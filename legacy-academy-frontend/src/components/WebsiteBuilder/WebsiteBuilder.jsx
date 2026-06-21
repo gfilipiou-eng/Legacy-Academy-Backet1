@@ -58,12 +58,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         coverImage: existingWebsite.coverImage || 'https://res.cloudinary.com/ddehek3eo/image/upload/v1781296353/legacyacademy/g2cp4zxk3ro1vqxrnwkt.jpg',
         palette: existingWebsite.palette || 'gold',
         font: existingWebsite.font || 'Inter',
-        ctaText: existingWebsite.ctaText || 'Get in Touch',
-        ctaLink: existingWebsite.ctaLink || '#',
-        navLink1: existingWebsite.navLink1 || 'Services',
-        navLink2: existingWebsite.navLink2 || 'About',
-        navLink3: existingWebsite.navLink3 || 'Contact',
-        featuresTitle: existingWebsite.featuresTitle || 'Why Choose Us',
+        ctaText: existingWebsite.ctaText ?? 'Get in Touch',
+        ctaLink: existingWebsite.ctaLink ?? '#',
+        navLink1: existingWebsite.navLink1 ?? 'Services',
+        navLink2: existingWebsite.navLink2 ?? 'About',
+        navLink3: existingWebsite.navLink3 ?? 'Contact',
+        featuresTitle: existingWebsite.featuresTitle ?? 'Why Choose Us',
         features: existingWebsite.features || [
             { title: 'Premium Quality 1', desc: 'We deliver nothing but the absolute best results for our clients.' },
             { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
@@ -176,39 +176,38 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
     return (
         <>
-        <div className="fixed inset-0 z-[3000] bg-[#09090b] flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none">
+        <div className="fixed inset-0 z-[3000] bg-black flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none">
             
             {/* MOBILE TABS (Only visible on small screens) */}
-            <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-safe">
+            <div className="md:hidden flex border-b border-white/10 shrink-0 bg-[#09090b] z-30 pt-safe shadow-lg">
                 <button 
                     onClick={() => setMobileTab('form')}
-                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
+                    className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)] bg-white/5' : 'text-gray-500'}`}
                 >
                     Edit Details
                 </button>
                 <button 
                     onClick={() => setMobileTab('preview')}
-                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'preview' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
+                    className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'preview' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)] bg-white/5' : 'text-gray-500'}`}
                 >
                     Live Preview
                 </button>
             </div>
 
             {/* ACTION BAR (Fixed at bottom for both PC and Mobile) */}
-            <div className="fixed bottom-0 left-0 w-full bg-[#09090b] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <div className="fixed bottom-0 left-0 w-full bg-[#050505] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-20px_40px_rgba(0,0,0,0.9)] pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-md">
                 <button 
                     onClick={() => handlePublish(true)}
                     disabled={saving}
-                    className="flex-1 py-3 rounded-full border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-3.5 rounded-xl border border-white/20 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                    {saving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-4 h-4" /> : t('SAVE_DRAFT', 'Save Draft'))}
+                    <Icons.Save className="w-4 h-4" /> Save Draft
                 </button>
                 <button 
                     onClick={() => handlePublish(false)}
-                    disabled={saving}
-                    className="flex-1 py-3 rounded-xl bg-[var(--gold-primary)] text-black font-black text-[11px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[var(--gold-primary)] to-yellow-600 text-black font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
                 >
-                    {saving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-4 h-4" /> : 'Publish')}
+                    <Icons.Globe className="w-4 h-4" /> {saving ? 'Publishing...' : 'Publish Live'}
                 </button>
             </div>
 
@@ -243,7 +242,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             onChange={(e) => setAiPrompt(e.target.value)}
                             placeholder="e.g. A premium fitness gym in Athens, Greece"
                             rows="2"
-                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none mb-3"
+                            className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md resize-none mb-3"
                         />
                         <button 
                             onClick={handleAIGenerate}
@@ -273,7 +272,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.businessName || ''}
                                 onChange={(e) => updateConfig('businessName', e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
                         <div>
@@ -282,7 +281,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.slogan || ''}
                                 onChange={(e) => updateConfig('slogan', e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
                         <div>
@@ -291,15 +290,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 value={config.description || ''}
                                 onChange={(e) => updateConfig('description', e.target.value)}
                                 rows="3"
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md resize-none"
                             />
                         </div>
                         <div className="pt-2 border-t border-white/5">
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Navigation Links</label>
                             <div className="flex gap-2">
-                                <input type="text" value={config.navLink1 || ''} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 1" />
-                                <input type="text" value={config.navLink2 || ''} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 2" />
-                                <input type="text" value={config.navLink3 || ''} onChange={(e) => updateConfig('navLink3', e.target.value)} className="w-1/3 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Link 3" />
+                                <input type="text" value={config.navLink1 || ''} onChange={(e) => updateConfig('navLink1', e.target.value)} className="w-1/3 bg-black/60 border border-white/5 shadow-inner rounded-[12px] px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="Link 1" />
+                                <input type="text" value={config.navLink2 || ''} onChange={(e) => updateConfig('navLink2', e.target.value)} className="w-1/3 bg-black/60 border border-white/5 shadow-inner rounded-[12px] px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="Link 2" />
+                                <input type="text" value={config.navLink3 || ''} onChange={(e) => updateConfig('navLink3', e.target.value)} className="w-1/3 bg-black/60 border border-white/5 shadow-inner rounded-[12px] px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="Link 3" />
                             </div>
                         </div>
                         <div>
@@ -316,7 +315,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.featuresTitle || ''}
                                 onChange={(e) => updateConfig('featuresTitle', e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors mb-3"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md mb-3"
                                 placeholder="Section Title (e.g. Why Choose Us)"
                             />
                             <div className="space-y-3">
@@ -386,7 +385,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 value={config.aboutText || ''}
                                 onChange={(e) => updateConfig('aboutText', e.target.value)}
                                 rows="3"
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors resize-none"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md resize-none"
                             />
                         </div>
                         <div className="pt-2 border-t border-white/5">
@@ -396,14 +395,14 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     type="text" 
                                     value={config.contactEmail || ''}
                                     onChange={(e) => updateConfig('contactEmail', e.target.value)}
-                                    className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                    className="w-1/2 bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" 
                                     placeholder="Email Address" 
                                 />
                                 <input 
                                     type="text" 
                                     value={config.contactPhone || ''}
                                     onChange={(e) => updateConfig('contactPhone', e.target.value)}
-                                    className="w-1/2 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" 
+                                    className="w-1/2 bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" 
                                     placeholder="Phone Number" 
                                 />
                             </div>
@@ -413,15 +412,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <XIcon className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="X (Twitter) URL" />
+                                    <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="X (Twitter) URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Icons.Instagram className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="Instagram URL" />
+                                    <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="Instagram URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Icons.Linkedin className="w-4 h-4 text-white/50" />
-                                    <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors" placeholder="LinkedIn URL" />
+                                    <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md" placeholder="LinkedIn URL" />
                                 </div>
                             </div>
                         </div>
@@ -443,7 +442,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 value={config.logo || ''}
                                 onChange={(e) => updateConfig('logo', e.target.value)}
                                 placeholder="https:// or Base64"
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
                         <div>
@@ -459,7 +458,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 value={config.coverImage || ''}
                                 onChange={(e) => updateConfig('coverImage', e.target.value)}
                                 placeholder="https:// or Base64"
-                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
                     </div>
@@ -474,7 +473,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     type="text" 
                                     value={config.ctaText || ''}
                                     onChange={(e) => updateConfig('ctaText', e.target.value)}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                    className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                                 />
                             </div>
                             <div className="flex-1">
@@ -483,7 +482,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     type="text" 
                                     value={config.ctaLink || ''}
                                     onChange={(e) => updateConfig('ctaLink', e.target.value)}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                    className="w-full bg-black/60 border border-white/5 shadow-inner rounded-[14px] px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold-primary)] transition-all backdrop-blur-md"
                                 />
                             </div>
                         </div>
@@ -550,18 +549,18 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <nav className={`w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3">
                                 {config.logo ? (
-                                    <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain" />
+                                    <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
                                 ) : (
-                                    <div className="w-8 h-8 rounded bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white">
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white shadow-lg">
                                         {config.businessName.charAt(0)}
                                     </div>
                                 )}
-                                <span className="font-black tracking-tight text-lg">{config.businessName}</span>
+                                <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                <a href="#services" className="hover:opacity-100">{config.navLink1 || 'Services'}</a>
-                                <a href="#about" className="hover:opacity-100">{config.navLink2 || 'About'}</a>
-                                <a href="#contact" className="hover:opacity-100">{config.navLink3 || 'Contact'}</a>
+                                {config.navLink1 !== '' && <a href="#services" className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Services'}</a>}
+                                {config.navLink2 !== '' && <a href="#about" className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'About'}</a>}
+                                {config.navLink3 !== '' && <a href="#contact" className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Contact'}</a>}
                             </div>
                         </nav>
 
@@ -577,17 +576,19 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                                     {config.description}
                                 </p>
-                                <a 
-                                    href={config.ctaLink === '#' ? '#contact' : config.ctaLink}
-                                    className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl"
-                                    style={{ 
-                                        backgroundColor: activeTheme.primary, 
-                                        color: config.palette === 'light' ? '#fff' : '#000',
-                                        boxShadow: `0 0 30px ${activeTheme.primary}40`
-                                    }}
-                                >
-                                    {config.ctaText}
-                                </a>
+                                {config.ctaText !== '' && (
+                                    <a 
+                                        href={config.ctaLink === '#' ? '#contact' : config.ctaLink}
+                                        className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl active:scale-95"
+                                        style={{ 
+                                            backgroundColor: activeTheme.primary, 
+                                            color: config.palette === 'light' ? '#fff' : '#000',
+                                            boxShadow: `0 0 30px ${activeTheme.primary}40`
+                                        }}
+                                    >
+                                        {config.ctaText ?? 'Get in Touch'}
+                                    </a>
+                                )}
                             </div>
 
                             <div className="flex-1 w-full z-10">

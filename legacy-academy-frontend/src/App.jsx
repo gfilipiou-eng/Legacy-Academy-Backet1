@@ -6681,7 +6681,7 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 relative overflow-hidden py-2.5 rounded-full text-[13px] sm:text-[14px] font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center ${isFollowing ? 'bg-transparent border border-white/30 text-white hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5' : 'bg-white border border-transparent text-black hover:bg-neutral-200'}`}
+                                                className={`flex-1 relative py-2.5 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center touch-manipulation select-none cursor-pointer ${isFollowing ? 'bg-transparent border border-white/30 text-white active:border-red-500/50 active:text-red-500 active:bg-red-500/5 md:hover:border-red-500/50 md:hover:text-red-500 md:hover:bg-red-500/5' : 'bg-white border border-transparent text-black active:bg-neutral-200 md:hover:bg-neutral-200'}`}
                                             >
                                                 <span className="relative z-10 flex items-center justify-center">
                                                     {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
@@ -6693,7 +6693,7 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="relative overflow-hidden py-2.5 px-6 rounded-full text-[13px] sm:text-[14px] font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center bg-transparent border border-white/30 text-white hover:bg-white/10 shrink-0"
+                                                className="relative py-2.5 px-6 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center bg-transparent border border-white/30 text-white active:bg-white/10 md:hover:bg-white/10 shrink-0 touch-manipulation select-none cursor-pointer"
                                             >
                                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                                     <Icons.MessageSquare className="w-4 h-4" />
