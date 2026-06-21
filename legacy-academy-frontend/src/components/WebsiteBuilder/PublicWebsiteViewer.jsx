@@ -14,13 +14,6 @@ export const PublicWebsiteViewer = ({ config }) => {
     const [orderComplete, setOrderComplete] = useState(false);
     const [activeTab, setActiveTab] = useState('newest');
 
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 1200);
-        return () => clearTimeout(timer);
-    }, []);
-
     if (!config) return <div className="min-h-screen bg-black flex items-center justify-center text-white">Website not found</div>;
 
     const themeColors = {
@@ -31,17 +24,6 @@ export const PublicWebsiteViewer = ({ config }) => {
     };
 
     const activeTheme = themeColors[config.palette] || themeColors.gold;
-
-    if (isLoading) {
-        return (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505]">
-                <Icons.Loader className="w-12 h-12 mb-6 animate-spin" style={{ color: activeTheme.primary }} />
-                <div className="text-white/50 text-xs font-black uppercase tracking-[0.3em] animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
-                    Loading Experience
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div 

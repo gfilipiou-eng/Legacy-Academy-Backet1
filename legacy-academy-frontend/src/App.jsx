@@ -1598,7 +1598,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     className="max-w-full max-h-full object-contain cursor-zoom-in"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, true));
+                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
                                     }}
                                     decoding="async"
                                     onError={() => {
