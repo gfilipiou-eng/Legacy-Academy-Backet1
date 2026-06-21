@@ -81,7 +81,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                 </div>
 
                 <div className="flex-1 w-full z-10">
-                    <div className={`w-full aspect-square md:aspect-video max-h-[600px] object-cover rounded-[30px] overflow-hidden shadow-2xl relative ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/5'}`}>
+                    <div className={`w-full aspect-video max-h-[600px] object-cover rounded-[30px] overflow-hidden shadow-2xl relative ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/5'}`}>
                         <img src={config.coverImage} alt="Cover" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     </div>
