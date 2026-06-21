@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 
@@ -14,6 +14,13 @@ export const PublicWebsiteViewer = ({ config }) => {
     const [orderComplete, setOrderComplete] = useState(false);
     const [activeTab, setActiveTab] = useState('newest');
 
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoading(false), 1200);
+        return () => clearTimeout(timer);
+    }, []);
+
     if (!config) return <div className="min-h-screen bg-black flex items-center justify-center text-white">Website not found</div>;
 
     const themeColors = {
@@ -24,6 +31,17 @@ export const PublicWebsiteViewer = ({ config }) => {
     };
 
     const activeTheme = themeColors[config.palette] || themeColors.gold;
+
+    if (isLoading) {
+        return (
+            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050505]">
+                <Icons.Loader className="w-12 h-12 mb-6 animate-spin" style={{ color: activeTheme.primary }} />
+                <div className="text-white/50 text-xs font-black uppercase tracking-[0.3em] animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
+                    Loading Experience
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div 
@@ -112,8 +130,25 @@ export const PublicWebsiteViewer = ({ config }) => {
                                         <Icons.Star className="w-8 h-8" />
                                     </div>
                                 )}
-                                <h4 className="text-2xl font-bold relative z-10">{feat.title}</h4>
+                                <h4 className="text-2xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
                                 <p className="break-words hyphens-auto opacity-60 text-base leading-relaxed relative z-10">{feat.desc}</p>
+                                {feat.link && feat.link.trim() !== '' && (
+                                    <div className="mt-4">
+                                        <a 
+                                            href={feat.link.startsWith('http') ? feat.link : `https://${feat.link}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="relative z-10 inline-flex items-center justify-center px-8 py-3.5 rounded-full font-black text-sm uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-2xl"
+                                            style={{ 
+                                                backgroundColor: activeTheme.primary, 
+                                                color: config.palette === 'light' ? '#fff' : '#000',
+                                                boxShadow: `0 8px 25px -5px ${activeTheme.primary}60`
+                                            }}
+                                        >
+                                            {feat.linkText || 'Learn More'}
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
