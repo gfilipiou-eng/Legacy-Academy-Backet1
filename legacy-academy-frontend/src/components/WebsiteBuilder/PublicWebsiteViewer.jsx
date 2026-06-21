@@ -19,8 +19,7 @@ export const PublicWebsiteViewer = ({ config }) => {
         gold: { primary: '#D4AF37', bg: '#09090b', card: '#111113' },
         blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
         pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
-        green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
-        light: { primary: '#111111', bg: '#f8f9fa', card: '#ffffff' }
+        green: { primary: '#2fd840', bg: '#041206', card: '#061c09' }
     };
 
     const activeTheme = themeColors[config.palette] || themeColors.gold;
