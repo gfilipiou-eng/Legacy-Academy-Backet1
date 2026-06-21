@@ -3386,13 +3386,19 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 };
 
 const PlatformLoadingPanel = ({ label, compact = false }) => (
-    <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative`}>
-        <div className="relative flex items-center justify-center w-16 h-16">
-            {/* Outer spinning ring */}
-            <div className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/30 border-b-transparent border-l-transparent animate-spin" style={{ animationDuration: '1.5s' }} />
+    <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative animate-fade-in`}>
+        <div className="relative flex items-center justify-center w-20 h-20">
+            {/* Outer spinning ring using pure CSS for perfect smoothness without JS lag */}
+            <div 
+                className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/30 border-b-transparent border-l-transparent animate-spin" 
+                style={{ animationDuration: '2s' }}
+            />
             {/* Inner pulsing core */}
-            <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)]/10 animate-pulse flex items-center justify-center backdrop-blur-sm border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                <Icons.Loader className="w-4 h-4 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '2s', animationDirection: 'reverse' }} />
+            <div 
+                className="w-12 h-12 rounded-full bg-[var(--gold-primary)]/10 flex items-center justify-center backdrop-blur-md border border-[var(--gold-primary)]/30 shadow-[0_0_30px_rgba(212,175,55,0.3)] animate-pulse"
+                style={{ animationDuration: '2s' }}
+            >
+                <Icons.Globe className="w-6 h-6 text-[var(--gold-primary)]" />
             </div>
         </div>
         {label && (
@@ -7372,18 +7378,14 @@ const applyZoom = (zoom) => {
 
 const PublicProfileSkeleton = () => (
     <div className="min-h-screen bg-black w-full flex flex-col relative overflow-hidden" style={{ '--gold-primary': '#D4AF37' }}>
-        <motion.div 
-            className="absolute inset-0 z-50 pointer-events-none"
-            animate={{ 
-                backgroundPosition: ['200% 0', '-200% 0']
-            }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        <div 
+            className="absolute inset-0 z-50 pointer-events-none animate-shimmer"
             style={{ 
                 backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%)',
                 backgroundSize: "200% 100%" 
             }}
         />
-        <div className="w-full h-[25vh] sm:h-[30vh] bg-white/5 relative overflow-hidden">
+        <div className="w-full h-[25vh] sm:h-[30vh] bg-white/5 relative overflow-hidden animate-pulse">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
         </div>
         <div className="w-full flex justify-center -mt-16 sm:-mt-20 relative z-10">
