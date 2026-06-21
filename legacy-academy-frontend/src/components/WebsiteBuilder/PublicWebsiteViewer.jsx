@@ -26,7 +26,7 @@ export const PublicWebsiteViewer = ({ config }) => {
 
     return (
         <div 
-            className="min-h-screen w-full flex flex-col font-sans overflow-y-auto overflow-x-hidden"
+            className="h-[100dvh] w-full flex flex-col font-sans overflow-y-auto overflow-x-hidden"
             style={{ 
                 fontFamily: config.font || 'Inter',
                 backgroundColor: activeTheme.bg,
