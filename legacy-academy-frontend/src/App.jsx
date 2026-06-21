@@ -10470,7 +10470,7 @@ const App = () => {
                                                 onClick={() => setFeedSortOrder('popular')}
                                                 className={`flex items-center gap-1.5 pb-3 font-bold text-[10px] sm:text-[13px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                             >
-                                                <Icons.Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                                 <span>Δημοφιλή</span>
                                                 {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                             </button>
@@ -10478,7 +10478,7 @@ const App = () => {
                                                 onClick={() => setFeedSortOrder('oldest')}
                                                 className={`flex items-center gap-1.5 pb-3 font-bold text-[10px] sm:text-[13px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                             >
-                                                <Icons.History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                                 <span>Παλαιότερα</span>
                                                 {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
                                             </button>
