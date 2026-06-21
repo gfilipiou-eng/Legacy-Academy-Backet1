@@ -20,6 +20,16 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
         websites = [user.settings.businessWebsite];
     }
 
+        const themeColors = {
+        gold: { primary: '#D4AF37', bg: '#09090b', card: '#111113' },
+        blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
+        pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
+        green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
+        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' }
+    };
+    const activePalette = websites.length > 0 ? (websites[0].palette || 'blue') : 'blue';
+    const builderPrimary = themeColors[activePalette]?.primary || '#1D9BF0';
+
     const handleCreateNew = () => {
         if (websites.length >= 2) return;
         setActiveWebsiteIndex(websites.length); // Next index
