@@ -3441,17 +3441,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
 const PlatformLoadingPanel = ({ label, compact = false }) => (
     <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative animate-fade-in`}>
-        <div className="relative flex items-center justify-center w-20 h-20">
-            {/* Outer spinning ring using pure CSS for perfect smoothness without JS lag */}
+        <div className="relative flex items-center justify-center w-16 h-16">
             <div 
-                className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/30 border-b-transparent border-l-transparent animate-spin" 
-                style={{ animationDuration: '2s' }}
+                className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/20 border-b-transparent border-l-transparent animate-spin" 
+                style={{ animationDuration: '1s' }}
             />
-            {/* Inner pulsing core */}
             <div 
-                className="w-12 h-12 rounded-full bg-transparent flex items-center justify-center"
+                className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/10 flex items-center justify-center bg-[var(--gold-primary)]/5"
             >
-                <img src="/images/legacy-logo-gold.png" alt="Intel" className="w-8 h-8 opacity-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.5)] animate-pulse" />
+                <Icons.Loader className="w-5 h-5 text-[var(--gold-primary)] opacity-80 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
             </div>
         </div>
         {label && (
@@ -9887,16 +9885,19 @@ const App = () => {
         
         let websites = [];
         if (publicUser.settings.businessWebsites && Array.isArray(publicUser.settings.businessWebsites)) {
-            websites = publicUser.settings.businessWebsites.filter(site => !site.isDraft);
+            // DO NOT filter by isDraft here, because the publicSiteIndex corresponds to the original array index!
+            websites = publicUser.settings.businessWebsites;
         } else if (publicUser.settings.businessWebsite) {
             websites = [publicUser.settings.businessWebsite];
         }
 
         const siteConfig = websites[parseInt(publicSiteIndex) || 0];
 
-        if (!siteConfig) {
-            return <div className="min-h-screen w-full bg-[#09090b] flex items-center justify-center text-white font-bold">
-                Website configuration not found for this index.
+        if (!siteConfig || siteConfig.isDraft) {
+            return <div className="min-h-screen w-full bg-[#09090b] flex flex-col items-center justify-center text-center gap-4 p-6">
+                <Icons.Globe className="w-16 h-16 text-white/10" />
+                <h2 className="text-xl font-black text-white uppercase tracking-widest">Website Unavailable</h2>
+                <p className="text-sm text-gray-500 max-w-sm leading-relaxed">This website configuration was not found or is currently marked as a draft.</p>
             </div>;
         }
 
