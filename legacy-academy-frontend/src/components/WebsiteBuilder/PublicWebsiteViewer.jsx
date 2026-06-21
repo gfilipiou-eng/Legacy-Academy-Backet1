@@ -12,6 +12,7 @@ export const PublicWebsiteViewer = ({ config }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [buyerEmail, setBuyerEmail] = useState('');
     const [orderComplete, setOrderComplete] = useState(false);
+    const [activeTab, setActiveTab] = useState('newest');
 
     if (!config) return <div className="min-h-screen bg-black flex items-center justify-center text-white">Website not found</div>;
 
@@ -47,9 +48,9 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <span className="break-words hyphens-auto font-black tracking-tight text-lg">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                    {config.navLink1 !== '' && <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 ?? 'Services'}</a>}
-                    {config.navLink2 !== '' && <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 ?? 'About'}</a>}
-                    {config.navLink3 !== '' && <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 ?? 'Contact'}</a>}
+                    {config.navLink1 !== '' && <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                    {config.navLink2 !== '' && <a href="#about" className="cursor-pointer hover:opacity-100">{config.navLink2 ?? 'Σχετικά'}</a>}
+                    {config.navLink3 !== '' && <a href="#contact" className="cursor-pointer hover:opacity-100">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                 </div>
             </nav>
 
@@ -122,7 +123,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* About Section */}
             {config.aboutText && (
                 <div id="about" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                    {config.navLink2 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
+                    {config.navLink2 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
                     <p className="break-words hyphens-auto text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
                         {config.aboutText}
                     </p>
@@ -132,7 +133,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Contact Section */}
             {(config.contactEmail || config.contactPhone) && (
                 <div id="contact" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.navLink3 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
+                    {config.navLink3 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-3xl mx-auto">
                         {config.contactEmail && (
                             <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>

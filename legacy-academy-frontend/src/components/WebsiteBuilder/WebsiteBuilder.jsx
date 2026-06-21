@@ -15,7 +15,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     const { t } = useTranslation();
     const [saving, setSaving] = useState(false);
     const [published, setPublished] = useState(false);
-    const [previewMode, setPreviewMode] = useState('desktop'); // desktop, mobile
+    const [previewMode, setPreviewMode] = useState('desktop');
+    const [activeTab, setActiveTab] = useState('newest'); // desktop, mobile
 
     // Mobile specific tab (form vs preview)
     const [mobileTab, setMobileTab] = useState('form');
@@ -59,12 +60,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         coverImage: existingWebsite.coverImage || 'https://res.cloudinary.com/ddehek3eo/image/upload/v1781296353/legacyacademy/g2cp4zxk3ro1vqxrnwkt.jpg',
         palette: existingWebsite.palette || 'gold',
         font: existingWebsite.font || 'Inter',
-        ctaText: existingWebsite.ctaText ?? 'Get in Touch',
+        ctaText: existingWebsite.ctaText ?? 'Επικοινωνήστε Μαζί Μας',
         ctaLink: existingWebsite.ctaLink ?? '#',
-        navLink1: existingWebsite.navLink1 ?? 'Services',
-        navLink2: existingWebsite.navLink2 ?? 'About',
-        navLink3: existingWebsite.navLink3 ?? 'Contact',
-        featuresTitle: existingWebsite.featuresTitle ?? 'Why Choose Us',
+        navLink1: existingWebsite.navLink1 ?? 'Υπηρεσίες',
+        navLink2: existingWebsite.navLink2 ?? 'Σχετικά',
+        navLink3: existingWebsite.navLink3 ?? 'Επικοινωνία',
+        featuresTitle: existingWebsite.featuresTitle ?? 'Τα Storyline μας',
         features: existingWebsite.features || [
             { title: 'Premium Quality 1', desc: 'We deliver nothing but the absolute best results for our clients.' },
             { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
@@ -563,9 +564,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                {config.navLink1 !== '' && <a href="#services" className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Services'}</a>}
-                                {config.navLink2 !== '' && <a href="#about" className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'About'}</a>}
-                                {config.navLink3 !== '' && <a href="#contact" className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Contact'}</a>}
+                                {config.navLink1 !== '' && <a href="#services" className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                                {config.navLink2 !== '' && <a href="#about" className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
+                                {config.navLink3 !== '' && <a href="#contact" className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                             </div>
                         </nav>
 
@@ -591,7 +592,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                             boxShadow: `0 0 30px ${activeTheme.primary}40`
                                         }}
                                     >
-                                        {config.ctaText ?? 'Get in Touch'}
+                                        {config.ctaText ?? 'Επικοινωνήστε Μαζί Μας'}
                                     </a>
                                 )}
                             </div>
@@ -637,7 +638,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* About Section */}
                         {config.aboutText && (
                             <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                                {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
+                                {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
                                 <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
                                     {config.aboutText}
                                 </p>
@@ -647,7 +648,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* Contact Section */}
                         {(config.contactEmail || config.contactPhone) && (
                             <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
+                                {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
                                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
                                     {config.contactEmail && (
                                         <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
