@@ -158,24 +158,40 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             
             {/* MOBILE TABS (Only visible on small screens) */}
             <div className="md:hidden flex border-b border-white/10 shrink-0 bg-black z-30 pt-safe">
-                
-                    <div className="flex items-center gap-2">
-                        <button 
-                            onClick={() => handlePublish(true)}
-                            disabled={saving}
-                            className="px-4 py-1.5 rounded-full border border-white/20 text-white font-black text-[10px] uppercase tracking-wider hover:bg-white/10 transition-all flex items-center gap-2"
-                        >
-                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-3 h-3" /> : t('SAVE_DRAFT', 'Save Draft'))}
-                        </button>
-                        <button 
-                            onClick={() => handlePublish(false)}
-                            disabled={saving}
-                            className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all flex items-center gap-2"
-                        >
-                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
-                        </button>
-                    </div>
+                <button 
+                    onClick={() => setMobileTab('form')}
+                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
+                >
+                    Edit Details
+                </button>
+                <button 
+                    onClick={() => setMobileTab('preview')}
+                    className={`flex-1 py-3 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'preview' ? 'text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)]' : 'text-gray-500'}`}
+                >
+                    Live Preview
+                </button>
+            </div>
 
+            {/* LEFT SIDEBAR - Form Inputs */}
+            <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
+                {/* Header */}
+                <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 shrink-0 bg-white/[0.02]">
+                    <div className="flex items-center gap-3">
+                        <button onClick={onExit} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors -ml-2">
+                            <Icons.ArrowLeft className="w-5 h-5 text-white/70" />
+                        </button>
+                        <span className="text-[var(--gold-primary)] font-black uppercase tracking-widest text-[11px]">
+                            Website Setup
+                        </span>
+                    </div>
+                    
+                    <button 
+                        onClick={handlePublish}
+                        disabled={saving}
+                        className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2"
+                    >
+                        {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
+                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain p-6 pb-40 custom-scrollbar space-y-8 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
