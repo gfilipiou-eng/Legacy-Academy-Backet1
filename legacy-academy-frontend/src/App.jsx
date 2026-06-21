@@ -8856,16 +8856,16 @@ const App = () => {
     }, [posts, searchQuery]);
 
     const groupedPosts = React.useMemo(() => {
-        let basePosts = posts;
+        let sortedFilteredPosts = [...filteredPosts];
         if (feedSortOrder === 'oldest') {
-            basePosts = [...posts].reverse();
+            sortedFilteredPosts = sortedFilteredPosts.reverse();
         } else if (feedSortOrder === 'popular') {
-            basePosts = [...posts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+            sortedFilteredPosts = sortedFilteredPosts.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
         }
         const groups = {};
         const lang = user?.settings?.language || 'en';
         const locale = getLocaleForLang(lang);
-        filteredPosts.forEach(p => {
+        sortedFilteredPosts.forEach(p => {
             const date = new Date(p.createdAt);
             const key = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
             if (!groups[key]) groups[key] = { key, posts: [], dateVal: date.setHours(0, 0, 0, 0) };
@@ -8873,7 +8873,7 @@ const App = () => {
         });
         // Convert to array and sort DESCENDING (Newest first)
         return Object.values(groups).sort((a, b) => b.dateVal - a.dateVal);
-    }, [filteredPosts, user]);
+    }, [filteredPosts, user, feedSortOrder]);
 
     // AUTO-EXPAND FEED FOLDERS (Open Latest Folder)
     useEffect(() => {
@@ -8885,7 +8885,7 @@ const App = () => {
     }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
-        return basePosts.filter(p => {
+        return posts.filter(p => {
             const isStory = p.isStory === true || String(p.isStory) === 'true';
             if (!isStory) return false;
             // Filter only last 24h
@@ -9793,7 +9793,7 @@ const App = () => {
     const preloadedProfilePosts = useMemo(() => {
         if (!profileUser?._id) return [];
         const targetId = String(profileUser._id);
-        return basePosts.filter(p => {
+        return posts.filter(p => {
             if (p.isStory === true || String(p.isStory) === 'true') return false;
             const authorId = String(p.author?._id || p.author || '');
             const reposterId = String(p.repostedBy?._id || p.repostedBy || '');
