@@ -5446,7 +5446,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         );})}
 
                         <button
-                            onClick={() => { playCyberSFX('menu'); onLogout(); handleClose(); }}
+                            onClick={() => { onLogout(); handleClose(); }}
                             className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98]"
                             style={{ animationDelay: '0.24s' }}
                         >
