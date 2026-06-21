@@ -26,6 +26,27 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     
     // Publish success state
     const [showPublishSuccess, setShowPublishSuccess] = useState(false);
+    const [copyToast, setCopyToast] = useState(false);
+
+    const handleCopyUrl = (e) => {
+        if(e) e.preventDefault();
+        const url = `${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`;
+        try {
+            navigator.clipboard.writeText(url);
+        } catch (err) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            } catch(e2){}
+        }
+        setCopyToast(true);
+        setTimeout(() => setCopyToast(false), 2000);
+    };
 
     const existingWebsite = initialConfig || {};
     
@@ -147,7 +168,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
         pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
         green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
-        light: { primary: '#111111', bg: '#f8f9fa', card: '#ffffff' }
+        light: { primary: '#111111', bg: '#f8f9fa', card: '#ffffff' },
+        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' }
     };
 
     const activeTheme = themeColors[config.palette];
@@ -491,18 +513,14 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Color Theme</label>
                             <div className="flex items-center gap-3">
-                                {[
-                                    { id: 'gold', color: '#D4AF37' },
-                                    { id: 'blue', color: '#1D9BF0' },
-                                    { id: 'pink', color: '#e83c74' },
-                                    { id: 'green', color: '#2fd840' },
-                                    { id: 'light', color: '#f8f9fa' }
-                                ].map(p => (
+                                {Object.keys(themeColors).map(c => (
                                     <button 
-                                        key={p.id}
-                                        onClick={() => updateConfig('palette', p.id)}
-                                        className={`w-10 h-10 rounded-full border-2 transition-all ${config.palette === p.id ? 'border-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'border-transparent hover:scale-105 opacity-60 hover:opacity-100'}`}
-                                        style={{ backgroundColor: p.color }}
+                                        key={c}
+                                        type="button"
+                                        onClick={() => updateConfig('palette', c)}
+                                        className={`w-10 h-10 rounded-full border-2 transition-all ${config.palette === c ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
+                                        style={{ backgroundColor: themeColors[c].primary }}
+                                        title={c.charAt(0).toUpperCase() + c.slice(1)}
                                     />
                                 ))}
                             </div>
@@ -685,51 +703,22 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <h2 className="text-2xl font-black text-white mb-2">Website Published!</h2>
                         <p className="text-gray-400 text-sm mb-8">Your automated website is now live and can be shared with the world.</p>
                         
-                        <div className="bg-black border border-white/10 rounded-xl p-4 flex items-center justify-between mb-8">
+                        <div className="bg-black border border-white/10 rounded-xl p-4 flex items-center justify-between mb-8 relative">
+                            {copyToast && (
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-wider shadow-xl animate-fade-in whitespace-nowrap">
+                                    {t('LINK_COPIED', 'Copied to clipboard!')}
+                                </div>
+                            )}
                             <span className="text-xs text-white/80 font-mono truncate mr-4">
                                 {window.location.origin}/?site={user?.username}&index={websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}
                             </span>
                             <button 
                                 type="button"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    const url = `${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`;
-                                    try {
-                                        navigator.clipboard.writeText(url);
-                                    } catch (err) {
-                                        try {
-                                            const textArea = document.createElement("textarea");
-                                            textArea.value = url;
-                                            document.body.appendChild(textArea);
-                                            textArea.focus();
-                                            textArea.select();
-                                            document.execCommand('copy');
-                                            document.body.removeChild(textArea);
-                                        } catch(e2){}
-                                    }
-                                    alert(t('LINK_COPIED', 'Copied to clipboard!'));
-                                }}
-                                onTouchEnd={(e) => {
-                                    e.preventDefault();
-                                    const url = `${window.location.origin}/?site=${user?.username}&index=${websiteIndex !== undefined ? websiteIndex : (websitesArray?.length || 0)}`;
-                                    try {
-                                        navigator.clipboard.writeText(url);
-                                    } catch (err) {
-                                        try {
-                                            const textArea = document.createElement("textarea");
-                                            textArea.value = url;
-                                            document.body.appendChild(textArea);
-                                            textArea.focus();
-                                            textArea.select();
-                                            document.execCommand('copy');
-                                            document.body.removeChild(textArea);
-                                        } catch(e2){}
-                                    }
-                                    alert(t('LINK_COPIED', 'Copied to clipboard!'));
-                                }}
-                                className="w-8 h-8 shrink-0 bg-white/10 hover:bg-white/20 rounded-md flex items-center justify-center transition-colors touch-manipulation"
+                                onClick={handleCopyUrl}
+                                onTouchEnd={handleCopyUrl}
+                                className={`w-8 h-8 shrink-0 rounded-md flex items-center justify-center transition-all touch-manipulation ${copyToast ? 'bg-green-500/20 text-green-400' : 'bg-white/10 hover:bg-white/20 text-white'}`}
                             >
-                                <Icons.Copy className="w-4 h-4 text-white" />
+                                {copyToast ? <Icons.Check className="w-4 h-4" /> : <Icons.Copy className="w-4 h-4" />}
                             </button>
                         </div>
                         
