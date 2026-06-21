@@ -205,7 +205,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 </button>
                 <button 
                     onClick={() => handlePublish(false)}
-                    className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[var(--builder-primary)] to-yellow-600 text-black font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                    className="flex-1 py-3.5 rounded-xl bg-[var(--builder-primary)] text-white font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
                 >
                     <Icons.Globe className="w-4 h-4" /> {saving ? 'Publishing...' : 'Publish Live'}
                 </button>
@@ -247,7 +247,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <button 
                             onClick={handleAIGenerate}
                             disabled={isGeneratingAI || !aiPrompt.trim()}
-                            className="w-full py-3 rounded-xl bg-gradient-to-r from-[var(--builder-primary)] to-yellow-600 text-black font-black text-[11px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full py-3 rounded-xl bg-[var(--builder-primary)] text-white font-black text-[11px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             {isGeneratingAI ? (
                                 <>
@@ -710,7 +710,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             type="button"
                             onClick={(e) => { e.preventDefault(); setShowPublishSuccess(false); }}
                             onTouchEnd={(e) => { e.preventDefault(); setShowPublishSuccess(false); }}
-                            className="w-full py-4 rounded-xl bg-[var(--builder-primary)] text-black font-black text-xs uppercase tracking-wider hover:opacity-90 transition-opacity touch-manipulation"
+                            className="w-full py-4 rounded-xl bg-[var(--builder-primary)] text-white font-black text-xs uppercase tracking-wider hover:opacity-90 transition-opacity touch-manipulation"
                         >
                             {t('CONTINUE_EDITING', 'Continue Editing')}
                         </button>
