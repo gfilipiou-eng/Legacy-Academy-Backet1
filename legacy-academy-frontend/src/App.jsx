@@ -1026,6 +1026,17 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (customColor === 'bronze') { baseColor = '#CD7F32'; darkColor = '#8B4513'; gradId = 'bronze3DGrad'; }
         else if (customColor === 'neon-green') { baseColor = '#39FF14'; darkColor = '#008000'; gradId = 'green3DGrad'; }
         else if (customColor === 'holographic') isHolo = true;
+        else if (customColor === 'live-gold' && resolvedRole === 'Founder') {
+            return (
+                <div className={`${className} flex items-center justify-center shrink-0`}>
+                    <div className="relative w-full h-full rounded-full animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }}>
+                        <div className="absolute inset-[15%] bg-black rounded-full flex items-center justify-center">
+                            <Icons.Check className="w-[80%] h-[80%] text-[#F6E27A]" strokeWidth={3} />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
     }
 
     if (isHolo) {
@@ -3848,6 +3859,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <>
                                                 {[
                                                     { id: 'gold', label: 'Gold', color: '#FFD700' },
+                                                    { id: 'live-gold', label: 'Live Gold', color: '#F6E27A', isLive: true },
                                                     { id: 'crimson', label: 'Crimson', color: '#FF0033' },
                                                     { id: 'neon-purple', label: 'Purple', color: '#B026FF' },
                                                     { id: 'holographic', label: 'Holo', isHolo: true }
@@ -3860,7 +3872,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
                                                         }`}
                                                     >
-                                                        {b.isHolo ? (
+                                                        {b.isLive ? (
+                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0 animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }} />
+                                                        ) : b.isHolo ? (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
                                                         ) : (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
