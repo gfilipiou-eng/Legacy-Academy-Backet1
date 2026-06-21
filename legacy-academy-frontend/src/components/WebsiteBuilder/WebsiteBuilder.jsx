@@ -194,8 +194,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 </button>
             </div>
 
-            {/* MOBILE ACTION BAR (Fixed at bottom) */}
-            <div className="md:hidden fixed bottom-0 left-0 w-full bg-[#09090b] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            {/* ACTION BAR (Fixed at bottom for both PC and Mobile) */}
+            <div className="fixed bottom-0 left-0 w-full bg-[#09090b] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] pb-[calc(1rem+env(safe-area-inset-bottom))]">
                 <button 
                     onClick={() => handlePublish(true)}
                     disabled={saving}
@@ -223,23 +223,6 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <span className="text-[var(--gold-primary)] font-black uppercase tracking-widest text-[11px]">
                             Website Setup
                         </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                        <button 
-                            onClick={() => handlePublish(true)}
-                            disabled={saving}
-                            className="px-4 py-1.5 rounded-full border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center gap-2"
-                        >
-                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-3 h-3" /> : t('SAVE_DRAFT', 'Save Draft'))}
-                        </button>
-                        <button 
-                            onClick={() => handlePublish(false)}
-                            disabled={saving}
-                            className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2"
-                        >
-                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
-                        </button>
                     </div>
                 </div>
 

@@ -582,7 +582,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             {/* The Circular Avatar */}
             <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 z-10">
                 {isLoading ? (
-                    <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm animate-pulse">
+                    <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm ">
                         <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
                     </div>
                 ) : resolvedProfilePic ? (
@@ -802,7 +802,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 
                 <div className="flex flex-col gap-4">
                     {audioBlob ? (
-                        <div className="flex items-center justify-between p-4 bg-white/5  rounded-none animate-pulse">
+                        <div className="flex items-center justify-between p-4 bg-white/5  rounded-none ">
                             <div className="flex items-center gap-3">
                                 <div className="w-2.5 h-2.5 rounded-none bg-white" />
                                 <span className="text-xs font-black text-white uppercase tracking-widest">{t('VOICE_NOTE_READY')}</span>
@@ -810,7 +810,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
                             <button onClick={() => setAudioBlob(null)} className="p-2 rounded-none"><Icons.Trash className="w-5 h-5 text-red-500" /></button>
                         </div>
                     ) : isRecording ? (
-                        <div className="flex items-center justify-between p-5 bg-red-600 border border-red-500 rounded-none animate-pulse">
+                        <div className="flex items-center justify-between p-5 bg-red-600 border border-red-500 rounded-none ">
                             <div className="flex items-center gap-3">
                                 <div className="w-3 h-3 rounded-none bg-white animate-ping" />
                                 <span className="text-sm font-black text-white uppercase tracking-widest">{t('RECORDING')}...</span>
@@ -1023,9 +1023,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (customColor === 'crimson') { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'crimson3DGrad'; }
         else if (customColor === 'neon-purple') { baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'purple3DGrad'; }
         else if (customColor === 'blue') { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'blue3DGrad'; }
-        else if (customColor === 'silver') { baseColor = '#E0E0E0'; darkColor = '#888888'; gradId = 'silver3DGrad'; }
-        else if (customColor === 'bronze') { baseColor = '#CD7F32'; darkColor = '#8B4513'; gradId = 'bronze3DGrad'; }
-        else if (customColor === 'neon-green') { baseColor = '#39FF14'; darkColor = '#008000'; gradId = 'green3DGrad'; }
+        else if (customColor === 'metal-blue') { baseColor = '#00B4DB'; darkColor = '#0083B0'; gradId = 'metalBlueGrad'; isMetallic = true; }
         else if (customColor === 'holographic') isHolo = true;
         else if (customColor === 'live-gold' && resolvedRole === 'Founder') {
             isMetallic = true;
@@ -1208,7 +1206,7 @@ const NeuralNarratorButton = ({ text }) => {
     return (
         <button
             onClick={handleNarrate}
-            className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest hover:underline flex items-center gap-1.5 transition-all ${speaking ? 'text-[var(--gold-primary)] opacity-100 animate-pulse' : 'text-white opacity-60 hover:opacity-100'}`}
+            className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest hover:underline flex items-center gap-1.5 transition-all ${speaking ? 'text-[var(--gold-primary)] opacity-100 ' : 'text-white opacity-60 hover:opacity-100'}`}
         >
             {speaking ? (
                 <>
@@ -1266,7 +1264,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     };
 
     return (
-        <motion.div
+        <div
             layout
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1437,7 +1435,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     )}
                 </div>
             )}
-        </motion.div>
+        </div>
     );
 });
 
@@ -1678,7 +1676,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 {isRecordingComment ? (
                                     <div className="flex-1 min-w-0 bg-black/80 text-white border border-white/20 rounded-2xl p-3 flex items-center justify-between">
                                         <div className="flex items-center gap-2 pl-1 shrink-0">
-                                            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
+                                            <div className="w-3 h-3 rounded-full bg-red-500 " />
                                             <span className="text-[11px] font-bold text-white uppercase tracking-widest">{t('TRANSMITTING')}</span>
                                         </div>
                                         <div className="flex gap-2">
@@ -1689,7 +1687,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 ) : commentAudio ? (
                                     <div className="flex-1 min-w-0 flex items-center justify-between px-3 bg-black/80 border border-white/20 rounded-2xl p-2">
                                         <div className="flex items-center gap-2 pl-2 min-w-0">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse shrink-0" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-white  shrink-0" />
                                             <span className="text-[11px] font-bold text-white uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
                                         </div>
                                         <div className="flex items-center gap-1 shrink-0">
@@ -1715,7 +1713,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                             className="flex-1 min-w-0 bg-transparent py-3 px-4 text-base text-white outline-none placeholder-gray-500 font-medium"
                                         />
                                         <div className="flex gap-1 pr-2 shrink-0">
-                                            <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-150 ${isRecordingComment ? 'bg-red-500 text-white animate-pulse' : 'text-gray-400 hover:text-white hover:bg-white/10'} sturdy-active touch-manipulation`}>
+                                            <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-150 ${isRecordingComment ? 'bg-red-500 text-white ' : 'text-gray-400 hover:text-white hover:bg-white/10'} sturdy-active touch-manipulation`}>
                                                 <Icons.Mic className="w-5 h-5" />
                                             </button>
                                             <button type="submit" disabled={!commentText.trim()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-25 hover:brightness-90 transition-all duration-150 sturdy-active touch-manipulation shrink-0">
@@ -2057,9 +2055,9 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
             )}
 
             {/* NEURAL OVERLAY - ALWAYS VISIBLE OVER EVERYTHING */}
-            <AnimatePresence>
+            <>
                 {(isHovered || !isPlaying || isDragging) && (
-                    <motion.div
+                    <div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -2107,14 +2105,14 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                         </div>
 
                         <div className="flex items-center justify-center">
-                            <motion.button
+                            <button
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 onClick={(e) => { e.stopPropagation(); togglePlay(e); }}
                                 className="w-16 h-16 rounded-full liquid-glass-control flex items-center justify-center text-black shadow-2xl pointer-events-auto"
                             >
                                 {isPlaying ? <Icons.Pause className="w-8 h-8 fill-white" /> : <Icons.Play className="w-8 h-8 fill-white ml-1" />}
-                            </motion.button>
+                            </button>
                         </div>
 
                         <div className="space-y-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
@@ -2129,20 +2127,20 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                                 onTouchStart={handleMouseDown}
                             >
                                 <div className="absolute inset-x-0 -inset-y-4 group-hover/seek:bg-white/5 rounded-full" />
-                                <motion.div
+                                <div
                                     className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffea70] rounded-full"
                                     style={{ width: `${progress}%` }}
                                     transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
                                 />
-                                <motion.div
+                                <div
                                     className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full scale-0 group-hover/seek:scale-100 hidden sm:block"
                                     style={{ left: `${progress}%`, marginLeft: '-6px' }}
                                 />
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 )}
-            </AnimatePresence>
+            </>
         </div >
     );
 });
@@ -2161,7 +2159,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
     const isFounderSender = note?.sender?.role === 'Founder' || note?.fromRole === 'Founder';
 
     return (
-        <motion.div
+        <div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer border transition-all duration-200 mb-2.5 group ${
@@ -2199,7 +2197,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                     </div>
                 )}
                 {note.type === 'security_alert' && (
-                    <div className="absolute -bottom-1 -right-1 bg-orange-500 rounded-full p-1 border border-black shadow-lg animate-pulse">
+                    <div className="absolute -bottom-1 -right-1 bg-orange-500 rounded-full p-1 border border-black shadow-lg ">
                         <Icons.ShieldCheck className="w-2.5 h-2.5 text-white" />
                     </div>
                 )}
@@ -2268,7 +2266,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                     />
                 </div>
             )}
-        </motion.div>
+        </div>
     );
 });
 
@@ -2471,7 +2469,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     };
 
     return (
-    <motion.div
+    <div
       initial={{ opacity: 0, y: 15 }}
       animate={{ 
         opacity: isDeleting ? 0 : 1, 
@@ -2495,7 +2493,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="w-16 h-16 text-[var(--gold-primary)] mb-4">
                         <Icons.Loader />
                     </div>
-                    <div className="text-white font-black uppercase tracking-[0.2em] animate-pulse text-lg drop-shadow-none">
+                    <div className="text-white font-black uppercase tracking-[0.2em]  text-lg drop-shadow-none">
                         {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
                     </div>
                     <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">{t('ENCRYPTING_DATA')}</div>
@@ -2734,7 +2732,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-base text-white outline-none focus:border-white/40 min-h-[100px] resize-none pb-12 transition-all"
                                             />
                                             <div className="absolute bottom-2 left-2 flex gap-2">
-                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-full transition-colors ${isRecordingComment ? 'bg-red-600 text-white animate-pulse' : 'bg-transparent text-gray-500 hover:text-white hover:bg-white/10'}`}>
+                                                <button onClick={toggleCommentRecording} className={`p-2 rounded-full transition-colors ${isRecordingComment ? 'bg-red-600 text-white ' : 'bg-transparent text-gray-500 hover:text-white hover:bg-white/10'}`}>
                                                     <Icons.Mic className="w-5 h-5" />
                                                 </button>
                                                 <button onClick={() => { if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="p-2 bg-white text-black rounded-full hover:brightness-90 transition-colors">
@@ -2766,7 +2764,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     </div>
                 </div>
             </div>
-        </motion.div >
+        </div>
     );
 });
 
@@ -3209,7 +3207,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                <AnimatePresence initial={false}>
+                                <>
                                     {(messages[activeChat._id] || []).map((m, i) => {
                                         const audioVal = m.audio || m.audioUrl || "";
                                         const isAudioActuallyImage = audioVal && /\.(jpg|jpeg|png|gif|webp|bmp|svg|heic|avif)/i.test(audioVal.split('?')[0]);
@@ -3234,7 +3232,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         };
 
                                         return (
-                                            <motion.div 
+                                            <div 
                                                 key={m._id || i}
                                                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -3279,7 +3277,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 {realAudio ? (
                                                     <div className="flex flex-col gap-2 relative z-10">
                                                         <div className="flex items-center gap-2">
-                                                            <div className="w-2 h-2 rounded-full animate-pulse bg-[var(--gold-primary)]" />
+                                                            <div className="w-2 h-2 rounded-full  bg-[var(--gold-primary)]" />
                                                             <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
                                                         </div>
                                                         <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
@@ -3297,10 +3295,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     )}
                                                 </div>
                                                 </div>
-                                            </motion.div>
+                                            </div>
                                         );
                                     })}
-                                </AnimatePresence>
+                                </>
                                 <div ref={scrollRef} />
                             </div>
                             {/* Hidden image input */}
@@ -3343,10 +3341,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
-                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? 'animate-pulse text-red-500' : ''}`}
+                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? ' text-red-500' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)] animate-pulse border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
+                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)]  border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
                                         <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] " />
                                     </div>
                                     </div>
@@ -3374,7 +3372,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl shrink-0 ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-gray-500'}`}
+                                                className={`w-10 h-10 flex items-center justify-center rounded-xl shrink-0 ${isRecording ? 'bg-red-500 text-white ' : 'bg-white/5 text-gray-500'}`}
                                             >
                                                 <Icons.Mic className="w-5 h-5" />
                                             </button>
@@ -3417,7 +3415,7 @@ const PlatformLoadingPanel = ({ label, compact = false }) => (
             />
             {/* Inner pulsing core */}
             <div 
-                className="w-12 h-12 rounded-full bg-[var(--gold-primary)]/10 flex items-center justify-center border border-[var(--gold-primary)]/30 animate-pulse"
+                className="w-12 h-12 rounded-full bg-[var(--gold-primary)]/10 flex items-center justify-center border border-[var(--gold-primary)]/30 "
                 style={{ animationDuration: '2s' }}
             >
                 
@@ -3723,12 +3721,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     ];
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-3 sm:p-4">
-            <motion.div
+            <div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/70" onClick={onClose}
             />
 
-            <motion.div
+            <div
                 initial={{ opacity: 0, scale: 0.97, y: 8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
@@ -3903,9 +3901,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <>
                                                 {[
                                                     { id: 'blue', label: 'Blue', color: '#1D9BF0' },
-                                                    { id: 'silver', label: 'Silver', color: '#C0C0C0' },
-                                                    { id: 'bronze', label: 'Bronze', color: '#CD7F32' },
-                                                    { id: 'neon-green', label: 'Green', color: '#39FF14' }
+                                                    { id: 'metal-blue', label: 'Metal Blue', color: '#0083B0' }
                                                 ].map(b => (
                                                     <button
                                                         key={b.id}
@@ -4055,12 +4051,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 {saving && (
                     <div className="absolute top-3 right-14 pointer-events-none">
                         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10">
-                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full animate-pulse" />
+                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full " />
                             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{t('SYNCING')}</span>
                         </div>
                     </div>
                 )}
-            </motion.div>
+            </div>
         </div>
     );
 };
@@ -4541,7 +4537,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                 {processingStep === 'submitting' ? (
                                     <div className="space-y-6 text-center py-10 flex flex-col items-center justify-center">
                                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-green-400 border border-green-500/20">
-                                            <Icons.Lock className="w-6 h-6 animate-pulse" />
+                                            <Icons.Lock className="w-6 h-6 " />
                                         </div>
                                         <h4 className="text-sm font-black text-white uppercase tracking-widest">Securing Transaction</h4>
                                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Minting LΞC shares on ledger...</p>
@@ -4674,10 +4670,10 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                                 {processingStep === 'auth' ? (
                                                     <div className="py-4 flex flex-col items-center gap-3">
                                                         <div className="w-16 h-16 rounded-full border border-amber-500/20 bg-amber-500/5 flex items-center justify-center text-amber-500 relative">
-                                                            <Icons.Fingerprint className="w-8 h-8 animate-pulse" />
+                                                            <Icons.Fingerprint className="w-8 h-8 " />
                                                             <div className="absolute inset-0 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
                                                         </div>
-                                                        <span className="text-[10px] text-amber-400 font-black uppercase tracking-widest animate-pulse">Scanning Face ID...</span>
+                                                        <span className="text-[10px] text-amber-400 font-black uppercase tracking-widest ">Scanning Face ID...</span>
                                                     </div>
                                                 ) : (
                                                     <button 
@@ -4724,7 +4720,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                                         <div className="w-12 h-12 rounded-full border-2 border-green-500 border-t-transparent animate-spin flex items-center justify-center">
                                                             <div className="w-8 h-8 rounded-full border border-green-500/20" />
                                                         </div>
-                                                        <span className="text-[10px] text-green-400 font-black uppercase tracking-widest animate-pulse">Contacting Google Ledger...</span>
+                                                        <span className="text-[10px] text-green-400 font-black uppercase tracking-widest ">Contacting Google Ledger...</span>
                                                     </div>
                                                 ) : (
                                                     <button 
@@ -5357,6 +5353,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
+                            { id: 'profile', icon: Icons.User, label: t('PROFILE', 'Profile'), action: () => onViewProfile(user) },
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
@@ -5483,7 +5480,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
 
     return createPortal(
         <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6" style={{ isolation: 'isolate' }}>
-            <motion.div 
+            <div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -5542,7 +5539,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         ))
                     )}
                 </div>
-            </motion.div>
+            </div>
         </div>,
         document.body
     );
@@ -5607,7 +5604,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             missions: [
                 { id: 'gym_spartan', titleKey: 'MISSION_GYM_SPARTAN', descKey: 'MISSION_GYM_SPARTAN_DESC', icon: '⚔️' },
                 { id: 'gym_lift', titleKey: 'MISSION_GYM_LIFT', descKey: 'MISSION_GYM_LIFT_DESC', icon: '🦍' },
-                { id: 'gym_cardio', titleKey: 'MISSION_GYM_CARDIO', descKey: 'MISSION_GYM_CARDIO_DESC', icon: '🔥' }
+                { id: 'gym_cardio', titleKey: 'MISSION_GYM_CARDIO', descKey: 'MISSION_GYM_CARDIO_DESC', icon: '🔥' },
+                { id: 'gym_core', titleKey: 'MISSION_GYM_CORE', descKey: 'MISSION_GYM_CORE_DESC', icon: '🛡️' },
+                { id: 'gym_endurance', titleKey: 'MISSION_GYM_ENDURANCE', descKey: 'MISSION_GYM_ENDURANCE_DESC', icon: '🏃‍♂️' }
             ]
         },
         {
@@ -5621,7 +5620,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'adv_unknown', titleKey: 'MISSION_ADV_UNKNOWN', descKey: 'MISSION_ADV_UNKNOWN_DESC', icon: '🧭' },
                 { id: 'adv_mountain', titleKey: 'MISSION_ADV_MOUNTAIN', descKey: 'MISSION_ADV_MOUNTAIN_DESC', icon: '⛰️' },
                 { id: 'adv_travel', titleKey: 'MISSION_ADV_TRAVEL', descKey: 'MISSION_ADV_TRAVEL_DESC', icon: '✈️' },
-                { id: 'adv_explore', titleKey: 'MISSION_ADV_EXPLORE', descKey: 'MISSION_ADV_EXPLORE_DESC', icon: '🌍' }
+                { id: 'adv_explore', titleKey: 'MISSION_ADV_EXPLORE', descKey: 'MISSION_ADV_EXPLORE_DESC', icon: '🌍' },
+                { id: 'adv_nature', titleKey: 'MISSION_ADV_NATURE', descKey: 'MISSION_ADV_NATURE_DESC', icon: '🏕️' },
+                { id: 'adv_sea', titleKey: 'MISSION_ADV_SEA', descKey: 'MISSION_ADV_SEA_DESC', icon: '🌊' }
             ]
         },
         {
@@ -5633,7 +5634,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             missions: [
                 { id: 'surv_fire', titleKey: 'MISSION_SURV_FIRE', descKey: 'MISSION_SURV_FIRE_DESC', icon: '🔥' },
                 { id: 'surv_detox', titleKey: 'MISSION_SURV_DETOX', descKey: 'MISSION_SURV_DETOX_DESC', icon: '📵' },
-                { id: 'surv_cold', titleKey: 'MISSION_SURV_COLD', descKey: 'MISSION_SURV_COLD_DESC', icon: '🧊' }
+                { id: 'surv_cold', titleKey: 'MISSION_SURV_COLD', descKey: 'MISSION_SURV_COLD_DESC', icon: '🧊' },
+                { id: 'surv_shelter', titleKey: 'MISSION_SURV_SHELTER', descKey: 'MISSION_SURV_SHELTER_DESC', icon: '⛺' },
+                { id: 'surv_fast', titleKey: 'MISSION_SURV_FAST', descKey: 'MISSION_SURV_FAST_DESC', icon: '⏳' }
             ]
         },
         {
@@ -5645,7 +5648,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             missions: [
                 { id: 'mind_strategy', titleKey: 'MISSION_MIND_STRATEGY', descKey: 'MISSION_MIND_STRATEGY_DESC', icon: '♟️' },
                 { id: 'mind_read', titleKey: 'MISSION_MIND_READ', descKey: 'MISSION_MIND_READ_DESC', icon: '📜' },
-                { id: 'mind_puzzle', titleKey: 'MISSION_MIND_PUZZLE', descKey: 'MISSION_MIND_PUZZLE_DESC', icon: '🧩' }
+                { id: 'mind_puzzle', titleKey: 'MISSION_MIND_PUZZLE', descKey: 'MISSION_MIND_PUZZLE_DESC', icon: '🧩' },
+                { id: 'mind_meditate', titleKey: 'MISSION_MIND_MEDITATE', descKey: 'MISSION_MIND_MEDITATE_DESC', icon: '🧘' },
+                { id: 'mind_focus', titleKey: 'MISSION_MIND_FOCUS', descKey: 'MISSION_MIND_FOCUS_DESC', icon: '🎯' }
             ]
         },
         {
@@ -5657,7 +5662,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             missions: [
                 { id: 'combat_shadow', titleKey: 'MISSION_COMBAT_SHADOW', descKey: 'MISSION_COMBAT_SHADOW_DESC', icon: '🥷' },
                 { id: 'combat_tactics', titleKey: 'MISSION_COMBAT_TACTICS', descKey: 'MISSION_COMBAT_TACTICS_DESC', icon: '🎯' },
-                { id: 'combat_spar', titleKey: 'MISSION_COMBAT_SPAR', descKey: 'MISSION_COMBAT_SPAR_DESC', icon: '🥊' }
+                { id: 'combat_spar', titleKey: 'MISSION_COMBAT_SPAR', descKey: 'MISSION_COMBAT_SPAR_DESC', icon: '🥊' },
+                { id: 'combat_reflex', titleKey: 'MISSION_COMBAT_REFLEX', descKey: 'MISSION_COMBAT_REFLEX_DESC', icon: '⚡' },
+                { id: 'combat_power', titleKey: 'MISSION_COMBAT_POWER', descKey: 'MISSION_COMBAT_POWER_DESC', icon: '💥' }
             ]
         },
         {
@@ -5669,7 +5676,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             missions: [
                 { id: 'chal_fast', titleKey: 'MISSION_CHAL_FAST', descKey: 'MISSION_CHAL_FAST_DESC', icon: '⚡' },
                 { id: 'chal_limit', titleKey: 'MISSION_CHAL_LIMIT', descKey: 'MISSION_CHAL_LIMIT_DESC', icon: '🚀' },
-                { id: 'chal_dare', titleKey: 'MISSION_CHAL_DARE', descKey: 'MISSION_CHAL_DARE_DESC', icon: '🔥' }
+                { id: 'chal_dare', titleKey: 'MISSION_CHAL_DARE', descKey: 'MISSION_CHAL_DARE_DESC', icon: '🔥' },
+                { id: 'chal_endure', titleKey: 'MISSION_CHAL_ENDURE', descKey: 'MISSION_CHAL_ENDURE_DESC', icon: '🛡️' },
+                { id: 'chal_conquer', titleKey: 'MISSION_CHAL_CONQUER', descKey: 'MISSION_CHAL_CONQUER_DESC', icon: '👑' }
             ]
         }
     ];
@@ -6193,7 +6202,7 @@ const ProfileModal = ({
 
         <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center overflow-x-hidden">
             <div className="absolute inset-0 bg-black/75 backdrop-blur-2xl" onClick={onClose} />
-            <motion.div 
+            <div 
                 initial={{ opacity: 0, y: "100%" }} 
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
@@ -6930,9 +6939,9 @@ const ProfileModal = ({
                                                 {Object.entries(groupedUserPosts).map(([dateLabel, groupPosts]) => (
                                                     <div key={dateLabel} className="animate-fade-in group mb-8 w-full">
                                                         <div className="space-y-4">
-                                                            <AnimatePresence mode="popLayout">
+                                                            <>
                                                                 {groupPosts.map(p => (
-                                                                    <motion.div
+                                                                    <div
                                                                         key={p._id}
                                                                         initial={{ opacity: 0, y: 30 }}
                                                                         animate={{ opacity: 1, y: 0 }}
@@ -6971,9 +6980,9 @@ const ProfileModal = ({
                                                                             onOpenSubscription={onOpenSubscription}
                                                                             openCommentsInModal={true}
                                                                         />
-                                                                    </motion.div>
+                                                                    </div>
                                                                 ))}
-                                                            </AnimatePresence>
+                                                            </>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -7012,7 +7021,7 @@ const ProfileModal = ({
                         </button>
                     </div>
                 )}
-            </motion.div >
+            </div>
         </div >
     );
 };
@@ -7134,8 +7143,8 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
     return (
         <div className="fixed inset-0 z-[3200] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
-            <motion.div 
+            <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
+            <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md glass-panel p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
@@ -7244,7 +7253,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                         {isSubmitting ? (isStory ? t('UPLOADING') || '...' : '...') : (isStory ? t('POST_STORY') : t('POST'))}
                     </button>
                 </div>
-            </motion.div >
+            </div>
         </div>
     );
 };
@@ -7339,8 +7348,8 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
 
     return (
         <div className="fixed inset-0 z-[3200] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
-            <motion.div 
+            <div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/65 backdrop-blur-xl" onClick={onClose} />
+            <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md glass-panel p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
@@ -7419,7 +7428,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         {saving ? '...' : t('PUBLISH')}
                     </button>
                 </div>
-            </motion.div >
+            </div>
         </div>
     );
 };
@@ -9732,6 +9741,25 @@ const App = () => {
         }
     }, [user?.settings?.language]);
 
+    // AUTO-REQUEST NOTIFICATIONS ON FIRST CLICK
+    useEffect(() => {
+        const askForNotifs = () => {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+            document.removeEventListener('click', askForNotifs);
+            document.removeEventListener('touchstart', askForNotifs);
+        };
+        document.addEventListener('click', askForNotifs);
+        document.addEventListener('touchstart', askForNotifs);
+        return () => {
+            document.removeEventListener('click', askForNotifs);
+            document.removeEventListener('touchstart', askForNotifs);
+        };
+    }, []);
+
+
+
     // iOS PWA FIX: Blur active inputs when app goes to background to prevent freezing
     useEffect(() => {
         const handleVisibilityChange = () => {
@@ -9875,7 +9903,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
+                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
@@ -10543,9 +10571,9 @@ const App = () => {
                                                     return (
                                                         <div key={dateKey} className="animate-fade-in group mb-12">
                                                             <div className="space-y-8">
-                                                                <AnimatePresence mode="popLayout">
+                                                                <>
                                                                     {group.posts.map(p => (
-                                                                        <motion.div
+                                                                        <div
                                                                             key={p._id}
                                                                             initial={{ opacity: 0, y: 30 }}
                                                                             animate={{ opacity: 1, y: 0 }}
@@ -10560,9 +10588,9 @@ const App = () => {
                                                                             className="relative"
                                                                         >
                                                                             <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} />
-                                                                        </motion.div>
+                                                                        </div>
                                                                     ))}
-                                                                </AnimatePresence>
+                                                                </>
                                                             </div>
                                                         </div>
                                                     );
@@ -10686,7 +10714,7 @@ const App = () => {
                     <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} logout={logout} user={user} onUpdateUser={handleUpdateUser} />
                     <SubscriptionModal isOpen={isSubscriptionOpen} onClose={() => setIsSubscriptionOpen(false)} user={user} onUpdateUser={handleUpdateUser} />
 
-                    <AnimatePresence>
+                    <>
                         {isWebsiteBuilderOpen && (
                             <WebsiteManager 
                                 user={user}
@@ -10694,7 +10722,7 @@ const App = () => {
                                 onBack={() => setIsWebsiteBuilderOpen(false)}
                             />
                         )}
-                    </AnimatePresence>
+                    </>
 
                     <LegalModal
                         isOpen={isTermsOpen}
