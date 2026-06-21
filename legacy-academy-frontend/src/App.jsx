@@ -5455,10 +5455,11 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
         const fetchLeaders = async () => {
             setLoading(true);
             try {
+                const getMissionsCount = (user) => Math.max(user.missionsCompletedCount || 0, getActiveStreak(user));
                 const allRes = await axios.get('/users');
                 const sorted = (allRes.data || [])
                     .sort((a, b) => {
-                        const completedDiff = (b.missionsCompletedCount || 0) - (a.missionsCompletedCount || 0);
+                        const completedDiff = getMissionsCount(b) - getMissionsCount(a);
                         if (completedDiff !== 0) return completedDiff;
                         return getActiveStreak(b) - getActiveStreak(a);
                     })
@@ -5528,7 +5529,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
                                         </div>
                                         <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
-                                            🎯 {u.missionsCompletedCount || 0} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
+                                            🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
                                         </div>
                                     </div>
                                 </div>
