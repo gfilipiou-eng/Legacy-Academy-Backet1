@@ -5514,8 +5514,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                         {u.username}
                                         {u._id === currentUser?._id && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full uppercase tracking-widest">You</span>}
                                     </div>
-                                    <div className="text-orange-500 font-black text-sm flex items-center gap-1.5 mt-0.5">
-                                        🔥 {getActiveStreak(u)} <span className="text-[10px] text-white/50 uppercase tracking-widest">Streak</span>
+                                    <div className={`font-black text-sm flex items-center gap-1.5 mt-0.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
+                                        {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[10px] text-white/50 uppercase tracking-widest">Streak</span>
                                     </div>
                                 </div>
                             </div>
@@ -5530,6 +5530,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
 const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
     const hasCompletedToday = useMemo(() => {
         if (!user?.lastMissionCompleted) return false;
