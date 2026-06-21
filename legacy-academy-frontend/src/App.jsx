@@ -9948,7 +9948,7 @@ const App = () => {
     return (
         <div className="app-container">
             {/* Forced Portrait Lock for Mobile/Android via CSS */}
-            <div className="hidden landscape:flex fixed inset-0 z-[10000] bg-black text-white items-center justify-center p-8 text-center flex-col gap-4 font-sans border-8 border-[var(--gold-primary)] pointer-events-auto">
+            <div className="mobile-landscape-blocker fixed inset-0 z-[10000] bg-black text-white items-center justify-center p-8 text-center flex-col gap-4 font-sans border-8 border-[var(--gold-primary)] pointer-events-auto">
                 <Icons.Smartphone className="w-20 h-20 animate-pulse text-[var(--gold-primary)]" style={{ transform: 'rotate(90deg)' }} />
                 <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]">Rotate Device</h2>
                 <p className="text-sm font-bold text-white/50 uppercase tracking-widest leading-relaxed max-w-sm">

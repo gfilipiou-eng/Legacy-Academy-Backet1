@@ -2259,3 +2259,13 @@ button:active,
     transform: translateY(-1px) scale(1.02);
   }
 }
+
+/* Mobile Landscape Blocker */
+.mobile-landscape-blocker {
+  display: none !important;
+}
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 600px) {
+  .mobile-landscape-blocker {
+    display: flex !important;
+  }
+}
