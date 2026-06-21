@@ -7370,6 +7370,40 @@ const applyZoom = (zoom) => {
     localStorage.setItem('uiZoom', String(z));
 };
 
+const PublicProfileSkeleton = () => (
+    <div className="min-h-screen bg-black w-full flex flex-col relative overflow-hidden" style={{ '--gold-primary': '#D4AF37' }}>
+        <motion.div 
+            className="absolute inset-0 z-50 pointer-events-none"
+            animate={{ 
+                backgroundPosition: ['200% 0', '-200% 0']
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            style={{ 
+                backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%)',
+                backgroundSize: "200% 100%" 
+            }}
+        />
+        <div className="w-full h-[25vh] sm:h-[30vh] bg-white/5 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
+        </div>
+        <div className="w-full flex justify-center -mt-16 sm:-mt-20 relative z-10">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-[#111] border-4 border-black shadow-[0_0_30px_rgba(212,175,55,0.1)] flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-white/5 animate-pulse" />
+            </div>
+        </div>
+        <div className="w-full max-w-2xl mx-auto px-4 mt-6 flex flex-col items-center gap-4">
+            <div className="w-48 h-8 bg-white/5 rounded-full animate-pulse" />
+            <div className="w-32 h-4 bg-white/5 rounded-full animate-pulse mb-4" />
+            <div className="w-full h-20 bg-white/5 rounded-2xl animate-pulse" />
+            <div className="w-full flex flex-col gap-4 mt-6">
+                {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="w-full h-16 bg-white/5 rounded-[1.5rem] animate-pulse" />
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
 const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, postsReady = false, onClose, onNavigateProfile, onOpenPost, t }) => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
