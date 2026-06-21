@@ -1467,6 +1467,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [showMenu, setShowMenu] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [imgError, setImgError] = useState(false); // Handle detail image error
+    const [zoomImage, setZoomImage] = useState(null);
 
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
@@ -1594,8 +1595,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             !imgError ? (
                                 <img
                                     src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                    className="max-w-full max-h-full object-contain cursor-pointer"
-                                    onClick={onClose}
+                                    className="max-w-full max-h-full object-contain cursor-zoom-in"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, true));
+                                    }}
                                     decoding="async"
                                     onError={() => {
                                         setImgError(true);
@@ -1784,6 +1788,26 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                 </div>
             </div>
+
+            {/* FULL SCREEN IMAGE ZOOM MODAL FOR POST DETAIL */}
+            {zoomImage && (
+                <div 
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 cursor-zoom-out"
+                    onClick={(e) => { e.stopPropagation(); setZoomImage(null); }}
+                >
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); setZoomImage(null); }} 
+                        className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-50 group"
+                    >
+                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
+                    </button>
+                    <img 
+                        src={zoomImage} 
+                        className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                        alt="Zoomed"
+                    />
+                </div>
+            )}
         </div>
     );
 };
