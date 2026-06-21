@@ -25,12 +25,17 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
         setActiveWebsiteIndex(websites.length); // Next index
     };
 
-    const handleDelete = async (index, e) => {
+    const handleDeletePrompt = (index, e) => {
         e.stopPropagation();
-        if (!window.confirm("Are you sure you want to delete this website?")) return;
+        setWebsiteToDelete(index);
+    };
+
+    const confirmDelete = async () => {
+        if (websiteToDelete === null) return;
         
         const newWebsites = [...websites];
-        newWebsites.splice(index, 1);
+        newWebsites.splice(websiteToDelete, 1);
+        setWebsiteToDelete(null);
         
         try {
             const payload = { settings: { businessWebsites: newWebsites } };
