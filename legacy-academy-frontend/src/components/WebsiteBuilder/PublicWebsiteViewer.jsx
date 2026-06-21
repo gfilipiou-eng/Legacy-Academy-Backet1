@@ -84,7 +84,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                     <img 
                         src={config.coverImage} 
                         alt="Cover" 
-                        className={`max-w-full w-auto h-auto max-h-[400px] md:max-h-[600px] rounded-[30px] shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`} 
+                        className={`w-full aspect-square object-cover rounded-[30px] shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`} 
                     />
                 </div>
             </div>
