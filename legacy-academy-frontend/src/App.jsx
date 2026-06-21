@@ -1108,20 +1108,45 @@ const playCyberSFX = (type = 'click') => {
     if (localStorage.getItem('cyberSFX') === 'false') return;
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        if (type === 'click') {
+        
+        if (type === 'click' || type === 'menu') {
+            // Premium luxury sound
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
-            gain.gain.setValueAtTime(0.04, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.15);
+            
+            // Add a slight high-frequency "glass" chime
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(1200, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.1);
+            gain2.gain.setValueAtTime(0, ctx.currentTime);
+            gain2.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.01);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            
+            osc2.start(ctx.currentTime);
+            osc2.stop(ctx.currentTime + 0.1);
         } else if (type === 'success') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(500, ctx.currentTime);
             osc.frequency.setValueAtTime(800, ctx.currentTime + 0.08);
@@ -5303,9 +5328,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
     };
 
     const handleLink = (tab) => {
+        playCyberSFX('menu');
         onNavigate(tab);
         handleClose();
-
     };
 
     return (
@@ -5335,7 +5360,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
                     <div
                         className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-white/[0.05] active:scale-[0.98] touch-manipulation"
-                        onClick={() => { onClose(); onViewProfile(user); }}
+                        onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
                     >
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
@@ -5382,6 +5407,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <button
                                 key={item.id}
                                 onClick={() => {
+                                    playCyberSFX('menu');
                                     if (item.action) { item.action(); handleClose(); }
                                     else handleLink(item.id);
                                 }}
@@ -5420,7 +5446,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         );})}
 
                         <button
-                            onClick={() => { onLogout(); handleClose(); }}
+                            onClick={() => { playCyberSFX('menu'); onLogout(); handleClose(); }}
                             className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98]"
                             style={{ animationDelay: '0.24s' }}
                         >

@@ -6,20 +6,45 @@ const playCyberSFX = (type = 'click') => {
     if (localStorage.getItem('cyberSFX') === 'false') return;
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        if (type === 'click') {
+        
+        if (type === 'click' || type === 'menu') {
+            // Premium luxury sound
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.08);
-            gain.gain.setValueAtTime(0.04, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.15);
+            
+            // Add a slight high-frequency "glass" chime
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(1200, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.1);
+            gain2.gain.setValueAtTime(0, ctx.currentTime);
+            gain2.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.01);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            
+            osc2.start(ctx.currentTime);
+            osc2.stop(ctx.currentTime + 0.1);
         } else if (type === 'success') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(500, ctx.currentTime);
             osc.frequency.setValueAtTime(800, ctx.currentTime + 0.08);
@@ -71,10 +96,10 @@ const BottomNavbar = memo(({
 
         if (currentIndex !== -1) {
             if (isLeftSwipe && currentIndex < tabs.length - 1) {
-                playCyberSFX('click');
+                playCyberSFX('menu');
                 onTabChange(tabs[currentIndex + 1]);
             } else if (isRightSwipe && currentIndex > 0) {
-                playCyberSFX('click');
+                playCyberSFX('menu');
                 onTabChange(tabs[currentIndex - 1]);
             }
         }
@@ -105,7 +130,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Home */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onTabChange('home'); }}
+                    onClick={() => { playCyberSFX('menu'); onTabChange('home'); }}
                     aria-label="Home"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -124,7 +149,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Search */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onTabChange('search'); }}
+                    onClick={() => { playCyberSFX('menu'); onTabChange('search'); }}
                     aria-label="Search"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -143,7 +168,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Create */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onCreate(); }}
+                    onClick={() => { playCyberSFX('menu'); onCreate(); }}
                     aria-label="Create"
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group"
                 >
@@ -155,7 +180,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Alerts */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onTabChange('alerts'); }}
+                    onClick={() => { playCyberSFX('menu'); onTabChange('alerts'); }}
                     aria-label="Alerts"
                     className="flex items-center justify-center relative flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
@@ -182,7 +207,7 @@ const BottomNavbar = memo(({
                 {/* Tab: Profile */}
                 <button
                     type="button"
-                    onClick={() => { playCyberSFX('click'); onProfile(); }}
+                    onClick={() => { playCyberSFX('menu'); onProfile(); }}
                     aria-label="Profile"
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
                 >
