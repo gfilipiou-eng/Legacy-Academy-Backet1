@@ -3441,16 +3441,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
 const PlatformLoadingPanel = ({ label, compact = false }) => (
     <div className={`flex flex-col items-center justify-center gap-6 ${compact ? 'py-10' : 'py-20'} relative animate-fade-in`}>
-        <div className="relative flex items-center justify-center w-16 h-16">
-            <div 
-                className="absolute inset-0 rounded-full border-[2px] border-t-[var(--gold-primary)] border-r-[var(--gold-primary)]/20 border-b-transparent border-l-transparent animate-spin" 
-                style={{ animationDuration: '1s' }}
-            />
-            <div 
-                className="w-10 h-10 rounded-full border border-[var(--gold-primary)]/10 flex items-center justify-center bg-[var(--gold-primary)]/5"
-            >
-                <Icons.Loader className="w-5 h-5 text-[var(--gold-primary)] opacity-80 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-            </div>
+        <div className="relative flex items-center justify-center w-12 h-12">
+            <Icons.Loader className="w-8 h-8 text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]" />
         </div>
         {label && (
             <div className="flex flex-col items-center gap-2">
@@ -7039,10 +7031,9 @@ const ProfileModal = ({
                             className="profile-save-btn"
                         >
                             {profileSaving ? (
-                                <div className="flex items-center justify-center gap-1.5 h-4">
-                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                <div className="flex items-center justify-center gap-2">
+                                    <Icons.Loader className="w-4 h-4 text-black" />
+                                    {t('SAVING') || 'SAVING...'}
                                 </div>
                             ) : (
                                 <>
