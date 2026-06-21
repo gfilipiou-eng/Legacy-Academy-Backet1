@@ -1905,8 +1905,8 @@ input, textarea {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .x-comment__avatar {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 9999px;
   overflow: hidden;
   flex-shrink: 0;
@@ -1929,7 +1929,7 @@ input, textarea {
   overflow: hidden;
 }
 .x-comment__username {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: #fff;
   cursor: pointer;
@@ -1952,12 +1952,12 @@ input, textarea {
   flex-shrink: 0;
 }
 .x-comment__text {
-  font-size: 15px;
-  line-height: 1.55;
-  color: rgba(255,255,255,0.90);
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.95);
   white-space: pre-wrap;
   word-break: break-word;
-  margin: 0 0 6px;
+  margin: 2px 0 8px;
 }
 
 /* Liquid Glass Refinement */
@@ -2100,8 +2100,8 @@ input, textarea {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .x-comment__avatar {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 9999px;
   overflow: hidden;
   flex-shrink: 0;
@@ -2124,7 +2124,7 @@ input, textarea {
   overflow: hidden;
 }
 .x-comment__username {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: #fff;
   cursor: pointer;
@@ -2147,12 +2147,12 @@ input, textarea {
   flex-shrink: 0;
 }
 .x-comment__text {
-  font-size: 15px;
-  line-height: 1.55;
-  color: rgba(255,255,255,0.90);
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.95);
   white-space: pre-wrap;
   word-break: break-word;
-  margin: 0 0 6px;
+  margin: 2px 0 8px;
 }
 
 /* Liquid Glass Refinement */

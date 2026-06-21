@@ -9946,6 +9946,16 @@ const App = () => {
 
     return (
         <div className="app-container">
+            {/* Forced Portrait Lock for Mobile/Android via CSS */}
+            <div className="hidden landscape:flex fixed inset-0 z-[10000] bg-black text-white items-center justify-center p-8 text-center flex-col gap-4 font-sans border-8 border-[var(--gold-primary)] pointer-events-auto">
+                <Icons.Smartphone className="w-20 h-20 animate-pulse text-[var(--gold-primary)]" style={{ transform: 'rotate(90deg)' }} />
+                <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]">Rotate Device</h2>
+                <p className="text-sm font-bold text-white/50 uppercase tracking-widest leading-relaxed max-w-sm">
+                    Legacy Academy is designed strictly for portrait mode.<br/><br/>
+                    Please rotate your device back to vertical to continue.
+                </p>
+            </div>
+
             {!user ? (
                 <>
                     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
@@ -10525,30 +10535,38 @@ const App = () => {
                                     
                                     {/* Feed Sort Tabs */}
                                     {activeTab !== 'search' && (
-                                        <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-5 px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent w-full">
+                                        <div className="flex items-center justify-between w-full px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent">
+                                            <div className="flex items-center gap-2 sm:gap-5">
+                                                <button 
+                                                    onClick={() => setFeedSortOrder('newest')}
+                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    <Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    <span>Νεότερα</span>
+                                                    {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                </button>
+                                                <button 
+                                                    onClick={() => setFeedSortOrder('popular')}
+                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    <Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    <span>Δημοφιλή</span>
+                                                    {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                </button>
+                                                <button 
+                                                    onClick={() => setFeedSortOrder('oldest')}
+                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[10px] sm:text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                >
+                                                    <Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                    <span>Παλαιότερα</span>
+                                                    {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                                </button>
+                                            </div>
                                             <button 
-                                                onClick={() => setFeedSortOrder('newest')}
-                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                onClick={() => { setActiveTab('search'); window.scrollTo(0,0); }}
+                                                className="flex items-center gap-1 pb-2.5 transition-all text-gray-500 hover:text-white"
                                             >
-                                                <Icons.Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                                <span>Νεότερα</span>
-                                                {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
-                                            </button>
-                                            <button 
-                                                onClick={() => setFeedSortOrder('popular')}
-                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                            >
-                                                <Icons.TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                                <span>Δημοφιλή</span>
-                                                {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
-                                            </button>
-                                            <button 
-                                                onClick={() => setFeedSortOrder('oldest')}
-                                                className={`flex items-center gap-1 pb-2.5 font-bold text-[9px] sm:text-[11px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                            >
-                                                <Icons.Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                                <span>Παλαιότερα</span>
-                                                {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_6px_var(--gold-primary)]" />}
+                                                <Icons.Hash className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)] drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]" strokeWidth={3} />
                                             </button>
                                         </div>
                                     )}
