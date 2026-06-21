@@ -5476,8 +5476,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+    return createPortal(
+        <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6" style={{ isolation: 'isolate' }}>
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -5538,7 +5538,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                     )}
                 </div>
             </motion.div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
