@@ -44,7 +44,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                             {config.businessName?.charAt(0) || 'W'}
                         </div>
                     )}
-                    <span className="font-black tracking-tight text-lg">{config.businessName}</span>
+                    <span className="break-words hyphens-auto font-black tracking-tight text-lg">{config.businessName}</span>
                 </div>
                 <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
                     {config.navLink1 !== '' && <a href="#services" className="cursor-pointer hover:opacity-100">{config.navLink1 ?? 'Services'}</a>}
@@ -59,7 +59,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                 <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                 
                 <div className="flex-1 flex flex-col items-start z-10 max-w-2xl">
-                    <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6">
+                    <h1 className="break-words hyphens-auto text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6">
                         {config.slogan}
                     </h1>
                     <p className={`text-lg md:text-2xl mb-10 leading-relaxed ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -92,7 +92,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Feature Cards / Posts */}
             {config.features && config.features.length > 0 && (
                 <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
+                    {config.featuresTitle !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         {config.features.map((feat, idx) => (
                             <div key={idx} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
@@ -107,7 +107,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                     </div>
                                 )}
                                 <h4 className="text-2xl font-bold relative z-10">{feat.title}</h4>
-                                <p className="opacity-60 text-base leading-relaxed relative z-10">{feat.desc}</p>
+                                <p className="break-words hyphens-auto opacity-60 text-base leading-relaxed relative z-10">{feat.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -117,8 +117,8 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* About Section */}
             {config.aboutText && (
                 <div id="about" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                    {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
-                    <p className="text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
+                    {config.navLink2 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
+                    <p className="break-words hyphens-auto text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
                         {config.aboutText}
                     </p>
                 </div>
@@ -127,18 +127,18 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Contact Section */}
             {(config.contactEmail || config.contactPhone) && (
                 <div id="contact" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
+                    {config.navLink3 !== '' && <h3 className="break-words hyphens-auto text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-3xl mx-auto">
                         {config.contactEmail && (
                             <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
                                 <Icons.Mail className="w-6 h-6 opacity-50" />
-                                <span className="font-bold text-lg">{config.contactEmail}</span>
+                                <span className="break-words hyphens-auto font-bold text-lg">{config.contactEmail}</span>
                             </div>
                         )}
                         {config.contactPhone && (
                             <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
                                 <Icons.Phone className="w-6 h-6 opacity-50" />
-                                <span className="font-bold text-lg">{config.contactPhone}</span>
+                                <span className="break-words hyphens-auto font-bold text-lg">{config.contactPhone}</span>
                             </div>
                         )}
                     </div>
@@ -148,8 +148,8 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Shop Section */}
             {config.hasStore && config.products && config.products.length > 0 && (
                 <div id="shop" className={`w-full px-6 md:px-12 py-24 border-t ${config.palette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
-                    <h3 className="text-4xl font-black mb-4 text-center tracking-tight">Our Products</h3>
-                    <p className="text-center opacity-60 max-w-2xl mx-auto mb-16">Premium selection of our best items.</p>
+                    <h3 className="break-words hyphens-auto text-4xl font-black mb-4 text-center tracking-tight">Our Products</h3>
+                    <p className="break-words hyphens-auto text-center opacity-60 max-w-2xl mx-auto mb-16">Premium selection of our best items.</p>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                         {config.products.map(product => (
@@ -163,7 +163,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                         </div>
                                     )}
                                     <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                                        <span className="text-white font-black">€{product.price}</span>
+                                        <span className="break-words hyphens-auto text-white font-black">€{product.price}</span>
                                     </div>
                                 </div>
                                 <div className="p-6 flex-1 flex flex-col">
@@ -229,7 +229,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                             {!orderComplete ? (
                                 <div className="p-8">
                                     <div className="flex justify-between items-start mb-6">
-                                        <h3 className="text-2xl font-black">Complete Purchase</h3>
+                                        <h3 className="break-words hyphens-auto text-2xl font-black">Complete Purchase</h3>
                                         <button onClick={() => setSelectedProduct(null)} className="opacity-50 hover:opacity-100">
                                             <Icons.X className="w-6 h-6" />
                                         </button>
@@ -241,7 +241,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                         )}
                                         <div>
                                             <h4 className="font-bold">{selectedProduct.name}</h4>
-                                            <p className="opacity-70 font-mono">€{selectedProduct.price}</p>
+                                            <p className="break-words hyphens-auto opacity-70 font-mono">€{selectedProduct.price}</p>
                                         </div>
                                     </div>
 
@@ -286,8 +286,8 @@ export const PublicWebsiteViewer = ({ config }) => {
                                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
                                         <Icons.Check className="w-10 h-10" />
                                     </div>
-                                    <h3 className="text-2xl font-black mb-2">Order Confirmed!</h3>
-                                    <p className="opacity-70">A receipt has been sent to {buyerEmail}. The store owner will contact you shortly.</p>
+                                    <h3 className="break-words hyphens-auto text-2xl font-black mb-2">Order Confirmed!</h3>
+                                    <p className="break-words hyphens-auto opacity-70">A receipt has been sent to {buyerEmail}. The store owner will contact you shortly.</p>
                                 </div>
                             )}
                         </motion.div>
