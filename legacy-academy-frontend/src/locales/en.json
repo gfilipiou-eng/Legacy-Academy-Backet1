@@ -63,7 +63,7 @@
   "JOIN_ELITE": "UNLOCK ACADEMY ACCESS",
   "CREATE_ACCOUNT_SUB": "OFFICIAL MEMBERSHIP • 4€ / MONTH",
   "JOIN_ACADEMY_PRICE": "JOIN ACADEMY • 4€/MO",
-  "POPULAR": "POPULAR TOPICS",
+  "POPULAR": "Popular",
   "EXPLORE": "Explore",
   "RESULTS_FOR": "RESULTS FOR",
   "NO_INTEL": "No intelligence found",
@@ -538,5 +538,8 @@
   "MISSION_CHAL_CONQUER_DESC": "Do one thing today that genuinely terrifies you.",
   "MISSION_CHAL_SOCIAL": "Social Maverick",
   "MISSION_CHAL_SOCIAL_DESC": "Start a meaningful conversation with 3 complete strangers.",
-  "PRIVACY_FOOTER": "Your data is handled in strict compliance with GDPR and international data protection regulations. Contact privacy@legacyacademy.com for requests."
+  "PRIVACY_FOOTER": "Your data is handled in strict compliance with GDPR and international data protection regulations. Contact privacy@legacyacademy.com for requests.",
+  "NEWEST": "Newest",
+  "HASHTAGS": "Hashtags",
+  "OLDEST": "Oldest"
 }

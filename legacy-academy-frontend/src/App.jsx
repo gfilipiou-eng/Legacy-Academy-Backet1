@@ -10566,10 +10566,10 @@ const App = () => {
                                                     onClick={() => setIsFeedSortMenuOpen(!isFeedSortMenuOpen)}
                                                     className="flex items-center gap-2 pb-2.5 font-black text-[11px] uppercase tracking-wider text-white"
                                                 >
-                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5" /> Νεότερα</>}
-                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5" strokeWidth={2.5} /> Hashtags</>}
-                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5" /> Δημοφιλή</>}
-                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5" /> Παλαιότερα</>}
+                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5" /> {t('NEWEST', 'Νεότερα')}</>}
+                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
+                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5" /> {t('POPULAR', 'Δημοφιλή')}</>}
+                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5" /> {t('OLDEST', 'Παλαιότερα')}</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
                                                 </button>
 
@@ -10583,10 +10583,10 @@ const App = () => {
                                                             className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
-                                                                { id: 'newest', label: 'Νεότερα', Icon: Icons.Sparkles },
-                                                                { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
-                                                                { id: 'popular', label: 'Δημοφιλή', Icon: Icons.TrendingUp },
-                                                                { id: 'oldest', label: 'Παλαιότερα', Icon: Icons.Clock }
+                                                                { id: 'newest', label: t('NEWEST', 'Νεότερα'), Icon: Icons.Sparkles },
+                                                                { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
+                                                                { id: 'popular', label: t('POPULAR', 'Δημοφιλή'), Icon: Icons.TrendingUp },
+                                                                { id: 'oldest', label: t('OLDEST', 'Παλαιότερα'), Icon: Icons.Clock }
                                                             ].map(opt => (
                                                                 <button
                                                                     key={opt.id}
@@ -10609,7 +10609,7 @@ const App = () => {
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                                 >
                                                     <Icons.Sparkles className="w-4 h-4" />
-                                                    <span>Νεότερα</span>
+                                                    <span>{t('NEWEST', 'Νεότερα')}</span>
                                                 </button>
                                                 
                                                 <button 
@@ -10617,7 +10617,7 @@ const App = () => {
                                                     className={`flex items-center gap-1 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'hashtags' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                                 >
                                                     <Icons.Hash className="w-4 h-4" strokeWidth={2.5} />
-                                                    <span>Hashtags</span>
+                                                    <span>{t('HASHTAGS', 'Hashtags')}</span>
                                                 </button>
 
                                                 <button 
@@ -10625,7 +10625,7 @@ const App = () => {
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                                 >
                                                     <Icons.TrendingUp className="w-4 h-4" />
-                                                    <span>Δημοφιλή</span>
+                                                    <span>{t('POPULAR', 'Δημοφιλή')}</span>
                                                 </button>
 
                                                 <button 
@@ -10633,7 +10633,7 @@ const App = () => {
                                                     className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
                                                 >
                                                     <Icons.Clock className="w-4 h-4" />
-                                                    <span>Παλαιότερα</span>
+                                                    <span>{t('OLDEST', 'Παλαιότερα')}</span>
                                                 </button>
                                             </div>
                                         </div>

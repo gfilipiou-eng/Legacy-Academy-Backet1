@@ -41,7 +41,7 @@
   "RETURN": "GERİ DÖN",
   "TRENDING": "ŞU AN TREND",
   "JOIN_ELITE": "Elite'ye katıl.",
-  "POPULAR": "POPÜLER KONULAR",
+  "POPULAR": "Popüler",
   "EXPLORE": "Keşfet",
   "RESULTS_FOR": "SONUÇLAR",
   "NO_INTEL": "Bilgi bulunamadı",
@@ -436,5 +436,8 @@
   "MISSION_CHAL_CONQUER_DESC": "Bugün seni gerçekten korkutan bir şey yap.",
   "MISSION_CHAL_SOCIAL": "Sosyal Asi",
   "MISSION_CHAL_SOCIAL_DESC": "Bugün 3 tamamen yabancı kişiyle anlamlı bir sohbet başlat.",
-  "PRIVACY_FOOTER": "Verileriniz GDPR ile tam uyumlu olarak işlenir."
+  "PRIVACY_FOOTER": "Verileriniz GDPR ile tam uyumlu olarak işlenir.",
+  "NEWEST": "En Yeni",
+  "HASHTAGS": "Etiketler",
+  "OLDEST": "En Eski"
 }

@@ -41,7 +41,7 @@
   "RETURN": "RETOUR",
   "TRENDING": "TENDANCES",
   "JOIN_ELITE": "Rejoins l'élite legacy.",
-  "POPULAR": "SUJETS POPULAIRES",
+  "POPULAR": "Populaires",
   "EXPLORE": "Explorer",
   "RESULTS_FOR": "RÉSULTATS POUR",
   "NO_INTEL": "Aucune information trouvée",
@@ -436,5 +436,8 @@
   "MISSION_CHAL_CONQUER_DESC": "Faites une chose aujourd'hui qui vous terrifie vraiment.",
   "MISSION_CHAL_SOCIAL": "Maverick Social",
   "MISSION_CHAL_SOCIAL_DESC": "Entamez une conversation enrichissante avec 3 parfaits inconnus.",
-  "PRIVACY_FOOTER": "Conforme au RGPD. Contactez-nous pour toute demande concernant la confidentialité."
+  "PRIVACY_FOOTER": "Conforme au RGPD. Contactez-nous pour toute demande concernant la confidentialité.",
+  "NEWEST": "Récents",
+  "HASHTAGS": "Hashtags",
+  "OLDEST": "Anciens"
 }

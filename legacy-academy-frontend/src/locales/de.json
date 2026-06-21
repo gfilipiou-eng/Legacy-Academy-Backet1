@@ -63,7 +63,7 @@
   "JOIN_ELITE": "ACADEMY-ZUGANG FREISCHALTEN",
   "CREATE_ACCOUNT_SUB": "OFFIZIELLE MITGLIEDSCHAFT • 4€ / MONAT",
   "JOIN_ACADEMY_PRICE": "JOIN ACADEMY • 4€/MO",
-  "POPULAR": "BELIEBTE THEMEN",
+  "POPULAR": "Beliebt",
   "EXPLORE": "Erforschen",
   "RESULTS_FOR": "ERGEBNISSE FÜR",
   "NO_INTEL": "Keine Informationen gefunden",
@@ -447,5 +447,8 @@
   "MISSION_CHAL_CONQUER_DESC": "Tue heute eine Sache, die dir wirklich Angst macht.",
   "MISSION_CHAL_SOCIAL": "Sozialer Rebell",
   "MISSION_CHAL_SOCIAL_DESC": "Beginne ein sinnvolles Gespräch mit 3 völlig Fremden.",
-  "PRIVACY_FOOTER": "Strenge Einhaltung der DSGVO-Richtlinien. Wenden Sie sich bei Fragen an unseren Datenschutzbeauftragten."
+  "PRIVACY_FOOTER": "Strenge Einhaltung der DSGVO-Richtlinien. Wenden Sie sich bei Fragen an unseren Datenschutzbeauftragten.",
+  "NEWEST": "Neueste",
+  "HASHTAGS": "Hashtags",
+  "OLDEST": "Älteste"
 }

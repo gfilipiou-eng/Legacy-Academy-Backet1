@@ -58,7 +58,7 @@
   "RETURN": "ΕΠΙΣΤΡΟΦΗ",
   "TRENDING": "ΤΩΡΑ TRENDING",
   "JOIN_ELITE": "Γίνε μέλος της ελίτ.",
-  "POPULAR": "ΔΗΜΟΦΙΛΗ ΘΕΜΑΤΑ",
+  "POPULAR": "Poblogaidd",
   "EXPLORE": "Εξερεύνηση",
   "RESULTS_FOR": "ΑΠΟΤΕΛΕΣΜΑΤΑ ΓΙΑ",
   "NO_INTEL": "Δεν βρέθηκαν πληροφορίες",
@@ -436,5 +436,8 @@
   "MISSION_CHAL_CONQUER_DESC": "Do one thing today that genuinely terrifies you.",
   "MISSION_CHAL_SOCIAL": "Social Maverick",
   "MISSION_CHAL_SOCIAL_DESC": "Start a meaningful conversation with 3 complete strangers.",
-  "PRIVACY_FOOTER": "Τα δεδομένα σου προστατεύονται σύμφωνα με το GDPR."
+  "PRIVACY_FOOTER": "Τα δεδομένα σου προστατεύονται σύμφωνα με το GDPR.",
+  "NEWEST": "Newydd",
+  "HASHTAGS": "Hashtagau",
+  "OLDEST": "Hynaf"
 }
