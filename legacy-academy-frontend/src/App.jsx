@@ -6862,10 +6862,11 @@ const ProfileModal = ({
                             className="profile-save-btn"
                         >
                             {profileSaving ? (
-                                <>
-                                    <Icons.Loader className="w-4 h-4" />
-                                    {t('SAVING') || 'SAVING...'}
-                                </>
+                                <div className="flex items-center justify-center gap-1.5 h-4">
+                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                    <div className="w-1.5 h-1.5 bg-black rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                </div>
                             ) : (
                                 <>
                                     <Icons.Check className="w-4 h-4" />
@@ -7378,28 +7379,27 @@ const applyZoom = (zoom) => {
 
 const PublicProfileSkeleton = () => (
     <div className="min-h-screen bg-black w-full flex flex-col relative overflow-hidden" style={{ '--gold-primary': '#D4AF37' }}>
-        <div 
-            className="absolute inset-0 z-50 pointer-events-none animate-shimmer"
-            style={{ 
-                backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0) 100%)',
-                backgroundSize: "200% 100%" 
-            }}
-        />
-        <div className="w-full h-[25vh] sm:h-[30vh] bg-white/5 relative overflow-hidden animate-pulse">
+        <div className="w-full h-[25vh] sm:h-[30vh] bg-[#111] relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
         </div>
         <div className="w-full flex justify-center -mt-16 sm:-mt-20 relative z-10">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-[#111] border-4 border-black flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full bg-white/5 animate-pulse" />
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-[#111] border-4 border-black relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
             </div>
         </div>
         <div className="w-full max-w-2xl mx-auto px-4 mt-6 flex flex-col items-center gap-4">
-            <div className="w-48 h-8 bg-white/5 rounded-full animate-pulse" />
-            <div className="w-32 h-4 bg-white/5 rounded-full animate-pulse mb-4" />
-            <div className="w-full h-20 bg-white/5 rounded-2xl animate-pulse" />
+            <div className="w-48 h-8 bg-[#111] rounded-full relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
+            </div>
+            <div className="w-32 h-4 bg-[#111] rounded-full relative overflow-hidden mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
+            </div>
             <div className="w-full flex flex-col gap-4 mt-6">
-                {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-full h-16 bg-white/5 rounded-[1.5rem] animate-pulse" />
+                {[1, 2, 3].map(i => (
+                    <div key={i} className="w-full h-16 bg-[#111] rounded-[1.5rem] relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
+                    </div>
                 ))}
             </div>
         </div>
