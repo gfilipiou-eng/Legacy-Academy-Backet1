@@ -31,7 +31,8 @@ export const PublicWebsiteViewer = ({ config }) => {
             style={{ 
                 fontFamily: config.font || 'Inter',
                 backgroundColor: activeTheme.bg,
-                color: config.palette === 'light' ? '#000' : '#fff'
+                color: config.palette === 'light' ? '#000' : '#fff',
+                '--builder-primary': activeTheme?.primary || '#D4AF37'
             }}
         >
             {/* Navbar */}
@@ -253,7 +254,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                                 value={buyerEmail}
                                                 onChange={(e) => setBuyerEmail(e.target.value)}
                                                 placeholder="john@example.com"
-                                                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--gold-primary)]"
+                                                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--builder-primary)]"
                                                 style={{ color: 'inherit' }}
                                             />
                                         </div>

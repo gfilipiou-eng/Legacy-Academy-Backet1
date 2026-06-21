@@ -17,8 +17,8 @@ const TEMPLATES = [
         title: 'Consulting',
         description: 'High-contrast, professional design built for coaches, consultants, and speakers.',
         icon: Icons.Briefcase,
-        color: 'from-[var(--gold-primary)]/20 to-amber-500/20',
-        borderColor: 'border-[var(--gold-primary)]/30'
+        color: 'from-[var(--builder-primary)]/20 to-amber-500/20',
+        borderColor: 'border-[var(--builder-primary)]/30'
     },
     {
         id: 'ecommerce',
@@ -53,7 +53,7 @@ export const WebsiteTemplates = ({ onSelectTemplate, onBack }) => {
                     <span className="font-bold text-sm uppercase tracking-wider">{t('BACK', 'Back')}</span>
                 </button>
                 <div className="mx-auto flex flex-col items-center">
-                    <span className="text-[var(--gold-primary)] font-black uppercase tracking-[0.2em] text-[10px] mb-0.5">
+                    <span className="text-[var(--builder-primary)] font-black uppercase tracking-[0.2em] text-[10px] mb-0.5">
                         {t('WEBSITE_BUILDER', 'Website Builder')}
                     </span>
                     <h1 className="text-white font-bold text-lg leading-none">
@@ -66,7 +66,7 @@ export const WebsiteTemplates = ({ onSelectTemplate, onBack }) => {
             {/* Content Canvas */}
             <div className="flex-1 overflow-y-auto p-6 md:p-12 relative">
                 {/* Background Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--gold-primary)]/5 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--builder-primary)]/5 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                     {TEMPLATES.map((tpl, i) => {
@@ -78,22 +78,22 @@ export const WebsiteTemplates = ({ onSelectTemplate, onBack }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 onClick={() => onSelectTemplate(tpl.id)}
-                                className={`group relative bg-white/[0.03] hover:bg-white/[0.08] border ${tpl.borderColor} hover:border-[var(--gold-primary)] rounded-2xl p-6 cursor-pointer overflow-hidden transition-all duration-500 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]`}
+                                className={`group relative bg-white/[0.03] hover:bg-white/[0.08] border ${tpl.borderColor} hover:border-[var(--builder-primary)] rounded-2xl p-6 cursor-pointer overflow-hidden transition-all duration-500 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]`}
                             >
                                 {/* Gradient Hover Overlay */}
                                 <div className={`absolute inset-0 bg-gradient-to-br ${tpl.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                                 
                                 <div className="relative z-10 flex flex-col h-full">
-                                    <div className="w-14 h-14 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 group-hover:border-[var(--gold-primary)]/50 transition-all duration-500">
-                                        <Icon className="w-7 h-7 text-white/80 group-hover:text-[var(--gold-primary)] transition-colors duration-500" />
+                                    <div className="w-14 h-14 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 group-hover:border-[var(--builder-primary)]/50 transition-all duration-500">
+                                        <Icon className="w-7 h-7 text-white/80 group-hover:text-[var(--builder-primary)] transition-colors duration-500" />
                                     </div>
-                                    <h3 className="text-2xl font-black text-white mb-2 tracking-wide group-hover:text-[var(--gold-primary)] transition-colors duration-500">
+                                    <h3 className="text-2xl font-black text-white mb-2 tracking-wide group-hover:text-[var(--builder-primary)] transition-colors duration-500">
                                         {t(`TPL_${tpl.id.toUpperCase()}_TITLE`, tpl.title)}
                                     </h3>
                                     <p className="text-gray-400 text-sm leading-relaxed flex-1 group-hover:text-white/80 transition-colors duration-500">
                                         {t(`TPL_${tpl.id.toUpperCase()}_DESC`, tpl.description)}
                                     </p>
-                                    <div className="mt-6 flex items-center text-[var(--gold-primary)] font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                                    <div className="mt-6 flex items-center text-[var(--builder-primary)] font-bold text-xs uppercase tracking-widest opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                                         {t('START_BUILDING', 'Start Building')} <Icons.ArrowRight className="w-4 h-4 ml-2" />
                                     </div>
                                 </div>

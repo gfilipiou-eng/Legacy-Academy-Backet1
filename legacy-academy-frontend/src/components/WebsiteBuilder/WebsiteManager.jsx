@@ -95,7 +95,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     return (
         <div className="fixed inset-0 z-[2000] bg-[#050505] flex flex-col items-center justify-start overflow-y-auto pt-safe relative">
             {/* Ambient Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--gold-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--builder-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">
@@ -115,7 +115,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             key={idx} 
                             onClick={() => setActiveWebsiteIndex(idx)}
                             type="button"
-                            className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
+                            className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--builder-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
@@ -218,7 +218,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[3000] bg-[var(--gold-primary)] text-black px-6 py-3 rounded-full font-black text-sm flex items-center gap-2 shadow-2xl"
+                        className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[3000] bg-[var(--builder-primary)] text-black px-6 py-3 rounded-full font-black text-sm flex items-center gap-2 shadow-2xl"
                     >
                         <Icons.Check className="w-4 h-4" />
                         {t('LINK_COPIED', 'Link Copied!')}
