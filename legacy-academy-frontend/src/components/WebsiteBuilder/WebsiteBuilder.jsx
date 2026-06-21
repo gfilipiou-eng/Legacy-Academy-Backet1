@@ -564,9 +564,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                {config.navLink1 !== '' && <a href="#services" className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
-                                {config.navLink2 !== '' && <a href="#about" className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
-                                {config.navLink3 !== '' && <a href="#contact" className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
+                                {config.navLink1 !== '' && <a href="#services" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                                {config.navLink2 !== '' && <a href="#about" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
+                                {config.navLink3 !== '' && <a href="#contact" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                             </div>
                         </nav>
 
@@ -619,16 +619,16 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     {config.features?.map((feat, idx) => (
                                         <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                             {feat.image ? (
-                                                <div className="-mx-8 -mt-8 mb-4 flex justify-center items-center bg-black/5 overflow-hidden">
-                                                    <img src={feat.image} alt={feat.title} className="max-w-full max-h-[200px] w-auto h-auto object-contain transition-transform duration-700 group-hover:scale-105" />
+                                                <div className="-mx-8 -mt-8 mb-4 h-[200px] flex justify-center items-center bg-black/5 overflow-hidden">
+                                                    <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                                 </div>
                                             ) : (
                                                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
                                                     <Icons.Star className="w-6 h-6" />
                                                 </div>
                                             )}
-                                            <h4 className="text-xl font-bold relative z-10">{feat.title}</h4>
-                                            <p className="opacity-60 text-sm leading-relaxed relative z-10">{feat.desc}</p>
+                                            <h4 className="text-xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
+                                            <p className="opacity-60 text-sm leading-relaxed relative z-10 break-words hyphens-auto">{feat.desc}</p>
                                         </div>
                                     ))}
                                 </div>

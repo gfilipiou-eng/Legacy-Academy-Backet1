@@ -104,8 +104,8 @@ export const PublicWebsiteViewer = ({ config }) => {
                         {config.features.map((feat, idx) => (
                             <div key={idx} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                 {feat.image ? (
-                                    <div className="-mx-10 -mt-10 mb-6 flex justify-center items-center bg-black/5 overflow-hidden">
-                                        <img src={feat.image} alt={feat.title} className="max-w-full max-h-[250px] w-auto h-auto object-contain transition-transform duration-700 group-hover:scale-105" />
+                                    <div className="-mx-10 -mt-10 mb-6 h-[250px] flex justify-center items-center bg-black/5 overflow-hidden">
+                                        <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                     </div>
                                 ) : (
                                     <div className="w-16 h-16 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
