@@ -92,13 +92,13 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Feature Cards / Posts */}
             {config.features && config.features.length > 0 && (
                 <div id="services" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle || 'Features'}</h3>
+                    {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         {config.features.map((feat, idx) => (
                             <div key={idx} className="p-10 rounded-3xl flex flex-col gap-6 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                 {feat.image ? (
                                     <div className="-mx-10 -mt-10 mb-2 h-48 overflow-hidden relative">
-                                        <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        <img src={feat.image} alt={feat.title} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
                                     </div>
                                 ) : (
@@ -117,7 +117,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* About Section */}
             {config.aboutText && (
                 <div id="about" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                    <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 || 'About'}</h3>
+                    {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
                     <p className="text-center max-w-3xl mx-auto opacity-70 leading-relaxed text-xl">
                         {config.aboutText}
                     </p>
@@ -127,7 +127,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             {/* Contact Section */}
             {(config.contactEmail || config.contactPhone) && (
                 <div id="contact" className={`w-full px-6 md:px-12 py-24 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 || 'Contact'}</h3>
+                    {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-3xl mx-auto">
                         {config.contactEmail && (
                             <div className="flex items-center gap-4 p-6 rounded-2xl w-full md:w-auto justify-center shadow-xl" style={{ backgroundColor: activeTheme.card }}>
@@ -156,7 +156,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                             <div key={product.id} className="group rounded-3xl overflow-hidden shadow-2xl transition-all hover:-translate-y-2 flex flex-col" style={{ backgroundColor: activeTheme.card }}>
                                 <div className="w-full aspect-square overflow-hidden relative bg-black/20">
                                     {product.image ? (
-                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
                                             <Icons.Image className="w-12 h-12 opacity-20" />

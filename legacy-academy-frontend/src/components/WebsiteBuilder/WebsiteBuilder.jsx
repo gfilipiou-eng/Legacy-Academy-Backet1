@@ -371,7 +371,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                         </div>
                                         {feat.image && (
                                             <div className="w-full h-16 rounded overflow-hidden mt-1 relative group/img">
-                                                <img src={feat.image} alt="Feature" className="w-full h-full object-cover opacity-80" />
+                                                <img src={feat.image} alt="Feature" className="w-full h-full object-contain opacity-80" />
                                             </div>
                                         )}
                                     </div>
@@ -601,13 +601,13 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* Feature Cards / Posts */}
                         {config.features && config.features.length > 0 && (
                             <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                <h3 className="text-2xl font-black mb-10 text-center">{config.featuresTitle || 'Features'}</h3>
+                                {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {config.features?.map((feat, idx) => (
                                         <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
                                             {feat.image ? (
                                                 <div className="-mx-8 -mt-8 mb-4 h-40 overflow-hidden relative">
-                                                    <img src={feat.image} alt={feat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                                    <img src={feat.image} alt={feat.title} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
                                                 </div>
                                             ) : (
@@ -626,7 +626,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* About Section */}
                         {config.aboutText && (
                             <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                                <h3 className="text-2xl font-black mb-6 text-center">{config.navLink2 || 'About'}</h3>
+                                {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'About'}</h3>}
                                 <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
                                     {config.aboutText}
                                 </p>
@@ -636,7 +636,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         {/* Contact Section */}
                         {(config.contactEmail || config.contactPhone) && (
                             <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                <h3 className="text-2xl font-black mb-8 text-center">{config.navLink3 || 'Contact'}</h3>
+                                {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Contact'}</h3>}
                                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
                                     {config.contactEmail && (
                                         <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
