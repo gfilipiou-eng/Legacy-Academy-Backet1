@@ -3449,10 +3449,9 @@ const PlatformLoadingPanel = ({ label, compact = false }) => (
             />
             {/* Inner pulsing core */}
             <div 
-                className="w-12 h-12 rounded-full bg-[var(--gold-primary)]/10 flex items-center justify-center border border-[var(--gold-primary)]/30 "
-                style={{ animationDuration: '2s' }}
+                className="w-12 h-12 rounded-full bg-transparent flex items-center justify-center"
             >
-                
+                <img src="/images/legacy-logo-gold.png" alt="Intel" className="w-8 h-8 opacity-90 drop-shadow-[0_0_10px_rgba(212,175,55,0.5)] animate-pulse" />
             </div>
         </div>
         {label && (
@@ -7999,7 +7998,27 @@ const App = () => {
         }
     }, [urlTheme]);
 
-    const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile'));
+    // Parse pathname for clean URLs (e.g. /@username or /@username/site/1)
+    let initialPathProfile = null;
+    let initialPathSite = null;
+    let initialPathIndex = 0;
+    
+    if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        if (path.startsWith('/@')) {
+            const parts = path.substring(2).split('/');
+            if (parts[0]) {
+                if (parts[1] === 'site') {
+                    initialPathSite = parts[0];
+                    initialPathIndex = parts[2] ? parseInt(parts[2]) : 0;
+                } else {
+                    initialPathProfile = parts[0];
+                }
+            }
+        }
+    }
+
+    const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile') || initialPathProfile);
     const [publicUser, setPublicUser] = useState(null);
     const [publicPosts, setPublicPosts] = useState([]);
     const [publicUserLoading, setPublicUserLoading] = useState(false);
@@ -8008,26 +8027,46 @@ const App = () => {
     const [viewPostId, setViewPostId] = useState(searchParams.get('postId'));
     
     // Public Website Viewer state
-    const [publicSiteUsername, setPublicSiteUsername] = useState(searchParams.get('site'));
-    const [publicSiteIndex, setPublicSiteIndex] = useState(searchParams.get('index') || 0);
+    const [publicSiteUsername, setPublicSiteUsername] = useState(searchParams.get('site') || initialPathSite);
+    const [publicSiteIndex, setPublicSiteIndex] = useState(searchParams.get('index') || initialPathIndex);
 
     const syncUrlState = useCallback(() => {
         const params = new URLSearchParams(window.location.search);
-        setPublicProfileUsername(params.get('profile'));
+        let pProfile = params.get('profile');
+        let pSite = params.get('site');
+        let pIndex = params.get('index') || 0;
+        
+        const path = window.location.pathname;
+        if (path.startsWith('/@')) {
+            const parts = path.substring(2).split('/');
+            if (parts[0]) {
+                if (parts[1] === 'site') {
+                    pSite = parts[0];
+                    pIndex = parts[2] ? parseInt(parts[2]) : 0;
+                } else {
+                    pProfile = parts[0];
+                }
+            }
+        }
+        
+        setPublicProfileUsername(pProfile);
         setViewPostId(params.get('postId'));
-        setPublicSiteUsername(params.get('site'));
-        setPublicSiteIndex(params.get('index') || 0);
+        setPublicSiteUsername(pSite);
+        setPublicSiteIndex(pIndex);
     }, []);
 
     const navigatePublicProfile = useCallback((username) => {
         const params = new URLSearchParams(window.location.search);
         params.delete('postId');
+        params.delete('profile'); // Remove profile from search since we will use path
+        params.delete('site');
+        params.delete('index');
         const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
         const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
-        params.set('profile', username);
         params.set('lang', savedLang);
         params.set('theme', savedTheme);
-        const nextUrl = `/?${params.toString()}`;
+        const searchString = params.toString();
+        const nextUrl = `/@${username}${searchString ? `?${searchString}` : ''}`;
         window.history.pushState({}, '', nextUrl);
         syncUrlState();
     }, [syncUrlState]);
@@ -9835,8 +9874,8 @@ const App = () => {
     // IF DIRECT LINK TO PUBLIC WEBSITE VIEWER
     if (publicSiteUsername) {
         if (publicUserLoading) {
-            return <div className="min-h-screen w-full bg-[#09090b] flex items-center justify-center">
-                <Icons.Loader className="w-8 h-8 text-[var(--gold-primary)] animate-spin" />
+            return <div className="min-h-screen w-full bg-[#050505] flex items-center justify-center">
+                <PlatformLoadingPanel label={t('LOADING_EXPERIENCE', 'LOCATING PLATFORM...')} compact />
             </div>;
         }
 
@@ -9890,7 +9929,12 @@ const App = () => {
                     const params = new URLSearchParams(window.location.search);
                     params.delete('profile');
                     const nextSearch = params.toString();
-                    window.history.pushState({}, '', `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
+                    // Clear /@username if present
+                    let nextPath = window.location.pathname;
+                    if (nextPath.startsWith('/@')) {
+                        nextPath = '/';
+                    }
+                    window.history.pushState({}, '', `${nextPath}${nextSearch ? `?${nextSearch}` : ''}`);
                     syncUrlState();
                 }}
                 onNavigateProfile={navigatePublicProfile}
