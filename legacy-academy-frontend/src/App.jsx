@@ -5361,7 +5361,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
-                            { id: 'profile', icon: Icons.User, label: t('PROFILE', 'Profile'), action: () => onViewProfile(user) },
+
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
