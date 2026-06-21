@@ -3709,13 +3709,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 await i18n.changeLanguage(normalizedLanguage);
             }
             await handleSave('language', normalizedLanguage);
-            
-            // Force reload to guarantee language applies across all PWA views
-            setTimeout(() => {
-                window.location.reload();
-            }, 150);
-            
-        } catch (error) {
+
+} catch (error) {
             console.error("Language change error:", error);
             setPendingLanguage(activeLanguage);
         }
@@ -5619,7 +5614,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'gym_lift', titleKey: 'MISSION_GYM_LIFT', descKey: 'MISSION_GYM_LIFT_DESC', icon: '🦍' },
                 { id: 'gym_cardio', titleKey: 'MISSION_GYM_CARDIO', descKey: 'MISSION_GYM_CARDIO_DESC', icon: '🔥' },
                 { id: 'gym_core', titleKey: 'MISSION_GYM_CORE', descKey: 'MISSION_GYM_CORE_DESC', icon: '🛡️' },
-                { id: 'gym_endurance', titleKey: 'MISSION_GYM_ENDURANCE', descKey: 'MISSION_GYM_ENDURANCE_DESC', icon: '🏃‍♂️' }
+                { id: 'gym_endurance', titleKey: 'MISSION_GYM_ENDURANCE', descKey: 'MISSION_GYM_ENDURANCE_DESC', icon: '🏃‍♂️' },
+                { id: 'gym_strength', titleKey: 'MISSION_GYM_STRENGTH', descKey: 'MISSION_GYM_STRENGTH_DESC', icon: '🏋️‍♂️' }
             ]
         },
         {
@@ -5635,7 +5631,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'adv_travel', titleKey: 'MISSION_ADV_TRAVEL', descKey: 'MISSION_ADV_TRAVEL_DESC', icon: '✈️' },
                 { id: 'adv_explore', titleKey: 'MISSION_ADV_EXPLORE', descKey: 'MISSION_ADV_EXPLORE_DESC', icon: '🌍' },
                 { id: 'adv_nature', titleKey: 'MISSION_ADV_NATURE', descKey: 'MISSION_ADV_NATURE_DESC', icon: '🏕️' },
-                { id: 'adv_sea', titleKey: 'MISSION_ADV_SEA', descKey: 'MISSION_ADV_SEA_DESC', icon: '🌊' }
+                { id: 'adv_sea', titleKey: 'MISSION_ADV_SEA', descKey: 'MISSION_ADV_SEA_DESC', icon: '🌊' },
+                { id: 'adv_urban', titleKey: 'MISSION_ADV_URBAN', descKey: 'MISSION_ADV_URBAN_DESC', icon: '🏙️' }
             ]
         },
         {
@@ -5649,7 +5646,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'surv_detox', titleKey: 'MISSION_SURV_DETOX', descKey: 'MISSION_SURV_DETOX_DESC', icon: '📵' },
                 { id: 'surv_cold', titleKey: 'MISSION_SURV_COLD', descKey: 'MISSION_SURV_COLD_DESC', icon: '🧊' },
                 { id: 'surv_shelter', titleKey: 'MISSION_SURV_SHELTER', descKey: 'MISSION_SURV_SHELTER_DESC', icon: '⛺' },
-                { id: 'surv_fast', titleKey: 'MISSION_SURV_FAST', descKey: 'MISSION_SURV_FAST_DESC', icon: '⏳' }
+                { id: 'surv_fast', titleKey: 'MISSION_SURV_FAST', descKey: 'MISSION_SURV_FAST_DESC', icon: '⏳' },
+                { id: 'surv_fire', titleKey: 'MISSION_SURV_FIRE', descKey: 'MISSION_SURV_FIRE_DESC', icon: '🔥' }
             ]
         },
         {
@@ -5663,7 +5661,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'mind_read', titleKey: 'MISSION_MIND_READ', descKey: 'MISSION_MIND_READ_DESC', icon: '📜' },
                 { id: 'mind_puzzle', titleKey: 'MISSION_MIND_PUZZLE', descKey: 'MISSION_MIND_PUZZLE_DESC', icon: '🧩' },
                 { id: 'mind_meditate', titleKey: 'MISSION_MIND_MEDITATE', descKey: 'MISSION_MIND_MEDITATE_DESC', icon: '🧘' },
-                { id: 'mind_focus', titleKey: 'MISSION_MIND_FOCUS', descKey: 'MISSION_MIND_FOCUS_DESC', icon: '🎯' }
+                { id: 'mind_focus', titleKey: 'MISSION_MIND_FOCUS', descKey: 'MISSION_MIND_FOCUS_DESC', icon: '🎯' },
+                { id: 'mind_read', titleKey: 'MISSION_MIND_READ', descKey: 'MISSION_MIND_READ_DESC', icon: '📚' }
             ]
         },
         {
@@ -5677,7 +5676,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'combat_tactics', titleKey: 'MISSION_COMBAT_TACTICS', descKey: 'MISSION_COMBAT_TACTICS_DESC', icon: '🎯' },
                 { id: 'combat_spar', titleKey: 'MISSION_COMBAT_SPAR', descKey: 'MISSION_COMBAT_SPAR_DESC', icon: '🥊' },
                 { id: 'combat_reflex', titleKey: 'MISSION_COMBAT_REFLEX', descKey: 'MISSION_COMBAT_REFLEX_DESC', icon: '⚡' },
-                { id: 'combat_power', titleKey: 'MISSION_COMBAT_POWER', descKey: 'MISSION_COMBAT_POWER_DESC', icon: '💥' }
+                { id: 'combat_power', titleKey: 'MISSION_COMBAT_POWER', descKey: 'MISSION_COMBAT_POWER_DESC', icon: '💥' },
+                { id: 'combat_shadow', titleKey: 'MISSION_COMBAT_SHADOW', descKey: 'MISSION_COMBAT_SHADOW_DESC', icon: '🥊' }
             ]
         },
         {
@@ -5691,7 +5691,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'chal_limit', titleKey: 'MISSION_CHAL_LIMIT', descKey: 'MISSION_CHAL_LIMIT_DESC', icon: '🚀' },
                 { id: 'chal_dare', titleKey: 'MISSION_CHAL_DARE', descKey: 'MISSION_CHAL_DARE_DESC', icon: '🔥' },
                 { id: 'chal_endure', titleKey: 'MISSION_CHAL_ENDURE', descKey: 'MISSION_CHAL_ENDURE_DESC', icon: '🛡️' },
-                { id: 'chal_conquer', titleKey: 'MISSION_CHAL_CONQUER', descKey: 'MISSION_CHAL_CONQUER_DESC', icon: '👑' }
+                { id: 'chal_conquer', titleKey: 'MISSION_CHAL_CONQUER', descKey: 'MISSION_CHAL_CONQUER_DESC', icon: '👑' },
+                { id: 'chal_social', titleKey: 'MISSION_CHAL_SOCIAL', descKey: 'MISSION_CHAL_SOCIAL_DESC', icon: '🗣️' }
             ]
         }
     ];
