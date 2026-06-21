@@ -8238,6 +8238,7 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
     const [activeTab, setActiveTab] = useState('home');
+    const [feedSortOrder, setFeedSortOrder] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -8855,6 +8856,12 @@ const App = () => {
     }, [posts, searchQuery]);
 
     const groupedPosts = React.useMemo(() => {
+        let basePosts = posts;
+        if (feedSortOrder === 'oldest') {
+            basePosts = [...posts].reverse();
+        } else if (feedSortOrder === 'popular') {
+            basePosts = [...posts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
+        }
         const groups = {};
         const lang = user?.settings?.language || 'en';
         const locale = getLocaleForLang(lang);
@@ -8878,7 +8885,7 @@ const App = () => {
     }, [groupedPosts.length, groupedPosts[0]?.key]);
 
     const stories = React.useMemo(() => {
-        return posts.filter(p => {
+        return basePosts.filter(p => {
             const isStory = p.isStory === true || String(p.isStory) === 'true';
             if (!isStory) return false;
             // Filter only last 24h
@@ -9786,7 +9793,7 @@ const App = () => {
     const preloadedProfilePosts = useMemo(() => {
         if (!profileUser?._id) return [];
         const targetId = String(profileUser._id);
-        return posts.filter(p => {
+        return basePosts.filter(p => {
             if (p.isStory === true || String(p.isStory) === 'true') return false;
             const authorId = String(p.author?._id || p.author || '');
             const reposterId = String(p.repostedBy?._id || p.repostedBy || '');
@@ -10440,6 +10447,34 @@ const App = () => {
                                 </div>
                             ) : (
                                 <>
+                                    
+                                    {/* Feed Sort Tabs */}
+                                    {activeTab !== 'search' && (
+                                        <div className="flex items-center justify-start gap-6 px-4 pt-4 pb-2 border-b border-white/5 bg-transparent overflow-x-auto no-scrollbar">
+                                            <button 
+                                                onClick={() => setFeedSortOrder('newest')}
+                                                className={`pb-3 font-bold text-[13px] uppercase tracking-wider transition-all relative whitespace-nowrap ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                            >
+                                                Νεότερα Posts
+                                                {feedSortOrder === 'newest' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                            </button>
+                                            <button 
+                                                onClick={() => setFeedSortOrder('popular')}
+                                                className={`pb-3 font-bold text-[13px] uppercase tracking-wider transition-all relative whitespace-nowrap ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                            >
+                                                Δημοφιλέστερα Posts
+                                                {feedSortOrder === 'popular' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                            </button>
+                                            <button 
+                                                onClick={() => setFeedSortOrder('oldest')}
+                                                className={`pb-3 font-bold text-[13px] uppercase tracking-wider transition-all relative whitespace-nowrap ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                            >
+                                                Παλαιότερα Posts
+                                                {feedSortOrder === 'oldest' && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[var(--gold-primary)] rounded-t-full shadow-[0_0_8px_var(--gold-primary)]" />}
+                                            </button>
+                                        </div>
+                                    )}
+
                                     {activeTab !== 'search' && <StoriesBar stories={stories} user={user} imgKey={imgKey} key={imgKey || 'stories'} onAddStory={() => { setCreateModeStory(true); setIsCreateOpen(true); }} onViewStory={(s) => setSelectedPost(s)} />}
                                     <div className="px-2 py-4 sm:p-8">
                                         {activeTab === 'search' && (
