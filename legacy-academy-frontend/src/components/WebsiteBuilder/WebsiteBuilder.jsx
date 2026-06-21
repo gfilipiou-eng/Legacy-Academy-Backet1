@@ -172,6 +172,24 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 </button>
             </div>
 
+            {/* MOBILE ACTION BAR (Fixed at bottom) */}
+            <div className="md:hidden fixed bottom-0 left-0 w-full bg-[#09090b] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                <button 
+                    onClick={() => handlePublish(true)}
+                    disabled={saving}
+                    className="flex-1 py-3 rounded-xl border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[11px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center justify-center gap-2"
+                >
+                    {saving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-4 h-4" /> : t('SAVE_DRAFT', 'Save Draft'))}
+                </button>
+                <button 
+                    onClick={() => handlePublish(false)}
+                    disabled={saving}
+                    className="flex-1 py-3 rounded-xl bg-[var(--gold-primary)] text-black font-black text-[11px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center justify-center gap-2"
+                >
+                    {saving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-4 h-4" /> : 'Publish')}
+                </button>
+            </div>
+
             {/* LEFT SIDEBAR - Form Inputs */}
             <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
                 {/* Header */}
@@ -185,13 +203,22 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         </span>
                     </div>
                     
-                    <button 
-                        onClick={handlePublish}
-                        disabled={saving}
-                        className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2"
-                    >
-                        {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button 
+                            onClick={() => handlePublish(true)}
+                            disabled={saving}
+                            className="px-4 py-1.5 rounded-full border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center gap-2"
+                        >
+                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-3 h-3" /> : t('SAVE_DRAFT', 'Save Draft'))}
+                        </button>
+                        <button 
+                            onClick={() => handlePublish(false)}
+                            disabled={saving}
+                            className="px-4 py-1.5 rounded-full bg-[var(--gold-primary)] text-black font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-hover)] transition-all flex items-center gap-2"
+                        >
+                            {saving ? <Icons.Loader className="w-3 h-3 animate-spin" /> : (published && !config.isDraft ? <Icons.Check className="w-3 h-3" /> : 'Publish')}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain p-6 pb-40 custom-scrollbar space-y-8 touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
