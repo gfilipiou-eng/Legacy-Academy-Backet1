@@ -47,7 +47,9 @@ const UserSchema = new mongoose.Schema({
     is18PlusProfile: { type: Boolean, default: false },
     matrixOverlay: { type: Boolean, default: false },
     cyberSFX: { type: Boolean, default: true },
-    neuralNarrator: { type: Boolean, default: false }
+    neuralNarrator: { type: Boolean, default: false },
+    businessWebsites: [{ type: Object }],
+    businessWebsite: { type: Object }
   },
   missionsStreak: { type: Number, default: 0 },
   lastMissionCompleted: { type: Date },
