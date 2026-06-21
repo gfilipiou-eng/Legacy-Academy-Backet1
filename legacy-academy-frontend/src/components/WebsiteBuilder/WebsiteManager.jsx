@@ -137,7 +137,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 <button type="button" onClick={(e) => handleCopyLink(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleCopyLink(idx, e); }} className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2 touch-manipulation">
                                     <Icons.Link className="w-4 h-4" /> {t('COPY_LINK', 'Copy Link')}
                                 </button>
-                                <button type="button" onClick={(e) => handleDeletePrompt(idx, e)} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold text-red-500 transition-all touch-manipulation">
+                                <button type="button" onClick={(e) => handleDeletePrompt(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleDeletePrompt(idx, e); }} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold text-red-500 transition-all touch-manipulation relative z-20">
                                     <Icons.Trash className="w-4 h-4" />
                                 </button>
                             </div>

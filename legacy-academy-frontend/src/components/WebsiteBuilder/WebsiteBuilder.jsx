@@ -177,7 +177,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 <button 
                     onClick={() => handlePublish(true)}
                     disabled={saving}
-                    className="flex-1 py-3 rounded-xl border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[11px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center justify-center gap-2"
+                    className="flex-1 py-3 rounded-full border border-[var(--gold-primary)]/50 text-[var(--gold-primary)] font-black text-[10px] uppercase tracking-wider hover:bg-[var(--gold-primary)]/10 transition-all flex items-center justify-center gap-2"
                 >
                     {saving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : (config.isDraft ? <Icons.Check className="w-4 h-4" /> : t('SAVE_DRAFT', 'Save Draft'))}
                 </button>
