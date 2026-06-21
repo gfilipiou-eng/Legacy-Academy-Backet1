@@ -111,7 +111,6 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             type="button"
                             className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
                         >
-                            <div>
                             <div className="flex items-center justify-between mb-4">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
                                     {site.businessName?.charAt(0) || 'W'}
