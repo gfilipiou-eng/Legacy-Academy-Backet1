@@ -5455,25 +5455,20 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
         const fetchLeaders = async () => {
             setLoading(true);
             try {
-                // Fetch top 50 users by active streak
-                const res = await axios.get('/users/top-streaks'); // Needs backend endpoint, but we can fallback to fetching all and sorting if it fails
-                setLeaders(res.data);
+                const allRes = await axios.get('/users');
+                const sorted = (allRes.data || [])
+                    .sort((a, b) => {
+                        const completedDiff = (b.missionsCompletedCount || 0) - (a.missionsCompletedCount || 0);
+                        if (completedDiff !== 0) return completedDiff;
+                        return getActiveStreak(b) - getActiveStreak(a);
+                    })
+                    .slice(0, 50);
+                setLeaders(sorted);
             } catch (err) {
-                console.error(err);
-                // Fallback: fetch all and sort
-                try {
-                    const allRes = await axios.get('/users');
-                    const sorted = (allRes.data || [])
-                        .sort((a, b) => {
-                            const completedDiff = (b.missionsCompletedCount || 0) - (a.missionsCompletedCount || 0);
-                            if (completedDiff !== 0) return completedDiff;
-                            return getActiveStreak(b) - getActiveStreak(a);
-                        })
-                        .slice(0, 50);
-                    setLeaders(sorted);
-                } catch(e) {}
+                console.error("Failed to fetch users:", err);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
         fetchLeaders();
     }, [isOpen]);
@@ -5520,8 +5515,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                 <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl drop-shadow-[0_0_10px_rgba(250,204,21,0.8)]' : idx === 1 ? 'text-gray-300 text-xl' : idx === 2 ? 'text-amber-600 text-xl' : 'text-white/30 text-base'}`}>
                                     #{idx + 1}
                                 </div>
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#111] border-2 border-white/10 overflow-hidden shrink-0 relative">
-                                    <img src={u.profilePic || `/api/placeholder/150/150`} alt={u.username} className="w-full h-full object-cover" />
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 relative">
+                                    <ProfileAvatar user={u} className="border-2 border-white/10" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="font-black text-white text-sm sm:text-base truncate flex items-center gap-2">
