@@ -81,11 +81,14 @@ export const PublicWebsiteViewer = ({ config }) => {
                 </div>
 
                 <div className="flex-1 w-full z-10 flex justify-center items-center">
-                    <div className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}>
+                    <div 
+                        className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}
+                        style={{ transform: 'translateZ(0)' }}
+                    >
                         <img 
                             src={config.coverImage} 
                             alt="Cover" 
-                            className="w-full h-full object-cover" 
+                            className="w-full h-full object-cover rounded-[30px]" 
                         />
                     </div>
                 </div>
