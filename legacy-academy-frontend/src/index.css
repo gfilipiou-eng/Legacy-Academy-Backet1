@@ -2216,6 +2216,14 @@ input, textarea {
   background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
 }
 
+.liquid-glass-panel {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 150%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 150%)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02) !important;
+}
+
 /* Transparent on active touch for better feedback */
 a:active, 
 button:active, 

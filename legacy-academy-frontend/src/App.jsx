@@ -1676,226 +1676,206 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-end md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/50 hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full z-[2600] transition-all duration-300 group hidden md:block">
-                <Icons.X className="w-6 h-6 text-white/50 group-hover:text-white transition-all duration-300" />
-            </button>
-            <div className="w-full max-w-6xl h-[92dvh] md:h-[90vh] bg-[#09090b]/95 backdrop-blur-3xl rounded-t-[32px] md:rounded-[32px] flex flex-col md:flex-row border-t border-white/20 md:border md:border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                {/* Close Button Mobile */}
-                <div className="w-full flex justify-end p-4 md:hidden shrink-0 absolute top-0 right-0 z-[100]" onClick={onClose}>
-                    <button className="p-2.5 bg-black/50 hover:bg-white/10 active:scale-95 rounded-full backdrop-blur-md transition-all border border-white/10">
-                        <Icons.X className="w-5 h-5 text-white/80" />
-                    </button>
-                </div>
-                {/* Image Section */}
-                <div className="w-full md:flex-1 bg-black/40 flex items-center justify-center relative shadow-inner overflow-hidden h-[45vh] md:h-full shrink-0 pt-0">
-                    {postHasMedia(post) ? (
-                        (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                            <NeuralVideoPlayer
-                                src={resolveMediaUrl(post.videoUrl || post.image)}
-                                poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                className="w-full h-full"
-                                forcePause={isWritingComment}
-                            />
-                        ) : (
-                            !imgError ? (
-                                <img
-                                    src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                    className="max-w-full max-h-full object-contain cursor-zoom-in"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
-                                    }}
-                                    decoding="async"
-                                    onError={() => {
-                                        setImgError(true);
-                                        const canDelete = isOwner || user?.role === 'Founder';
-                                        if (canDelete && post.image) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
-                                    }}
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center p-10 text-gray-500">
-                                    <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
-                                    <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
-                                </div>
-                            )
-                        )
-                    ) : (
-                        <div className="p-10 text-center text-lg sm:text-2xl text-white bg-black w-full h-full flex items-center justify-center">
-                            <p className="font-medium leading-relaxed break-words whitespace-pre-wrap max-w-prose">
-                                {parseText(post.desc, (tag) => onHashtagClick?.(tag), (username) => {
-                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                    if (u && onViewProfile) onViewProfile(u);
-                                })}
-                            </p>
+        <div className="fixed inset-0 z-[2500] bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
+            <div className="w-full h-[100dvh] md:h-[90vh] md:max-w-2xl bg-[#000000] md:bg-[#09090b] md:rounded-[24px] flex flex-col border border-white/10 shrink-0 transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                
+                {/* Header (Author & Close) */}
+                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/90 backdrop-blur-xl shrink-0 sticky top-0 z-50">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
+                        <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
+                            <div className="absolute inset-[2px] rounded-full overflow-hidden">
+                                <ProfileAvatar user={author} />
+                            </div>
                         </div>
-                    )}
+                        <div className="flex flex-col min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-bold text-white text-[15px] truncate">{author?.username}</span>
+                                {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(author)}</span>}
+                                <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={author} />
+                            </div>
+                            <span className="text-gray-500 text-[13px] truncate">{formatUserHandle(author?.username)}</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
+                        <button onClick={onClose} className="p-2 bg-transparent hover:bg-white/10 rounded-full transition-colors hidden md:block">
+                            <Icons.X className="w-5 h-5 text-white" />
+                        </button>
+                    </div>
                 </div>
 
-                {/* Info Section */}
-                <div className="w-full md:w-[450px] flex flex-col bg-black/40 backdrop-blur-md border-l border-white/5 flex-1 min-h-0 md:h-full relative font-sans">
-                    <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-transparent shrink-0 relative z-50 gap-2">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="w-11 h-11 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
-                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
-                                    <ProfileAvatar user={author} />
-                                </div>
-                            </div>
-                            <div className="flex flex-col min-w-0 flex-1 pr-2">
-                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0">
-                                    <span className="font-bold text-white text-[14px] leading-tight break-words">{author?.username}</span>
-                                    {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(author)}{isTopStreak(author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
-                                    <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={author} />
-                                    <span className="text-gray-500 text-[12px] break-all">{formatUserHandle(author?.username)}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="relative shrink-0">
-                            <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
+                {/* Scrollable Feed */}
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black overscroll-contain">
+                    
+                    {/* Description Section */}
+                    <div className="px-4 py-3 bg-transparent z-10 relative">
+                        <p className="text-[16px] text-white leading-relaxed whitespace-pre-wrap break-words">
+                            {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
+                                onClose();
+                                if (onHashtagClick) onHashtagClick(tag);
+                            }, (username) => {
+                                onClose();
+                                const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                if (u && onViewProfile) onViewProfile(u);
+                            })}
+                            {(translatedText || post.desc) && (translatedText || post.desc).length > 800 && (
+                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[14px] font-bold ml-2 hover:underline">
+                                    {isExpanded ? t('READ_LESS', 'Show less') : t('READ_MORE', 'Show more')}
+                                </button>
+                            )}
+                        </p>
+                        <div className="mt-3">
+                            <button
+                                onClick={handleTranslate}
+                                disabled={isTranslating}
+                                className="text-[12px] font-bold text-[#1D9BF0] hover:underline flex items-center gap-1.5 transition-opacity"
+                            >
+                                <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show Original') : t('SEE_TRANSLATION', 'Translate Post'))}
+                            </button>
                         </div>
                     </div>
 
-                    <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black/30 overscroll-contain">
-                        {/* ── STICKY COMMENT/ACTIONS BAR ── */}
-                        <div className="sticky top-0 px-2 py-2 border-b border-white/10 bg-black/90 backdrop-blur-xl z-[200]">
-                            <div className="flex items-center justify-between mt-1 mb-3 w-full px-2">
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-comment text-gray-500 md:hover:bg-[#1D9BF0]/10 md:hover:text-[#1D9BF0] active:bg-[#1D9BF0]/20 active:text-[#1D9BF0]"
-                                >
-                                    <Icons.MessageSquare className="w-5 h-5" />
-                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                                </button>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 md:hover:bg-[#00BA7C]/10 md:hover:text-[#00BA7C] active:bg-[#00BA7C]/20 active:text-[#00BA7C]'}`}
-                                >
-                                    <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
-                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                                </button>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-500 md:hover:bg-[#F91880]/10 md:hover:text-[#F91880] active:bg-[#F91880]/20 active:text-[#F91880]'}`}
-                                >
-                                    <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
-                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
-                                </button>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
-                                    className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-purple-500' : 'text-gray-500 md:hover:bg-purple-500/10 md:hover:text-purple-500 active:bg-purple-500/20 active:text-purple-500'}`}
-                                >
-                                    <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
-                                    <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
-                                </button>
-                            </div>
-                            <div className="flex items-center gap-3 w-full">
-                                <div className="w-10 h-10 relative group shrink-0">
-                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                    <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
-                                        <ProfileAvatar user={user} />
-                                    </div>
-                                </div>
-                                {isRecordingComment ? (
-                                    <div className="flex-1 min-w-0 bg-black/80 text-white border border-white/20 rounded-2xl p-3 flex items-center justify-between">
-                                        <div className="flex items-center gap-2 pl-1 shrink-0">
-                                            <div className="w-3 h-3 rounded-full bg-red-500 " />
-                                            <span className="text-[11px] font-bold text-white uppercase tracking-widest">{t('TRANSMITTING')}</span>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button onClick={() => stopRecording(true)} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-150 sturdy-active touch-manipulation"><Icons.X className="w-5 h-5" /></button>
-                                            <button onClick={() => stopRecording(false)} className="px-4 py-2 rounded-full bg-white text-black font-bold text-[11px] uppercase tracking-widest hover:brightness-90 transition-all duration-150 sturdy-active touch-manipulation">{t('STOP')}</button>
-                                        </div>
-                                    </div>
-                                ) : commentAudio ? (
-                                    <div className="flex-1 min-w-0 flex items-center justify-between px-3 bg-black/80 border border-white/20 rounded-2xl p-2">
-                                        <div className="flex items-center gap-2 pl-2 min-w-0">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-white  shrink-0" />
-                                            <span className="text-[11px] font-bold text-white uppercase tracking-widest truncate">{t('VOICE_NOTE_READY')}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1 shrink-0">
-                                            <button onClick={() => setCommentAudio(null)} className="w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all duration-150 sturdy-active touch-manipulation">
-                                                <Icons.X className="w-5 h-5" />
-                                            </button>
-                                            <button onClick={() => {
-                                                const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
-                                                if (commentText.trim()) fd.append('text', commentText.trim());
-                                                onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                            }} className="w-10 h-10 flex items-center justify-center bg-white rounded-full text-black hover:brightness-90 transition-all duration-150 sturdy-active touch-manipulation">
-                                                <Icons.Send className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                    </div>
+                    {/* Image/Video Section */}
+                    {postHasMedia(post) && (
+                        <div className="w-full bg-black/40 flex items-center justify-center relative overflow-hidden border-y border-white/10 max-h-[60vh] shrink-0">
+                            {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                <NeuralVideoPlayer
+                                    src={resolveMediaUrl(post.videoUrl || post.image)}
+                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                    className="w-full h-full max-h-[60vh] object-contain"
+                                    forcePause={isWritingComment}
+                                />
+                            ) : (
+                                !imgError ? (
+                                    <img
+                                        src={resolveMediaUrl(post.image || post.thumbnailUrl)}
+                                        className="w-full h-full max-h-[60vh] object-contain cursor-zoom-in"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
+                                        }}
+                                        decoding="async"
+                                        onError={() => setImgError(true)}
+                                    />
                                 ) : (
-                                    <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[48px]">
-                                        <input
-                                            id={`comment-input-${post._id}`}
-                                            placeholder={t('FOUNDER_PLACEHOLDER')}
-                                            value={commentText}
-                                            onChange={(e) => setCommentText(e.target.value)}
-                                            className="flex-1 min-w-0 bg-transparent py-3 px-4 text-base text-white outline-none placeholder-gray-500 font-medium"
-                                        />
-                                        <div className="flex gap-1 pr-2 shrink-0">
-                                            <button type="button" onClick={toggleCommentRecording} className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-150 ${isRecordingComment ? 'bg-red-500 text-white ' : 'text-gray-400 hover:text-white hover:bg-white/10'} sturdy-active touch-manipulation`}>
-                                                <Icons.Mic className="w-5 h-5" />
-                                            </button>
-                                            <button type="submit" disabled={!commentText.trim()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-25 hover:brightness-90 transition-all duration-150 sturdy-active touch-manipulation shrink-0">
-                                                <Icons.Send className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                    </form>
-                                )}
-                            </div>
+                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500">
+                                        <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
+                                        <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                                    </div>
+                                )
+                            )}
                         </div>
-                        {/* Description Section */}
-                        <div className="px-4 sm:px-6 py-6 bg-transparent border-b border-white/10 z-10 relative">
-                            <div className="space-y-4">
-                                <div className="text-[15px] text-white border-l-[3px] border-white pl-5 py-2 pb-3 font-bold leading-relaxed w-full text-left whitespace-pre-wrap break-words">
-                                    {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 500 && !isExpanded ? (translatedText || post.desc).slice(0, 500) + '...' : (translatedText || post.desc), (tag) => {
-                                        onClose();
-                                        if (onHashtagClick) onHashtagClick(tag);
-                                    }, (username) => {
-                                        onClose();
-                                        const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                        if (u && onViewProfile) onViewProfile(u);
-                                    })}
-                                    {(translatedText || post.desc) && (translatedText || post.desc).length > 500 && (
-                                        <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-white text-[10px] font-black uppercase tracking-widest ml-2 hover:underline">
-                                            {isExpanded ? t('READ_LESS') : t('READ_MORE')}
-                                        </button>
-                                    )}
-                                </div>
-                                <div className="pl-5">
-                                    <button
-                                        onClick={handleTranslate}
-                                        disabled={isTranslating}
-                                        className="text-[10px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
-                                    >
-                                        <Icons.Globe className={`w-3 h-3 ${isTranslating ? 'animate-spin' : ''}`} />
-                                        {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    )}
 
-                        {/* Comments Section */}
-                        <div className="p-3">
-                            <div className="w-full animate-fade-in border-t border-white/[0.06] mt-2">
-                                {!post.comments?.length ? (
-                                    <p className="text-gray-600 text-[10px] uppercase font-bold py-2 text-center tracking-widest">{t('NO_COMMENTS') || "NO COMMENTS YET"}</p>
-                                ) : (
-                                    (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
-                                        <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} onViewProfile={onViewProfile} />
-                                    ))
-                                )}
-                            </div>
+                    {/* Stats & Date */}
+                    <div className="px-4 py-3 border-b border-white/10 flex items-center text-gray-500 text-[14px]">
+                        <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="px-2 py-1 border-b border-white/10">
+                        <div className="flex items-center justify-around w-full max-w-md">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                            >
+                                <Icons.MessageSquare className="w-5 h-5" />
+                                <span className="text-[13px] font-bold tabular-nums">{post.comments?.length || 0}</span>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
+                            >
+                                <Icons.RefreshCcw className="w-5 h-5" />
+                                <span className="text-[13px] font-bold tabular-nums">{post.reposts?.length || 0}</span>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-500 hover:bg-[#F91880]/10 hover:text-[#F91880]'}`}
+                            >
+                                <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[13px] font-bold tabular-nums">{post.likes?.length || 0}</span>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-purple-500' : 'text-gray-500 hover:bg-purple-500/10 hover:text-purple-500'}`}
+                            >
+                                <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                <span className="text-[13px] font-bold tabular-nums">{post.dislikes?.length || 0}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Comment Input */}
+                    <div className="px-4 py-3 bg-black/50 backdrop-blur-md sticky top-0 z-[100] border-b border-white/10">
+                        <div className="flex items-center gap-3 w-full">
+                            <ProfileAvatar user={user} className="w-10 h-10 rounded-full shrink-0" />
+                            {isRecordingComment ? (
+                                <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-red-500 text-xs font-bold animate-pulse">
+                                        <Icons.Mic className="w-4 h-4" />
+                                        RECORDING...
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => stopRecording(true)} className="p-1 hover:text-gray-300 text-gray-500"><Icons.X className="w-5 h-5" /></button>
+                                        <button onClick={() => stopRecording(false)} className="px-3 py-1 bg-white text-black font-bold text-xs rounded-full">STOP</button>
+                                    </div>
+                                </div>
+                            ) : commentAudio ? (
+                                <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
+                                    <span className="text-white text-xs font-bold">VOICE NOTE READY</span>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white"><Icons.X className="w-5 h-5" /></button>
+                                        <button onClick={() => {
+                                            const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
+                                            if (commentText.trim()) fd.append('text', commentText.trim());
+                                            onComment(post._id, fd); setCommentAudio(null); setCommentText('');
+                                        }} className="px-3 py-1 bg-[#1D9BF0] text-white font-bold text-xs rounded-full">SEND</button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-[#202327] rounded-3xl overflow-hidden focus-within:ring-1 focus-within:ring-[#1D9BF0] transition-all">
+                                    <input
+                                        id={`comment-input-${post._id}`}
+                                        placeholder="Post your reply..."
+                                        value={commentText}
+                                        onChange={(e) => setCommentText(e.target.value)}
+                                        className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500"
+                                        autoComplete="off"
+                                    />
+                                    <div className="flex items-center pr-2">
+                                        <button type="button" onClick={toggleCommentRecording} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full transition-colors">
+                                            <Icons.Mic className="w-5 h-5" />
+                                        </button>
+                                        <button type="submit" disabled={!commentText.trim()} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
+                                            <Icons.Send className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Comments Section (Liquid Glass) */}
+                    <div className="p-2 md:p-4">
+                        <div className="w-full rounded-[24px] liquid-glass-panel border border-white/20 p-2 overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+                            {!post.comments?.length ? (
+                                <div className="text-center py-10">
+                                    <p className="text-gray-400 text-[15px] font-bold">No replies yet</p>
+                                </div>
+                            ) : (
+                                (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
+                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={onDeleteComment} t={t} lang={lang} onViewProfile={onViewProfile} />
+                                ))
+                            )}
                         </div>
                     </div>
 
                 </div>
             </div>
-
-            {/* FULL SCREEN IMAGE ZOOM MODAL FOR POST DETAIL */}
             {zoomImage && (
                 <div 
                     className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
