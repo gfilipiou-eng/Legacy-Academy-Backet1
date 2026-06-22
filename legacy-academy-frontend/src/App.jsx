@@ -1064,11 +1064,11 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         } else if (customColor === 'diamond') {
             gradIdName = "diamondGrad";
             stops = [
-                { offset: "0%", color: "#45B8AC" },
-                { offset: "25%", color: "#E0FFFF" },
+                { offset: "0%", color: "#00E5FF" },
+                { offset: "25%", color: "#007BFF" },
                 { offset: "50%", color: "#FFFFFF" },
-                { offset: "75%", color: "#E0FFFF" },
-                { offset: "100%", color: "#45B8AC" }
+                { offset: "75%", color: "#00E5FF" },
+                { offset: "100%", color: "#0056B3" }
             ];
         } else if (customColor === 'liquid-gold') {
             gradIdName = "liquidGoldGrad";
