@@ -1833,7 +1833,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </div>
                             ) : (
                                 (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
-                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={(cid, text) => onEditComment(post._id, cid, text)} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} />
+                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} />
                                 ))
                             )}
                         </div>
@@ -2891,7 +2891,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 </div>
                                 <div className="border-t border-white/[0.06] mt-4">
                                     {(post.comments || []).slice().reverse().map(c => (
-                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={(cid, text) => onEditComment(post._id, cid, text)} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} />
+                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} />
                                     ))}
                                 </div>
                             </div>
