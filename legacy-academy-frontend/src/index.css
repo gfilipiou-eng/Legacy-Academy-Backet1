@@ -2319,3 +2319,17 @@ body.glow-enabled .action-btn-like.text-\[\#F91880\] svg {
     filter: drop-shadow(0 0 8px #F91880) drop-shadow(0 0 16px #F91880);
     transition: filter 0.3s ease;
 }
+
+@keyframes slide-up-bubble {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+.animate-slide-up-bubble {
+    animation: slide-up-bubble 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Nav Item Active Glow */
+body.glow-enabled .nav-item-active svg {
+    filter: drop-shadow(0 0 10px #1D9BF0) drop-shadow(0 0 20px #1D9BF0);
+    transition: filter 0.3s ease;
+}

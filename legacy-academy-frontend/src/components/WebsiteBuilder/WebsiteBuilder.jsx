@@ -187,7 +187,11 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
         pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
         green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
-        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' }
+        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' },
+        cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
+        neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
+        minimal: { primary: '#FFFFFF', bg: '#121212', card: '#1A1A1A' },
+        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' }
     };
 
     const activeTheme = themeColors[config.palette];
@@ -552,8 +556,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">{t('wb_typography', 'Typography')}</label>
-                            <div className="grid grid-cols-2 gap-2">
-                                {['Inter', 'Playfair Display', 'Space Mono', 'Outfit'].map(f => (
+                            <div className="space-y-2">
+                                {['Inter', 'Roboto', 'Oswald', 'Space Grotesk', 'Playfair Display', 'Outfit', 'Montserrat', 'Syne'].map(f => (
                                     <button
                                         key={f}
                                         onClick={() => updateConfig('font', f)}

@@ -1676,13 +1676,17 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-black/98 backdrop-blur-md flex flex-col items-center justify-start md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full z-[2600] transition-all duration-300 group">
-                <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
+        <div className="fixed inset-0 z-[2500] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-end md:justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
+            <button onClick={onClose} className="fixed top-4 right-4 p-3 bg-black/50 hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full z-[2600] transition-all duration-300 group hidden md:block">
+                <Icons.X className="w-6 h-6 text-white/50 group-hover:text-white transition-all duration-300" />
             </button>
-            <div className="w-full max-w-6xl h-[100dvh] md:h-[90vh] bg-[#050505]/95 backdrop-blur-md rounded-none flex flex-col md:flex-row border-none md:border md:border-white/10 shrink-0 my-auto transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
+            <div className="w-full max-w-6xl h-[92dvh] md:h-[90vh] bg-[#09090b]/95 backdrop-blur-3xl rounded-t-[32px] md:rounded-[32px] flex flex-col md:flex-row border-t border-white/20 md:border md:border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                {/* Drag Handle Mobile */}
+                <div className="w-full flex justify-center py-3 md:hidden shrink-0 absolute top-0 z-[100]" onClick={onClose}>
+                    <div className="w-12 h-1.5 bg-white/30 rounded-full"></div>
+                </div>
                 {/* Image Section */}
-                <div className="w-full md:flex-1 bg-black flex items-center justify-center relative shadow-inner overflow-hidden h-[50vh] md:h-full shrink-0">
+                <div className="w-full md:flex-1 bg-black/40 flex items-center justify-center relative shadow-inner overflow-hidden h-[45vh] md:h-full shrink-0 pt-6 md:pt-0">
                     {postHasMedia(post) ? (
                         (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
@@ -3800,20 +3804,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         localStorage.setItem('language', normalizedLanguage);
         setPendingLanguage(normalizedLanguage);
 
-        const baseUser = latestUserRef.current || user || {};
-        if (baseUser?._id) {
-            const optimisticUser = {
-                ...baseUser,
-                settings: {
-                    ...(baseUser?.settings || {}),
-                    language: normalizedLanguage,
-                },
-            };
-            latestUserRef.current = optimisticUser;
-            onUpdateUser?.(optimisticUser);
-        }
-
         try {
+            await handleSave('language', normalizedLanguage);
             if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
                 await i18n.changeLanguage(normalizedLanguage);
             }
@@ -5848,6 +5840,36 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'chal_endure', titleKey: 'MISSION_CHAL_ENDURE', descKey: 'MISSION_CHAL_ENDURE_DESC', icon: '🛡️' },
                 { id: 'chal_conquer', titleKey: 'MISSION_CHAL_CONQUER', descKey: 'MISSION_CHAL_CONQUER_DESC', icon: '👑' },
                 { id: 'chal_social', titleKey: 'MISSION_CHAL_SOCIAL', descKey: 'MISSION_CHAL_SOCIAL_DESC', icon: '🗣️' }
+            ]
+        },
+        {
+            id: 'business',
+            nameKey: 'CAT_BUSINESS',
+            descriptionKey: 'CAT_BUSINESS_DESC',
+            icon: '💼',
+            color: 'from-blue-600 to-cyan-500',
+            missions: [
+                { id: 'biz_launch', titleKey: 'MISSION_BIZ_LAUNCH', descKey: 'MISSION_BIZ_LAUNCH_DESC', icon: '🚀' },
+                { id: 'biz_network', titleKey: 'MISSION_BIZ_NETWORK', descKey: 'MISSION_BIZ_NETWORK_DESC', icon: '🤝' },
+                { id: 'biz_sales', titleKey: 'MISSION_BIZ_SALES', descKey: 'MISSION_BIZ_SALES_DESC', icon: '💰' },
+                { id: 'biz_plan', titleKey: 'MISSION_BIZ_PLAN', descKey: 'MISSION_BIZ_PLAN_DESC', icon: '📝' },
+                { id: 'biz_brand', titleKey: 'MISSION_BIZ_BRAND', descKey: 'MISSION_BIZ_BRAND_DESC', icon: '✨' },
+                { id: 'biz_growth', titleKey: 'MISSION_BIZ_GROWTH', descKey: 'MISSION_BIZ_GROWTH_DESC', icon: '📈' }
+            ]
+        },
+        {
+            id: 'tech',
+            nameKey: 'CAT_TECH',
+            descriptionKey: 'CAT_TECH_DESC',
+            icon: '💻',
+            color: 'from-green-500 to-emerald-400',
+            missions: [
+                { id: 'tech_code', titleKey: 'MISSION_TECH_CODE', descKey: 'MISSION_TECH_CODE_DESC', icon: '👨‍💻' },
+                { id: 'tech_debug', titleKey: 'MISSION_TECH_DEBUG', descKey: 'MISSION_TECH_DEBUG_DESC', icon: '🐛' },
+                { id: 'tech_deploy', titleKey: 'MISSION_TECH_DEPLOY', descKey: 'MISSION_TECH_DEPLOY_DESC', icon: '🌐' },
+                { id: 'tech_learn', titleKey: 'MISSION_TECH_LEARN', descKey: 'MISSION_TECH_LEARN_DESC', icon: '📚' },
+                { id: 'tech_algo', titleKey: 'MISSION_TECH_ALGO', descKey: 'MISSION_TECH_ALGO_DESC', icon: '🧠' },
+                { id: 'tech_security', titleKey: 'MISSION_TECH_SECURITY', descKey: 'MISSION_TECH_SECURITY_DESC', icon: '🔒' }
             ]
         }
     ];
