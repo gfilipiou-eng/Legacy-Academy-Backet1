@@ -2,10 +2,18 @@ import React, { memo, useMemo, useRef, useEffect } from 'react';
 import { Icons } from './Icons';
 import { motion } from 'framer-motion';
 
+let globalAudioCtx = null;
+
 const playCyberSFX = (type = 'click') => {
     if (localStorage.getItem('cyberSFX') === 'false') return;
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!globalAudioCtx) {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (globalAudioCtx.state === 'suspended') {
+            globalAudioCtx.resume();
+        }
+        const ctx = globalAudioCtx;
         
         if (type === 'click' || type === 'menu') {
             // Cyber liquid glass sound

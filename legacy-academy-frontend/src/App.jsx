@@ -1104,10 +1104,18 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     );
 };
 
+let globalAudioCtx = null;
+
 const playCyberSFX = (type = 'click') => {
     if (localStorage.getItem('cyberSFX') === 'false') return;
     try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!globalAudioCtx) {
+            globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (globalAudioCtx.state === 'suspended') {
+            globalAudioCtx.resume();
+        }
+        const ctx = globalAudioCtx;
         
         if (type === 'click' || type === 'menu') {
             // Cyber liquid glass sound
