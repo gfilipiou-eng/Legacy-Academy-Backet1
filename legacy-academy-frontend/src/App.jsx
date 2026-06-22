@@ -1809,56 +1809,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                    {/* Comment Input */}
-                    <div className="px-4 py-3 bg-black/50 backdrop-blur-md sticky top-0 z-[100] border-b border-white/10">
-                        <div className="flex items-center gap-3 w-full">
-                            <ProfileAvatar user={user} className="w-10 h-10 rounded-full shrink-0" />
-                            {isRecordingComment ? (
-                                <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-red-500 text-xs font-bold animate-pulse">
-                                        <Icons.Mic className="w-4 h-4" />
-                                        RECORDING...
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button onClick={() => stopRecording(true)} className="p-1 hover:text-gray-300 text-gray-500"><Icons.X className="w-5 h-5" /></button>
-                                        <button onClick={() => stopRecording(false)} className="px-3 py-1 bg-white text-black font-bold text-xs rounded-full">STOP</button>
-                                    </div>
-                                </div>
-                            ) : commentAudio ? (
-                                <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
-                                    <span className="text-white text-xs font-bold">VOICE NOTE READY</span>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white"><Icons.X className="w-5 h-5" /></button>
-                                        <button onClick={() => {
-                                            const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
-                                            if (commentText.trim()) fd.append('text', commentText.trim());
-                                            onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                        }} className="px-3 py-1 bg-[#1D9BF0] text-white font-bold text-xs rounded-full">SEND</button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-[#202327] rounded-3xl overflow-hidden focus-within:ring-1 focus-within:ring-[#1D9BF0] transition-all">
-                                    <input
-                                        id={`comment-input-${post._id}`}
-                                        placeholder="Post your reply..."
-                                        value={commentText}
-                                        onChange={(e) => setCommentText(e.target.value)}
-                                        className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500"
-                                        autoComplete="off"
-                                    />
-                                    <div className="flex items-center pr-2">
-                                        <button type="button" onClick={toggleCommentRecording} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full transition-colors">
-                                            <Icons.Mic className="w-5 h-5" />
-                                        </button>
-                                        <button type="submit" disabled={!commentText.trim()} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
-                                            <Icons.Send className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
-                    </div>
-
                     {/* Comments Section (Liquid Glass) */}
                     <div className="p-2 md:p-4">
                         <div className="w-full rounded-[24px] liquid-glass-panel border border-white/20 p-2 overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.05)]">
@@ -1873,7 +1823,60 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             )}
                         </div>
                     </div>
+                    {/* Safe area padding at the bottom of the scroll container */}
+                    <div className="h-6 w-full"></div>
+                </div>
 
+                {/* Comment Input (Fixed at Bottom) */}
+                <div className="px-4 py-3 bg-black/90 backdrop-blur-xl shrink-0 z-[100] border-t border-white/10">
+                    <div className="flex items-center gap-3 w-full">
+                        <div className="w-10 h-10 shrink-0">
+                            <ProfileAvatar user={user} />
+                        </div>
+                        {isRecordingComment ? (
+                            <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-red-500 text-xs font-bold animate-pulse">
+                                    <Icons.Mic className="w-4 h-4" />
+                                    RECORDING...
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => stopRecording(true)} className="p-1 hover:text-gray-300 text-gray-500"><Icons.X className="w-5 h-5" /></button>
+                                    <button onClick={() => stopRecording(false)} className="px-3 py-1 bg-white text-black font-bold text-xs rounded-full">STOP</button>
+                                </div>
+                            </div>
+                        ) : commentAudio ? (
+                            <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
+                                <span className="text-white text-xs font-bold">VOICE NOTE READY</span>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white"><Icons.X className="w-5 h-5" /></button>
+                                    <button onClick={() => {
+                                        const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
+                                        if (commentText.trim()) fd.append('text', commentText.trim());
+                                        onComment(post._id, fd); setCommentAudio(null); setCommentText('');
+                                    }} className="px-3 py-1 bg-[#1D9BF0] text-white font-bold text-xs rounded-full">SEND</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-[#202327] rounded-3xl overflow-hidden focus-within:ring-1 focus-within:ring-[#1D9BF0] transition-all">
+                                <input
+                                    id={`comment-input-${post._id}`}
+                                    placeholder="Post your reply..."
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
+                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500"
+                                    autoComplete="off"
+                                />
+                                <div className="flex items-center pr-2">
+                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full transition-colors">
+                                        <Icons.Mic className="w-5 h-5" />
+                                    </button>
+                                    <button type="submit" disabled={!commentText.trim()} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
+                                        <Icons.Send className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    </div>
                 </div>
             </div>
             {zoomImage && (
