@@ -197,7 +197,7 @@ body.bg-f1-aston {
 .login-greek-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(var(--dynamic-blur, 80px));
   opacity: 0.3;
   animation: float-gentle 15s ease-in-out infinite;
 }
@@ -252,8 +252,8 @@ button:active {
 /* Liquid Glass Effect Class */
 .liquid-glass-btn {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(var(--dynamic-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px));
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: none;
 }
@@ -273,8 +273,8 @@ button:active {
 /* AI Style Glassmorphism */
 .ai-glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--dynamic-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px));
   border: 1px solid var(--glass-border);
   box-shadow: none;
 }
@@ -314,8 +314,8 @@ button:active {
 
 .nav-drawer-panel {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(10, 10, 10, 0.45);
-  backdrop-filter: blur(30px) saturate(210%);
-  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
   border-right: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 
     8px 0 32px rgba(0, 0, 0, 0.5), 
@@ -389,8 +389,8 @@ button:active {
 .bottom-nav-glass {
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(10, 10, 10, 0.45);
-  backdrop-filter: blur(30px) saturate(210%);
-  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.5), 
@@ -541,9 +541,9 @@ textarea.profile-edit-field:focus {
   padding: 0.875rem 1rem;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65));
+  backdrop-filter: blur(var(--dynamic-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px));
   color: #fff;
   font-size: 11px;
   font-weight: 900;
@@ -600,7 +600,7 @@ textarea.profile-edit-field:focus {
 }
 
 .profile-glass-btn--primary .profile-glass-btn__shine {
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65));
 }
 
 .profile-glass-btn--primary:hover:not(:disabled) {
@@ -709,16 +709,16 @@ textarea.profile-edit-field:focus {
     padding-bottom: 0.875rem !important;
     font-size: 0.875rem !important;
     background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(var(--dynamic-blur, 24px));
+    -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px));
   }
 
   textarea.profile-edit-field {
     font-size: 0.875rem !important;
     min-height: 8rem;
     background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(var(--dynamic-blur, 24px));
+    -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px));
   }
 }
 
@@ -848,24 +848,24 @@ body.theme-orange-black {
 
 .settings-ios-group {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--dynamic-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px));
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .settings-toggle {
   -webkit-tap-highlight-color: transparent;
   background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--dynamic-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px));
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .settings-toggle-knob {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(var(--dynamic-blur, 25px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 25px));
 }
 
 .settings-toggle:not(:disabled):hover {
@@ -1054,7 +1054,7 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 
 .f1-input {
   @apply bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--f1-red)] transition-all font-medium;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--dynamic-blur, 10px));
 }
 
 .liquid-bg {
@@ -1150,8 +1150,8 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 
 .liquid-glass-input {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--dynamic-blur, 20px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px));
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
   @apply rounded-xl px-4 py-3 text-white outline-none focus:border-white transition-all;
@@ -1297,9 +1297,9 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 
 /* NEURAL MODAL REFINEMENTS */
 .detail-modal-glass {
-  background: rgba(10, 10, 10, 0.85);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  background: var(--dynamic-glass-bg, rgba(10, 10, 10, 0.65));
+  backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 200%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 200%));
 }
 
 .comment-bubble-optimistic {
@@ -1330,8 +1330,8 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 
 .liquid-glass-card {
   background: #000000;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(var(--dynamic-blur, 30px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 30px));
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
@@ -1388,7 +1388,7 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   from {
     transform: translateY(-50px);
     opacity: 0;
-    filter: blur(10px);
+    filter: blur(var(--dynamic-blur, 10px));
   }
   to {
     transform: translateY(0);
@@ -1509,8 +1509,8 @@ html, body {
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
   background: rgb(var(--c-white) / 0.03);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(var(--dynamic-blur, 40px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px));
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: none;
   border-radius: 24px;
@@ -1521,8 +1521,8 @@ html, body {
 
 .liquid-image-card {
   background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(var(--dynamic-blur, 40px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px));
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: none;
   border-radius: 24px;
@@ -1988,9 +1988,9 @@ input, textarea {
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(50px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(50px) saturate(200%) !important;
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -1998,9 +1998,9 @@ input, textarea {
 }
 
 .liquid-glass-control {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(40px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -2183,9 +2183,9 @@ input, textarea {
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(50px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(50px) saturate(200%) !important;
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -2193,9 +2193,9 @@ input, textarea {
 }
 
 .liquid-glass-control {
-  background: rgba(0, 0, 0, 0.6) !important;
-  backdrop-filter: blur(40px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -2207,7 +2207,7 @@ input, textarea {
 }
 .liquid-glass-control:active {
   transform: scale(0.93) !important;
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
 }
 
 /* Transparent on active touch for better feedback */
