@@ -2329,7 +2329,7 @@ body.glow-enabled .action-btn-like.text-\[\#F91880\] svg {
 }
 
 /* Nav Item Active Glow */
-body.glow-enabled .nav-item-active svg {
+body.glow-enabled .bottom-nav-icon-active svg {
     filter: drop-shadow(0 0 10px #1D9BF0) drop-shadow(0 0 20px #1D9BF0);
     transition: filter 0.3s ease;
 }
