@@ -1110,38 +1110,22 @@ const playCyberSFX = (type = 'click') => {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         
         if (type === 'click' || type === 'menu') {
-            // Premium luxury sound
+            // Clean modern UI pop
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.connect(gain);
             gain.connect(ctx.destination);
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
             
             gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
             
             osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.15);
-            
-            // Add a slight high-frequency "glass" chime
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            osc2.connect(gain2);
-            gain2.connect(ctx.destination);
-            
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(1200, ctx.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.1);
-            gain2.gain.setValueAtTime(0, ctx.currentTime);
-            gain2.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.01);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            
-            osc2.start(ctx.currentTime);
-            osc2.stop(ctx.currentTime + 0.1);
+            osc.stop(ctx.currentTime + 0.05);
         } else if (type === 'success') {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -3914,11 +3898,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         {user?.role === 'Founder' ? (
                                             <>
                                                 {[
-                                                    { id: 'gold', label: 'Gold', color: '#FFD700' },
-                                                    { id: 'live-gold', label: 'Live Gold', color: '#F6E27A', isLive: true },
-                                                    { id: 'crimson', label: 'Crimson', color: '#FF0033' },
-                                                    { id: 'neon-purple', label: 'Purple', color: '#B026FF' },
-                                                    { id: 'holographic', label: 'Holo', isHolo: true }
+                                                    { id: 'gold', label: t('BADGE_GOLD', 'Gold'), color: '#FFD700' },
+                                                    { id: 'live-gold', label: t('BADGE_LIVE_GOLD', 'Live Gold'), color: '#F6E27A', isLive: true },
+                                                    { id: 'crimson', label: t('BADGE_CRIMSON', 'Crimson'), color: '#FF0033' },
+                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Purple'), color: '#B026FF' },
+                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holo'), isHolo: true }
                                                 ].map(b => (
                                                     <button
                                                         key={b.id}
@@ -3942,7 +3926,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         ) : (
                                             <>
                                                 {[
-                                                    { id: 'blue', label: 'Blue', color: '#1D9BF0' },
+                                                    { id: 'blue', label: t('BADGE_BLUE', 'Blue'), color: '#1D9BF0' },
                                                     { id: 'metal-blue', label: t('BADGE_METAL_BLUE', 'Metal Blue'), color: '#0083B0' }
                                                 ].map(b => (
                                                     <button
@@ -8035,7 +8019,7 @@ const App = () => {
     const [publicProfileUsername, setPublicProfileUsername] = useState(searchParams.get('profile') || initialPathProfile);
     const [publicUser, setPublicUser] = useState(null);
     const [publicPosts, setPublicPosts] = useState([]);
-    const [publicUserLoading, setPublicUserLoading] = useState(false);
+    const [publicUserLoading, setPublicUserLoading] = useState(true);
     const [publicPostsLoading, setPublicPostsLoading] = useState(false);
     const [publicPostsReady, setPublicPostsReady] = useState(false);
     const [viewPostId, setViewPostId] = useState(searchParams.get('postId'));
@@ -8063,7 +8047,12 @@ const App = () => {
             }
         }
         
-        setPublicProfileUsername(pProfile);
+        setPublicProfileUsername(prev => {
+            if (prev !== pProfile && pProfile) {
+                setPublicUserLoading(true);
+            }
+            return pProfile;
+        });
         setViewPostId(params.get('postId'));
         setPublicSiteUsername(pSite);
         setPublicSiteIndex(pIndex);
@@ -8935,14 +8924,14 @@ const App = () => {
 
     const groupedPosts = React.useMemo(() => {
         if (feedSortOrder === 'hashtags') {
-            const hashtagPosts = filteredPosts.filter(p => p.text?.includes('#') || p.title?.includes('#'));
+            const hashtagPosts = filteredPosts.filter(p => p.desc?.includes('#') || p.title?.includes('#'));
             const sorted = [...hashtagPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            return [{ key: 'Hashtags', posts: sorted, dateVal: Date.now() }];
+            return [{ key: t('HASHTAGS', 'Hashtags'), posts: sorted, dateVal: Date.now() }];
         }
 
         if (feedSortOrder === 'popular') {
             const sorted = [...filteredPosts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
-            return [{ key: 'Δημοφιλέστερα', posts: sorted, dateVal: Date.now() }];
+            return [{ key: t('POPULAR', 'Δημοφιλή'), posts: sorted, dateVal: Date.now() }];
         }
         
         let sortedFilteredPosts = [...filteredPosts];
