@@ -64,6 +64,32 @@ body.bg-obsidian { --app-bg: #09090b; }
 body.bg-pink-aesthetic { --app-bg: #2a0919; }
 body.bg-razer-green { --app-bg: #041a08; }
 
+body.bg-f1-ferrari {
+  --app-bg: #150000;
+  background-image: radial-gradient(ellipse at top right, rgba(220, 0, 0, 0.15) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(255, 40, 0, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+body.bg-f1-mercedes {
+  --app-bg: #001214;
+  background-image: radial-gradient(ellipse at top left, rgba(0, 210, 190, 0.15) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(200, 204, 206, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+body.bg-f1-mclaren {
+  --app-bg: #1a0800;
+  background-image: radial-gradient(ellipse at top right, rgba(255, 128, 0, 0.18) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(255, 135, 0, 0.1) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+body.bg-f1-redbull {
+  --app-bg: #00061a;
+  background-image: radial-gradient(ellipse at top left, rgba(6, 25, 60, 0.5) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(204, 30, 74, 0.15) 0%, transparent 50%), radial-gradient(ellipse at center, rgba(255, 190, 0, 0.05) 0%, transparent 70%);
+  background-attachment: fixed;
+}
+body.bg-f1-aston {
+  --app-bg: #001408;
+  background-image: radial-gradient(ellipse at top right, rgba(0, 102, 60, 0.25) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(206, 223, 0, 0.1) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
 .profile-shell-bg,
 .profile-page-bg {
   position: relative;

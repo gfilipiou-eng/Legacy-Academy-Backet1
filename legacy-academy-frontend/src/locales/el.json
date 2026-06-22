@@ -561,5 +561,10 @@
   "BADGE_OBSIDIAN_GOLD": "Χρυσός Οψιδιανός",
   "BADGE_PLATINUM": "Πλατίνα",
   "BADGE_DIAMOND": "Διαμάντι",
-  "BADGE_LIQUID_GOLD": "Υγρός Χρυσός"
+  "BADGE_LIQUID_GOLD": "Υγρός Χρυσός",
+  "F1_FERRARI_MODE": "F1 Scuderia",
+  "F1_MERCEDES_MODE": "F1 Silver Arrow",
+  "F1_MCLAREN_MODE": "F1 Papaya",
+  "F1_REDBULL_MODE": "F1 Bull",
+  "F1_ASTON_MODE": "F1 Green"
 }

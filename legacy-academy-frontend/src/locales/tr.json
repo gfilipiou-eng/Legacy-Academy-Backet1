@@ -451,5 +451,10 @@
   "BADGE_OBSIDIAN_GOLD": "Obsidyen Altın",
   "BADGE_PLATINUM": "Platin",
   "BADGE_DIAMOND": "Elmas",
-  "BADGE_LIQUID_GOLD": "Sıvı Altın"
+  "BADGE_LIQUID_GOLD": "Sıvı Altın",
+  "F1_FERRARI_MODE": "F1 Scuderia",
+  "F1_MERCEDES_MODE": "F1 Silver Arrow",
+  "F1_MCLAREN_MODE": "F1 Papaya",
+  "F1_REDBULL_MODE": "F1 Bull",
+  "F1_ASTON_MODE": "F1 Green"
 }

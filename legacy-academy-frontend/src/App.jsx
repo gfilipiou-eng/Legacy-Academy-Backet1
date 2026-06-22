@@ -296,6 +296,11 @@ const BACKGROUND_MODES = [
     { value: 'obsidian', labelKey: 'OBSIDIAN_MODE', color: '#09090b', className: 'bg-obsidian' },
     { value: 'pink-aesthetic', labelKey: 'PINK_AESTHETIC_MODE', color: '#2a0919', className: 'bg-pink-aesthetic' },
     { value: 'razer-green', labelKey: 'RAZER_GREEN_MODE', color: '#041a08', className: 'bg-razer-green' },
+    { value: 'f1-ferrari', labelKey: 'F1_FERRARI_MODE', color: '#150000', className: 'bg-f1-ferrari' },
+    { value: 'f1-mercedes', labelKey: 'F1_MERCEDES_MODE', color: '#001214', className: 'bg-f1-mercedes' },
+    { value: 'f1-mclaren', labelKey: 'F1_MCLAREN_MODE', color: '#1a0800', className: 'bg-f1-mclaren' },
+    { value: 'f1-redbull', labelKey: 'F1_REDBULL_MODE', color: '#00061a', className: 'bg-f1-redbull' },
+    { value: 'f1-aston', labelKey: 'F1_ASTON_MODE', color: '#001408', className: 'bg-f1-aston' },
 ];
 
 const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
@@ -875,8 +880,17 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const rawUrl = user.profilePic || user.fromProfilePic;
     const name = user.username || user.fromUsername;
 
-    // Reset error state if url or cache key changes
-    useEffect(() => { setImgError(false); }, [String(rawUrl || ''), cacheKey]);
+    // Reset error state if url or cache key changes, or when app becomes visible again
+    useEffect(() => { 
+        setImgError(false); 
+        const handleVisibility = () => { if (document.visibilityState === 'visible') setImgError(false); };
+        window.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('online', handleVisibility);
+        return () => {
+            window.removeEventListener('visibilitychange', handleVisibility);
+            window.removeEventListener('online', handleVisibility);
+        };
+    }, [String(rawUrl || ''), cacheKey]);
 
     const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 600 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
@@ -8542,7 +8556,11 @@ const App = () => {
                 nextPic = `${nextPic.split('?')[0]}${sep}t=${Date.now()}`;
             }
             const merged = { ...current, ...newData, profilePic: nextPic || current.profilePic };
-            localStorage.setItem('user', JSON.stringify(merged));
+            const storageMerged = { ...merged };
+            if (storageMerged.profilePic && storageMerged.profilePic.startsWith('blob:')) {
+                storageMerged.profilePic = current.profilePic && !current.profilePic.startsWith('blob:') ? current.profilePic : "";
+            }
+            localStorage.setItem('user', JSON.stringify(storageMerged));
             return merged;
         });
     };
@@ -8601,7 +8619,14 @@ const App = () => {
                 }
             };
             setUser(merged);
-            localStorage.setItem('user', JSON.stringify(merged));
+            const storageMerged = { ...merged };
+            if (storageMerged.profilePic && storageMerged.profilePic.startsWith('blob:')) {
+                storageMerged.profilePic = user?.profilePic && !user.profilePic.startsWith('blob:') ? user.profilePic : "";
+            }
+            if (storageMerged.coverPic && storageMerged.coverPic.startsWith('blob:')) {
+                storageMerged.coverPic = user?.coverPic && !user.coverPic.startsWith('blob:') ? user.coverPic : "";
+            }
+            localStorage.setItem('user', JSON.stringify(storageMerged));
             setImgKey(Date.now());
             try { window.sessionStorage.removeItem(`public-profile-cache-v3:${updatedUser.username}`); } catch (e) {}
         }
@@ -8780,7 +8805,8 @@ const App = () => {
     // Fetch posts on tab change only (login/refresh handled by user init effect)
     useEffect(() => {
         if (user && !isPublicExperience) fetchPosts();
-    }, [activeTab, user, isPublicExperience]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, isPublicExperience]);
 
     // 🔥 GLOBAL REAL-TIME LISTENERS
     useEffect(() => {

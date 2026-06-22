@@ -451,5 +451,10 @@
   "BADGE_OBSIDIAN_GOLD": "Or Obsidienne",
   "BADGE_PLATINUM": "Platine",
   "BADGE_DIAMOND": "Diamant",
-  "BADGE_LIQUID_GOLD": "Or Liquide"
+  "BADGE_LIQUID_GOLD": "Or Liquide",
+  "F1_FERRARI_MODE": "F1 Scuderia",
+  "F1_MERCEDES_MODE": "F1 Silver Arrow",
+  "F1_MCLAREN_MODE": "F1 Papaya",
+  "F1_REDBULL_MODE": "F1 Bull",
+  "F1_ASTON_MODE": "F1 Green"
 }

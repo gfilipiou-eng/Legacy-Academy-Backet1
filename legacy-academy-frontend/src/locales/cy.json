@@ -451,5 +451,10 @@
   "BADGE_OBSIDIAN_GOLD": "Aur Obsidiaidd",
   "BADGE_PLATINUM": "Platinwm",
   "BADGE_DIAMOND": "Diemwnt",
-  "BADGE_LIQUID_GOLD": "Aur Hylifol"
+  "BADGE_LIQUID_GOLD": "Aur Hylifol",
+  "F1_FERRARI_MODE": "F1 Scuderia",
+  "F1_MERCEDES_MODE": "F1 Silver Arrow",
+  "F1_MCLAREN_MODE": "F1 Papaya",
+  "F1_REDBULL_MODE": "F1 Bull",
+  "F1_ASTON_MODE": "F1 Green"
 }
