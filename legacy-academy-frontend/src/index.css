@@ -839,9 +839,9 @@ body.theme-orange-black {
 
 /* Apple-style Liquid Glass for Settings Modal */
 .settings-modal-glass {
-  background: rgba(30, 30, 32, 0.85);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: var(--dynamic-glass-bg, rgba(30, 30, 32, 0.85));
+  backdrop-filter: blur(var(--dynamic-blur, 40px));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px));
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
 }
@@ -1007,9 +1007,9 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
 }
 
 .glass-panel {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(10, 10, 10, 0.45);
-  backdrop-filter: blur(30px) saturate(210%);
-  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), var(--dynamic-glass-bg, rgba(10, 10, 10, 0.45));
+  backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 30px)) saturate(var(--dynamic-saturate, 210%));
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 
     0 12px 40px rgba(0, 0, 0, 0.7), 
@@ -2295,3 +2295,16 @@ button:active,
     display: flex !important;
   }
 }
+
+body.glow-enabled .glass-panel,
+body.glow-enabled .settings-modal-glass,
+body.glow-enabled .profile-shell-bg {
+    box-shadow: 0 0 50px var(--f1-primary, rgba(255,255,255,0.08));
+    transition: box-shadow 0.3s ease;
+}
+
+body.glow-enabled.bg-f1-ferrari .glass-panel, body.glow-enabled.bg-f1-ferrari .settings-modal-glass { box-shadow: 0 0 50px rgba(220, 0, 0, 0.35); }
+body.glow-enabled.bg-f1-mercedes .glass-panel, body.glow-enabled.bg-f1-mercedes .settings-modal-glass { box-shadow: 0 0 50px rgba(0, 210, 190, 0.35); }
+body.glow-enabled.bg-f1-mclaren .glass-panel, body.glow-enabled.bg-f1-mclaren .settings-modal-glass { box-shadow: 0 0 50px rgba(255, 128, 0, 0.35); }
+body.glow-enabled.bg-f1-redbull .glass-panel, body.glow-enabled.bg-f1-redbull .settings-modal-glass { box-shadow: 0 0 50px rgba(204, 30, 74, 0.35); }
+body.glow-enabled.bg-f1-aston .glass-panel, body.glow-enabled.bg-f1-aston .settings-modal-glass { box-shadow: 0 0 50px rgba(0, 102, 60, 0.35); }

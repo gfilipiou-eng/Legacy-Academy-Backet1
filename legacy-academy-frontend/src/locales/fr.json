@@ -456,5 +456,8 @@
   "F1_MERCEDES_MODE": "F1 Silver Arrow",
   "F1_MCLAREN_MODE": "F1 Papaya",
   "F1_REDBULL_MODE": "F1 Bull",
-  "F1_ASTON_MODE": "F1 Green"
+  "F1_ASTON_MODE": "F1 Green",
+  "ENABLE_GLOW": "Activer la lueur",
+  "GLOW_EFFECT_DESC": "Ajoute un effet de lueur aux couleurs",
+  "LIQUID_GLASS_INTENSITY": "Intensité Liquid Glass"
 }

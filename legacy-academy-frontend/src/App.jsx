@@ -3639,6 +3639,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             )
         )
     );
+    const [enableGlow, setEnableGlow] = useState(
+        user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
+    );
+    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
+        Math.min(1, Math.max(0, user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '0.5')))
+    );
 
     useEffect(() => {
         latestUserRef.current = user;
@@ -3968,6 +3974,43 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     })}
                                 </div>
                             </div>
+                            
+                            {/* GLOW EFFECT */}
+                            <SettingRow label={t('ENABLE_GLOW')} desc={t('GLOW_EFFECT_DESC')}>
+                                <Toggle active={enableGlow} onToggle={() => {
+                                    const v = !enableGlow;
+                                    setEnableGlow(v);
+                                    applyGlow(v);
+                                    handleSave('enableGlow', v);
+                                }} saving={saving} color="blue" />
+                            </SettingRow>
+
+                            {/* LIQUID GLASS INTENSITY */}
+                            <div>
+                                <div className="flex items-center justify-between mb-3 px-1">
+                                    <span className="text-[14px] font-medium text-white">{t('LIQUID_GLASS_INTENSITY')}</span>
+                                    <span className="text-[13px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(liquidGlassIntensity * 100)}%</span>
+                                </div>
+                                <div className="px-1">
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.05"
+                                        value={liquidGlassIntensity}
+                                        onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            setLiquidGlassIntensity(val);
+                                            applyLiquidGlass(val);
+                                        }}
+                                        onPointerUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
+                                        onKeyUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
+                                        className="settings-range w-full h-2 accent-[#1D9BF0]"
+                                        style={{ '--progress-width': `${liquidGlassIntensity * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                            
                         </div>
                     </section>
 
@@ -7605,6 +7648,26 @@ const applyDisplayMode = (mode) => {
     localStorage.setItem('displayMode', mode);
 };
 
+const applyGlow = (enabled) => {
+    if (enabled) {
+        document.body.classList.add('glow-enabled');
+    } else {
+        document.body.classList.remove('glow-enabled');
+    }
+    localStorage.setItem('enableGlow', enabled ? 'true' : 'false');
+};
+
+const applyLiquidGlass = (intensity) => {
+    const val = Math.max(0, Math.min(1, Number(intensity) || 0));
+    const blur = 4 + (val * 36); // 4px to 40px
+    const saturate = 100 + (val * 150); // 100% to 250%
+    const bgOpacity = 0.2 + (val * 0.6); // 0.2 to 0.8
+    document.documentElement.style.setProperty('--dynamic-blur', `${blur}px`);
+    document.documentElement.style.setProperty('--dynamic-saturate', `${saturate}%`);
+    document.documentElement.style.setProperty('--dynamic-glass-bg', `rgba(10, 10, 10, ${bgOpacity})`);
+    localStorage.setItem('liquidGlassIntensity', String(val));
+};
+
 const applyZoom = (zoom) => {
     const appContent = document.getElementById('zoomable-content');
     const z = Math.max(0.95, Math.min(1, Number(zoom) || 1));
@@ -8721,6 +8784,10 @@ const App = () => {
         applyDisplayMode('dark');
         const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
+        const savedGlow = userSettings?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true';
+        applyGlow(savedGlow);
+        const savedLiquidGlass = userSettings?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '0.5');
+        applyLiquidGlass(savedLiquidGlass);
 
         // SYNC USER DATA & THEME LIVE ACROSS TABS
         const handleStorageChange = (e) => {
@@ -8729,6 +8796,12 @@ const App = () => {
             }
             if (e.key === 'backgroundMode' && e.newValue) {
                 applyBackground(e.newValue);
+            }
+            if (e.key === 'enableGlow' && e.newValue) {
+                applyGlow(e.newValue === 'true');
+            }
+            if (e.key === 'liquidGlassIntensity' && e.newValue) {
+                applyLiquidGlass(parseFloat(e.newValue));
             }
             if (e.key === 'user' && e.newValue) {
                 console.log("🔄 [SYNC] User data changed in another tab, updating...");
@@ -8764,6 +8837,18 @@ const App = () => {
             applyZoom(user.settings.zoom);
         }
     }, [user?.settings?.zoom]);
+
+    useEffect(() => {
+        if (user?.settings?.enableGlow !== undefined) {
+            applyGlow(user.settings.enableGlow);
+        }
+    }, [user?.settings?.enableGlow]);
+
+    useEffect(() => {
+        if (user?.settings?.liquidGlassIntensity !== undefined) {
+            applyLiquidGlass(user.settings.liquidGlassIntensity);
+        }
+    }, [user?.settings?.liquidGlassIntensity]);
 
     // Use a ref to track the last user ID we initialized for, to avoid loops
     const lastInitializedId = useRef(null);
