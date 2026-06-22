@@ -2448,7 +2448,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
     const hasEnoughEquity = user ? (user.sharesBalance || 0) >= 0.01 : false;
-    const isNSFW = post.is18Plus || author?.settings?.is18PlusProfile;
+    const isNSFW = post.is18Plus;
     const shouldBlur = isNSFW && !isOwner && user?.settings?.blur18Plus !== false && !revealed;
     const canDelete = isOwner || isCurrentUserFounder;
 
