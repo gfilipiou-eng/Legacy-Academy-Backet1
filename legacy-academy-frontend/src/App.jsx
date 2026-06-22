@@ -1679,15 +1679,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
     return (
         <div className="fixed inset-0 z-[2500] bg-black/60 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <div className="w-full h-[90dvh] md:h-[90vh] md:max-w-2xl liquid-glass-panel rounded-t-[32px] md:rounded-[24px] flex flex-col border border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                
-                {/* Grab Handle for Mobile */}
-                <div className="w-full flex justify-center py-3 md:hidden shrink-0 absolute top-0 z-[100] pointer-events-none">
-                    <div className="w-12 h-1.5 bg-white/20 rounded-full"></div>
-                </div>
+            <div className="w-full h-[100dvh] md:h-[90vh] md:max-w-2xl liquid-glass-panel rounded-none md:rounded-[24px] flex flex-col border-none md:border md:border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header (Author & Close) */}
-                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50 mt-4 md:mt-0">
+                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
