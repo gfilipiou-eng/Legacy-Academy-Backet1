@@ -2320,16 +2320,30 @@ body.glow-enabled .action-btn-like.text-\[\#F91880\] svg {
     transition: filter 0.3s ease;
 }
 
+/* Glow for Repost */
+body.glow-enabled .action-btn-repost.text-\[\#00BA7C\] {
+    text-shadow: 0 0 10px #00BA7C, 0 0 20px #00BA7C, 0 0 30px #00BA7C;
+    transition: text-shadow 0.3s ease;
+}
+body.glow-enabled .action-btn-repost.text-\[\#00BA7C\] svg {
+    filter: drop-shadow(0 0 8px #00BA7C) drop-shadow(0 0 16px #00BA7C);
+    transition: filter 0.3s ease;
+}
+
+/* Glow for Dislike */
+body.glow-enabled .action-btn-dislike.text-purple-500 {
+    text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 30px #a855f7;
+    transition: text-shadow 0.3s ease;
+}
+body.glow-enabled .action-btn-dislike.text-purple-500 svg {
+    filter: drop-shadow(0 0 8px #a855f7) drop-shadow(0 0 16px #a855f7);
+    transition: filter 0.3s ease;
+}
+
 @keyframes slide-up-bubble {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
 }
 .animate-slide-up-bubble {
     animation: slide-up-bubble 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Nav Item Active Glow */
-body.glow-enabled .bottom-nav-icon-active svg {
-    filter: drop-shadow(0 0 10px #1D9BF0) drop-shadow(0 0 20px #1D9BF0);
-    transition: filter 0.3s ease;
 }
