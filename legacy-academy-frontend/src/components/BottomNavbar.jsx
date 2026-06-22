@@ -8,35 +8,45 @@ const playCyberSFX = (type = 'click') => {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         
         if (type === 'click' || type === 'menu') {
-            // Premium luxury sound
+            // Cyber liquid glass sound
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
+            const filter = ctx.createBiquadFilter();
             
+            // Watery / Liquid base
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(400, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+            osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, ctx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
             
             gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
             
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.15);
             
-            // Add a slight high-frequency "glass" chime
+            // Glassy cyber ping overlay
             const osc2 = ctx.createOscillator();
             const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(2500, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(3500, ctx.currentTime + 0.03);
+            
+            gain2.gain.setValueAtTime(0, ctx.currentTime);
+            gain2.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+            
             osc2.connect(gain2);
             gain2.connect(ctx.destination);
-            
-            osc2.type = 'triangle';
-            osc2.frequency.setValueAtTime(1200, ctx.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.1);
-            gain2.gain.setValueAtTime(0, ctx.currentTime);
-            gain2.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.01);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
             
             osc2.start(ctx.currentTime);
             osc2.stop(ctx.currentTime + 0.1);
