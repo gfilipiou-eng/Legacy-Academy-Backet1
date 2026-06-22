@@ -8951,6 +8951,12 @@ const App = () => {
             return [{ key: t('HASHTAGS', 'Hashtags'), posts: sorted, dateVal: Date.now() }];
         }
 
+        if (feedSortOrder === 'nsfw18plus') {
+            const nsfwPosts = filteredPosts.filter(p => p.is18Plus);
+            const sorted = [...nsfwPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            return [{ key: t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts'), posts: sorted, dateVal: Date.now() }];
+        }
+
         if (feedSortOrder === 'popular') {
             const sorted = [...filteredPosts].sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0));
             return [{ key: t('POPULAR', 'Δημοφιλή'), posts: sorted, dateVal: Date.now() }];
@@ -10571,20 +10577,21 @@ const App = () => {
                                     {activeTab !== 'search' && (
                                         <div className="flex items-center justify-between w-full px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent relative z-[45]">
                                             
-                                            {/* Mobile Dropdown Button */}
-                                            <div className="sm:hidden relative w-full flex items-center justify-between">
+                                            {/* Dropdown Button */}
+                                            <div className="relative w-full flex items-center justify-between">
                                                 <button 
                                                     onClick={() => setIsFeedSortMenuOpen(!isFeedSortMenuOpen)}
-                                                    className="flex items-center gap-2 pb-2.5 font-black text-[11px] uppercase tracking-wider text-white"
+                                                    className="flex items-center gap-2 pb-2.5 font-black text-[11px] sm:text-[12px] uppercase tracking-wider text-white hover:text-white/80 transition-colors"
                                                 >
-                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5" /> {t('NEWEST', 'Νεότερα')}</>}
-                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
-                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5" /> {t('POPULAR', 'Δημοφιλή')}</>}
-                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5" /> {t('OLDEST', 'Παλαιότερα')}</>}
+                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('NEWEST', 'Νεότερα')}</>}
+                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
+                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">{t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts')}</span></>}
+                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Δημοφιλή')}</>}
+                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('OLDEST', 'Παλαιότερα')}</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
                                                 </button>
 
-                                                {/* Mobile Dropdown Menu */}
+                                                {/* Dropdown Menu */}
                                                 <AnimatePresence>
                                                     {isFeedSortMenuOpen && (
                                                         <motion.div
@@ -10596,56 +10603,29 @@ const App = () => {
                                                             {[
                                                                 { id: 'newest', label: t('NEWEST', 'Νεότερα'), Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
+                                                                { id: 'nsfw18plus', label: t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
                                                                 { id: 'popular', label: t('POPULAR', 'Δημοφιλή'), Icon: Icons.TrendingUp },
                                                                 { id: 'oldest', label: t('OLDEST', 'Παλαιότερα'), Icon: Icons.Clock }
-                                                            ].map(opt => (
-                                                                <button
-                                                                    key={opt.id}
-                                                                    onClick={() => { setFeedSortOrder(opt.id); setIsFeedSortMenuOpen(false); }}
-                                                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all ${feedSortOrder === opt.id ? 'bg-[var(--gold-primary)] text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                                                                >
-                                                                    <opt.Icon className="w-3.5 h-3.5" />
-                                                                    {opt.label}
-                                                                </button>
-                                                            ))}
+                                                            ].map(opt => {
+                                                                const isActive = feedSortOrder === opt.id;
+                                                                const baseActive = opt.activeClass || 'bg-[var(--gold-primary)] text-black';
+                                                                const baseHover = opt.colorClass ? `hover:bg-white/5 ${opt.colorClass}` : 'hover:bg-white/5 hover:text-white';
+                                                                const colorClass = opt.colorClass && !isActive ? opt.colorClass : '';
+                                                                
+                                                                return (
+                                                                    <button
+                                                                        key={opt.id}
+                                                                        onClick={() => { setFeedSortOrder(opt.id); setIsFeedSortMenuOpen(false); }}
+                                                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all ${isActive ? baseActive : `text-gray-400 ${baseHover}`} ${colorClass}`}
+                                                                    >
+                                                                        <opt.Icon className="w-3.5 h-3.5" />
+                                                                        {opt.label}
+                                                                    </button>
+                                                                );
+                                                            })}
                                                         </motion.div>
                                                     )}
                                                 </AnimatePresence>
-                                            </div>
-
-                                            {/* Desktop Tabs */}
-                                            <div className="hidden sm:flex items-center gap-5 pr-4">
-                                                <button 
-                                                    onClick={() => setFeedSortOrder('newest')}
-                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'newest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                                >
-                                                    <Icons.Sparkles className="w-4 h-4" />
-                                                    <span>{t('NEWEST', 'Νεότερα')}</span>
-                                                </button>
-                                                
-                                                <button 
-                                                    onClick={() => setFeedSortOrder('hashtags')}
-                                                    className={`flex items-center gap-1 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'hashtags' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                                >
-                                                    <Icons.Hash className="w-4 h-4" strokeWidth={2.5} />
-                                                    <span>{t('HASHTAGS', 'Hashtags')}</span>
-                                                </button>
-
-                                                <button 
-                                                    onClick={() => setFeedSortOrder('popular')}
-                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'popular' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                                >
-                                                    <Icons.TrendingUp className="w-4 h-4" />
-                                                    <span>{t('POPULAR', 'Δημοφιλή')}</span>
-                                                </button>
-
-                                                <button 
-                                                    onClick={() => setFeedSortOrder('oldest')}
-                                                    className={`flex items-center gap-1.5 pb-2.5 font-black text-[12px] uppercase tracking-wider transition-all relative ${feedSortOrder === 'oldest' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
-                                                >
-                                                    <Icons.Clock className="w-4 h-4" />
-                                                    <span>{t('OLDEST', 'Παλαιότερα')}</span>
-                                                </button>
                                             </div>
                                         </div>
                                     )}
