@@ -1723,82 +1723,108 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                 {/* Scrollable Feed */}
                 <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-transparent overscroll-contain">
-                    <div className="p-4 border-b border-white/5">
-                        <div className="flex flex-col gap-3">
-                            <p className="text-[15px] sm:text-[16px] text-white leading-relaxed break-words whitespace-pre-wrap">
-                                {parseText(post.text, onHashtagClick, (username) => {
-                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                    if (u && onViewProfile) onViewProfile(u);
-                                })}
-                            </p>
-                            {post.is18Plus && !confirmed18Plus && (
-                                <div className="mt-2 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col items-center justify-center text-center gap-3">
-                                    <Icons.AlertCircle className="w-8 h-8 text-red-500" />
-                                    <div>
-                                        <h4 className="text-red-500 font-bold mb-1">18+ Content</h4>
-                                        <p className="text-red-400/80 text-sm">This content is age-restricted.</p>
-                                    </div>
-                                    <button onClick={(e) => { e.stopPropagation(); setConfirmed18Plus(true); }} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full transition-colors text-sm uppercase tracking-wider">
-                                        View Content
-                                    </button>
-                                </div>
+                    {/* Description Section */}
+                    <div className="px-4 py-3 bg-transparent z-10 relative">
+                        <p className="text-[16px] text-white leading-relaxed whitespace-pre-wrap break-words">
+                            {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
+                                onClose();
+                                if (onHashtagClick) onHashtagClick(tag);
+                            }, (username) => {
+                                onClose();
+                                const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                if (u && onViewProfile) onViewProfile(u);
+                            })}
+                            {(translatedText || post.desc) && (translatedText || post.desc).length > 800 && (
+                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[14px] font-bold ml-2 hover:underline">
+                                    {isExpanded ? t('READ_LESS', 'Show less') : t('READ_MORE', 'Show more')}
+                                </button>
                             )}
-                            {post.mediaUrl && (!post.is18Plus || confirmed18Plus) && (
-                                <div className="mt-2 w-full rounded-2xl overflow-hidden border border-white/10 bg-black/40">
-                                    {post.isVideo ? (
-                                        <NeuralVideoPlayer url={resolveMediaUrl(post.mediaUrl)} t={t} post={post} />
-                                    ) : post.isAudio ? (
-                                        <div className="p-4 flex flex-col gap-2 relative z-20">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"><Icons.Music className="w-4 h-4" /></div>
-                                                <span className="text-white font-bold text-sm truncate">{post.mediaName || 'Audio Track'}</span>
-                                            </div>
-                                            <VoiceNotePlayer src={resolveMediaUrl(post.mediaUrl)} t={t} />
-                                        </div>
-                                    ) : (
-                                        <img 
-                                            src={resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false)}
-                                            className="w-full h-auto max-h-[60vh] object-contain cursor-zoom-in"
-                                            alt=""
-                                            loading="lazy"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
-                                            }}
-                                            onError={(e) => { setImgError(true); e.target.style.display = 'none'; }}
-                                        />
-                                    )}
-                                </div>
-                            )}
-                            <div className="flex items-center gap-2 text-gray-500 text-[14px]">
-                                <CyberDate date={post.createdAt} t={t} lang={lang} />
-                                <span>·</span>
-                                <span>{post.views || 0} {t('VIEWS') || 'Views'}</span>
-                            </div>
-                        </div>
-
-                        {/* Actions Row */}
-                        <div className="flex items-center justify-around border-t border-b border-white/5 py-1 mt-4">
+                        </p>
+                        <div className="mt-3">
                             <button
-                                onClick={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
+                                onClick={handleTranslate}
+                                disabled={isTranslating}
+                                className="text-[12px] font-bold text-[#1D9BF0] hover:underline flex items-center gap-1.5 transition-opacity"
+                            >
+                                <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
+                                {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show Original') : t('SEE_TRANSLATION', 'Translate Post'))}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Image/Video Section */}
+                    {postHasMedia(post) && (
+                        <div className="w-full bg-black/40 flex items-center justify-center relative overflow-hidden border-y border-white/10 max-h-[60vh] shrink-0">
+                            {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                <NeuralVideoPlayer
+                                    src={resolveMediaUrl(post.videoUrl || post.image)}
+                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
+                                    className="w-full h-full max-h-[60vh] object-contain"
+                                    forcePause={isWritingComment}
+                                />
+                            ) : (
+                                !imgError ? (
+                                    <img
+                                        src={resolveMediaUrl(post.image || post.thumbnailUrl)}
+                                        className="w-full h-full max-h-[60vh] object-contain cursor-zoom-in"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
+                                        }}
+                                        decoding="async"
+                                        onError={() => setImgError(true)}
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500">
+                                        <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    )}
+
+                    {/* Stats & Date */}
+                    <div className="px-4 py-3 border-b border-white/10 flex items-center text-gray-500 text-[14px]">
+                        <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="px-2 py-1 border-b border-white/10">
+                        <div className="flex items-center justify-around w-full max-w-md">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                            >
+                                <Icons.MessageSquare className="w-5 h-5" />
+                                <span className="text-[13px] font-bold tabular-nums">{post.comments?.length || 0}</span>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
                                 className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
                                 <span className="text-[13px] font-bold tabular-nums">{post.reposts?.length || 0}</span>
                             </button>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onLike(post._id); }}
+                                onClick={(e) => { e.stopPropagation(); onLike?.(post._id); }}
                                 className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-500 hover:bg-[#F91880]/10 hover:text-[#F91880]'}`}
                             >
                                 <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[13px] font-bold tabular-nums">{post.likes?.length || 0}</span>
                             </button>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onDislike(post._id); }}
+                                onClick={(e) => { e.stopPropagation(); onDislike?.(post._id); }}
                                 className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-purple-500' : 'text-gray-500 hover:bg-purple-500/10 hover:text-purple-500'}`}
                             >
                                 <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[13px] font-bold tabular-nums">{post.dislikes?.length || 0}</span>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onShare?.(post._id); }}
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                            >
+                                <Icons.Share2 className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
