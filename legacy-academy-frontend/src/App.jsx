@@ -6829,64 +6829,33 @@ const ProfileModal = ({
                             {/* 18+ WARNING LOCK SCREEN */}
                             {displayUser?.settings?.is18PlusProfile && !isMe && !confirmed18Plus ? (
                                 <div className="p-12 text-center space-y-6 bg-red-950/20 border border-red-500/20 rounded-3xl mt-4 animate-fade-in group mx-2">
-                                    {!hasEnoughEquity ? (
-                                        <>
-                                            <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-red-500/30 text-red-500 relative overflow-hidden">
-                                                <Icons.Lock className="w-10 h-10 text-red-500" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <h3 className="font-black text-red-500 text-xl uppercase tracking-[0.2em]">NSFW PROFILE LOCKED</h3>
-                                                <div className="h-0.5 w-12 bg-red-500 mx-auto opacity-50" />
-                                                <p className="text-gray-300 text-[12px] uppercase tracking-widest leading-relaxed mx-auto max-w-[280px] font-bold">
-                                                    This profile is NSFW. A minimum equity holding of 0.01 LΞC shares (~$8.90 USD) is required to verify age and unlock NSFW profiles.
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-col gap-3 justify-center pt-2">
-                                                <button 
-                                                    onClick={() => onOpenSubscription?.()}
-                                                    className="px-8 py-3 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] hover:opacity-90 text-black rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase shadow-lg shadow-[var(--gold-primary)]/20 transition-all"
-                                                >
-                                                    Purchase LΞC Shares
-                                                </button>
-                                                <button 
-                                                    onClick={onClose} 
-                                                    className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase transition-all"
-                                                >
-                                                    No, go back
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-red-500/30 group-hover:text-red-400 relative overflow-hidden">
-                                                <Icons.AlertCircle className="w-10 h-10 text-red-500 group-hover:text-red-400 relative z-10" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <h3 className="font-black text-red-500 text-xl uppercase tracking-[0.2em]">18+ WARNING</h3>
-                                                <div className="h-0.5 w-12 bg-red-500 mx-auto opacity-50" />
-                                                <p className="text-gray-300 text-[12px] uppercase tracking-widest leading-relaxed mx-auto max-w-[280px] font-bold">
-                                                    This profile contains 18+ (NSFW) content. You must be 18 years of age or older to view this profile.
-                                                </p>
-                                                <p className="text-gray-400 text-[11px] font-medium leading-relaxed mx-auto max-w-[280px]">
-                                                    Are you 18 years or older?
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-                                                <button 
-                                                    onClick={() => setConfirmed18Plus(true)} 
-                                                    className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase shadow-lg shadow-red-950/45 transition-all"
-                                                >
-                                                    Yes, I am 18+
-                                                </button>
-                                                <button 
-                                                    onClick={onClose} 
-                                                    className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase transition-all"
-                                                >
-                                                    No, go back
-                                                </button>
-                                            </div>
-                                        </>
-                                    )}
+                                    <div className="w-20 h-20 mx-auto bg-black/40 rounded-full flex items-center justify-center border border-red-500/30 group-hover:text-red-400 relative overflow-hidden">
+                                        <Icons.AlertCircle className="w-10 h-10 text-red-500 group-hover:text-red-400 relative z-10" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h3 className="font-black text-red-500 text-xl uppercase tracking-[0.2em]">18+ WARNING</h3>
+                                        <div className="h-0.5 w-12 bg-red-500 mx-auto opacity-50" />
+                                        <p className="text-gray-300 text-[12px] uppercase tracking-widest leading-relaxed mx-auto max-w-[280px] font-bold">
+                                            This profile contains 18+ (NSFW) content. You must be 18 years of age or older to view this profile.
+                                        </p>
+                                        <p className="text-gray-400 text-[11px] font-medium leading-relaxed mx-auto max-w-[280px]">
+                                            Are you 18 years or older?
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                                        <button 
+                                            onClick={() => setConfirmed18Plus(true)} 
+                                            className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase shadow-lg shadow-red-950/45 transition-all"
+                                        >
+                                            Yes, I am 18+
+                                        </button>
+                                        <button 
+                                            onClick={onClose} 
+                                            className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-xl text-[10px] font-black tracking-[0.2em] hover:scale-105 active:scale-95 uppercase transition-all"
+                                        >
+                                            No, go back
+                                        </button>
+                                    </div>
                                 </div>
                             ) : displayUser?.isPrivate && !isMe && !isFollowing ? (
                                 <div className="p-12 text-center space-y-6 bg-white/[0.02] border border-white/5 rounded-3xl mt-4 animate-fade-in group mx-2">
@@ -7619,6 +7588,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const urlThemeParam = searchParams.get('theme');
     const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
     const [zoomImage, setZoomImage] = useState(null);
+    const [confirmed18Plus, setConfirmed18Plus] = useState(false);
     const profileScrollRef = useRef(null);
 
     useEffect(() => {
@@ -7693,6 +7663,28 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <button onClick={onClose} className="px-8 py-3 bg-white text-black font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-transform">
                     RETURN TO PORTAL
                 </button>
+            </div>
+        );
+    }
+
+    if (publicUser?.settings?.is18PlusProfile && !confirmed18Plus) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor }}>
+                <div className="w-20 h-20 rounded-[2rem] bg-red-950/20 border border-red-500/20 flex items-center justify-center text-red-500">
+                    <Icons.AlertCircle className="w-10 h-10" />
+                </div>
+                <div>
+                    <h2 className="text-xl font-black text-white uppercase tracking-widest mb-2">18+ WARNING</h2>
+                    <p className="text-xs text-gray-500 max-w-xs leading-relaxed uppercase tracking-wider">This profile contains sensitive (NSFW) content. You must be 18 years or older to proceed.</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                    <button onClick={() => setConfirmed18Plus(true)} className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-transform shadow-lg shadow-red-950/50">
+                        Yes, I am 18+
+                    </button>
+                    <button onClick={onClose} className="px-8 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 font-black rounded-xl text-xs uppercase tracking-widest hover:scale-105 transition-transform">
+                        No, Go Back
+                    </button>
+                </div>
             </div>
         );
     }
