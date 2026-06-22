@@ -2310,8 +2310,7 @@ button:active,
   }
 }
 
-body.glow-enabled .glass-panel,
-body.glow-enabled .profile-shell-bg {
+body.glow-enabled .glass-panel {
     box-shadow: 0 0 50px var(--f1-primary, rgba(255,255,255,0.08));
     transition: box-shadow 0.3s ease;
 }
