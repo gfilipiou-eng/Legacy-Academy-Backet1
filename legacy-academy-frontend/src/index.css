@@ -448,9 +448,11 @@ button:active {
 .profile-link-glass {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96));
-  border: 1px solid rgba(96, 165, 250, 0.16);
-  border-radius: 24px;
+  background: var(--dynamic-glass-bg, linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96)));
+  backdrop-filter: blur(var(--dynamic-blur, 20px)) saturate(var(--dynamic-saturate, 150%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px)) saturate(var(--dynamic-saturate, 150%));
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 28px;
 }
 
 .profile-link-glass::before {
@@ -1508,12 +1510,12 @@ html, body {
   contain: paint;
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
-  background: rgb(var(--c-white) / 0.03);
-  backdrop-filter: blur(var(--dynamic-blur, 40px));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px));
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: none;
-  border-radius: 24px;
+  background: var(--dynamic-glass-bg, rgb(var(--c-white) / 0.03));
+  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-radius: 28px;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -2297,14 +2299,23 @@ button:active,
 }
 
 body.glow-enabled .glass-panel,
-body.glow-enabled .settings-modal-glass,
 body.glow-enabled .profile-shell-bg {
     box-shadow: 0 0 50px var(--f1-primary, rgba(255,255,255,0.08));
     transition: box-shadow 0.3s ease;
 }
 
-body.glow-enabled.bg-f1-ferrari .glass-panel, body.glow-enabled.bg-f1-ferrari .settings-modal-glass { box-shadow: 0 0 50px rgba(220, 0, 0, 0.35); }
-body.glow-enabled.bg-f1-mercedes .glass-panel, body.glow-enabled.bg-f1-mercedes .settings-modal-glass { box-shadow: 0 0 50px rgba(0, 210, 190, 0.35); }
-body.glow-enabled.bg-f1-mclaren .glass-panel, body.glow-enabled.bg-f1-mclaren .settings-modal-glass { box-shadow: 0 0 50px rgba(255, 128, 0, 0.35); }
-body.glow-enabled.bg-f1-redbull .glass-panel, body.glow-enabled.bg-f1-redbull .settings-modal-glass { box-shadow: 0 0 50px rgba(204, 30, 74, 0.35); }
-body.glow-enabled.bg-f1-aston .glass-panel, body.glow-enabled.bg-f1-aston .settings-modal-glass { box-shadow: 0 0 50px rgba(0, 102, 60, 0.35); }
+body.glow-enabled.bg-f1-ferrari .glass-panel { box-shadow: 0 0 50px rgba(220, 0, 0, 0.35); }
+body.glow-enabled.bg-f1-mercedes .glass-panel { box-shadow: 0 0 50px rgba(0, 210, 190, 0.35); }
+body.glow-enabled.bg-f1-mclaren .glass-panel { box-shadow: 0 0 50px rgba(255, 128, 0, 0.35); }
+body.glow-enabled.bg-f1-redbull .glass-panel { box-shadow: 0 0 50px rgba(204, 30, 74, 0.35); }
+body.glow-enabled.bg-f1-aston .glass-panel { box-shadow: 0 0 50px rgba(0, 102, 60, 0.35); }
+
+/* Star Wars Lightsaber Glow for Likes */
+body.glow-enabled .action-btn-like.text-\[\#F91880\] {
+    text-shadow: 0 0 10px #F91880, 0 0 20px #F91880, 0 0 30px #F91880, 0 0 40px #F91880;
+    transition: text-shadow 0.3s ease;
+}
+body.glow-enabled .action-btn-like.text-\[\#F91880\] svg {
+    filter: drop-shadow(0 0 8px #F91880) drop-shadow(0 0 16px #F91880);
+    transition: filter 0.3s ease;
+}
