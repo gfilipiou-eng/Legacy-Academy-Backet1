@@ -1824,7 +1824,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 onClick={(e) => { e.stopPropagation(); onShare?.(post._id); }}
                                 className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
                             >
-                                <Icons.Share2 className="w-5 h-5" />
+                                <Icons.Share className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
