@@ -2598,10 +2598,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const [commentText, setCommentText] = useState('');
     const [showMenu, setShowMenu] = useState(false);
 
-    const handleDoubleTap = (e) => {
-        e.preventDefault();
-        onLike(post._id);
-    };
+
 
     return (
     <div
@@ -2745,7 +2742,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     loading="lazy"
                                                     decoding="async"
                                                     onClick={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)}
-                                                    onDoubleClick={onMediaClick ? () => onMediaClick(post) : handleDoubleTap}
+                                                    onDoubleClick={onMediaClick ? () => onMediaClick(post) : undefined}
                                                     onError={() => {
                                                         setImgError(true);
                                                         // Auto-cleanup broken link (Only for Author/Founder)
