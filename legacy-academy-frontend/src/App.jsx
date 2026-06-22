@@ -8954,7 +8954,7 @@ const App = () => {
         if (feedSortOrder === 'nsfw18plus') {
             const nsfwPosts = filteredPosts.filter(p => p.is18Plus);
             const sorted = [...nsfwPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            return [{ key: t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts'), posts: sorted, dateVal: Date.now() }];
+            return [{ key: t('NSFW_18_PLUS', '18+ NSFW'), posts: sorted, dateVal: Date.now() }];
         }
 
         if (feedSortOrder === 'popular') {
@@ -10585,7 +10585,7 @@ const App = () => {
                                                 >
                                                     {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('NEWEST', 'Νεότερα')}</>}
                                                     {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
-                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">{t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts')}</span></>}
+                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">{t('NSFW_18_PLUS', '18+ NSFW')}</span></>}
                                                     {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Δημοφιλή')}</>}
                                                     {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('OLDEST', 'Παλαιότερα')}</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
@@ -10603,7 +10603,7 @@ const App = () => {
                                                             {[
                                                                 { id: 'newest', label: t('NEWEST', 'Νεότερα'), Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
-                                                                { id: 'nsfw18plus', label: t('NSFW_18_PLUS_POSTS', '18+ NSFW Posts'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
+                                                                { id: 'nsfw18plus', label: t('NSFW_18_PLUS', '18+ NSFW'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
                                                                 { id: 'popular', label: t('POPULAR', 'Δημοφιλή'), Icon: Icons.TrendingUp },
                                                                 { id: 'oldest', label: t('OLDEST', 'Παλαιότερα'), Icon: Icons.Clock }
                                                             ].map(opt => {
