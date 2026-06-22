@@ -1377,7 +1377,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     };
 
     return (
-        <div
+        <motion.div
             layout
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1490,7 +1490,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         <Icons.MoreHorizontal className="w-4 h-4" />
                     </button>
 
-                    {menuOpen && (
+                    {menuOpen && createPortal(
                         <>
                             {/* Backdrop to close the menu on tap/click outside */}
                             <div
@@ -1501,16 +1501,16 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                 }}
                             />
 
-                            {/* Dropdown / Bottom Sheet Menu */}
-                            <div className="fixed bottom-0 left-0 right-0 w-full bg-[#0f1419] border-t border-white/10 rounded-t-3xl py-4 shadow-2xl z-[99999] animate-in slide-in-from-bottom duration-200 pr-10">
+                            {/* Dropdown / Bottom Sheet Menu (Liquid Glass) */}
+                            <div className="fixed bottom-0 left-0 right-0 w-full liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] z-[99999] animate-in slide-in-from-bottom duration-200 pr-10 md:absolute md:bottom-auto md:left-auto md:right-4 md:top-8 md:w-48 md:rounded-2xl md:border md:pr-0">
                                 {/* Grab handle for mobile bottom sheet */}
-                                <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
+                                <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4 md:hidden" />
 
                                 {/* Close X button */}
                                 <button
                                     type="button"
                                     onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }}
-                                    className="absolute top-2 right-4 p-1.5 rounded-full bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/60 transition-colors"
+                                    className="absolute top-2 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 text-white transition-colors md:hidden"
                                     aria-label="Close"
                                 >
                                     <Icons.X className="w-4 h-4" />
@@ -1519,36 +1519,38 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                 {canEdit && (
                                     <button
                                         type="button"
-                                        onClick={() => {
-                                            setMenuOpen(false);
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             setIsEditing(true);
-                                            setEditText(comment.text || '');
+                                            setMenuOpen(false);
                                         }}
-                                        className="w-full px-5 py-3 text-left text-base font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-3 cursor-pointer touch-manipulation"
+                                        className="w-full px-5 py-3 text-left text-base md:text-sm font-bold text-white hover:bg-white/10 active:bg-white/20 transition-colors flex items-center gap-3 cursor-pointer touch-manipulation"
                                     >
-                                        <Icons.Edit className="w-5 h-5 text-white/60" />
-                                        <span>{t('EDIT') || 'Edit'}</span>
+                                        <Icons.Edit className="w-5 h-5 text-white/80" />
+                                        <span>{t('EDIT')}</span>
                                     </button>
                                 )}
                                 {canDelete && (
                                     <button
                                         type="button"
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete(comment._id);
                                             setMenuOpen(false);
-                                            onDelete?.(post._id, comment._id);
                                         }}
-                                        className="w-full px-5 py-3 text-left text-base font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-3 border-t border-white/[0.06] cursor-pointer touch-manipulation"
+                                        className="w-full px-5 py-3 text-left text-base md:text-sm font-bold text-red-400 hover:bg-red-500/20 active:bg-red-500/30 transition-colors flex items-center gap-3 border-t border-white/10 cursor-pointer touch-manipulation"
                                     >
                                         <Icons.Trash className="w-5 h-5" />
-                                        <span>{t('DELETE') || 'Delete'}</span>
+                                        <span>{t('DELETE')}</span>
                                     </button>
                                 )}
                             </div>
-                        </>
+                        </>,
+                        document.body
                     )}
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 });
 
@@ -1676,117 +1678,109 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <div className="w-full h-[100dvh] md:h-[90vh] md:max-w-2xl bg-[#000000] md:bg-[#09090b] md:rounded-[24px] flex flex-col border border-white/10 shrink-0 transform-gpu relative shadow-[0_15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[2500] bg-black/60 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
+            <div className="w-full h-[90dvh] md:h-[90vh] md:max-w-2xl liquid-glass-panel rounded-t-[32px] md:rounded-[24px] flex flex-col border border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                
+                {/* Grab Handle for Mobile */}
+                <div className="w-full flex justify-center py-3 md:hidden shrink-0 absolute top-0 z-[100] pointer-events-none">
+                    <div className="w-12 h-1.5 bg-white/20 rounded-full"></div>
+                </div>
                 
                 {/* Header (Author & Close) */}
-                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/90 backdrop-blur-xl shrink-0 sticky top-0 z-50">
+                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50 mt-4 md:mt-0">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
-                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                            <div className="absolute inset-[2px] rounded-full overflow-hidden">
-                                <ProfileAvatar user={author} />
-                            </div>
+                            <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
+                            {isFounder && (
+                                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
+                                    <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <div className="flex flex-col min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-bold text-white text-[15px] truncate">{author?.username}</span>
-                                {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(author)}</span>}
-                                <VerifiedBadge isFounder={author?.role === 'Founder'} isUser={author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={author} />
+                        <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                            <div className="flex items-center gap-1">
+                                <span className="font-bold text-[15px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
+                                {isFounder && <Icons.CheckCircle className="w-3.5 h-3.5 text-yellow-400 shrink-0" />}
                             </div>
-                            <span className="text-gray-500 text-[13px] truncate">{formatUserHandle(author?.username)}</span>
+                            <span className="text-[13px] text-gray-500">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2">
+                        {isOwner && (
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                                <Icons.Edit className="w-5 h-5" />
+                            </button>
+                        )}
                         <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
-                        <button onClick={onClose} className="p-2 bg-transparent hover:bg-white/10 rounded-full transition-colors hidden md:block">
-                            <Icons.X className="w-5 h-5 text-white" />
+                        <button onClick={onClose} className="hidden md:flex p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                            <Icons.X className="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
                 {/* Scrollable Feed */}
-                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-black overscroll-contain">
-                    
-                    {/* Description Section */}
-                    <div className="px-4 py-3 bg-transparent z-10 relative">
-                        <p className="text-[16px] text-white leading-relaxed whitespace-pre-wrap break-words">
-                            {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
-                                onClose();
-                                if (onHashtagClick) onHashtagClick(tag);
-                            }, (username) => {
-                                onClose();
-                                const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
-                                if (u && onViewProfile) onViewProfile(u);
-                            })}
-                            {(translatedText || post.desc) && (translatedText || post.desc).length > 800 && (
-                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[14px] font-bold ml-2 hover:underline">
-                                    {isExpanded ? t('READ_LESS', 'Show less') : t('READ_MORE', 'Show more')}
-                                </button>
-                            )}
-                        </p>
-                        <div className="mt-3">
-                            <button
-                                onClick={handleTranslate}
-                                disabled={isTranslating}
-                                className="text-[12px] font-bold text-[#1D9BF0] hover:underline flex items-center gap-1.5 transition-opacity"
-                            >
-                                <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show Original') : t('SEE_TRANSLATION', 'Translate Post'))}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Image/Video Section */}
-                    {postHasMedia(post) && (
-                        <div className="w-full bg-black/40 flex items-center justify-center relative overflow-hidden border-y border-white/10 max-h-[60vh] shrink-0">
-                            {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                <NeuralVideoPlayer
-                                    src={resolveMediaUrl(post.videoUrl || post.image)}
-                                    poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                    className="w-full h-full max-h-[60vh] object-contain"
-                                    forcePause={isWritingComment}
-                                />
-                            ) : (
-                                !imgError ? (
-                                    <img
-                                        src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                        className="w-full h-full max-h-[60vh] object-contain cursor-zoom-in"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
-                                        }}
-                                        decoding="async"
-                                        onError={() => setImgError(true)}
-                                    />
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500">
-                                        <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
-                                        <span className="text-xs font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-transparent overscroll-contain">
+                    <div className="p-4 border-b border-white/5">
+                        <div className="flex flex-col gap-3">
+                            <p className="text-[15px] sm:text-[16px] text-white leading-relaxed break-words whitespace-pre-wrap">
+                                {parseText(post.text, onHashtagClick, (username) => {
+                                    const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
+                                    if (u && onViewProfile) onViewProfile(u);
+                                })}
+                            </p>
+                            {post.is18Plus && !confirmed18Plus && (
+                                <div className="mt-2 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col items-center justify-center text-center gap-3">
+                                    <Icons.AlertCircle className="w-8 h-8 text-red-500" />
+                                    <div>
+                                        <h4 className="text-red-500 font-bold mb-1">18+ Content</h4>
+                                        <p className="text-red-400/80 text-sm">This content is age-restricted.</p>
                                     </div>
-                                )
+                                    <button onClick={(e) => { e.stopPropagation(); setConfirmed18Plus(true); }} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-full transition-colors text-sm uppercase tracking-wider">
+                                        View Content
+                                    </button>
+                                </div>
                             )}
+                            {post.mediaUrl && (!post.is18Plus || confirmed18Plus) && (
+                                <div className="mt-2 w-full rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+                                    {post.isVideo ? (
+                                        <NeuralVideoPlayer url={resolveMediaUrl(post.mediaUrl)} t={t} post={post} />
+                                    ) : post.isAudio ? (
+                                        <div className="p-4 flex flex-col gap-2 relative z-20">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"><Icons.Music className="w-4 h-4" /></div>
+                                                <span className="text-white font-bold text-sm truncate">{post.mediaName || 'Audio Track'}</span>
+                                            </div>
+                                            <VoiceNotePlayer src={resolveMediaUrl(post.mediaUrl)} t={t} />
+                                        </div>
+                                    ) : (
+                                        <img 
+                                            src={resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false)}
+                                            className="w-full h-auto max-h-[60vh] object-contain cursor-zoom-in"
+                                            alt=""
+                                            loading="lazy"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
+                                            }}
+                                            onError={(e) => { setImgError(true); e.target.style.display = 'none'; }}
+                                        />
+                                    )}
+                                </div>
+                            )}
+                            <div className="flex items-center gap-2 text-gray-500 text-[14px]">
+                                <CyberDate date={post.createdAt} t={t} lang={lang} />
+                                <span>·</span>
+                                <span>{post.views || 0} {t('VIEWS') || 'Views'}</span>
+                            </div>
                         </div>
-                    )}
 
-                    {/* Stats & Date */}
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center text-gray-500 text-[14px]">
-                        <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
-                    </div>
-
-                    {/* Action Bar */}
-                    <div className="px-2 py-1 border-b border-white/10">
-                        <div className="flex items-center justify-around w-full max-w-md">
+                        {/* Actions Row */}
+                        <div className="flex items-center justify-around border-t border-b border-white/5 py-1 mt-4">
                             <button
-                                onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
-                            >
-                                <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[13px] font-bold tabular-nums">{post.comments?.length || 0}</span>
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
+                                onClick={(e) => { e.stopPropagation(); onRepost && onRepost(post._id); }}
                                 className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
@@ -1811,10 +1805,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                     {/* Comments Section (Liquid Glass) */}
                     <div className="p-2 md:p-4">
-                        <div className="w-full rounded-[24px] liquid-glass-panel border border-white/20 p-2 overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+                        <div className="w-full rounded-[24px] bg-black/20 border border-white/10 p-2 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.2)]">
                             {!post.comments?.length ? (
                                 <div className="text-center py-10">
-                                    <p className="text-gray-400 text-[15px] font-bold">No replies yet</p>
+                                    <p className="text-white/50 text-[15px] font-bold">No replies yet</p>
                                 </div>
                             ) : (
                                 (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
@@ -2599,13 +2593,17 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full`}
+      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full cursor-pointer hover:bg-white/[0.02]`}
       style={{ overflow: 'visible' }}
+      onClick={(e) => {
+          if (!isReadOnly && onOpenDetail) {
+              onOpenDetail(post);
+          }
+      }}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
             <div className="hidden" />
-
 
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
@@ -2633,7 +2631,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={() => onViewProfile(author)}>
+                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
@@ -2645,7 +2643,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
-                                        <span className={nameClass} onClick={() => onViewProfile(author)}>{author?.username}</span>
+                                        <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
                                             <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -2669,7 +2667,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {post.desc && (
                                 <div className="space-y-2">
                                     {shouldBlur ? (
-                                        <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={handleRevealClick}>
+                                        <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={(e) => { e.stopPropagation(); handleRevealClick(e); }}>
                                             <Icons.Lock className="w-4 h-4 text-red-500 shrink-0" />
                                             <div className="text-left">
                                                 <span className="text-xs font-black text-red-500 uppercase tracking-widest block">{t('NSFW_CONTENT_LOCKED')}</span>
@@ -2678,7 +2676,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         </div>
                                     ) : (
                                         <>
-                                            <p className={bodyTextClass} onClick={(e) => { e.stopPropagation(); }}>
+                                            <p className={bodyTextClass}>
                                                 {parseText(translatedText || post.desc, (tag) => !isReadOnly && onHashtagClick?.(tag), (username) => {
                                                     if (isReadOnly) return;
                                                     const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
@@ -2688,7 +2686,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             {!isReadOnly && (
                                                 <div className="flex flex-wrap items-center gap-4 mt-1 pb-1">
                                                     <button
-                                                        onClick={handleTranslate}
+                                                        onClick={(e) => { e.stopPropagation(); handleTranslate(e); }}
                                                         disabled={isTranslating}
                                                         className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
                                                     >
@@ -2696,7 +2694,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                         {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
                                                     </button>
                                                     {localStorage.getItem('neuralNarrator') === 'true' && (
-                                                        <NeuralNarratorButton text={translatedText || post.desc} />
+                                                        <div onClick={(e) => e.stopPropagation()}>
+                                                            <NeuralNarratorButton text={translatedText || post.desc} />
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}
@@ -9467,28 +9467,24 @@ const App = () => {
 
     useEffect(() => {
         if (publicProfileUsername || viewPostId || publicSiteUsername) return;
+        const mainContainer = document.querySelector('main.app-main-scroll');
+        
         if (isAnyModalOpen) {
-            const scrollY = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
+            if (mainContainer) {
+                mainContainer.style.overflow = 'hidden';
+            }
         } else {
-            const scrollY = document.body.style.top;
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
             document.body.style.overflow = '';
-            if (scrollY) window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            if (mainContainer) {
+                mainContainer.style.overflow = 'auto'; // Reset to default
+            }
         }
         return () => {
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
             document.body.style.overflow = '';
+            if (mainContainer) {
+                mainContainer.style.overflow = 'auto';
+            }
         };
     }, [isAnyModalOpen, publicProfileUsername, viewPostId]);
 
@@ -10941,7 +10937,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
                                                                         </div>
                                                                     ))}
                                                                 </>
