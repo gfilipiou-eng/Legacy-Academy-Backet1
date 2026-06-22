@@ -456,5 +456,11 @@
   "BADGE_CRIMSON": "Karminrot",
   "BADGE_PURPLE": "Lila",
   "BADGE_HOLO": "Holo",
-  "BADGE_BLUE": "Blau"
+  "BADGE_BLUE": "Blau",
+  "BADGE_ROYAL_GOLD": "Königliches Gold",
+  "BADGE_DYNAMIC_GOLD": "Dynamisches Gold",
+  "BADGE_OBSIDIAN_GOLD": "Obsidian Gold",
+  "BADGE_PLATINUM": "Platin",
+  "BADGE_DIAMOND": "Diamant",
+  "BADGE_LIQUID_GOLD": "Flüssiges Gold"
 }

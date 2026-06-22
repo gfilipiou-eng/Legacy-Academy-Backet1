@@ -1023,40 +1023,83 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (customColor === 'crimson') { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'crimson3DGrad'; }
         else if (customColor === 'neon-purple') { baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'purple3DGrad'; }
         else if (customColor === 'blue') { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'blue3DGrad'; }
-        else if (customColor === 'metal-blue') { baseColor = '#00B4DB'; darkColor = '#0083B0'; gradId = 'metalBlueGrad'; isMetallic = true; }
         else if (customColor === 'holographic') isHolo = true;
-        else if (customColor === 'live-gold' && resolvedRole === 'Founder') {
+        else if (['metal-blue', 'platinum', 'obsidian-gold', 'diamond', 'liquid-gold', 'live-gold'].includes(customColor)) {
             isMetallic = true;
         }
     }
 
     if (isMetallic) {
-        const isBlue = user?.settings?.badgeColor === 'metal-blue';
-        const stops = isBlue
-            ? [
+        let stops;
+        let gradIdName;
+        const customColor = user?.settings?.badgeColor;
+        
+        if (customColor === 'metal-blue') {
+            gradIdName = "metalBlueGrad";
+            stops = [
                 { offset: "0%", color: "#0F2027" },
                 { offset: "25%", color: "#203A43" },
                 { offset: "50%", color: "#00E1FF" },
                 { offset: "75%", color: "#2C5364" },
                 { offset: "100%", color: "#0F2027" }
-              ]
-            : [
+            ];
+        } else if (customColor === 'platinum') {
+            gradIdName = "platinumGrad";
+            stops = [
+                { offset: "0%", color: "#8A9193" },
+                { offset: "25%", color: "#CECECE" },
+                { offset: "50%", color: "#F5F5F5" },
+                { offset: "75%", color: "#CECECE" },
+                { offset: "100%", color: "#8A9193" }
+            ];
+        } else if (customColor === 'obsidian-gold') {
+            gradIdName = "obsidianGoldGrad";
+            stops = [
+                { offset: "0%", color: "#0A0A0A" },
+                { offset: "25%", color: "#222222" },
+                { offset: "50%", color: "#FFD700" },
+                { offset: "75%", color: "#222222" },
+                { offset: "100%", color: "#0A0A0A" }
+            ];
+        } else if (customColor === 'diamond') {
+            gradIdName = "diamondGrad";
+            stops = [
+                { offset: "0%", color: "#45B8AC" },
+                { offset: "25%", color: "#E0FFFF" },
+                { offset: "50%", color: "#FFFFFF" },
+                { offset: "75%", color: "#E0FFFF" },
+                { offset: "100%", color: "#45B8AC" }
+            ];
+        } else if (customColor === 'liquid-gold') {
+            gradIdName = "liquidGoldGrad";
+            stops = [
+                { offset: "0%", color: "#B8860B" },
+                { offset: "25%", color: "#FFD700" },
+                { offset: "50%", color: "#FFA500" },
+                { offset: "75%", color: "#FFDF00" },
+                { offset: "100%", color: "#B8860B" }
+            ];
+        } else {
+            // Default live-gold / metal-gold
+            gradIdName = "metalGoldGrad";
+            stops = [
                 { offset: "0%", color: "#bf953f" },
                 { offset: "25%", color: "#fcf6ba" },
                 { offset: "50%", color: "#b38728" },
                 { offset: "75%", color: "#fbf5b7" },
                 { offset: "100%", color: "#aa771c" }
-              ];
+            ];
+        }
               
         return (
             <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
-                    <linearGradient id={isBlue ? "metalBlueGrad" : "metalGoldGrad"} x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id={gradIdName} x1="0%" y1="0%" x2="100%" y2="100%">
                         {stops.map((stop, i) => <stop key={i} offset={stop.offset} stopColor={stop.color} />)}
                     </linearGradient>
                 </defs>
                 <circle cx="11" cy="11" r="6" fill="#ffffff" />
-                <path fill={isBlue ? "url(#metalBlueGrad)" : "url(#metalGoldGrad)"} d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
+                <path fill={`url(#${gradIdName})`} d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" />
             </svg>
         );
     }
@@ -3928,11 +3971,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         {user?.role === 'Founder' ? (
                                             <>
                                                 {[
-                                                    { id: 'gold', label: t('BADGE_GOLD', 'Gold'), color: '#FFD700' },
-                                                    { id: 'live-gold', label: t('BADGE_LIVE_GOLD', 'Live Gold'), color: '#F6E27A', isLive: true },
+                                                    { id: 'gold', label: t('BADGE_ROYAL_GOLD', 'Royal Gold'), color: '#FFD700' },
+                                                    { id: 'live-gold', label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold'), color: '#F6E27A', isLive: true },
+                                                    { id: 'obsidian-gold', label: t('BADGE_OBSIDIAN_GOLD', 'Obsidian Gold'), color: '#111', ring: '#FFD700' },
+                                                    { id: 'platinum', label: t('BADGE_PLATINUM', 'Platinum'), color: '#E5E4E2' },
+                                                    { id: 'diamond', label: t('BADGE_DIAMOND', 'Diamond'), color: '#00FFFF' },
+                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid Gold'), color: '#FFDF00' },
                                                     { id: 'crimson', label: t('BADGE_CRIMSON', 'Crimson'), color: '#FF0033' },
-                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Purple'), color: '#B026FF' },
-                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holo'), isHolo: true }
+                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon Purple'), color: '#B026FF' },
+                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holographic'), isHolo: true }
                                                 ].map(b => (
                                                     <button
                                                         key={b.id}
@@ -3946,6 +3993,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0 animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }} />
                                                         ) : b.isHolo ? (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
+                                                        ) : b.ring ? (
+                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0 border-[1.5px]" style={{ backgroundColor: b.color, borderColor: b.ring }} />
                                                         ) : (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
                                                         )}

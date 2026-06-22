@@ -547,5 +547,11 @@
   "BADGE_CRIMSON": "Crimson",
   "BADGE_PURPLE": "Purple",
   "BADGE_HOLO": "Holo",
-  "BADGE_BLUE": "Blue"
+  "BADGE_BLUE": "Blue",
+  "BADGE_ROYAL_GOLD": "Royal Gold",
+  "BADGE_DYNAMIC_GOLD": "Dynamic Gold",
+  "BADGE_OBSIDIAN_GOLD": "Obsidian Gold",
+  "BADGE_PLATINUM": "Platinum",
+  "BADGE_DIAMOND": "Diamond",
+  "BADGE_LIQUID_GOLD": "Liquid Gold"
 }

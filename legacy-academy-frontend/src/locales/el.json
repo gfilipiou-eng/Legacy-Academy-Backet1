@@ -555,5 +555,11 @@
   "BADGE_CRIMSON": "Κόκκινο",
   "BADGE_PURPLE": "Μωβ",
   "BADGE_HOLO": "Ολογραφικό",
-  "BADGE_BLUE": "Μπλε"
+  "BADGE_BLUE": "Μπλε",
+  "BADGE_ROYAL_GOLD": "Βασιλικός Χρυσός",
+  "BADGE_DYNAMIC_GOLD": "Δυναμικός Χρυσός",
+  "BADGE_OBSIDIAN_GOLD": "Χρυσός Οψιδιανός",
+  "BADGE_PLATINUM": "Πλατίνα",
+  "BADGE_DIAMOND": "Διαμάντι",
+  "BADGE_LIQUID_GOLD": "Υγρός Χρυσός"
 }

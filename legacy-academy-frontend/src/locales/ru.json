@@ -445,5 +445,11 @@
   "BADGE_CRIMSON": "Малиновый",
   "BADGE_PURPLE": "Пурпурный",
   "BADGE_HOLO": "Голографический",
-  "BADGE_BLUE": "Синий"
+  "BADGE_BLUE": "Синий",
+  "BADGE_ROYAL_GOLD": "Королевское золото",
+  "BADGE_DYNAMIC_GOLD": "Динамичное золото",
+  "BADGE_OBSIDIAN_GOLD": "Обсидиановое золото",
+  "BADGE_PLATINUM": "Платина",
+  "BADGE_DIAMOND": "Бриллиант",
+  "BADGE_LIQUID_GOLD": "Жидкое золото"
 }

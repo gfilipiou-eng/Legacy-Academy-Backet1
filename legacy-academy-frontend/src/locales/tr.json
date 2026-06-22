@@ -445,5 +445,11 @@
   "BADGE_CRIMSON": "Kızıl",
   "BADGE_PURPLE": "Mor",
   "BADGE_HOLO": "Holo",
-  "BADGE_BLUE": "Mavi"
+  "BADGE_BLUE": "Mavi",
+  "BADGE_ROYAL_GOLD": "Kraliyet Altını",
+  "BADGE_DYNAMIC_GOLD": "Dinamik Altın",
+  "BADGE_OBSIDIAN_GOLD": "Obsidyen Altın",
+  "BADGE_PLATINUM": "Platin",
+  "BADGE_DIAMOND": "Elmas",
+  "BADGE_LIQUID_GOLD": "Sıvı Altın"
 }

@@ -445,5 +445,11 @@
   "BADGE_CRIMSON": "Rhuddgoch",
   "BADGE_PURPLE": "Porffor",
   "BADGE_HOLO": "Holo",
-  "BADGE_BLUE": "Glas"
+  "BADGE_BLUE": "Glas",
+  "BADGE_ROYAL_GOLD": "Aur Brenhinol",
+  "BADGE_DYNAMIC_GOLD": "Aur Deinamig",
+  "BADGE_OBSIDIAN_GOLD": "Aur Obsidiaidd",
+  "BADGE_PLATINUM": "Platinwm",
+  "BADGE_DIAMOND": "Diemwnt",
+  "BADGE_LIQUID_GOLD": "Aur Hylifol"
 }
