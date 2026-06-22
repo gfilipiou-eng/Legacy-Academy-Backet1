@@ -3755,8 +3755,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 await i18n.changeLanguage(normalizedLanguage);
             }
             await handleSave('language', normalizedLanguage);
+            playCyberSFX('success');
+            setTimeout(onClose, 250);
 
-} catch (error) {
+        } catch (error) {
             console.error("Language change error:", error);
             setPendingLanguage(activeLanguage);
         }
