@@ -1681,12 +1681,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 <Icons.X className="w-6 h-6 text-white/50 group-hover:text-white transition-all duration-300" />
             </button>
             <div className="w-full max-w-6xl h-[92dvh] md:h-[90vh] bg-[#09090b]/95 backdrop-blur-3xl rounded-t-[32px] md:rounded-[32px] flex flex-col md:flex-row border-t border-white/20 md:border md:border-white/10 shrink-0 transform-gpu relative shadow-[0_-15px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_50px_rgba(0,0,0,0.8)] animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                {/* Drag Handle Mobile */}
-                <div className="w-full flex justify-center py-3 md:hidden shrink-0 absolute top-0 z-[100]" onClick={onClose}>
-                    <div className="w-12 h-1.5 bg-white/30 rounded-full"></div>
+                {/* Close Button Mobile */}
+                <div className="w-full flex justify-end p-4 md:hidden shrink-0 absolute top-0 right-0 z-[100]" onClick={onClose}>
+                    <button className="p-2.5 bg-black/50 hover:bg-white/10 active:scale-95 rounded-full backdrop-blur-md transition-all border border-white/10">
+                        <Icons.X className="w-5 h-5 text-white/80" />
+                    </button>
                 </div>
                 {/* Image Section */}
-                <div className="w-full md:flex-1 bg-black/40 flex items-center justify-center relative shadow-inner overflow-hidden h-[45vh] md:h-full shrink-0 pt-6 md:pt-0">
+                <div className="w-full md:flex-1 bg-black/40 flex items-center justify-center relative shadow-inner overflow-hidden h-[45vh] md:h-full shrink-0 pt-0">
                     {postHasMedia(post) ? (
                         (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                             <NeuralVideoPlayer
