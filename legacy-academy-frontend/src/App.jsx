@@ -1382,33 +1382,37 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className={`x-comment relative group ${menuOpen ? 'z-50' : 'z-10'}`}
+            className={`flex gap-3 px-4 py-3 border-b border-white/[0.08] hover:bg-white/[0.02] transition-colors relative group ${menuOpen ? 'z-50' : 'z-10'}`}
         >
-            {/* Avatar */}
-            <div
-                className="x-comment__avatar"
-                onClick={() => onViewProfile && onViewProfile(commentAuthor)}
-            >
-                <ProfileAvatar user={commentAuthor} />
+            {/* Avatar & Thread Line */}
+            <div className="flex flex-col items-center shrink-0">
+                <div
+                    className="w-10 h-10 rounded-full overflow-hidden cursor-pointer bg-white/5 transition-opacity hover:opacity-80 shrink-0"
+                    onClick={() => onViewProfile && onViewProfile(commentAuthor)}
+                >
+                    <ProfileAvatar user={commentAuthor} />
+                </div>
+                {/* Subtle vertical thread line for Bluesky feel */}
+                <div className="w-[2px] h-full bg-white/[0.05] mt-2 rounded-full hidden sm:block"></div>
             </div>
 
             {/* Body */}
-            <div className="x-comment__body pr-7">
+            <div className="flex-1 min-w-0 pr-6">
 
                 {/* Header: Name + Badge + Handle + Dot + Time */}
-                <div className="x-comment__header flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
+                <div className="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 mb-1">
                     <span
-                        className="x-comment__username font-bold text-[14px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
+                        className="font-bold text-[15px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
                         onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
-                    <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
+                    <span className="text-[14px] text-gray-500 truncate shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
-                    <span className="x-comment__dot">·</span>
-                    <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
+                    <span className="text-[14px] text-gray-500 shrink-0">·</span>
+                    <span className="text-[14px] text-gray-500 shrink-0 hover:underline cursor-pointer"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
                 </div>
 
                 {/* Edit mode */}
@@ -1439,7 +1443,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     <>
                         {/* Comment text */}
                         {comment.text && (
-                            <p className="x-comment__text">
+                            <p className="text-[15px] leading-relaxed text-[#e7e9ea] whitespace-pre-wrap break-words mt-0.5 mb-2">
                                 {parseText(translatedText || comment.text, null, (username) => {
                                     const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                     if (u && onViewProfile) onViewProfile(u);
@@ -1459,7 +1463,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
 
                         {/* Translate link */}
                         {comment.text && comment.text.length > 3 && (
-                            <div className="mt-1 flex items-center">
+                            <div className="mt-1 mb-2 flex items-center">
                                 <button
                                     type="button"
                                     onClick={handleTranslate}
@@ -1471,13 +1475,26 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                 </button>
                             </div>
                         )}
+
+                        {/* Bluesky-style Interaction Bar */}
+                        <div className="flex items-center justify-between text-gray-500 max-w-[200px] mt-1">
+                            <button className="flex items-center gap-1.5 hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/10 p-1.5 rounded-full transition-colors cursor-pointer group">
+                                <Icons.MessageSquare className="w-4 h-4" />
+                            </button>
+                            <button className="flex items-center gap-1.5 hover:text-[#00BA7C] hover:bg-[#00BA7C]/10 p-1.5 rounded-full transition-colors cursor-pointer group">
+                                <Icons.RefreshCcw className="w-4 h-4" />
+                            </button>
+                            <button className="flex items-center gap-1.5 hover:text-[#F91880] hover:bg-[#F91880]/10 p-1.5 rounded-full transition-colors cursor-pointer group">
+                                <Icons.Heart className="w-4 h-4" />
+                            </button>
+                        </div>
                     </>
                 )}
             </div>
 
             {/* Options Dropdown / Bottom Sheet (Edit/Delete) */}
             {(canEdit || canDelete) && !isEditing && (
-                <div className="absolute right-0 top-2.5 z-30">
+                <div className="absolute right-2 top-2 z-30">
                     <button
                         type="button"
                         onClick={(e) => {
@@ -1678,8 +1695,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm block md:flex md:items-center md:justify-center p-0 md:p-4 overflow-hidden" onClick={onClose}>
-            <div className="absolute inset-0 md:relative md:inset-auto w-full h-full md:h-[90vh] md:max-w-2xl bg-[var(--app-bg)] rounded-none md:rounded-[24px] border-none md:border md:border-white/10 flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[2500] flex justify-center bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
+            <div className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden relative md:shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header (Author & Close) */}
                 <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
@@ -1824,9 +1841,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                    {/* Comments Section (Liquid Glass) */}
-                    <div className="p-2 md:p-4">
-                        <div className="w-full rounded-[24px] bg-black/20 border border-white/10 p-2 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.2)]">
+                    {/* Comments Section (Bluesky Style) */}
+                    <div className="w-full border-t border-white/10 mt-2">
+                        <div className="w-full">
                             {!post.comments?.length ? (
                                 <div className="text-center py-10">
                                     <p className="text-white/50 text-[15px] font-bold">No replies yet</p>
