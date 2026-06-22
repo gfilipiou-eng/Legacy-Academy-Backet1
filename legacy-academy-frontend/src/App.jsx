@@ -1678,8 +1678,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] bg-[var(--app-bg)] md:bg-black/60 md:backdrop-blur-md flex items-center justify-center p-0 md:p-4 overflow-hidden duration-300" onClick={onClose}>
-            <div className="w-full h-full md:h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:liquid-glass-panel rounded-none md:rounded-[24px] flex flex-col border-none md:border md:border-white/10 shrink-0 transform-gpu relative shadow-none md:shadow-[0_-15px_50px_rgba(0,0,0,0.8)] animate-in slide-in-from-right md:animate-slide-up-bubble overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[2500] bg-[var(--app-bg)] md:bg-black/60 md:backdrop-blur-md block md:flex md:items-center md:justify-center p-0 md:p-4 overflow-hidden" onClick={onClose}>
+            <div className="absolute inset-0 md:relative md:inset-auto w-full h-full md:h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:liquid-glass-panel rounded-none md:rounded-[24px] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header (Author & Close) */}
                 <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
