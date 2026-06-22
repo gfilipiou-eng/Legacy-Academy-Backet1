@@ -399,7 +399,7 @@
   "STREAK": "Серия",
   "MISSIONS_COMPLETED": "Миссии",
   "YOU": "Ты",
-  "BADGE_METAL_BLUE": "Металлический Синий",
+  "BADGE_METAL_BLUE": "Синий Металлик",
   "MISSION_GYM_CORE": "Стальной Пресс",
   "MISSION_GYM_CORE_DESC": "Сделайте 100 скручиваний или простойте в планке 5 минут.",
   "MISSION_GYM_ENDURANCE": "Тест на Выносливость",
@@ -439,5 +439,11 @@
   "PRIVACY_FOOTER": "Ваши данные обрабатываются в строгом соответствии с GDPR.",
   "NEWEST": "Новые",
   "HASHTAGS": "Хэштеги",
-  "OLDEST": "Старые"
+  "OLDEST": "Старые",
+  "BADGE_GOLD": "Золотой",
+  "BADGE_LIVE_GOLD": "Живое Золото",
+  "BADGE_CRIMSON": "Малиновый",
+  "BADGE_PURPLE": "Пурпурный",
+  "BADGE_HOLO": "Голографический",
+  "BADGE_BLUE": "Синий"
 }

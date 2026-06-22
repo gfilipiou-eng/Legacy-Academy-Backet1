@@ -439,5 +439,11 @@
   "PRIVACY_FOOTER": "Verileriniz GDPR ile tam uyumlu olarak işlenir.",
   "NEWEST": "En Yeni",
   "HASHTAGS": "Etiketler",
-  "OLDEST": "En Eski"
+  "OLDEST": "En Eski",
+  "BADGE_GOLD": "Altın",
+  "BADGE_LIVE_GOLD": "Canlı Altın",
+  "BADGE_CRIMSON": "Kızıl",
+  "BADGE_PURPLE": "Mor",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Mavi"
 }

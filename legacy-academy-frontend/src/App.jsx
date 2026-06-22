@@ -2448,19 +2448,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isFounder = author?.role === 'Founder';
     const isOwner = isSameId(author?._id || author, user?._id);
     const hasEnoughEquity = user ? (user.sharesBalance || 0) >= 0.01 : false;
-    const shouldBlur = post.is18Plus && (user?.settings?.blur18Plus !== false || !hasEnoughEquity) && !revealed;
+    const isNSFW = post.is18Plus || author?.settings?.is18PlusProfile;
+    const shouldBlur = isNSFW && !isOwner && user?.settings?.blur18Plus !== false && !revealed;
     const canDelete = isOwner || isCurrentUserFounder;
 
     const handleRevealClick = (e) => {
         e.stopPropagation();
-        if (!hasEnoughEquity) {
-            alert("LΞC EQUITY REQUIRED: To unlock this 18+ content, you must hold a minimum of 0.01 LΞC shares (~$8.90 USD). Please open the Empire Capital dashboard to deposit capital.");
-            if (onOpenSubscription) onOpenSubscription();
-            return;
-        }
-        if (window.confirm("WARNING: This content is intended for audiences 18 years and older. Do you wish to proceed?")) {
-            setRevealed(true);
-        }
+        setRevealed(true);
     };
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';

@@ -450,5 +450,11 @@
   "PRIVACY_FOOTER": "Strenge Einhaltung der DSGVO-Richtlinien. Wenden Sie sich bei Fragen an unseren Datenschutzbeauftragten.",
   "NEWEST": "Neueste",
   "HASHTAGS": "Hashtags",
-  "OLDEST": "Älteste"
+  "OLDEST": "Älteste",
+  "BADGE_GOLD": "Gold",
+  "BADGE_LIVE_GOLD": "Live-Gold",
+  "BADGE_CRIMSON": "Karminrot",
+  "BADGE_PURPLE": "Lila",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Blau"
 }

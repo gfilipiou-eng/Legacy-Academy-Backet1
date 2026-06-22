@@ -439,5 +439,11 @@
   "PRIVACY_FOOTER": "Sus datos se manejan en estricto cumplimiento del RGPD.",
   "NEWEST": "Más recientes",
   "HASHTAGS": "Hashtags",
-  "OLDEST": "Más antiguos"
+  "OLDEST": "Más antiguos",
+  "BADGE_GOLD": "Oro",
+  "BADGE_LIVE_GOLD": "Oro Vivo",
+  "BADGE_CRIMSON": "Carmesí",
+  "BADGE_PURPLE": "Púrpura",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Azul"
 }

@@ -541,5 +541,11 @@
   "PRIVACY_FOOTER": "Your data is handled in strict compliance with GDPR and international data protection regulations. Contact privacy@legacyacademy.com for requests.",
   "NEWEST": "Newest",
   "HASHTAGS": "Hashtags",
-  "OLDEST": "Oldest"
+  "OLDEST": "Oldest",
+  "BADGE_GOLD": "Gold",
+  "BADGE_LIVE_GOLD": "Live Gold",
+  "BADGE_CRIMSON": "Crimson",
+  "BADGE_PURPLE": "Purple",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Blue"
 }

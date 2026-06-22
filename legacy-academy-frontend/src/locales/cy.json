@@ -399,7 +399,7 @@
   "CYBER_SFX_DESC": "Syntheseiddio effeithiau sain seiberneitig amser-real ar weithrediad",
   "NEURAL_NARRATOR": "Adroddwr Niwral",
   "NEURAL_NARRATOR_DESC": "Galluogi botwm darllenydd Testun-i-Leferydd wrth ymyl botwm cyfieithu",
-  "BADGE_METAL_BLUE": "Metal Blue",
+  "BADGE_METAL_BLUE": "Glas Metelaidd",
   "MISSION_GYM_CORE": "Core Crusher",
   "MISSION_GYM_CORE_DESC": "Complete 100 sit-ups or 5 minutes of planking.",
   "MISSION_GYM_ENDURANCE": "Endurance Run",
@@ -439,5 +439,11 @@
   "PRIVACY_FOOTER": "Τα δεδομένα σου προστατεύονται σύμφωνα με το GDPR.",
   "NEWEST": "Newydd",
   "HASHTAGS": "Hashtagau",
-  "OLDEST": "Hynaf"
+  "OLDEST": "Hynaf",
+  "BADGE_GOLD": "Aur",
+  "BADGE_LIVE_GOLD": "Aur Fyw",
+  "BADGE_CRIMSON": "Rhuddgoch",
+  "BADGE_PURPLE": "Porffor",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Glas"
 }

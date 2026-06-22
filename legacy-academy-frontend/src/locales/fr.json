@@ -439,5 +439,11 @@
   "PRIVACY_FOOTER": "Conforme au RGPD. Contactez-nous pour toute demande concernant la confidentialité.",
   "NEWEST": "Récents",
   "HASHTAGS": "Hashtags",
-  "OLDEST": "Anciens"
+  "OLDEST": "Anciens",
+  "BADGE_GOLD": "Or",
+  "BADGE_LIVE_GOLD": "Or Vivant",
+  "BADGE_CRIMSON": "Cramoisi",
+  "BADGE_PURPLE": "Violet",
+  "BADGE_HOLO": "Holo",
+  "BADGE_BLUE": "Bleu"
 }
