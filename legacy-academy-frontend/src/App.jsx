@@ -1695,8 +1695,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] flex justify-center bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
-            <div className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden relative md:shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[2500] flex justify-center items-stretch md:items-center p-0 md:p-8 overflow-hidden animate-fade-in">
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm cursor-pointer" onClick={onClose} />
+            
+            {/* Modal Body */}
+            <div className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden md:shadow-2xl">
                 
                 {/* Header (Author & Close) */}
                 <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
@@ -1734,7 +1738,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Scrollable Feed */}
-                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-transparent overscroll-contain">
+                <div 
+                    className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-transparent overscroll-contain touch-pan-y"
+                    style={{ WebkitOverflowScrolling: 'touch' }}
+                >
                     {/* Description Section */}
                     <div className="px-4 py-3 bg-transparent z-10 relative">
                         <p className="text-[16px] text-white leading-relaxed whitespace-pre-wrap break-words">
