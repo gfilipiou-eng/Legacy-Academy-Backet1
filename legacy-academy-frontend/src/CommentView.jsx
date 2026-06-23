@@ -217,9 +217,11 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
     }
   };
 
-
-  const handleEdit = async (commentId, newText) => {
-    <div className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[#0a0a0a] text-white touch-manipulation" style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+  const shell = (content) => createPortal(
+    <div
+      className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[#0a0a0a] text-white touch-manipulation"
+      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)' }}
+    >
       {content}
       <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
     </div>,
