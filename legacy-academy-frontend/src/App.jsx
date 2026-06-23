@@ -1695,19 +1695,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] flex justify-center items-stretch md:items-center p-0 md:p-8 overflow-hidden animate-fade-in">
-            {/* Backdrop */}
-            <div 
-                className="absolute inset-0 bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm cursor-pointer z-0" 
-                onClick={() => {
-                    if (window.innerWidth >= 768) {
-                        onClose();
-                    }
-                }} 
-            />
-            
-            {/* Modal Body */}
-            <div className="relative w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden md:shadow-2xl z-10">
+        <div className="fixed inset-0 z-[2500] flex justify-center bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
+            <div className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden relative md:shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header (Author & Close) */}
                 <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
@@ -2642,13 +2631,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full cursor-pointer hover:bg-white/[0.02]`}
+      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full`}
       style={{ overflow: 'visible' }}
-      onClick={(e) => {
-          if (!isReadOnly && onOpenDetail) {
-              onOpenDetail(post);
-          }
-      }}
     >
             {/* Subtle Ancient Greek Meander Top Border */}
             <div className="hidden" />
