@@ -23,6 +23,7 @@ import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
+import ImageLightbox from './components/ImageLightbox';
 import socket from './socket';
 import BottomNavbar from './components/BottomNavbar';
 import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
@@ -1567,9 +1568,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [isExpanded, setIsExpanded] = useState(false);
     const [imgError, setImgError] = useState(false); // Handle detail image error
     const [zoomImage, setZoomImage] = useState(null);
+    const openedAtRef = useRef(0);
 
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
+
+    useEffect(() => {
+        if (post?._id) openedAtRef.current = Date.now();
+    }, [post?._id]);
+
+    const handleBackdropClose = (e) => {
+        if (e.target !== e.currentTarget) return;
+        if (Date.now() - openedAtRef.current < 400) return;
+        onClose();
+    };
 
     const handleTranslate = async (e) => {
         if (e) e.stopPropagation();
@@ -1674,12 +1686,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
+    return createPortal(
+        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[32px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl transition-transform" 
+                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
+                style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
                 
                 {/* Visual Drag Handle (Mobile Only) */}
@@ -1770,13 +1783,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 !imgError ? (
                                     <img
                                         src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                        className="w-full h-auto max-h-[65vh] object-contain cursor-zoom-in"
+                                        className="w-full h-auto max-h-[65vh] object-contain cursor-zoom-in touch-manipulation"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
                                         }}
                                         decoding="async"
                                         onError={() => setImgError(true)}
+                                        alt="Post media"
                                     />
                                 ) : (
                                     <div className="flex flex-col items-center justify-center p-10 text-gray-500 bg-white/5 w-full aspect-video">
@@ -1849,7 +1863,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Sleek Bottom Input Area */}
-                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[#0a0a0a]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-white/5 pb-safe">
+                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[#0a0a0a]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-white/5" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
                     <div className="flex items-end gap-3 w-full max-w-4xl mx-auto">
                         <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-white/10 mb-0.5 hidden sm:block">
                             <ProfileAvatar user={user} />
@@ -1908,27 +1922,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
             </div>
 
-            {zoomImage && (
-                <div 
-                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out touch-pan-x touch-pan-y touch-pinch-zoom"
-                    onClick={(e) => { e.stopPropagation(); setZoomImage(null); }}
-                    style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
-                >
-                    <button 
-                        onClick={(e) => { e.stopPropagation(); setZoomImage(null); }} 
-                        className="absolute top-4 right-4 p-3 bg-black/50 hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-[10000] group"
-                    >
-                        <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-all duration-300" />
-                    </button>
-                    <img 
-                        src={zoomImage} 
-                        className="max-w-full max-h-[100dvh] object-contain shadow-2xl rounded-sm cursor-default"
-                        alt="Zoomed"
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                </div>
-            )}
-        </div>
+            <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
+        </div>,
+        document.body
     );
 };
 
@@ -9491,27 +9487,51 @@ const App = () => {
     const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || !!selectedPost;
 
     useEffect(() => {
-        if (publicProfileUsername || viewPostId || publicSiteUsername) return;
+        if (publicProfileUsername || viewPostId || publicSiteUsername) return undefined;
         const mainContainer = document.querySelector('main.app-main-scroll');
-        
+        const scrollY = window.scrollY;
+
         if (isAnyModalOpen) {
             document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
             if (mainContainer) {
                 mainContainer.style.overflow = 'hidden';
             }
         } else {
+            const top = document.body.style.top;
             document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.width = '';
+            if (top) {
+                window.scrollTo(0, parseInt(top || '0', 10) * -1);
+            }
             if (mainContainer) {
-                mainContainer.style.overflow = 'auto'; // Reset to default
+                mainContainer.style.overflow = 'auto';
             }
         }
         return () => {
+            const top = document.body.style.top;
             document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.width = '';
+            if (top) {
+                window.scrollTo(0, parseInt(top || '0', 10) * -1);
+            }
             if (mainContainer) {
                 mainContainer.style.overflow = 'auto';
             }
         };
-    }, [isAnyModalOpen, publicProfileUsername, viewPostId]);
+    }, [isAnyModalOpen, publicProfileUsername, viewPostId, publicSiteUsername]);
 
     const isValidObjectId = (id) => typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id);
     const sanitizeObjectId = (id) => {

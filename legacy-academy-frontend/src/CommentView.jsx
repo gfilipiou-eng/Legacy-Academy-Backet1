@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
+import { createPortal } from 'react-dom';
 import axios from './api';
 import socket from './socket';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from './components/Icons';
 import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
-import { playSound } from './utils/sounds';
-import EnhancedButton from './components/EnhancedButton';
+import ImageLightbox from './components/ImageLightbox';
 
 const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
@@ -118,34 +117,36 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
   const { t, lang } = useTranslation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [commentText, setCommentText] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState('');
   const [activeMenuId, setActiveMenuId] = useState(null);
+  const [zoomImage, setZoomImage] = useState(null);
   const scrollRef = useRef(null);
 
   const fetchPost = async () => {
     try {
+      setErrorMsg(null);
       const res = await axios.get(`/posts/find/${postId}`);
       setPost(res.data);
-      setLoading(false);
     } catch (e) {
       console.error("Failed to fetch post for comments", e);
+      setErrorMsg(t('POST_NOT_FOUND') || 'Post unavailable');
+    } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!postId) return;
+    if (!postId) return undefined;
+    setLoading(true);
+    setPost(null);
     fetchPost();
 
-    // Join room for this post
     socket.emit('join', postId);
 
     const handleCommentAdded = (data) => {
       if (String(data.postId) === String(postId)) {
-        console.log("📡 [SOCKET] New comment added");
         setPost(prev => prev ? { ...prev, comments: data.comments } : null);
       }
     };
@@ -166,37 +167,41 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
     socket.on('comment.updated', handleCommentUpdated);
     socket.on('comment.deleted', handleCommentDeleted);
 
+    const scrollY = window.scrollY;
+    const prevOverflow = document.body.style.overflow;
+    const prevPosition = document.body.style.position;
+    const prevTop = document.body.style.top;
+    const prevLeft = document.body.style.left;
+    const prevRight = document.body.style.right;
+    const prevWidth = document.body.style.width;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+
     return () => {
       socket.off('comment.added', handleCommentAdded);
       socket.off('comment.updated', handleCommentUpdated);
       socket.off('comment.deleted', handleCommentDeleted);
+
+      document.body.style.overflow = prevOverflow;
+      document.body.style.position = prevPosition;
+      document.body.style.top = prevTop;
+      document.body.style.left = prevLeft;
+      document.body.style.right = prevRight;
+      document.body.style.width = prevWidth;
+      window.scrollTo(0, scrollY);
     };
   }, [postId]);
-
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    if (!commentText.trim() || isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      await axios.post(`/posts/${postId}/comment`, { text: commentText });
-      setCommentText('');
-      fetchPost();
-      
-      setTimeout(() => scrollRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    } catch (e) {
-      alert(t('ERROR_POSTING') || "Connectivity failure.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleEdit = async (commentId, newText) => {
     try {
       await axios.put(`/posts/${postId}/comment/${commentId}`, { text: newText });
       setEditingCommentId(null);
       fetchPost();
-      
     } catch (e) {
       alert(t('ERROR_UPDATING') || "Update failed.");
     }
@@ -207,146 +212,110 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
     try {
       await axios.delete(`/posts/${postId}/comment/${commentId}`);
       fetchPost();
-      
     } catch (e) {
       alert(t('ERROR_DELETING') || "Deletion failed.");
     }
   };
 
+
+  const handleEdit = async (commentId, newText) => {
+    <div className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[#0a0a0a] text-white touch-manipulation" style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {content}
+      <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
+    </div>,
+    document.body
+  );
+
   if (loading) {
-    return (
-      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center space-y-4 z-[9999]">
-        <div className="w-12 h-12 text-[var(--gold-primary)] animate-spin" style={{ animationDuration: '4s' }}>
-            <Icons.Loader />
-        </div>
-        <div className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.3em] animate-pulse">Establishing Secure Link...</div>
+    return shell(
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
+        <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)] animate-spin" />
+        <div className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.3em]">{t('LOADING', 'Loading...')}</div>
       </div>
     );
   }
 
   if (!post) {
-    return (
-      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center p-6 text-center z-[9999]">
+    return shell(
+      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
         <Icons.XCircle className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-white font-black text-xl mb-2 italic">INTEL NODE DISCONNECTED</h2>
-        <p className="text-gray-500 text-sm">{t('POST_NOT_FOUND') || "The target intelligence packet has been purged or is inaccessible."}</p>
-        <button onClick={onClose} className="mt-8 gold-btn">{t('BACK_TO_HQ') || "BACK TO HQ"}</button>
+        <h2 className="text-white font-black text-xl mb-2">{t('POST_NOT_FOUND', 'Post not found')}</h2>
+        <p className="text-gray-500 text-sm max-w-xs">{errorMsg || t('POST_NOT_FOUND')}</p>
+        <button type="button" onClick={onClose} className="mt-8 px-6 py-3 rounded-full bg-white text-black font-black uppercase tracking-widest text-sm touch-manipulation">{t('BACK_TO_HQ', 'Back')}</button>
       </div>
     );
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-3xl z-[9999] flex flex-col font-sans overflow-hidden">
-      {/* Header */}
-      <header className="shrink-0 h-16 border-b border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-between px-4 z-50">
-        <div className="flex items-center gap-3">
-          <button onClick={onClose} className="p-2 rounded-full transition-all ">
+  return shell(
+    <>
+      <header className="shrink-0 border-b border-white/10 bg-[#0a0a0a]/95 flex items-center justify-between px-3 sm:px-4 py-3 z-50">
+        <div className="flex items-center gap-2 min-w-0">
+          <button type="button" onClick={onClose} className="p-2.5 rounded-full hover:bg-white/10 active:scale-95 transition-all touch-manipulation" aria-label="Back">
             <Icons.Back className="w-6 h-6 text-white" />
           </button>
-          <div>
-            <h1 className="text-sm font-black italic text-white uppercase tracking-widest">{t('COMMENTS')}</h1>
-            <p className="text-[10px] text-gray-500 font-bold tracking-tighter line-clamp-1">{post.authorName || 'Target Intel'}</p>
+          <div className="min-w-0">
+            <h1 className="text-sm font-black text-white uppercase tracking-widest">{t('COMMENTS')}</h1>
+            <p className="text-[10px] text-gray-500 font-bold tracking-tighter truncate">{post.authorName || post.author?.username || 'Post'}</p>
           </div>
         </div>
-        <div className="w-10" />
+        <div className="text-[11px] font-bold text-gray-400 tabular-nums shrink-0">{post.comments?.length || 0}</div>
       </header>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32 custom-scrollbar">
-        {/* Post Summary (Bluesky Style) */}
-        <div className="px-4 py-2 border-b border-white/10 mb-2">
-          <div className="flex gap-3 sm:gap-4">
-            <div className="shrink-0 flex flex-col items-center">
-              <div 
-                className="w-12 h-12 relative group cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
-              >
-                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                <div className="absolute inset-[3px] rounded-full overflow-hidden">
-                    <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 flex flex-col min-w-0">
-              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-2 min-w-0">
-                <span 
-                  className="font-bold text-white text-[13px] sm:text-[15px] break-words leading-tight cursor-pointer hover:underline"
+      <div
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar"
+        style={{ WebkitOverflowScrolling: 'touch', paddingBottom: 'max(6rem, calc(env(safe-area-inset-bottom, 0px) + 5rem))' }}
+      >
+        <div className="px-4 py-4 border-b border-white/10">
+          <div className="flex gap-3">
+            <button
+              type="button"
+              className="w-11 h-11 shrink-0 rounded-full overflow-hidden border border-white/15"
+              onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
+            >
+              <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+            </button>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mb-2">
+                <button
+                  type="button"
+                  className="font-bold text-white text-[15px] text-left hover:underline touch-manipulation"
                   onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
                 >
                   {post.author?.username || post.authorName}
-                </span>
-                {post.author?.role === 'Founder' ? (
-                  <>
-                    <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 text-[#FFD700] fill-current" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 -ml-0.5" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </>
-                ) : (
-                  <svg viewBox="0 0 22 22" className="w-4 h-4 shrink-0 text-[#1D9BF0] fill-current" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                )}
+                </button>
                 <span className="text-gray-500 text-[13px] break-all">{`@${String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
-                <span className="text-gray-600 text-[13px] shrink-0">·</span>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
-                </div>
+                <span className="text-gray-600 text-[13px]">·</span>
+                <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
               </div>
-              <p className="text-white text-[15px] sm:text-[16px] font-medium leading-relaxed whitespace-pre-wrap break-words pr-2">
+              <p className="text-white text-[15px] font-medium leading-relaxed whitespace-pre-wrap break-words">
                 {post.desc || post.text || 'No description provided.'}
               </p>
               {(post.image || post.videoUrl) && (
-                <div className="mt-3 rounded-2xl overflow-hidden border border-white/10">
+                <div className="mt-3 rounded-2xl overflow-hidden border border-white/10 bg-[#050505]">
                   {post.videoUrl ? (
-                    <video src={resolveMediaUrl(post.videoUrl)} controls className="w-full h-auto bg-black" />
+                    <video src={resolveMediaUrl(post.videoUrl)} controls playsInline className="w-full h-auto bg-black" />
                   ) : (
-                    <img src={resolveMediaUrl(post.image)} alt="Post media" className="w-full h-auto max-h-[400px] object-contain bg-[#050505]" />
+                    <button
+                      type="button"
+                      className="w-full touch-manipulation"
+                      onClick={() => setZoomImage(resolveMediaUrl(post.image))}
+                    >
+                      <img src={resolveMediaUrl(post.image)} alt="Post media" className="w-full h-auto max-h-[50vh] object-contain bg-[#050505]" />
+                    </button>
                   )}
                 </div>
               )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2">
-                <EnhancedButton className="flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/10 border border-transparent hover:border-white/10 text-gray-400 hover:text-white">
-                  <Icons.MessageSquare className="w-5 h-5" />
-                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                </EnhancedButton>
-                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-green-500/10 border border-transparent hover:border-green-500/20 ${post.reposts?.includes(currentUser?._id) ? 'text-green-500 bg-green-500/10 border-green-500/20' : 'text-gray-400 hover:text-green-400'}`} onClick={async () => {
-                  try {
-                    await axios.put(`/posts/${post._id}/repost`);
-                    fetchPost();
-                  } catch (e) { }
-                }}>
-                  <Icons.RefreshCcw className={`w-5 h-5 transition-transform ${post.reposts?.includes(currentUser?._id) ? 'scale-110' : ''}`} />
-                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                </EnhancedButton>
-                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 ${post.likes?.includes(currentUser?._id) ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-gray-400 hover:text-red-400'}`} onClick={async () => {
-                  try {
-                    await axios.put(`/posts/${post._id}/like`);
-                    fetchPost();
-                  } catch (e) { }
-                }}>
-                  <Icons.Heart className={`w-5 h-5 transition-transform ${post.likes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
-                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
-                </EnhancedButton>
-                <EnhancedButton className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 ${post.dislikes?.includes(currentUser?._id) ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' : 'text-gray-400 hover:text-blue-400'}`} onClick={async () => {
-                  try {
-                    await axios.put(`/posts/${post._id}/dislike`);
-                    fetchPost();
-                  } catch (e) { }
-                }}>
-                  <Icons.ThumbsDown className={`w-5 h-5 transition-transform ${post.dislikes?.includes(currentUser?._id) ? 'fill-current scale-110' : ''}`} />
-                  <span className="text-[12px] font-bold tabular-nums tracking-wide">{post.dislikes?.length || 0}</span>
-                </EnhancedButton>
-              </div>
             </div>
           </div>
         </div>
 
-        <div className="divide-y divide-white/[0.06] border-t border-white/[0.06] mt-4">
-          <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] py-3 pl-1">{post.comments?.length || 0} {t('INTEL_LOGS') || "INTEL LOGS"}</h3>
+        <div className="px-2 sm:px-4">
+          <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] py-3 px-2">{post.comments?.length || 0} {t('INTEL_LOGS') || 'Comments'}</h3>
 
           {post.comments?.length === 0 ? (
-            <div className="py-20 text-center">
-              <Icons.MessageCircle className="w-12 h-12 text-gray-800 mx-auto mb-4 opacity-50" />
-              <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">{t('ZERO_COMMENTS') || "No intel reported yet."}</p>
+            <div className="py-16 text-center px-4">
+              <Icons.MessageCircle className="w-12 h-12 text-gray-700 mx-auto mb-4" />
+              <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">{t('ZERO_COMMENTS') || 'No comments yet'}</p>
             </div>
           ) : (
             post.comments.map((c, i) => {
@@ -356,118 +325,78 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               const canDelete = isCommentAuthor || isFounder;
 
               return (
-                <div key={i} className={`py-3.5 flex gap-3 group relative animate-slide-down ${activeMenuId === c._id ? 'z-50' : 'z-10'}`}>
-                  {/* Avatar */}
-                  <div className="shrink-0 w-9 h-9 rounded-full overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>
+                <div key={c._id || i} className={`comment-view__item py-4 px-2 flex gap-3 relative border-b border-white/[0.06] ${activeMenuId === c._id ? 'z-20' : ''}`}>
+                  <button
+                    type="button"
+                    className="shrink-0 w-10 h-10 rounded-full overflow-hidden touch-manipulation"
+                    onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
+                  >
                     <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
-                  </div>
+                  </button>
 
-                  {/* Body */}
-                  <div className="flex-1 min-w-0 pr-2">
-                    {/* Header: Name + Badge + Handle + Dot + Time */}
-                    <div className="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 mb-1">
-                      <span className="font-bold text-[15px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[200px] shrink-0" onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}>{c.authorName}</span>
-                      {(c.user?.role === 'Founder') ? (
-                        <div className="flex items-center shrink-0">
-                          <svg viewBox="0 0 22 22" className="w-4 h-4 text-[#FFD700] fill-current" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                          <svg viewBox="0 0 24 24" className="w-4 h-4 -ml-[3px]" fill="none"><polygon points="12,1 15,4 19,4 20,8 24,12 20,16 19,20 15,20 12,23 9,20 5,20 4,16 0,12 4,8 5,4 9,4" fill="#F5C32C" /><path d="M16 8.5L10.5 14L8 11.5" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </div>
-                      ) : (
-                        <svg viewBox="0 0 22 22" className="w-4 h-4 text-[#1D9BF0] fill-current shrink-0" style={{ overflow: 'visible' }}><path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z" /></svg>
-                      )}
-                      <span className="text-[15px] text-gray-500 truncate max-w-[100px] sm:max-w-none shrink">
+                  <div className="flex-1 min-w-0 pr-8">
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-1">
+                      <button
+                        type="button"
+                        className="font-bold text-[15px] text-white truncate max-w-[45vw] touch-manipulation"
+                        onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
+                      >
+                        {c.authorName}
+                      </button>
+                      <span className="text-[13px] text-gray-500 truncate max-w-[30vw]">
                         {`@${String(c.author?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
                       </span>
-                      <span className="text-gray-500 mx-0.5">·</span>
-                      <span className="text-gray-500 hover:underline cursor-pointer">{formatDate(c.createdAt, t, lang)}</span>
+                      <span className="text-gray-500">·</span>
+                      <span className="text-[12px] text-gray-500">{formatDate(c.createdAt, t, lang)}</span>
                     </div>
 
                     {editingCommentId === c._id ? (
                       <div className="mt-2 flex flex-col gap-2">
                         <textarea
-                          id={`edit-comment-${c._id}`}
-                          name="edit-comment"
-                          aria-label="Edit comment"
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
-                          className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2.5 text-[15px] text-white outline-none mb-2 focus:border-white/35 min-h-[72px] resize-none leading-relaxed"
+                          className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-[16px] text-white outline-none focus:border-white/35 min-h-[88px] resize-none leading-relaxed"
                           autoFocus
                         />
                         <div className="flex gap-2 justify-end">
-                          <button onClick={() => setEditingCommentId(null)} className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all cursor-pointer">{t('CANCEL') || "CANCEL"}</button>
-                          <button onClick={() => handleEdit(c._id, editText)} className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all cursor-pointer">{t('SAVE') || "SAVE"}</button>
+                          <button type="button" onClick={() => setEditingCommentId(null)} className="px-4 py-2 rounded-full border border-white/15 text-[12px] font-bold text-white/70 touch-manipulation">{t('CANCEL') || 'Cancel'}</button>
+                          <button type="button" onClick={() => handleEdit(c._id, editText)} className="px-4 py-2 rounded-full bg-white text-[12px] font-bold text-black touch-manipulation">{t('SAVE') || 'Save'}</button>
                         </div>
                       </div>
                     ) : (
                       <>
-                        {c.text && <p className="text-[15px] leading-snug text-white/90 whitespace-pre-wrap break-words m-0 mb-3">{c.text}</p>}
+                        {c.text && <p className="text-[15px] leading-relaxed text-white/90 whitespace-pre-wrap break-words mb-2">{c.text}</p>}
                         {c.audioUrl && (
-                          <div className="flex flex-col gap-1 mt-1 mb-2 w-full">
-                            <div className="flex items-center gap-1 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('VOICE_NOTE')}
-                            </div>
+                          <div className="mb-2 w-full max-w-sm">
                             <VoiceNotePlayer src={resolveMediaUrl(c.audioUrl)} t={t} />
                           </div>
                         )}
-                        
-                        {/* Twitter/X Style Action Buttons */}
-                        <div className="flex items-center justify-between mt-1 max-w-[425px] text-gray-500">
-                          <div className="flex items-center gap-2 hover:text-blue-400 cursor-pointer transition-colors group/btn">
-                            <div className="p-2 -ml-2 rounded-full group-hover/btn:bg-blue-400/10">
-                              <Icons.MessageCircle className="w-[18px] h-[18px]" />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 hover:text-green-400 cursor-pointer transition-colors group/btn">
-                            <div className="p-2 rounded-full group-hover/btn:bg-green-400/10">
-                              <Icons.RefreshCcw className="w-[18px] h-[18px]" />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 hover:text-red-400 cursor-pointer transition-colors group/btn">
-                            <div className="p-2 rounded-full group-hover/btn:bg-red-400/10">
-                              <Icons.Heart className="w-[18px] h-[18px]" />
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 hover:text-blue-400 cursor-pointer transition-colors group/btn">
-                            <div className="p-2 rounded-full group-hover/btn:bg-blue-400/10">
-                              <Icons.Share className="w-[18px] h-[18px]" />
-                            </div>
-                          </div>
-                        </div>
                       </>
                     )}
                   </div>
 
-                  {/* Options Dropdown / Bottom Sheet (Edit/Delete) */}
                   {(canEdit || canDelete) && editingCommentId !== c._id && (
-                    <div className="absolute right-0 top-3 z-30">
+                    <div className="absolute right-1 top-3">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveMenuId(activeMenuId === c._id ? null : c._id);
                         }}
-                        className="p-1.5 rounded-full text-white/30 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation"
+                        className="p-2 rounded-full text-white/40 hover:text-white hover:bg-white/10 touch-manipulation"
                         aria-label="Comment actions"
                       >
-                        <Icons.MoreHorizontal className="w-4 h-4" />
+                        <Icons.MoreHorizontal className="w-5 h-5" />
                       </button>
 
-                      {activeMenuId === c._id && (
+                      {activeMenuId === c._id && createPortal(
                         <>
-                          {/* Backdrop to close the menu on tap/click outside */}
                           <div
-                            className="fixed inset-0 z-[99998] bg-black/60 backdrop-blur-sm cursor-default"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveMenuId(null);
-                            }}
+                            className="fixed inset-0 z-[30000] bg-black/70 touch-manipulation"
+                            onClick={() => setActiveMenuId(null)}
                           />
-
-                          {/* Dropdown / Bottom Sheet Menu */}
-                          <div className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:left-auto md:right-0 md:mt-1 w-full md:w-36 bg-[#0f1419] border-t md:border border-white/10 rounded-t-3xl md:rounded-xl py-4 md:py-1 shadow-2xl z-[99999] animate-in slide-in-from-bottom md:slide-in-from-top-1 duration-200">
-                            {/* Grab handle for mobile bottom sheet */}
-                            <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4 md:hidden" />
-
+                          <div className="fixed bottom-0 left-0 right-0 z-[30001] bg-[#121212] border-t border-white/10 rounded-t-3xl py-4 shadow-2xl" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+                            <div className="w-12 h-1 bg-white/25 rounded-full mx-auto mb-4" />
                             {canEdit && (
                               <button
                                 type="button"
@@ -476,9 +405,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                                   setEditingCommentId(c._id);
                                   setEditText(c.text || '');
                                 }}
-                                className="w-full px-5 py-3 md:px-3.5 md:py-2.5 text-left text-base md:text-[13px] font-bold text-white hover:bg-white/5 active:bg-white/10 transition-colors flex items-center gap-3 cursor-pointer touch-manipulation"
+                                className="w-full px-5 py-3.5 text-left text-base font-bold text-white active:bg-white/10 flex items-center gap-3 touch-manipulation"
                               >
-                                <Icons.Edit className="w-5 h-5 md:w-4 md:h-4 text-white/60" />
+                                <Icons.Edit className="w-5 h-5 text-white/70" />
                                 <span>{t('EDIT') || 'Edit'}</span>
                               </button>
                             )}
@@ -489,36 +418,36 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                                   setActiveMenuId(null);
                                   handleDelete(c._id);
                                 }}
-                                className="w-full px-5 py-3 md:px-3.5 md:py-2.5 text-left text-base md:text-[13px] font-bold text-red-500 hover:bg-red-500/10 active:bg-red-500/25 transition-colors flex items-center gap-3 border-t border-white/[0.06] cursor-pointer touch-manipulation"
+                                className="w-full px-5 py-3.5 text-left text-base font-bold text-red-500 active:bg-red-500/10 flex items-center gap-3 border-t border-white/[0.06] touch-manipulation"
                               >
-                                <Icons.Trash className="w-5 h-5 md:w-4 md:h-4" />
+                                <Icons.Trash className="w-5 h-5" />
                                 <span>{t('DELETE') || 'Delete'}</span>
                               </button>
                             )}
                           </div>
-                        </>
+                        </>,
+                        document.body
                       )}
                     </div>
                   )}
                 </div>
-              )
+              );
             })
           )}
           <div ref={scrollRef} />
         </div>
       </div>
 
-      {/* Sticky Input Field - DISABLED PER FOUNDER REQUEST FOR SHARED LINKS */}
-      <div className="shrink-0 p-4 pb-[max(8rem,calc(env(safe-area-inset-bottom,20px)+90px))] sm:pb-12 bg-transparent text-center">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 bg-black/40 py-4 px-4 border border-white/10 rounded-xl">
-              {t('COMMENTS_DISABLED', 'INTEL LOGS ARE READ-ONLY FOR SHARED LINKS')}
-          </div>
+      <div
+        className="shrink-0 px-4 py-4 border-t border-white/10 bg-[#0a0a0a]/95 text-center"
+        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+      >
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 bg-white/5 py-3 px-4 border border-white/10 rounded-xl">
+          {t('COMMENTS_DISABLED', 'Comments are read-only for shared links')}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default CommentView;
-
-
-

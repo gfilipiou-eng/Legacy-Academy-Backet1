@@ -1440,6 +1440,19 @@ html, body {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: none;
   }
+
+  .post-detail-modal__sheet {
+    border-radius: 0 !important;
+  }
+
+  .comment-view__item {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .image-lightbox img {
+    max-height: calc(100dvh - 6rem);
+  }
 }
 
 /* === NO HOVER EFFECTS ON MOBILE === */
