@@ -1916,19 +1916,21 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
             </div>
             {zoomImage && (
                 <div 
-                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
+                    className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out touch-pan-x touch-pan-y touch-pinch-zoom"
                     onClick={(e) => { e.stopPropagation(); setZoomImage(null); }}
+                    style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
                 >
                     <button 
                         onClick={(e) => { e.stopPropagation(); setZoomImage(null); }} 
-                        className="absolute top-4 right-4 p-3 bg-transparent hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-50 group"
+                        className="absolute top-4 right-4 p-3 bg-black/50 hover:bg-white/10 hover:scale-105 active:scale-95 rounded-full transition-all duration-300 z-[10000] group"
                     >
-                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300" />
+                        <Icons.X className="w-6 h-6 text-white group-hover:rotate-90 transition-all duration-300" />
                     </button>
                     <img 
                         src={zoomImage} 
-                        className="max-w-full max-h-full object-contain shadow-2xl rounded-sm"
+                        className="max-w-full max-h-[100dvh] object-contain shadow-2xl rounded-sm cursor-default"
                         alt="Zoomed"
+                        onClick={(e) => e.stopPropagation()}
                     />
                 </div>
             )}
