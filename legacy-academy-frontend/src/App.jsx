@@ -1675,11 +1675,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return (
-        <div className="fixed inset-0 z-[2500] flex justify-center bg-[var(--app-bg)] md:bg-black/80 md:backdrop-blur-sm p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
-            <div className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] md:rounded-[24px] md:border md:border-white/10 flex flex-col overflow-hidden relative md:shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in" onClick={onClose}>
+            {/* The "Sheet" / Modal */}
+            <div 
+                className="w-full h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[32px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl transition-transform" 
+                onClick={(e) => e.stopPropagation()}
+            >
                 
-                {/* Header (Author & Close) */}
-                <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-black/20 backdrop-blur-xl shrink-0 sticky top-0 z-50">
+                {/* Visual Drag Handle (Mobile Only) */}
+                <div className="w-full flex justify-center pt-3 pb-1 md:hidden absolute top-0 z-[60] bg-transparent pointer-events-none">
+                    <div className="w-12 h-1.5 bg-white/20 rounded-full"></div>
+                </div>
+
+                {/* Glassmorphic Header */}
+                <div className="pt-6 md:pt-4 pb-3 px-4 border-b border-white/5 flex items-center justify-between bg-[#0a0a0a]/80 backdrop-blur-2xl shrink-0 sticky top-0 z-50">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
@@ -1694,20 +1703,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
-                                <span className="font-bold text-[15px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
-                                {isFounder && <Icons.CheckCircle className="w-3.5 h-3.5 text-yellow-400 shrink-0" />}
+                                <span className="font-bold text-[16px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
+                                {isFounder && <Icons.CheckCircle className="w-4 h-4 text-yellow-400 shrink-0" />}
                             </div>
-                            <span className="text-[13px] text-gray-500">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
+                            <span className="text-[13px] text-gray-500 font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
                                 <Icons.Edit className="w-5 h-5" />
                             </button>
                         )}
                         <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
-                        <button onClick={onClose} className="hidden md:flex p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                        <button onClick={onClose} className="hidden md:flex p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95 bg-white/5">
                             <Icons.X className="w-5 h-5" />
                         </button>
                     </div>
@@ -1718,9 +1727,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     className="flex-1 min-h-0 overflow-y-auto custom-scrollbar bg-transparent overscroll-contain touch-pan-y"
                     style={{ WebkitOverflowScrolling: 'touch' }}
                 >
-                    {/* Description Section */}
-                    <div className="px-4 py-3 bg-transparent z-10 relative">
-                        <p className="text-[16px] text-white leading-relaxed whitespace-pre-wrap break-words">
+                    {/* Post Content */}
+                    <div className="px-5 py-4 bg-transparent z-10 relative">
+                        <p className="text-[16px] sm:text-[17px] text-white/95 leading-relaxed whitespace-pre-wrap break-words font-medium">
                             {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
                                 onClose();
                                 if (onHashtagClick) onHashtagClick(tag);
@@ -1730,38 +1739,38 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 if (u && onViewProfile) onViewProfile(u);
                             })}
                             {(translatedText || post.desc) && (translatedText || post.desc).length > 800 && (
-                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[14px] font-bold ml-2 hover:underline">
+                                <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[15px] font-bold ml-2 hover:underline">
                                     {isExpanded ? t('READ_LESS', 'Show less') : t('READ_MORE', 'Show more')}
                                 </button>
                             )}
                         </p>
-                        <div className="mt-3">
+                        <div className="mt-4">
                             <button
                                 onClick={handleTranslate}
                                 disabled={isTranslating}
-                                className="text-[12px] font-bold text-[#1D9BF0] hover:underline flex items-center gap-1.5 transition-opacity"
+                                className="text-[13px] font-bold text-[#1D9BF0] hover:bg-[#1D9BF0]/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors"
                             >
-                                <Icons.Globe className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show Original') : t('SEE_TRANSLATION', 'Translate Post'))}
+                                <Icons.Globe className={`w-4 h-4 ${isTranslating ? 'animate-spin' : ''}`} />
+                                {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show Original') : t('SEE_TRANSLATION', 'Translate'))}
                             </button>
                         </div>
                     </div>
 
                     {/* Image/Video Section */}
                     {postHasMedia(post) && (
-                        <div className="w-full bg-black/40 flex items-center justify-center relative overflow-hidden border-y border-white/10 max-h-[60vh] shrink-0">
+                        <div className="w-full bg-[#050505] flex items-center justify-center relative overflow-hidden shrink-0 mt-2">
                             {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer
                                     src={resolveMediaUrl(post.videoUrl || post.image)}
                                     poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
-                                    className="w-full h-full max-h-[60vh] object-contain"
+                                    className="w-full h-auto max-h-[65vh] object-contain"
                                     forcePause={isWritingComment}
                                 />
                             ) : (
                                 !imgError ? (
                                     <img
                                         src={resolveMediaUrl(post.image || post.thumbnailUrl)}
-                                        className="w-full h-full max-h-[60vh] object-contain cursor-zoom-in"
+                                        className="w-full h-auto max-h-[65vh] object-contain cursor-zoom-in"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setZoomImage(resolveMediaUrl(post.image || post.thumbnailUrl, null, false, false));
@@ -1770,123 +1779,127 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         onError={() => setImgError(true)}
                                     />
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500">
+                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500 bg-white/5 w-full aspect-video">
                                         <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image unavailable</span>
+                                        <span className="text-[11px] font-black uppercase tracking-widest opacity-50">Media Expired</span>
                                     </div>
                                 )
                             )}
                         </div>
                     )}
 
-                    {/* Stats & Date */}
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center text-gray-500 text-[14px]">
-                        <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
+                    {/* Meta & Stats */}
+                    <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2 text-gray-500 text-[14px] font-medium">
+                        <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span>·</span>
+                        <span>{new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
                     </div>
 
                     {/* Action Bar */}
-                    <div className="px-2 py-1 border-b border-white/10">
-                        <div className="flex items-center justify-around w-full max-w-md">
+                    <div className="px-3 py-2 border-b border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent">
+                        <div className="flex items-center justify-around w-full max-w-md mx-auto">
                             <button
                                 onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
                             >
                                 <Icons.MessageSquare className="w-5 h-5" />
-                                <span className="text-[13px] font-bold tabular-nums">{post.comments?.length || 0}</span>
+                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-400 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
                             >
                                 <Icons.RefreshCcw className="w-5 h-5" />
-                                <span className="text-[13px] font-bold tabular-nums">{post.reposts?.length || 0}</span>
+                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onLike?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-500 hover:bg-[#F91880]/10 hover:text-[#F91880]'}`}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-400 hover:bg-[#F91880]/10 hover:text-[#F91880]'}`}
                             >
                                 <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[13px] font-bold tabular-nums">{post.likes?.length || 0}</span>
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onDislike?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-purple-500' : 'text-gray-500 hover:bg-purple-500/10 hover:text-purple-500'}`}
-                            >
-                                <Icons.ThumbsDown className={`w-5 h-5 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                <span className="text-[13px] font-bold tabular-nums">{post.dislikes?.length || 0}</span>
+                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onShare?.(post._id); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-500 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-white/10 hover:text-white"
                             >
                                 <Icons.Share className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
 
-                    {/* Comments Section (Liquid Glass) */}
-                    <div className="p-2 md:p-4">
-                        <div className="w-full rounded-[24px] bg-black/20 border border-white/10 p-2 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.2)]">
-                            {!post.comments?.length ? (
-                                <div className="text-center py-10">
-                                    <p className="text-white/50 text-[15px] font-bold">No replies yet</p>
+                    {/* Edge-to-Edge Comments Feed */}
+                    <div className="w-full pb-6">
+                        {!post.comments?.length ? (
+                            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-white/20">
+                                    <Icons.MessageSquare className="w-8 h-8" />
                                 </div>
-                            ) : (
-                                (Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
+                                <h3 className="text-white font-bold text-lg mb-1">No Comments Yet</h3>
+                                <p className="text-gray-500 text-[15px]">Be the first to share your thoughts!</p>
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-white/[0.04]">
+                                {(Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
                                     <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} />
-                                ))
-                            )}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    {/* Safe area padding at the bottom of the scroll container */}
-                    <div className="h-6 w-full"></div>
                 </div>
 
-                {/* Comment Input (Fixed at Bottom) */}
-                <div className="px-4 py-3 bg-black/90 backdrop-blur-xl shrink-0 z-[100] border-t border-white/10">
-                    <div className="flex items-center gap-3 w-full">
-                        <div className="w-10 h-10 shrink-0">
+                {/* Sleek Bottom Input Area */}
+                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[#0a0a0a]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-white/5 pb-safe">
+                    <div className="flex items-end gap-3 w-full max-w-4xl mx-auto">
+                        <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-white/10 mb-0.5 hidden sm:block">
                             <ProfileAvatar user={user} />
                         </div>
                         {isRecordingComment ? (
-                            <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-red-500 text-xs font-bold animate-pulse">
-                                    <Icons.Mic className="w-4 h-4" />
+                            <div className="flex-1 bg-red-500/10 border border-red-500/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-red-500 text-[14px] font-bold animate-pulse">
+                                    <Icons.Mic className="w-5 h-5" />
                                     RECORDING...
                                 </div>
-                                <div className="flex gap-2">
-                                    <button onClick={() => stopRecording(true)} className="p-1 hover:text-gray-300 text-gray-500"><Icons.X className="w-5 h-5" /></button>
-                                    <button onClick={() => stopRecording(false)} className="px-3 py-1 bg-white text-black font-bold text-xs rounded-full">STOP</button>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => stopRecording(true)} className="p-1 text-gray-400 hover:text-white transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
+                                    <button onClick={() => stopRecording(false)} className="px-4 py-1.5 bg-red-500 text-white font-bold text-[13px] rounded-full shadow-lg shadow-red-500/20 active:scale-95 transition-all">STOP</button>
                                 </div>
                             </div>
                         ) : commentAudio ? (
-                            <div className="flex-1 bg-[#202327] rounded-full px-4 py-2 flex items-center justify-between">
-                                <span className="text-white text-xs font-bold">VOICE NOTE READY</span>
-                                <div className="flex items-center gap-2">
-                                    <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white"><Icons.X className="w-5 h-5" /></button>
+                            <div className="flex-1 bg-[#1D9BF0]/10 border border-[#1D9BF0]/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-[#1D9BF0] text-[14px] font-bold">
+                                    <Icons.Play className="w-5 h-5 fill-current" />
+                                    VOICE NOTE READY
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
                                     <button onClick={() => {
                                         const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                         if (commentText.trim()) fd.append('text', commentText.trim());
                                         onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                    }} className="px-3 py-1 bg-[#1D9BF0] text-white font-bold text-xs rounded-full">SEND</button>
+                                    }} className="px-5 py-1.5 bg-[#1D9BF0] text-white font-bold text-[13px] rounded-full shadow-lg shadow-[#1D9BF0]/20 active:scale-95 transition-all">SEND</button>
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex items-center bg-[#202327] rounded-3xl overflow-hidden focus-within:ring-1 focus-within:ring-[#1D9BF0] transition-all">
-                                <input
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col bg-white/[0.03] border border-white/10 rounded-[24px] overflow-hidden focus-within:bg-white/[0.05] focus-within:border-white/20 transition-all">
+                                <textarea
                                     id={`comment-input-${post._id}`}
-                                    placeholder="Post your reply..."
+                                    placeholder="Add a comment..."
                                     value={commentText}
-                                    onChange={(e) => setCommentText(e.target.value)}
-                                    className="flex-1 bg-transparent py-3 px-4 text-[15px] text-white outline-none placeholder-gray-500"
-                                    autoComplete="off"
+                                    onChange={(e) => {
+                                        setCommentText(e.target.value);
+                                        e.target.style.height = 'inherit';
+                                        e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                                    }}
+                                    className="w-full bg-transparent py-3 px-4 text-[16px] text-white outline-none placeholder-gray-500 resize-none min-h-[48px] max-h-[120px] custom-scrollbar"
+                                    rows="1"
                                 />
-                                <div className="flex items-center pr-2">
-                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full transition-colors">
+                                <div className="flex items-center justify-between px-2 pb-2">
+                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
-                                    <button type="submit" disabled={!commentText.trim()} className="p-2 text-[#1D9BF0] hover:bg-[#1D9BF0]/10 rounded-full disabled:opacity-50 disabled:hover:bg-transparent transition-colors">
-                                        <Icons.Send className="w-5 h-5" />
+                                    <button type="submit" disabled={!commentText.trim()} className="px-4 py-1.5 bg-white text-black font-bold text-[14px] rounded-full disabled:opacity-30 disabled:bg-white/20 disabled:text-white/50 transition-all active:scale-95 flex items-center gap-1.5">
+                                        Post <Icons.Send className="w-4 h-4" />
                                     </button>
                                 </div>
                             </form>
@@ -1894,6 +1907,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
                 </div>
             </div>
+
             {zoomImage && (
                 <div 
                     className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out touch-pan-x touch-pan-y touch-pinch-zoom"
@@ -1909,6 +1923,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     <img 
                         src={zoomImage} 
                         className="max-w-full max-h-[100dvh] object-contain shadow-2xl rounded-sm cursor-default"
+                        alt="Zoomed"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            )}
+        </div>
+    );t"
                         alt="Zoomed"
                         onClick={(e) => e.stopPropagation()}
                     />
