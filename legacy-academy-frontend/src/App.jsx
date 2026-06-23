@@ -1929,13 +1929,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
             )}
         </div>
-    );t"
-                        alt="Zoomed"
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                </div>
-            )}
-        </div>
     );
 };
 
