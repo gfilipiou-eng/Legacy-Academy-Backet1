@@ -6,6 +6,7 @@ import { Icons } from './components/Icons';
 import { VoiceNotePlayer } from './components/VoiceNotePlayer';
 import { useTranslation } from './translations';
 import ImageLightbox from './components/ImageLightbox';
+import VerifiedBadge from './components/VerifiedBadge';
 
 const BASE_URL = axios.defaults.baseURL.replace('/api', '');
 
@@ -285,6 +286,12 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                 >
                   {post.author?.username || post.authorName}
                 </button>
+                <VerifiedBadge
+                  isFounder={(post.author?.role || post.authorRole) === 'Founder'}
+                  isUser={(post.author?.role || post.authorRole) !== 'Founder'}
+                  className="w-3.5 h-3.5 shrink-0"
+                  user={post.author || { settings: post.authorSettings, role: post.authorRole }}
+                />
                 <span className="text-gray-500 text-[13px] break-all">{`@${String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
                 <span className="text-gray-600 text-[13px]">·</span>
                 <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
@@ -340,12 +347,18 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-1">
                       <button
                         type="button"
-                        className="font-bold text-[15px] text-white truncate max-w-[45vw] touch-manipulation"
+                        className="font-bold text-[15px] text-white truncate max-w-[40vw] touch-manipulation"
                         onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
                       >
                         {c.authorName}
                       </button>
-                      <span className="text-[13px] text-gray-500 truncate max-w-[30vw]">
+                      <VerifiedBadge
+                        isFounder={(c.author?.role || c.authorRole) === 'Founder'}
+                        isUser={(c.author?.role || c.authorRole) !== 'Founder'}
+                        className="w-3.5 h-3.5 shrink-0"
+                        user={c.author || { settings: c.authorSettings, role: c.authorRole }}
+                      />
+                      <span className="text-[13px] text-gray-500 truncate max-w-[28vw]">
                         {`@${String(c.author?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
                       </span>
                       <span className="text-gray-500">·</span>
