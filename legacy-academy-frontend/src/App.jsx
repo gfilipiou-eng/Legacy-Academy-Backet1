@@ -1567,7 +1567,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-[16px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
-                                {isFounder && <Icons.CheckCircle className="w-4 h-4 text-yellow-400 shrink-0" />}
+                                {isFounder && <VerifiedBadge isFounder={true} isUser={false} className="w-4 h-4 shrink-0" />}
                             </div>
                             <span className="text-[13px] text-gray-500 font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
                         </div>
@@ -2509,6 +2509,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
+                        {isFounder && (
+                            <div className="relative" style={{ marginTop: '-10px', marginRight: '-10px', alignSelf: 'flex-end' }}>
+                                <div className="bg-black rounded-full p-[2px]">
+                                    <div className="w-4 h-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(250,214,32,0.8)]">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT COL: CONTENT */}
