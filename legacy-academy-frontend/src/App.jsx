@@ -1202,7 +1202,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const commentAuthor = isCommentAuthor
         ? user
         : (foundUserInList || comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic });
-    const isFounder = (user?.role === 'Founder' || comment.user?.role === 'Founder' || foundUserInList?.role === 'Founder');
+    // Check the comment AUTHOR's role, not the logged-in user's role
+    const commentAuthorRole = commentAuthor?.role || comment.user?.role || foundUserInList?.role || comment.authorRole;
+    const isFounder = commentAuthorRole === 'Founder';
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
     const canDelete = isCommentAuthor || user?.role === 'Founder';
@@ -1237,10 +1239,17 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
         >
             {/* Avatar */}
             <div
-                className="x-comment__avatar"
+                className="x-comment__avatar relative"
                 onClick={() => onViewProfile && onViewProfile(commentAuthor)}
             >
                 <ProfileAvatar user={commentAuthor} />
+                {isFounder && (
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
+                        <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Body */}
@@ -1254,7 +1263,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} forceGold={isFounder && !commentAuthor?.settings?.badgeColor} />
                     <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>

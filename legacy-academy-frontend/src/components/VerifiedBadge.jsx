@@ -1,7 +1,7 @@
 import React from 'react';
 
-const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user }) => {
-    // If user settings specify showBadge is false, don't show the badge!
+const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp }) => {
+    // If user settings specify showBadge is false, don't show the badge
     if (user && user.settings && user.settings.showBadge === false) {
         return null;
     }
@@ -12,24 +12,18 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     let isHolo = false;
     let isMetallic = false;
 
-    // Default to intense 3D Blue (X Platform style)
-    let baseColor = '#2F80ED';
-    let darkColor = '#1CB5E0';
-    let gradId = 'vb_blue3DGrad';
+    // Default colors — gold for founders, blue for everyone else
+    let baseColor = isGold ? '#F6E27A' : '#2F80ED';
+    let darkColor  = isGold ? '#CB9B51' : '#1CB5E0';
+    let gradId     = isGold ? 'vb_gold3DGrad' : 'vb_blue3DGrad';
 
-    if (isGold) {
-        baseColor = '#F6E27A';
-        darkColor = '#CB9B51';
-        gradId = 'vb_gold3DGrad';
-    }
-
-    // Apply custom badge color from settings if available
-    if (user?.settings?.badgeColor) {
-        const customColor = user.settings.badgeColor;
-        if (customColor === 'gold') { baseColor = '#F6E27A'; darkColor = '#CB9B51'; gradId = 'vb_gold3DGrad'; }
-        else if (customColor === 'crimson') { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'vb_crimson3DGrad'; }
+    // Custom badge color — works for ALL users (founders and regular)
+    const customColor = badgeColorProp || user?.settings?.badgeColor;
+    if (customColor) {
+        if (customColor === 'gold')          { baseColor = '#F6E27A'; darkColor = '#CB9B51'; gradId = 'vb_gold3DGrad'; }
+        else if (customColor === 'crimson')  { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'vb_crimson3DGrad'; }
         else if (customColor === 'neon-purple') { baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'vb_purple3DGrad'; }
-        else if (customColor === 'blue') { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'vb_blue3DGrad'; }
+        else if (customColor === 'blue')     { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'vb_blue3DGrad'; }
         else if (customColor === 'holographic') isHolo = true;
         else if (['metal-blue', 'platinum', 'obsidian-gold', 'diamond', 'liquid-gold', 'live-gold'].includes(customColor)) {
             isMetallic = true;

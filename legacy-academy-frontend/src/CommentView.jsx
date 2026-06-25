@@ -270,13 +270,19 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
       >
         <div className="px-4 py-4 border-b border-white/10">
           <div className="flex gap-3">
-            <button
-              type="button"
-              className="w-11 h-11 shrink-0 rounded-full overflow-hidden border border-white/15"
+            <div
+              className="relative w-11 h-11 shrink-0 rounded-full overflow-hidden border border-white/15 cursor-pointer"
               onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
             >
               <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
-            </button>
+              {(post.author?.role || post.authorRole) === 'Founder' && (
+                <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
+                  <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mb-2">
                 <button
@@ -329,19 +335,26 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
           ) : (
             post.comments.map((c, i) => {
               const isCommentAuthor = String(c.user?._id || c.userId || c.authorId) === String(currentUser?._id);
-              const isFounder = currentUser?.role === 'Founder';
-              const canEdit = isCommentAuthor || isFounder;
-              const canDelete = isCommentAuthor || isFounder;
+              const commentAuthorRole = c.author?.role || c.authorRole;
+              const isCommentFounder = commentAuthorRole === 'Founder';
+              const canEdit = isCommentAuthor || currentUser?.role === 'Founder';
+              const canDelete = isCommentAuthor || currentUser?.role === 'Founder';
 
               return (
                 <div key={c._id || i} className={`comment-view__item py-4 px-2 flex gap-3 relative border-b border-white/[0.06] ${activeMenuId === c._id ? 'z-20' : ''}`}>
-                  <button
-                    type="button"
-                    className="shrink-0 w-10 h-10 rounded-full overflow-hidden touch-manipulation"
+                  <div
+                    className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden cursor-pointer touch-manipulation"
                     onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
                   >
                     <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
-                  </button>
+                    {isCommentFounder && (
+                      <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
+                        <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="flex-1 min-w-0 pr-8">
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mb-1">
@@ -353,8 +366,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                         {c.authorName}
                       </button>
                       <VerifiedBadge
-                        isFounder={(c.author?.role || c.authorRole) === 'Founder'}
-                        isUser={(c.author?.role || c.authorRole) !== 'Founder'}
+                        isFounder={isCommentFounder}
+                        isUser={!isCommentFounder}
                         className="w-3.5 h-3.5 shrink-0"
                         user={c.author || { settings: c.authorSettings, role: c.authorRole }}
                       />
