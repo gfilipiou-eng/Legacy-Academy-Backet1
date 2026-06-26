@@ -10,22 +10,27 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     const resolvedRole = user?.role || (isFounder && !isUser ? 'Founder' : 'User');
     const isGold = (resolvedRole === 'Founder' || forceGold);
     let isHolo = false;
-    let isMetallic = false;
+    // Founders default to metallic liquid-gold; regular users default to 3D blue
+    let isMetallic = isGold; // founders start metallic by default
 
-    // Default colors — gold for founders, blue for everyone else
+    // Default colors — used only if not metallic and no custom color
     let baseColor = isGold ? '#F6E27A' : '#2F80ED';
     let darkColor  = isGold ? '#CB9B51' : '#1CB5E0';
     let gradId     = isGold ? 'vb_gold3DGrad' : 'vb_blue3DGrad';
 
+    // Resolve effective badge color (prop takes priority over user settings)
+    const effectiveBadgeColor = badgeColorProp || user?.settings?.badgeColor;
+
     // Custom badge color — works for ALL users (founders and regular)
-    const customColor = badgeColorProp || user?.settings?.badgeColor;
-    if (customColor) {
-        if (customColor === 'gold')          { baseColor = '#F6E27A'; darkColor = '#CB9B51'; gradId = 'vb_gold3DGrad'; }
-        else if (customColor === 'crimson')  { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'vb_crimson3DGrad'; }
-        else if (customColor === 'neon-purple') { baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'vb_purple3DGrad'; }
-        else if (customColor === 'blue')     { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'vb_blue3DGrad'; }
-        else if (customColor === 'holographic') isHolo = true;
-        else if (['metal-blue', 'platinum', 'obsidian-gold', 'diamond', 'liquid-gold', 'live-gold'].includes(customColor)) {
+    if (effectiveBadgeColor) {
+        // If an explicit non-metallic color is set, turn off metallic default for founders
+        isMetallic = false;
+        if (effectiveBadgeColor === 'gold')            { baseColor = '#F6E27A'; darkColor = '#CB9B51'; gradId = 'vb_gold3DGrad'; }
+        else if (effectiveBadgeColor === 'crimson')    { baseColor = '#FF0844'; darkColor = '#93001E'; gradId = 'vb_crimson3DGrad'; }
+        else if (effectiveBadgeColor === 'neon-purple'){ baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'vb_purple3DGrad'; }
+        else if (effectiveBadgeColor === 'blue')       { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'vb_blue3DGrad'; }
+        else if (effectiveBadgeColor === 'holographic') { isHolo = true; }
+        else if (['metal-blue', 'platinum', 'obsidian-gold', 'diamond', 'liquid-gold', 'live-gold'].includes(effectiveBadgeColor)) {
             isMetallic = true;
         }
     }
@@ -35,9 +40,9 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     if (isMetallic) {
         let stops;
         let gradIdName;
-        const customColor = user?.settings?.badgeColor;
-
-        if (customColor === 'metal-blue') {
+        // Use effectiveBadgeColor (prop or settings) — default founders to liquid-gold
+        const resolvedMetallicColor = effectiveBadgeColor || (isGold ? 'liquid-gold' : null);
+        if (resolvedMetallicColor === 'metal-blue') {
             gradIdName = "vb_metalBlueGrad";
             stops = [
                 { offset: "0%", color: "#0F2027" },
@@ -46,7 +51,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 { offset: "75%", color: "#2C5364" },
                 { offset: "100%", color: "#0F2027" }
             ];
-        } else if (customColor === 'platinum') {
+        } else if (resolvedMetallicColor === 'platinum') {
             gradIdName = "vb_platinumGrad";
             stops = [
                 { offset: "0%", color: "#8A9193" },
@@ -55,7 +60,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 { offset: "75%", color: "#CECECE" },
                 { offset: "100%", color: "#8A9193" }
             ];
-        } else if (customColor === 'obsidian-gold') {
+        } else if (resolvedMetallicColor === 'obsidian-gold') {
             gradIdName = "vb_obsidianGoldGrad";
             stops = [
                 { offset: "0%", color: "#0A0A0A" },
@@ -64,7 +69,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 { offset: "75%", color: "#222222" },
                 { offset: "100%", color: "#0A0A0A" }
             ];
-        } else if (customColor === 'diamond') {
+        } else if (resolvedMetallicColor === 'diamond') {
             gradIdName = "vb_diamondGrad";
             stops = [
                 { offset: "0%", color: "#00E5FF" },
@@ -73,22 +78,23 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 { offset: "75%", color: "#00E5FF" },
                 { offset: "100%", color: "#0056B3" }
             ];
-        } else if (customColor === 'liquid-gold') {
+        } else if (resolvedMetallicColor === 'liquid-gold') {
             gradIdName = "vb_liquidGoldGrad";
             stops = [
-                { offset: "0%", color: "#B8860B" },
-                { offset: "25%", color: "#FFD700" },
-                { offset: "50%", color: "#FFA500" },
-                { offset: "75%", color: "#FFDF00" },
+                { offset: "0%",   color: "#B8860B" },
+                { offset: "25%",  color: "#FFD700" },
+                { offset: "50%",  color: "#FFA500" },
+                { offset: "75%",  color: "#FFDF00" },
                 { offset: "100%", color: "#B8860B" }
             ];
         } else {
+            // live-gold or unknown metallic — rich multi-stop gold
             gradIdName = "vb_metalGoldGrad";
             stops = [
-                { offset: "0%", color: "#bf953f" },
-                { offset: "25%", color: "#fcf6ba" },
-                { offset: "50%", color: "#b38728" },
-                { offset: "75%", color: "#fbf5b7" },
+                { offset: "0%",   color: "#bf953f" },
+                { offset: "25%",  color: "#fcf6ba" },
+                { offset: "50%",  color: "#b38728" },
+                { offset: "75%",  color: "#fbf5b7" },
                 { offset: "100%", color: "#aa771c" }
             ];
         }

@@ -1199,9 +1199,13 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const postAuthorId = post.author?._id || post.author;
 
     const foundUserInList = allUsers?.find(u => isSameId(u._id, currentCommentAuthorId));
-    const commentAuthor = isCommentAuthor
+    const rawCommentAuthor = isCommentAuthor
         ? user
         : (foundUserInList || comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic });
+    // Merge settings from foundUserInList when the raw author lacks settings (e.g. comment.user doesn't carry full settings)
+    const commentAuthor = rawCommentAuthor?.settings
+        ? rawCommentAuthor
+        : { ...rawCommentAuthor, settings: foundUserInList?.settings || comment.user?.settings || comment.authorSettings };
     // Check the comment AUTHOR's role, not the logged-in user's role
     const commentAuthorRole = commentAuthor?.role || comment.user?.role || foundUserInList?.role || comment.authorRole;
     const isFounder = commentAuthorRole === 'Founder';
