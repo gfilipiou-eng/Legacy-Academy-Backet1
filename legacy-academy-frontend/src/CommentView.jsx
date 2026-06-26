@@ -271,10 +271,12 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
         <div className="px-4 py-4 border-b border-white/10">
           <div className="flex gap-3">
             <div
-              className="relative w-11 h-11 shrink-0 rounded-full overflow-hidden border border-white/15 cursor-pointer"
+              className="relative w-11 h-11 shrink-0 cursor-pointer"
               onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
             >
-              <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+              <div className="w-full h-full rounded-full overflow-hidden border border-white/15">
+                <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+              </div>
               {(post.author?.role || post.authorRole) === 'Founder' && (
                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                   <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
@@ -343,10 +345,12 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               return (
                 <div key={c._id || i} className={`comment-view__item py-4 px-2 flex gap-3 relative border-b border-white/[0.06] ${activeMenuId === c._id ? 'z-20' : ''}`}>
                   <div
-                    className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden cursor-pointer touch-manipulation"
+                    className="relative shrink-0 w-10 h-10 cursor-pointer touch-manipulation"
                     onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
                   >
-                    <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
+                    <div className="w-full h-full rounded-full overflow-hidden">
+                      <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
+                    </div>
                     {isCommentFounder && (
                       <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                         <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">

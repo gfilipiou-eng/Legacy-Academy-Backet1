@@ -1246,7 +1246,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 className="x-comment__avatar relative"
                 onClick={() => onViewProfile && onViewProfile(commentAuthor)}
             >
-                <ProfileAvatar user={commentAuthor} />
+                <div className="w-full h-full rounded-full overflow-hidden">
+                    <ProfileAvatar user={commentAuthor} />
+                </div>
                 {isFounder && (
                     <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                         <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">

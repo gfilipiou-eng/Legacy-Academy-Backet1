@@ -1956,11 +1956,12 @@ input, textarea {
   width: 44px;
   height: 44px;
   border-radius: 9999px;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.06);
   transition: opacity 0.15s ease;
+  position: relative;
 }
 .x-comment__avatar:hover { opacity: 0.75; }
 
@@ -2151,11 +2152,12 @@ input, textarea {
   width: 44px;
   height: 44px;
   border-radius: 9999px;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.06);
   transition: opacity 0.15s ease;
+  position: relative;
 }
 .x-comment__avatar:hover { opacity: 0.75; }
 
