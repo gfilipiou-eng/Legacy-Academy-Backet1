@@ -155,9 +155,11 @@ const BottomNavbar = memo(({
                     <div className={navItemClass(activeTab === 'home')}>
                         {activeTab === 'home' && (
                             <motion.div 
-                                layoutId="navActiveIndicator"
+                                key="navActive-home"
+                                layoutId="navActive-home"
                                 className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                initial={false}
+                                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                             />
                         )}
                         <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'home' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
@@ -174,9 +176,11 @@ const BottomNavbar = memo(({
                     <div className={navItemClass(activeTab === 'search')}>
                         {activeTab === 'search' && (
                             <motion.div 
-                                layoutId="navActiveIndicator"
+                                key="navActive-search"
+                                layoutId="navActive-search"
                                 className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                initial={false}
+                                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                             />
                         )}
                         <Icons.Search className={iconClass(activeTab === 'search')} fill={activeTab === 'search' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'search' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
@@ -205,9 +209,11 @@ const BottomNavbar = memo(({
                     <div className={navItemClass(activeTab === 'alerts')}>
                         {activeTab === 'alerts' && (
                             <motion.div 
-                                layoutId="navActiveIndicator"
+                                key="navActive-alerts"
+                                layoutId="navActive-alerts"
                                 className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                initial={false}
+                                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                             />
                         )}
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'alerts' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
@@ -232,9 +238,11 @@ const BottomNavbar = memo(({
                     <div className={navItemClass(isProfileActive)}>
                         {isProfileActive && (
                             <motion.div 
-                                layoutId="navActiveIndicator"
+                                key="navActive-profile"
+                                layoutId="navActive-profile"
                                 className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                initial={false}
+                                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                             />
                         )}
                         <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
