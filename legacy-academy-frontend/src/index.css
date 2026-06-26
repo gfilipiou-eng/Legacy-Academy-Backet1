@@ -1940,74 +1940,90 @@ input, textarea {
   cursor: wait;
 }
 
-/* ── X/Twitter-style comment ─────────────────────────────────────────── */
+/* ── X/Twitter-style comment — Liquid Glass Premium ─────────────────────── */
 .x-comment {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 16px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: background-color 0.2s ease;
+  padding: 14px 12px;
+  margin: 0 4px;
+  border-radius: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: visible;
 }
 .x-comment:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.3);
 }
 .x-comment__avatar {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 9999px;
   overflow: visible;
   flex-shrink: 0;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.06);
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
   position: relative;
 }
-.x-comment__avatar:hover { opacity: 0.75; }
+.x-comment__avatar:hover { opacity: 0.82; transform: scale(1.04); }
+
+/* Founder avatar — gold ring glow */
+.x-comment__avatar--founder {
+  box-shadow: 0 0 0 2px rgba(250,214,32,0.45), 0 0 12px rgba(250,214,32,0.25);
+}
 
 .x-comment__body {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 .x-comment__header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 2px;
+  gap: 5px;
+  margin-bottom: 3px;
   flex-wrap: nowrap;
   overflow: hidden;
 }
 .x-comment__username {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: #fff;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 140px;
+  max-width: 130px;
   flex-shrink: 1;
+  letter-spacing: -0.01em;
 }
 .x-comment__username:hover { text-decoration: underline; }
 .x-comment__dot {
   font-size: 12px;
-  color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.2);
   flex-shrink: 0;
 }
 .x-comment__time {
-  font-size: 13px;
-  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
   white-space: nowrap;
   flex-shrink: 0;
 }
 .x-comment__text {
   font-size: 15px;
-  line-height: 1.5;
-  color: rgba(255,255,255,0.9);
+  line-height: 1.55;
+  color: rgba(255,255,255,0.88);
   white-space: pre-wrap;
   word-break: break-word;
-  margin: 2px 0 8px;
+  overflow-wrap: break-word;
+  margin: 3px 0 6px;
 }
+
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
@@ -2140,70 +2156,78 @@ input, textarea {
   cursor: wait;
 }
 
-/* ── X/Twitter-style comment ─────────────────────────────────────────── */
+/* ── X/Twitter-style comment — Liquid Glass Premium (mobile) ─────────── */
 .x-comment {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 13px 10px;
+  margin: 0 2px;
+  border-radius: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: visible;
 }
 .x-comment__avatar {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 9999px;
   overflow: visible;
   flex-shrink: 0;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.06);
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
   position: relative;
 }
-.x-comment__avatar:hover { opacity: 0.75; }
+.x-comment__avatar:hover { opacity: 0.82; transform: scale(1.04); }
 
 .x-comment__body {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 .x-comment__header {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   flex-wrap: nowrap;
   overflow: hidden;
 }
 .x-comment__username {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: #fff;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 130px;
+  max-width: 110px;
   flex-shrink: 1;
 }
 .x-comment__username:hover { text-decoration: underline; }
 .x-comment__dot {
   font-size: 11px;
-  color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.2);
   flex-shrink: 0;
 }
 .x-comment__time {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255,255,255,0.35);
   white-space: nowrap;
   flex-shrink: 0;
 }
 .x-comment__text {
-  font-size: 16px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.95);
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.9);
   white-space: pre-wrap;
   word-break: break-word;
-  margin: 2px 0 8px;
+  overflow-wrap: break-word;
+  margin: 3px 0 6px;
 }
+
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {

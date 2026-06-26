@@ -1187,7 +1187,7 @@ const NeuralNarratorButton = ({ text }) => {
     );
 };
 
-const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile }) => {
+const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile, userBadgeKey }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
     const [translatedText, setTranslatedText] = useState(null);
@@ -1199,16 +1199,26 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const postAuthorId = post.author?._id || post.author;
 
     const foundUserInList = allUsers?.find(u => isSameId(u._id, currentCommentAuthorId));
-    const rawCommentAuthor = isCommentAuthor
+    // Always prefer the logged-in user object when this is their comment (freshest data)
+    const rawBase = isCommentAuthor
         ? user
-        : (foundUserInList || comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic });
-    // Merge settings from foundUserInList when the raw author lacks settings (e.g. comment.user doesn't carry full settings)
-    const commentAuthor = rawCommentAuthor?.settings
-        ? rawCommentAuthor
-        : { ...rawCommentAuthor, settings: foundUserInList?.settings || comment.user?.settings || comment.authorSettings };
-    // Check the comment AUTHOR's role, not the logged-in user's role
-    const commentAuthorRole = commentAuthor?.role || comment.user?.role || foundUserInList?.role || comment.authorRole;
+        : (comment.user || { username: comment.authorName, profilePic: comment.authorProfilePic });
+    // ALWAYS merge foundUserInList settings & role on top (source of truth for live updates)
+    const commentAuthor = {
+        ...rawBase,
+        ...(foundUserInList ? { role: foundUserInList.role } : {}),
+        settings: {
+            ...(rawBase?.settings || {}),
+            ...(foundUserInList?.settings || {}),
+            // If this is the logged-in user, their own user object is freshest
+            ...(isCommentAuthor ? (user?.settings || {}) : {}),
+        },
+    };
+    // Role: allUsers > user object > comment fields
+    const commentAuthorRole = foundUserInList?.role || commentAuthor?.role || comment.user?.role || comment.authorRole;
     const isFounder = commentAuthorRole === 'Founder';
+    // showBadge: founders always show; others respect setting
+    const showBadge = isFounder ? true : (commentAuthor?.settings?.showBadge !== false);
 
     const canEdit = isCommentAuthor || user?.role === 'Founder';
     const canDelete = isCommentAuthor || user?.role === 'Founder';
@@ -1243,7 +1253,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
         >
             {/* Avatar */}
             <div
-                className="x-comment__avatar relative"
+                className={`x-comment__avatar relative ${isFounder ? 'x-comment__avatar--founder' : ''}`}
                 onClick={() => onViewProfile && onViewProfile(commentAuthor)}
             >
                 <div className="w-full h-full rounded-full overflow-hidden">
@@ -1269,7 +1279,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
-                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} forceGold={isFounder && !commentAuthor?.settings?.badgeColor} />
+                    <VerifiedBadge isFounder={isFounder} isUser={!isFounder && showBadge} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} forceGold={isFounder && !commentAuthor?.settings?.badgeColor} />
                     <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
@@ -1718,7 +1728,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <p className="text-gray-500 text-[15px]">Be the first to share your thoughts!</p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-white/[0.04]">
+                            <div className="px-1 py-1">
                                 {(Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
                                     <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`} />
                                 ))}
