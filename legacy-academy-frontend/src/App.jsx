@@ -10043,7 +10043,7 @@ const App = () => {
 
     // IF DIRECT LINK TO COMMENT VIEW - Moved here to prevent hook order violations
     if (viewPostId) {
-        return <CommentView postId={viewPostId} user={user} onClose={() => {
+        return <CommentView postId={viewPostId} user={user} allUsers={allUsers} onClose={() => {
             const params = new URLSearchParams(window.location.search);
             params.delete('postId');
             const nextSearch = params.toString();

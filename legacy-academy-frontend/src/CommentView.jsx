@@ -114,7 +114,7 @@ const ProfileAvatarBase = ({ user }) => {
 
 const ProfileAvatar = memo(ProfileAvatarBase);
 
-const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
+const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUsers }) => {
   const { t, lang } = useTranslation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -342,6 +342,15 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
               const canEdit = isCommentAuthor || currentUser?.role === 'Founder';
               const canDelete = isCommentAuthor || currentUser?.role === 'Founder';
 
+              // Merge live settings from allUsers
+              const commentAuthorId = String(c.user?._id || c.userId || c.authorId);
+              const foundInAllUsers = (allUsers || []).find(u => String(u._id) === commentAuthorId);
+              const mergedCommentAuthor = foundInAllUsers
+                ? { ...(c.author || {}), settings: { ...(c.author?.settings || {}), ...(foundInAllUsers.settings || {}) }, role: foundInAllUsers.role || commentAuthorRole }
+                : (c.author || { username: c.authorName, profilePic: c.authorProfilePic, settings: c.authorSettings, role: c.authorRole });
+              const mergedCommentFounder = (mergedCommentAuthor?.role || commentAuthorRole) === 'Founder';
+              const commentShowBadge = mergedCommentFounder ? true : (mergedCommentAuthor?.settings?.showBadge !== false);
+
               return (
                 <div key={c._id || i} className={`comment-view__item py-4 px-2 flex gap-3 relative border-b border-white/[0.06] ${activeMenuId === c._id ? 'z-20' : ''}`}>
                   <div
@@ -370,10 +379,10 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                         {c.authorName}
                       </button>
                       <VerifiedBadge
-                        isFounder={isCommentFounder}
-                        isUser={!isCommentFounder}
+                        isFounder={mergedCommentFounder}
+                        isUser={!mergedCommentFounder && commentShowBadge}
                         className="w-3.5 h-3.5 shrink-0"
-                        user={c.author || { settings: c.authorSettings, role: c.authorRole }}
+                        user={mergedCommentAuthor}
                       />
                       <span className="text-[13px] text-gray-500 truncate max-w-[28vw]">
                         {`@${String(c.author?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
