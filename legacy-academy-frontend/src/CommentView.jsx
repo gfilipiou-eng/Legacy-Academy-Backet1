@@ -276,9 +276,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
             >
               <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
               {(post.author?.role || post.authorRole) === 'Founder' && (
-                <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
-                  <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
+                  <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                 </div>
               )}
@@ -348,9 +348,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile }) => {
                   >
                     <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
                     {isCommentFounder && (
-                      <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
-                        <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
+                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                       </div>
                     )}

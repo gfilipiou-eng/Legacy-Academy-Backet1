@@ -1244,9 +1244,9 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
             >
                 <ProfileAvatar user={commentAuthor} />
                 {isFounder && (
-                    <div className="absolute -bottom-0.5 -right-0.5 bg-black rounded-full p-[1.5px]">
-                        <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-1.5 h-1.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
+                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                     </div>
                 )}
@@ -2517,16 +2517,14 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
                         <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
-                        </div>
-                        {isFounder && (
-                            <div className="relative" style={{ marginTop: '-10px', marginRight: '-10px', alignSelf: 'flex-end' }}>
-                                <div className="bg-black rounded-full p-[2px]">
-                                    <div className="w-4 h-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(250,214,32,0.8)]">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3.5" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            {isFounder && (
+                                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 overflow-visible">
+                                    <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
                     {/* RIGHT COL: CONTENT */}
@@ -7675,6 +7673,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     }
 
     if (!publicUser) {
+        // If still loading, show spinner not error
+        if (publicUserLoading) {
+            return (
+                <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor }}>
+                    <PlatformLoadingPanel label="GATHERING INTEL..." />
+                </div>
+            );
+        }
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor }}>
                 <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">

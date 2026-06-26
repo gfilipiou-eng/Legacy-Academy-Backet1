@@ -251,17 +251,17 @@ button:active {
 
 /* Liquid Glass Effect Class */
 .liquid-glass-btn {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(var(--dynamic-blur, 24px));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px));
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 100%);
+  backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 16px rgba(0,0,0,0.35);
 }
 
 .liquid-glass-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 24px rgba(0,0,0,0.4);
   transform: translateY(-1px) scale(1.02);
 }
 
@@ -272,17 +272,20 @@ button:active {
 
 /* AI Style Glassmorphism */
 .ai-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--dynamic-blur, 20px));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px));
-  border: 1px solid var(--glass-border);
-  box-shadow: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 100%), var(--glass-bg);
+  backdrop-filter: blur(var(--dynamic-blur, 28px)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 28px)) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .ai-card {
-  background: linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(5, 5, 5, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(20,20,22,0.92) 100%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
   transition: all 0.3s ease;
 }
 
@@ -2370,4 +2373,169 @@ body.glow-enabled .action-btn-dislike.text-purple-500 svg {
 }
 .animate-slide-up-bubble {
     animation: slide-up-bubble 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIQUID GLASS SYSTEM — Premium Apple-inspired glassmorphism
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Core glass surface */
+:root {
+  --lg-blur: 28px;
+  --lg-bg: rgba(12, 12, 14, 0.72);
+  --lg-border: rgba(255, 255, 255, 0.10);
+  --lg-highlight: rgba(255, 255, 255, 0.06);
+  --lg-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+/* Post cards */
+.x-post,
+.post-card {
+  background: var(--lg-bg);
+  backdrop-filter: blur(var(--lg-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(180%);
+  border: 1px solid var(--lg-border);
+  box-shadow: var(--lg-shadow);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.x-post:hover,
+.post-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+/* Comments */
+.x-comment {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  transition: background 0.2s ease;
+}
+.x-comment:hover {
+  background: rgba(255, 255, 255, 0.025) !important;
+}
+/* Comment-view items inside mobile sheet */
+.comment-view__item {
+  background: transparent;
+  transition: background 0.2s ease;
+}
+.comment-view__item:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* Post detail modal sheet */
+.post-detail-modal__sheet {
+  background: linear-gradient(180deg, rgba(8,8,10,0.96) 0%, rgba(6,6,8,0.99) 100%);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 -16px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Input fields — glass style */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+
+/* Action buttons — liquid glass pill */
+.action-btn {
+  transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+}
+.action-btn:hover {
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.action-btn:active {
+  transform: scale(0.94);
+}
+
+/* Bottom nav glass — stronger refraction */
+.bottom-nav-glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 100%), rgba(8,8,10,0.82) !important;
+  backdrop-filter: blur(40px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: 
+    0 -1px 0 rgba(255,255,255,0.07),
+    0 8px 32px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.3) !important;
+}
+
+/* Nav drawer — deeper glass */
+.nav-drawer-panel {
+  background: linear-gradient(160deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.01) 100%), rgba(8,8,10,0.88) !important;
+  backdrop-filter: blur(44px) saturate(220%) !important;
+  -webkit-backdrop-filter: blur(44px) saturate(220%) !important;
+  border-right: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 12px 0 48px rgba(0,0,0,0.65), inset -1px 0 0 rgba(255,255,255,0.04) !important;
+}
+
+/* Modals / sheets — glass overlay */
+.modal-glass {
+  background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%), rgba(10,10,12,0.82);
+  backdrop-filter: blur(36px) saturate(180%);
+  -webkit-backdrop-filter: blur(36px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Premium card glass — for settings panels, profile cards etc */
+.premium-glass {
+  background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 60%, rgba(0,0,0,0.1) 100%);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 
+    0 8px 32px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  border-radius: 20px;
+}
+
+/* Glow pulse for founder badge */
+@keyframes gold-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(250,214,32,0.5), 0 0 12px rgba(250,214,32,0.3); }
+  50%       { box-shadow: 0 0 12px rgba(250,214,32,0.8), 0 0 24px rgba(250,214,32,0.4); }
+}
+.founder-badge-glow {
+  animation: gold-pulse 2.5s ease-in-out infinite;
+}
+
+/* Frosted pill — tag/chip components */
+.frosted-pill {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 9999px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.frosted-pill:hover {
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.16);
+}
+
+/* Profile page glass card */
+.profile-glass-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.2) 100%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-radius: 24px;
+}
+
+/* CommentView bottom sheet glass */
+.comment-view {
+  background: rgba(8,8,10,0.96) !important;
+  backdrop-filter: blur(40px) !important;
+  -webkit-backdrop-filter: blur(40px) !important;
 }
