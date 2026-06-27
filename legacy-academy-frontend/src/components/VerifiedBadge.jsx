@@ -4,7 +4,7 @@ const FOUNDER_SEAL_PATH = "M11 0 L14 3.5 L18.5 3.5 L18.5 8 L22 11 L18.5 14 L18.5
 const CHECKMARK_PATH = "M9.5 15.5l-4-4 1.5-1.5 2.5 2.5 6.5-6.5 1.5 1.5z";
 
 const FounderPremiumBadge = ({ className }) => (
-    <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0 drop-shadow-[0_2px_4px_rgba(234,179,8,0.5)]`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
         <defs>
             <linearGradient id="founderPremiumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF7D6" />

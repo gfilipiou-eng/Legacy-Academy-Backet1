@@ -1261,7 +1261,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 </div>
                 {isFounder && (
                     <div className="absolute -bottom-1 -right-1 overflow-visible">
-                        <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+                        <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                     </div>
                 )}
             </div>
@@ -1589,7 +1589,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                             {isAuthorFounder && (
                                 <div className="absolute -bottom-1 -right-1 overflow-visible">
-                                    <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+                                    <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                                 </div>
                             )}
                         </div>
@@ -2539,7 +2539,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                             {isFounder && (
                                 <div className="absolute -bottom-1 -right-1 overflow-visible">
-                                    <AvatarFounderBadge className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+                                    <AvatarFounderBadge className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                                 </div>
                             )}
                         </div>
