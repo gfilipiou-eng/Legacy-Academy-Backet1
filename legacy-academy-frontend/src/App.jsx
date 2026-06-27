@@ -580,43 +580,55 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center gap-2.5 liquid-glass-control pl-1.5 pr-4 py-1.5 rounded-full shadow-sm transition-all duration-300 cursor-pointer select-none relative overflow-hidden ${className}`}
+            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden hover:scale-[1.02] active:scale-95 shadow-lg ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
-            {/* Liquid Glass Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Premium Gradient Border Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-[var(--gold-primary)]/40 to-white/10 rounded-full opacity-60 group-hover:opacity-100 animate-gradient-xy transition-opacity duration-500" />
             
-            {/* The Circular Avatar */}
-            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 z-10">
-                {isLoading ? (
-                    <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm ">
-                        <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
+            {/* Inner Content Container */}
+            <div className="relative flex items-center gap-3 bg-[#0a0a0c]/95 backdrop-blur-2xl pl-1 pr-5 py-1 rounded-full w-full h-full border border-white/5 shadow-inner group-hover:shadow-[inset_0_0_20px_rgba(255,215,0,0.05)] transition-shadow duration-500 z-10">
+                
+                {/* Decorative glow behind avatar */}
+                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--gold-primary)]/20 blur-md rounded-full group-hover:bg-[var(--gold-primary)]/40 transition-colors duration-500" />
+
+                {/* The Circular Avatar with Gold Ring */}
+                <div className="relative w-9 h-9 rounded-full shrink-0 border-[1.5px] border-[var(--gold-primary)]/40 group-hover:border-[var(--gold-primary)] p-[1.5px] transition-colors duration-500 z-10 overflow-hidden bg-black">
+                    <div className="w-full h-full rounded-full overflow-hidden relative">
+                        {isLoading ? (
+                            <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm ">
+                                <Icons.Loader className="w-3 h-3 text-[var(--gold-primary)]/50 animate-spin" />
+                            </div>
+                        ) : resolvedProfilePic ? (
+                            <img 
+                                src={resolvedProfilePic} 
+                                alt="" 
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                loading="lazy" 
+                                decoding="async" 
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-950">
+                                <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
+                                    {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                                </span>
+                            </div>
+                        )}
                     </div>
-                ) : resolvedProfilePic ? (
-                    <img 
-                        src={resolvedProfilePic} 
-                        alt="" 
-                        className="w-full h-full object-cover" 
-                        loading="lazy" 
-                        decoding="async" 
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-950">
-                        <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
-                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                </div>
+                
+                {/* The Text Info */}
+                <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
+                    <div className="flex items-center gap-1.5 mb-[3px]">
+                        <Icons.Star className="w-2.5 h-2.5 text-[var(--gold-primary)] fill-[var(--gold-primary)] opacity-90 drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]" />
+                        <span className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-[0.25em] leading-none drop-shadow-md">
+                            Affiliated Partner
                         </span>
                     </div>
-                )}
-            </div>
-            
-            {/* The Text Info */}
-            <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
-                <span className="text-[8px] font-bold text-white/50 uppercase tracking-[0.2em] leading-tight mb-0.5">
-                    Affiliated
-                </span>
-                <span className="text-[12px] sm:text-[13px] font-black text-white/95 leading-tight tracking-wide">
-                    @{normalizedUsername}
-                </span>
+                    <span className="text-[13px] sm:text-[14px] font-black text-white/95 leading-none tracking-wide group-hover:text-white transition-colors duration-300 drop-shadow-sm">
+                        @{normalizedUsername}
+                    </span>
+                </div>
             </div>
         </div>
     );
