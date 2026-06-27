@@ -5876,21 +5876,23 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             )}
 
             {/* Quick Navigation Shortcuts */}
-            <div className="flex overflow-x-auto gap-3 py-4 snap-x snap-mandatory custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollBehavior: 'smooth' }}>
-                {missionCategories.map(cat => (
-                    <button
-                        key={`nav-${cat.id}`}
-                        type="button"
-                        onClick={() => {
-                            const el = document.getElementById(`category-${cat.id}`);
-                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }}
-                        className={`shrink-0 snap-start flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-300 touch-manipulation liquid-glass-video-panel`}
-                    >
-                        <span className="text-lg">{cat.icon}</span>
-                        <span className="font-bold text-xs uppercase tracking-widest">{t(cat.nameKey)}</span>
-                    </button>
-                ))}
+            <div className="w-full overflow-x-auto pb-4 custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
+                <div className="flex gap-3 w-max px-1">
+                    {missionCategories.map(cat => (
+                        <button
+                            key={`nav-${cat.id}`}
+                            type="button"
+                            onClick={() => {
+                                const el = document.getElementById(`category-${cat.id}`);
+                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }}
+                            className={`shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-300 touch-manipulation liquid-glass-video-panel`}
+                        >
+                            <span className="text-lg">{cat.icon}</span>
+                            <span className="font-bold text-xs uppercase tracking-widest">{t(cat.nameKey)}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* All Categories */}
@@ -5905,14 +5907,15 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        {category.missions.map(m => (
-                            <div
-                                key={m.id}
-                                className={`w-full p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
-                                    hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
-                                }`}
-                            >
+                    <div className="w-full overflow-x-auto pb-6 snap-x snap-mandatory custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
+                        <div className="flex gap-4 sm:gap-6 w-max px-1">
+                            {category.missions.map(m => (
+                                <div
+                                    key={m.id}
+                                    className={`shrink-0 w-[85vw] sm:w-[320px] snap-start p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                                        hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
+                                    }`}
+                                >
                                 <div className="flex items-start gap-5 w-full">
                                     <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
                                     <div className="flex-1 w-full">
