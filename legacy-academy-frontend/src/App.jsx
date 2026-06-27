@@ -5504,6 +5504,8 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 
 const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
     const [leaders, setLeaders] = useState([]);
+    const [allTimeLeaders, setAllTimeLeaders] = useState([]);
+    const [activeTab, setActiveTab] = useState('active'); // 'active' or 'allTime'
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -5512,15 +5514,30 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
             setLoading(true);
             try {
                 const getMissionsCount = (user) => Math.max(user.missionsCompletedCount || 0, getActiveStreak(user));
-                const allRes = await axios.get('/users');
-                const sorted = (allRes.data || [])
+                const getHighestStreak = (user) => Math.max(user.highestStreak || 0, getActiveStreak(user));
+                
+                const allUsers = allRes.data || [];
+                
+                // Active Warriors (sorted by current active streak)
+                const activeSorted = [...allUsers]
                     .sort((a, b) => {
-                        const completedDiff = getMissionsCount(b) - getMissionsCount(a);
-                        if (completedDiff !== 0) return completedDiff;
-                        return getActiveStreak(b) - getActiveStreak(a);
+                        const streakDiff = getActiveStreak(b) - getActiveStreak(a);
+                        if (streakDiff !== 0) return streakDiff;
+                        return getMissionsCount(b) - getMissionsCount(a);
                     })
                     .slice(0, 50);
-                setLeaders(sorted);
+                    
+                // Hall of Fame (sorted by all-time highest streak)
+                const allTimeSorted = [...allUsers]
+                    .sort((a, b) => {
+                        const highestDiff = getHighestStreak(b) - getHighestStreak(a);
+                        if (highestDiff !== 0) return highestDiff;
+                        return getMissionsCount(b) - getMissionsCount(a);
+                    })
+                    .slice(0, 50);
+                    
+                setLeaders(activeSorted);
+                setAllTimeLeaders(allTimeSorted);
             } catch (err) {
                 console.error("Failed to fetch users:", err);
             } finally {
@@ -5544,16 +5561,39 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                 
                 <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.4)] shrink-0">
                             <Icons.Trophy className="w-6 h-6 text-black" />
                         </div>
-                        <div>
-                            <h2 className="text-xl font-black text-white uppercase tracking-widest">{t('RANK_LIST', 'Rank List')}</h2>
-                            <p className="text-xs text-orange-500 font-bold uppercase tracking-wider">{t('TOP_WARRIORS', 'Top Warriors')}</p>
+                        <div className="min-w-0">
+                            <h2 className="text-xl font-black text-white uppercase tracking-widest truncate">{t('RANK_LIST', 'Rank List')}</h2>
+                            <p className="text-xs text-orange-500 font-bold uppercase tracking-wider truncate">{t('TOP_WARRIORS', 'Top Warriors')}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-white/70 hover:text-white">
                         <Icons.X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div className="px-4 sm:px-6 py-2 border-b border-white/5 flex gap-2 overflow-x-auto custom-scrollbar shrink-0">
+                    <button
+                        onClick={() => setActiveTab('active')}
+                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+                            activeTab === 'active' 
+                            ? 'bg-orange-500/20 text-orange-500 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.2)]' 
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
+                        }`}
+                    >
+                        🔥 {t('ACTIVE_WARRIORS', 'Active Warriors')}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('allTime')}
+                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+                            activeTab === 'allTime' 
+                            ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.2)]' 
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
+                        }`}
+                    >
+                        👑 {t('ALL_TIME_STREAKS', 'Hall of Fame')}
                     </button>
                 </div>
 
@@ -5562,14 +5602,19 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         <div className="flex justify-center py-10">
                             <Icons.Loader className="w-8 h-8 text-orange-500 animate-spin" />
                         </div>
-                    ) : leaders.length === 0 ? (
+                    ) : (activeTab === 'active' ? leaders : allTimeLeaders).length === 0 ? (
                         <div className="text-center py-10 text-white/50 font-bold uppercase tracking-widest text-sm">
                             {t('NO_ACTIVE_STREAKS', 'No active streaks yet')}
                         </div>
                     ) : (
-                        leaders.map((u, idx) => (
+                        (activeTab === 'active' ? leaders : allTimeLeaders).map((u, idx) => {
+                            const currentStreak = getActiveStreak(u);
+                            const highestStreak = Math.max(u.highestStreak || 0, currentStreak);
+                            const displayStreak = activeTab === 'allTime' ? highestStreak : currentStreak;
+                            
+                            return (
                             <div key={u._id} className={`p-4 rounded-2xl flex items-center gap-4 border transition-all ${u._id === currentUser?._id ? 'bg-[#bf953f]/10 border-[#bf953f]/30' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
-                                <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl' : idx === 1 ? 'text-gray-300 text-xl' : idx === 2 ? 'text-amber-600 text-xl' : 'text-white/30 text-base'}`}>
+                                <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]' : idx === 1 ? 'text-gray-300 text-xl drop-shadow-[0_0_5px_rgba(209,213,219,0.5)]' : idx === 2 ? 'text-amber-600 text-xl drop-shadow-[0_0_5px_rgba(217,119,6,0.5)]' : 'text-white/30 text-base'}`}>
                                     #{idx + 1}
                                 </div>
                                 <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 relative">
@@ -5581,8 +5626,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                         {u._id === currentUser?._id && <span className="shrink-0 text-[9px] bg-[#bf953f]/20 text-[#bf953f] px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
                                     </div>
                                     <div className="flex flex-col items-start gap-1 mt-1">
-                                        <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${getActiveStreak(u) > 0 ? 'text-orange-500' : 'text-gray-500'}`}>
-                                            {getActiveStreak(u) > 0 ? '🔥' : '💨'} {getActiveStreak(u)} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
+                                        <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${displayStreak > 0 ? (activeTab === 'allTime' ? 'text-yellow-500' : 'text-orange-500') : 'text-gray-500'}`}>
+                                            {displayStreak > 0 ? (activeTab === 'allTime' ? '👑' : '🔥') : '💨'} {displayStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{activeTab === 'allTime' ? t('HIGHEST_STREAK', 'Record') : t('STREAK', 'Streak')}</span>
                                         </div>
                                         <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
                                             🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
@@ -5590,7 +5635,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                     </div>
                                 </div>
                             </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>
@@ -5603,6 +5649,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState(null);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const hasCompletedToday = useMemo(() => {
         if (!user?.lastMissionCompleted) return false;
@@ -5693,7 +5740,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'surv_cold', titleKey: 'MISSION_SURV_COLD', descKey: 'MISSION_SURV_COLD_DESC', icon: '🧊' },
                 { id: 'surv_shelter', titleKey: 'MISSION_SURV_SHELTER', descKey: 'MISSION_SURV_SHELTER_DESC', icon: '⛺' },
                 { id: 'surv_fast', titleKey: 'MISSION_SURV_FAST', descKey: 'MISSION_SURV_FAST_DESC', icon: '⏳' },
-                { id: 'surv_fire', titleKey: 'MISSION_SURV_FIRE', descKey: 'MISSION_SURV_FIRE_DESC', icon: '🔥' }
+                { id: 'surv_hunt', titleKey: 'MISSION_SURV_HUNT', descKey: 'MISSION_SURV_HUNT_DESC', icon: '🏹' }
             ]
         },
         {
@@ -5708,7 +5755,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'mind_puzzle', titleKey: 'MISSION_MIND_PUZZLE', descKey: 'MISSION_MIND_PUZZLE_DESC', icon: '🧩' },
                 { id: 'mind_meditate', titleKey: 'MISSION_MIND_MEDITATE', descKey: 'MISSION_MIND_MEDITATE_DESC', icon: '🧘' },
                 { id: 'mind_focus', titleKey: 'MISSION_MIND_FOCUS', descKey: 'MISSION_MIND_FOCUS_DESC', icon: '🎯' },
-                { id: 'mind_read', titleKey: 'MISSION_MIND_READ', descKey: 'MISSION_MIND_READ_DESC', icon: '📚' }
+                { id: 'mind_journal', titleKey: 'MISSION_MIND_JOURNAL', descKey: 'MISSION_MIND_JOURNAL_DESC', icon: '✍️' }
             ]
         },
         {
@@ -5723,7 +5770,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'combat_spar', titleKey: 'MISSION_COMBAT_SPAR', descKey: 'MISSION_COMBAT_SPAR_DESC', icon: '🥊' },
                 { id: 'combat_reflex', titleKey: 'MISSION_COMBAT_REFLEX', descKey: 'MISSION_COMBAT_REFLEX_DESC', icon: '⚡' },
                 { id: 'combat_power', titleKey: 'MISSION_COMBAT_POWER', descKey: 'MISSION_COMBAT_POWER_DESC', icon: '💥' },
-                { id: 'combat_shadow', titleKey: 'MISSION_COMBAT_SHADOW', descKey: 'MISSION_COMBAT_SHADOW_DESC', icon: '🥊' }
+                { id: 'combat_endurance', titleKey: 'MISSION_COMBAT_ENDURANCE', descKey: 'MISSION_COMBAT_ENDURANCE_DESC', icon: '🩸' }
             ]
         },
         {
@@ -5769,6 +5816,18 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 { id: 'tech_learn', titleKey: 'MISSION_TECH_LEARN', descKey: 'MISSION_TECH_LEARN_DESC', icon: '📚' },
                 { id: 'tech_algo', titleKey: 'MISSION_TECH_ALGO', descKey: 'MISSION_TECH_ALGO_DESC', icon: '🧠' },
                 { id: 'tech_security', titleKey: 'MISSION_TECH_SECURITY', descKey: 'MISSION_TECH_SECURITY_DESC', icon: '🔒' }
+            ]
+        },
+        {
+            id: 'elite',
+            nameKey: 'CAT_ELITE',
+            descriptionKey: 'CAT_ELITE_DESC',
+            icon: '💎',
+            color: 'from-[#bf953f] to-[#fcf6ba]',
+            missions: [
+                { id: 'elite_audit', titleKey: 'MISSION_ELITE_AUDIT', descKey: 'MISSION_ELITE_AUDIT_DESC', icon: '📊' },
+                { id: 'elite_network', titleKey: 'MISSION_ELITE_NETWORK', descKey: 'MISSION_ELITE_NETWORK_DESC', icon: '🤝' },
+                { id: 'elite_invest', titleKey: 'MISSION_ELITE_INVEST', descKey: 'MISSION_ELITE_INVEST_DESC', icon: '📈' }
             ]
         }
     ];
@@ -5824,27 +5883,54 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 </div>
             )}
 
-            {/* Category Tabs */}
-            <div className="flex flex-wrap gap-2">
-                {missionCategories.map((category) => (
-                    <button
-                        key={category.id}
-                        type="button"
-                        onClick={() => setExpandedCategory(category.id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 touch-manipulation ${
-                            expandedCategory === category.id
-                                ? `bg-gradient-to-r ${category.color} text-black border-transparent shadow-lg`
-                                : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-                        }`}
-                    >
-                        <span className="text-lg">{category.icon}</span>
-                        <span className="font-bold text-sm uppercase tracking-wide">{t(category.nameKey)}</span>
-                    </button>
-                ))}
+            <div className="flex flex-col gap-4 mb-4">
+                {/* Search Bar */}
+                <div className="relative w-full sm:w-80 group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Icons.Search className="w-4 h-4 text-white/40 group-focus-within:text-[var(--gold-primary)] transition-colors" />
+                    </div>
+                    <input 
+                        type="text"
+                        placeholder={t('SEARCH_PLACEHOLDER', 'Search missions...')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-[#111] border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gold-primary)]/50 focus:ring-1 focus:ring-[var(--gold-primary)]/50 transition-all shadow-inner"
+                    />
+                </div>
+
+                {/* Category Tabs */}
+                <div className="flex flex-wrap gap-2">
+                    {missionCategories.map((category) => (
+                        <button
+                            key={category.id}
+                            type="button"
+                            onClick={() => setExpandedCategory(category.id)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 touch-manipulation ${
+                                expandedCategory === category.id
+                                    ? `bg-gradient-to-r ${category.color} text-black border-transparent shadow-lg shadow-${category.color.split(' ')[0].split('-')[1]}-500/20`
+                                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                            }`}
+                        >
+                            <span className="text-lg">{category.icon}</span>
+                            <span className="font-bold text-sm uppercase tracking-wide">{t(category.nameKey)}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Active Category */}
-            {missionCategories.filter(cat => cat.id === expandedCategory).map(category => (
+            {missionCategories
+                .filter(cat => cat.id === expandedCategory)
+                .map(category => {
+                    const filteredMissions = category.missions.filter(m => {
+                        if (!searchQuery) return true;
+                        const q = searchQuery.toLowerCase();
+                        const title = t(m.titleKey).toLowerCase();
+                        const desc = t(m.descKey).toLowerCase();
+                        return title.includes(q) || desc.includes(q);
+                    });
+
+                    return (
                 <div key={category.id} className="space-y-4">
                     <div className="space-y-1">
                         <h4 className="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
@@ -5853,8 +5939,15 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         </h4>
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
-                    <div className="grid grid-cols-1 gap-4">
-                        {category.missions.map(m => (
+                    
+                    {filteredMissions.length === 0 && (
+                        <div className="py-10 text-center text-white/40 text-sm font-bold uppercase tracking-wider border border-white/5 rounded-2xl bg-white/[0.02]">
+                            No missions found matching "{searchQuery}"
+                        </div>
+                    )}
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {filteredMissions.map(m => (
                             <div
                                 key={m.id}
                                 className={`p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
@@ -5884,7 +5977,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         ))}
                     </div>
                 </div>
-            ))}
+            )})}
             <MissionsLeaderboardModal 
                 isOpen={showLeaderboard}
                 onClose={() => setShowLeaderboard(false)}
