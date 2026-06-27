@@ -198,14 +198,11 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' },
         cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
         neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
-        minimal: { primary: '#FFFFFF', bg: '#121212', card: '#1A1A1A' },
         darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' },
         emerald: { primary: '#10b981', bg: '#02120a', card: '#052414' },
-        ocean: { primary: '#0ea5e9', bg: '#01101a', card: '#032034' },
         midnight: { primary: '#6366f1', bg: '#0a0a0a', card: '#111111' },
         rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
-        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
-        monochrome: { primary: '#e5e5e5', bg: '#000000', card: '#0f0f0f' }
+        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' }
     };
 
     const activeTheme = themeColors[config.palette];
