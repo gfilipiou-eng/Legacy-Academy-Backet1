@@ -10827,7 +10827,6 @@ const App = () => {
                                                             <div className="w-10 h-10 relative group shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 rounded-full z-10 overflow-hidden">
                                                                 <ProfileAvatar user={u} cacheKey={imgKey} />
                                                             </div>
-                                                            </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-1.5">
                                                                     <div className="font-bold text-white text-xs sm:text-sm">
