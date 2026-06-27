@@ -972,7 +972,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
     return (
         <div className="relative shrink-0 z-30">
-            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-all active:scale-85 liquid-glass-control">
+            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 text-white/70 hover:text-white rounded-full transition-all active:scale-95 shadow-sm touch-manipulation">
                 <Icons.MoreHorizontal className="w-5 h-5" />
             </button>
             {showMenu && createPortal(
@@ -1355,7 +1355,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             e.stopPropagation();
                             setMenuOpen(!menuOpen);
                         }}
-                        className="p-1.5 rounded-full text-white/30 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation"
+                        className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 text-white/70 hover:text-white shadow-sm active:scale-95 transition-all cursor-pointer touch-manipulation"
                         aria-label="Comment actions"
                     >
                         <Icons.MoreHorizontal className="w-4 h-4" />
