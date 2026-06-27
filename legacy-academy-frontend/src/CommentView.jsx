@@ -286,13 +286,6 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
               <div className="w-full h-full rounded-full overflow-hidden border border-white/15">
                 <ProfileAvatar user={mergedPostAuthor} />
               </div>
-              {mergedPostFounder && (
-                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                  <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  </div>
-                </div>
-              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mb-2">
@@ -369,13 +362,6 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                     <div className="w-full h-full rounded-full overflow-hidden">
                       <ProfileAvatar user={mergedCommentAuthor} />
                     </div>
-                    {mergedCommentFounder && (
-                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   <div className="flex-1 min-w-0 pr-8">

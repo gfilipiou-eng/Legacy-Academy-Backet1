@@ -1259,11 +1259,6 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 <div className="w-full h-full rounded-full overflow-hidden">
                     <ProfileAvatar user={commentAuthor} />
                 </div>
-                {isFounder && (
-                    <div className="absolute -bottom-1 -right-1 overflow-visible">
-                        <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                    </div>
-                )}
             </div>
 
             {/* Body */}
@@ -1587,11 +1582,6 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
-                            {isAuthorFounder && (
-                                <div className="absolute -bottom-1 -right-1 overflow-visible">
-                                    <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                                </div>
-                            )}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
@@ -2086,7 +2076,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                 </div>
             )}
 
-            {/* NEURAL OVERLAY - ALWAYS VISIBLE OVER EVERYTHING */}
+            {/* NEUTRAL OVERLAY - ALWAYS VISIBLE OVER EVERYTHING */}
             <>
                 {(isHovered || !isPlaying || isDragging) && (
                     <div
@@ -2537,11 +2527,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
                         <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
-                            {isFounder && (
-                                <div className="absolute -bottom-1 -right-1 overflow-visible">
-                                    <AvatarFounderBadge className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                                </div>
-                            )}
                         </div>
                     </div>
 

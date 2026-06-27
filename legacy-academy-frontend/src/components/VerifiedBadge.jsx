@@ -13,8 +13,7 @@ const FounderPremiumBadge = ({ className }) => (
                 <stop offset="100%" stopColor="#854D0E" />
             </linearGradient>
         </defs>
-        <circle cx="11" cy="11" r="6" fill="#000000" />
-        <path fill="url(#founderPremiumGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" d={BADGE_PATH} />
+        <path fill="url(#founderPremiumGrad)" d="M11 0 L14 3.5 L18.5 3.5 L18.5 8 L22 11 L18.5 14 L18.5 18.5 L14 18.5 L11 22 L8 18.5 L3.5 18.5 L3.5 14 L0 11 L3.5 8 L3.5 3.5 L8 3.5 Z" />
     </svg>
 );
 
