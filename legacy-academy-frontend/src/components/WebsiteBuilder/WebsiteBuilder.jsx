@@ -75,6 +75,10 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         socialX: existingWebsite.socialX || '',
         socialInstagram: existingWebsite.socialInstagram || '',
         socialLinkedin: existingWebsite.socialLinkedin || '',
+        socialTiktok: existingWebsite.socialTiktok || '',
+        socialYoutube: existingWebsite.socialYoutube || '',
+        socialFacebook: existingWebsite.socialFacebook || '',
+        socialWhatsapp: existingWebsite.socialWhatsapp || '',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
@@ -195,7 +199,13 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
         neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
         minimal: { primary: '#FFFFFF', bg: '#121212', card: '#1A1A1A' },
-        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' }
+        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' },
+        emerald: { primary: '#10b981', bg: '#02120a', card: '#052414' },
+        ocean: { primary: '#0ea5e9', bg: '#01101a', card: '#032034' },
+        midnight: { primary: '#6366f1', bg: '#0a0a0a', card: '#111111' },
+        rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
+        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
+        monochrome: { primary: '#e5e5e5', bg: '#000000', card: '#0f0f0f' }
     };
 
     const activeTheme = themeColors[config.palette];
@@ -464,16 +474,32 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Social Links (Leave empty to hide)</label>
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <XIcon className="w-4 h-4 text-white/50" />
+                                    <XIcon className="w-4 h-4 text-white/50 shrink-0" />
                                     <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="X (Twitter) URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Icons.Instagram className="w-4 h-4 text-white/50" />
+                                    <Icons.Instagram className="w-4 h-4 text-white/50 shrink-0" />
                                     <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Instagram URL" />
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Icons.Linkedin className="w-4 h-4 text-white/50" />
+                                    <Icons.Linkedin className="w-4 h-4 text-white/50 shrink-0" />
                                     <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="LinkedIn URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.Video className="w-4 h-4 text-white/50 shrink-0" />
+                                    <input type="text" value={config.socialTiktok || ''} onChange={(e) => updateConfig('socialTiktok', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="TikTok URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.Youtube className="w-4 h-4 text-white/50 shrink-0" />
+                                    <input type="text" value={config.socialYoutube || ''} onChange={(e) => updateConfig('socialYoutube', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="YouTube URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.Facebook className="w-4 h-4 text-white/50 shrink-0" />
+                                    <input type="text" value={config.socialFacebook || ''} onChange={(e) => updateConfig('socialFacebook', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Facebook URL" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Icons.MessageCircle className="w-4 h-4 text-white/50 shrink-0" />
+                                    <input type="text" value={config.socialWhatsapp || ''} onChange={(e) => updateConfig('socialWhatsapp', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="WhatsApp Number/URL" />
                                 </div>
                             </div>
                         </div>
@@ -548,7 +574,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Website Template</label>
                             <div className="grid grid-cols-2 gap-2 mb-6">
-                                {['classic', 'newspaper', 'restaurant', 'technology', 'football', 'betting'].map(tmpl => (
+                                {['classic', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting'].map(tmpl => (
                                     <button
                                         key={tmpl}
                                         onClick={() => updateConfig('template', tmpl)}
@@ -579,7 +605,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">{t('wb_typography', 'Typography')}</label>
                             <div className="space-y-2">
-                                {['Inter', 'Roboto', 'Oswald', 'Space Grotesk', 'Playfair Display', 'Outfit', 'Montserrat', 'Syne'].map(f => (
+                                {['Inter', 'Roboto', 'Oswald', 'Space Grotesk', 'Playfair Display', 'Outfit', 'Montserrat', 'Syne', 'Cinzel', 'Roboto Mono', 'DM Sans'].map(f => (
                                     <button
                                         key={f}
                                         onClick={() => updateConfig('font', f)}

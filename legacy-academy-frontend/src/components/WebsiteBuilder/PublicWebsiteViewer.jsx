@@ -27,7 +27,13 @@ export const PublicWebsiteViewer = ({ config }) => {
         cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
         neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
         minimal: { primary: '#FFFFFF', bg: '#121212', card: '#1A1A1A' },
-        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' }
+        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' },
+        emerald: { primary: '#10b981', bg: '#02120a', card: '#052414' },
+        ocean: { primary: '#0ea5e9', bg: '#01101a', card: '#032034' },
+        midnight: { primary: '#6366f1', bg: '#0a0a0a', card: '#111111' },
+        rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
+        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
+        monochrome: { primary: '#e5e5e5', bg: '#000000', card: '#0f0f0f' }
     };
 
     const activeTheme = themeColors[config.palette] || themeColors.gold;
@@ -164,6 +170,26 @@ export const PublicWebsiteViewer = ({ config }) => {
                     {config.socialLinkedin && (
                         <a href={config.socialLinkedin} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
                             <Icons.Linkedin className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialTiktok && (
+                        <a href={config.socialTiktok} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.Video className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialYoutube && (
+                        <a href={config.socialYoutube} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.Youtube className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialFacebook && (
+                        <a href={config.socialFacebook} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.Facebook className="w-6 h-6" />
+                        </a>
+                    )}
+                    {config.socialWhatsapp && (
+                        <a href={config.socialWhatsapp} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
+                            <Icons.MessageCircle className="w-6 h-6" />
                         </a>
                     )}
                 </div>
