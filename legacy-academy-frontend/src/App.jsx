@@ -619,13 +619,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 
                 {/* The Text Info */}
                 <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
-                    <div className="flex items-center gap-1.5 mb-[3px]">
-                        <Icons.Star className="w-2.5 h-2.5 text-[var(--gold-primary)] fill-[var(--gold-primary)] opacity-90 drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]" />
-                        <span className="text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-[0.25em] leading-none drop-shadow-md">
-                            Affiliated Partner
-                        </span>
-                    </div>
-                    <span className="text-[13px] sm:text-[14px] font-black text-white/95 leading-none tracking-wide group-hover:text-white transition-colors duration-300 drop-shadow-sm">
+                    <span className="text-[13px] sm:text-[14px] font-black text-white/95 leading-none tracking-wide group-hover:text-[var(--gold-primary)] transition-colors duration-300 drop-shadow-sm">
                         @{normalizedUsername}
                     </span>
                 </div>
