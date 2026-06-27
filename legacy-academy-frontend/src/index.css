@@ -2231,28 +2231,37 @@ input, textarea {
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
-  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
-  backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: var(--dynamic-glass-bg, rgba(5, 5, 5, 0.45)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 220%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 220%)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 0 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.03) !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 0 30px rgba(255,255,255,0.03) !important;
 }
 
 .liquid-glass-control {
-  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
-  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: var(--dynamic-glass-bg, rgba(15, 15, 15, 0.5)) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05) !important;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 .liquid-glass-control:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.25), inset 0 0 20px rgba(255, 255, 255, 0.08) !important;
 }
+
+.liquid-glass-panel {
+  background: rgba(10, 10, 10, 0.55) !important;
+  backdrop-filter: blur(45px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(45px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+
 .liquid-glass-control:active {
   transform: scale(0.93) !important;
   background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;

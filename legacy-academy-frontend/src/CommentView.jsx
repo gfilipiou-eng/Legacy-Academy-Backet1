@@ -279,7 +279,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
               </div>
               {(post.author?.role || post.authorRole) === 'Founder' && (
                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                  <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                  <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                 </div>
@@ -362,7 +362,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                     </div>
                     {isCommentFounder && (
                       <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(250,214,32,0.6)]">
+                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
                           <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                       </div>
@@ -436,8 +436,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                             className="fixed inset-0 z-[30000] bg-black/70 touch-manipulation"
                             onClick={() => setActiveMenuId(null)}
                           />
-                          <div className="fixed bottom-0 left-0 right-0 z-[30001] bg-[#121212] border-t border-white/10 rounded-t-3xl py-4 shadow-2xl" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
-                            <div className="w-12 h-1 bg-white/25 rounded-full mx-auto mb-4" />
+                          <div className="fixed bottom-0 left-0 right-0 z-[30001] liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-200" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+                            <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4" />
                             {canEdit && (
                               <button
                                 type="button"
