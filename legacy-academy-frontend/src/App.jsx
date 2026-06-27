@@ -1261,9 +1261,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 </div>
                 {isFounder && (
                     <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
+                        <VerifiedBadge isFounder={isFounder} isUser={false} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
                     </div>
                 )}
             </div>
@@ -1528,11 +1526,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     // Late return to protect hook order
     if (!post) return null;
 
-    // Resolve author object if it's just an ID or missing details
+    // Resolve author object and merge live settings from allUsers
     const authorId = post.author?._id || post.author;
-    const author = (post.author && typeof post.author === 'object' && post.author.username)
-        ? post.author
-        : (allUsers?.find(u => isSameId(u._id, authorId)) || post.authorObject || { username: 'Unknown', _id: authorId });
+    const baseAuthor = (post.author && typeof post.author === 'object' && post.author.username) 
+        ? post.author 
+        : (post.authorObject || { username: 'Unknown', _id: authorId });
+    const liveAuthor = allUsers?.find(u => isSameId(u._id, authorId));
+    
+    const author = liveAuthor 
+        ? { ...baseAuthor, settings: { ...(baseAuthor.settings || {}), ...(liveAuthor.settings || {}) }, role: liveAuthor.role || baseAuthor.role }
+        : baseAuthor;
 
     // Robust reposter resolution
     let reposter = null;
@@ -1546,7 +1549,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     }
 
     const isOwner = isSameId(author?._id, user?._id);
-    const isFounder = user?.role === 'Founder';
+    const isAuthorFounder = author?.role === 'Founder';
+    const authorShowBadge = isAuthorFounder ? true : (author?.settings?.showBadge !== false);
 
     const handleClearComments = async () => {
         if (!window.confirm(t('CONFIRM_DELETE_ALL_COMMENTS') || "DELETE ALL COMMENTS?")) return;
@@ -1583,18 +1587,16 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
-                            {isFounder && (
+                            {isAuthorFounder && (
                                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                                    <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                    </div>
+                                    <VerifiedBadge isFounder={isAuthorFounder} isUser={false} className="w-3.5 h-3.5 shrink-0" user={author} />
                                 </div>
                             )}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-[16px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
-                                {isFounder && <VerifiedBadge isFounder={true} isUser={false} className="w-4 h-4 shrink-0" />}
+                                <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder && authorShowBadge} className="w-4 h-4 shrink-0" user={author} />
                             </div>
                             <span className="text-[13px] text-gray-500 font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
                         </div>
@@ -2537,9 +2539,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                             {isFounder && (
                                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 overflow-visible">
-                                    <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                    </div>
+                                    <VerifiedBadge isFounder={isFounder} isUser={false} className="w-4 h-4 shrink-0" user={author} />
                                 </div>
                             )}
                         </div>
