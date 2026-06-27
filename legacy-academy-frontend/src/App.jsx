@@ -571,8 +571,8 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         };
     }, [normalizedUsername, linkedUser]);
 
-    // Request a 100px image for perfect clarity on a 24px circle (Retina/4K)
-    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 100, true);
+    // Request a 400px image for perfect 4K crispness on high-DPI displays
+    const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 400, true);
 
     return (
         <div 
@@ -580,14 +580,14 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden hover:scale-[1.02] active:scale-95 shadow-lg ${className}`}
+            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden hover:scale-[1.02] active:scale-95 shadow-lg max-w-full ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             {/* Premium Gradient Border Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-[var(--gold-primary)]/40 to-white/10 rounded-full opacity-60 group-hover:opacity-100 animate-gradient-xy transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-[var(--gold-primary)]/50 to-white/20 rounded-full opacity-60 group-hover:opacity-100 animate-gradient-xy transition-opacity duration-500" />
             
-            {/* Inner Content Container */}
-            <div className="relative flex items-center gap-3 bg-[#0a0a0c]/95 backdrop-blur-2xl pl-1 pr-5 py-1 rounded-full w-full h-full border border-white/5 shadow-inner group-hover:shadow-[inset_0_0_20px_rgba(255,215,0,0.05)] transition-shadow duration-500 z-10">
+            {/* Inner Content Container - Liquid Glass Transparent Black */}
+            <div className="relative flex items-center gap-3 bg-black/40 backdrop-blur-2xl pl-1 pr-5 py-1 rounded-full w-full h-full border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] group-hover:shadow-[inset_0_0_20px_rgba(255,215,0,0.08)] transition-all duration-500 z-10">
                 
                 {/* Decorative glow behind avatar */}
                 <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--gold-primary)]/20 blur-md rounded-full group-hover:bg-[var(--gold-primary)]/40 transition-colors duration-500" />
