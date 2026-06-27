@@ -580,7 +580,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden hover:scale-[1.02] active:scale-95 shadow-lg max-w-full ${className}`}
+            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden shadow-lg max-w-full ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             {/* Premium Gradient Border Background */}
@@ -603,7 +603,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                             <img 
                                 src={resolvedProfilePic} 
                                 alt="" 
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                className="w-full h-full object-cover transition-transform duration-700" 
                                 loading="lazy" 
                                 decoding="async" 
                             />
