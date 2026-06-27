@@ -5937,6 +5937,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                                 </button>
                             </div>
                         ))}
+                        </div>
                     </div>
                 </div>
             ))}
