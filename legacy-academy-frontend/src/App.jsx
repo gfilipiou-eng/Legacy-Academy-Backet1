@@ -580,11 +580,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center gap-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 pl-1.5 pr-4 py-1.5 rounded-[100px] shadow-sm transition-all duration-300 cursor-pointer select-none relative overflow-hidden ${className}`}
+            className={`group inline-flex items-center gap-2.5 liquid-glass-control pl-1.5 pr-4 py-1.5 rounded-full shadow-sm transition-all duration-300 cursor-pointer select-none relative overflow-hidden ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             {/* Liquid Glass Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             {/* The Circular Avatar */}
             <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 z-10">
@@ -1375,9 +1375,10 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             />
 
                             {/* Dropdown / Bottom Sheet Menu (Liquid Glass) */}
-                            <div className="fixed bottom-0 left-0 right-0 w-full liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] z-[99999] animate-in slide-in-from-bottom duration-200" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
-                                {/* Grab handle for mobile bottom sheet */}
-                                <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4 md:hidden" />
+                            <div className="fixed inset-x-0 bottom-0 z-[99999] flex justify-center pointer-events-none">
+                                <div className="w-full max-w-[680px] pointer-events-auto liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-200" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+                                    {/* Grab handle for mobile bottom sheet */}
+                                    <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4 md:hidden" />
 
                                 {/* Close X button */}
                                 <button
@@ -1418,7 +1419,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                                     </button>
                                 )}
                             </div>
-                        </>,
+                        </div>
+                    </>,
                         document.body
                     )}
                 </div>
@@ -1770,7 +1772,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col bg-white/[0.03] border border-white/10 rounded-[24px] overflow-hidden focus-within:bg-white/[0.05] focus-within:border-white/20 transition-all">
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col liquid-glass-control rounded-[24px] overflow-hidden focus-within:ring-1 focus-within:ring-white/30 transition-all duration-300">
                                 <textarea
                                     id={`comment-input-${post._id}`}
                                     placeholder="Add a comment..."
@@ -1780,15 +1782,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         e.target.style.height = 'inherit';
                                         e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
                                     }}
-                                    className="w-full bg-transparent py-3 px-4 text-[16px] text-white outline-none placeholder-gray-500 resize-none min-h-[48px] max-h-[120px] custom-scrollbar"
+                                    className="w-full bg-transparent py-3 px-4 text-[15px] sm:text-[16px] text-white outline-none placeholder-white/40 resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed"
                                     rows="1"
                                 />
-                                <div className="flex items-center justify-between px-2 pb-2">
-                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                                <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-white/5">
+                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
-                                    <button type="submit" disabled={!commentText.trim()} className="px-4 py-1.5 bg-white text-black font-bold text-[14px] rounded-full disabled:opacity-30 disabled:bg-white/20 disabled:text-white/50 transition-all active:scale-95 flex items-center gap-1.5">
-                                        Post <Icons.Send className="w-4 h-4" />
+                                    <button type="submit" disabled={!commentText.trim()} className="px-4 py-1.5 bg-white text-black font-bold text-[13px] sm:text-[14px] rounded-full disabled:opacity-25 disabled:bg-white/20 disabled:text-white/50 hover:bg-gray-100 transition-all active:scale-95 flex items-center gap-1.5 uppercase tracking-wide">
+                                        Post <Icons.Send className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
                             </form>
@@ -10734,7 +10736,7 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white z-10 pointer-events-none drop-shadow-[0_1px_6px_rgba(255,255,255,0.18)]" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-[linear-gradient(180deg,rgba(12,12,12,0.96),rgba(5,5,5,0.9))] backdrop-blur-2xl rounded-2xl py-4 pl-12 pr-4 font-semibold tracking-[0.01em] outline-none focus:border-white/25 focus:bg-black/90 border border-white/12 text-white placeholder:text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_14px_32px_rgba(0,0,0,0.4)] transition-all duration-300 touch-manipulation" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full liquid-glass-control rounded-2xl py-4 pl-12 pr-4 font-semibold tracking-[0.01em] outline-none focus:ring-1 focus:ring-white/30 text-white placeholder:text-white/50 transition-all duration-300 touch-manipulation" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">

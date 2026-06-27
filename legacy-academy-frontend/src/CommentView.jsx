@@ -436,9 +436,10 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                             className="fixed inset-0 z-[30000] bg-black/70 touch-manipulation"
                             onClick={() => setActiveMenuId(null)}
                           />
-                          <div className="fixed bottom-0 left-0 right-0 z-[30001] liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-200" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
-                            <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4" />
-                            {canEdit && (
+                          <div className="fixed inset-x-0 bottom-0 z-[30001] flex justify-center pointer-events-none">
+                            <div className="w-full max-w-[680px] pointer-events-auto liquid-glass-panel border-t border-white/20 rounded-t-3xl py-4 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-200" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+                              <div className="w-12 h-1 bg-white/30 rounded-full mx-auto mb-4" />
+                              {canEdit && (
                               <button
                                 type="button"
                                 onClick={() => {
@@ -466,6 +467,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                               </button>
                             )}
                           </div>
+                        </div>
                         </>,
                         document.body
                       )}
