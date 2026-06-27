@@ -5869,10 +5869,28 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 </div>
             )}
 
+            {/* Quick Navigation Shortcuts */}
+            <div className="flex overflow-x-auto gap-3 py-4 snap-x snap-mandatory custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollBehavior: 'smooth' }}>
+                {missionCategories.map(cat => (
+                    <button
+                        key={`nav-${cat.id}`}
+                        type="button"
+                        onClick={() => {
+                            const el = document.getElementById(`category-${cat.id}`);
+                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }}
+                        className={`shrink-0 snap-start flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-300 touch-manipulation liquid-glass-video-panel`}
+                    >
+                        <span className="text-lg">{cat.icon}</span>
+                        <span className="font-bold text-xs uppercase tracking-widest">{t(cat.nameKey)}</span>
+                    </button>
+                ))}
+            </div>
+
             {/* All Categories */}
-            <div className="flex flex-col gap-12 mt-6">
+            <div className="flex flex-col gap-12 mt-4">
             {missionCategories.map(category => (
-                <div key={category.id} className="space-y-4">
+                <div key={category.id} id={`category-${category.id}`} className="space-y-4 scroll-mt-24">
                     <div className="space-y-1">
                         <h4 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
                             <span>{category.icon}</span>
