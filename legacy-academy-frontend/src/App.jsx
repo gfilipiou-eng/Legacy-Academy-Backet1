@@ -5913,7 +5913,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                                     hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
                                 }`}
                             >
-                                <div className="flex items-start gap-5 w-full">
+                                <div className="flex items-start gap-5 flex-1">
                                     <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
                                     <div className="flex-1 w-full">
                                         <h4 className="text-lg sm:text-xl font-black text-white uppercase tracking-wider">{m.titleKey ? t(m.titleKey) : m.title}</h4>
