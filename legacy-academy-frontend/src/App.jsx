@@ -5501,6 +5501,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                 const getMissionsCount = (user) => Math.max(user.missionsCompletedCount || 0, getActiveStreak(user));
                 const getHighestStreak = (user) => Math.max(user.highestStreak || 0, getActiveStreak(user));
                 
+                const allRes = await axios.get('/users');
                 const allUsers = allRes.data || [];
                 
                 // Active Warriors (sorted by current active streak)

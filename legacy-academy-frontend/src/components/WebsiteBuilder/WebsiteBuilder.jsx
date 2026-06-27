@@ -112,12 +112,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         reader.readAsDataURL(file);
     };
 
-    const handlePublish = async (isDraft = false, quiet = false) => {
+    const handlePublish = async (isDraftParam, quiet = false) => {
         if (!user?._id) return;
         if (!quiet) setSaving(true);
         try {
+            // Use passed isDraftParam, or fallback to current config.isDraft, or default to true
+            const finalIsDraft = isDraftParam !== undefined ? isDraftParam : (config.isDraft !== undefined ? config.isDraft : true);
+            
             const newWebsites = [...(websitesArray || [])];
-            const updatedConfig = { ...config, lastUpdated: new Date(), isDraft };
+            const updatedConfig = { ...config, lastUpdated: new Date(), isDraft: finalIsDraft };
             
             if (websiteIndex !== undefined && websiteIndex !== null && websiteIndex < newWebsites.length) {
                 newWebsites[websiteIndex] = updatedConfig;
@@ -127,6 +130,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
             const payload = { settings: { businessWebsites: newWebsites } };
             const res = await axios.put('/users/settings', payload);
+            
+            // Update local config to remember the draft status so auto-save doesn't overwrite it
+            setConfig(updatedConfig);
             
             if (onUpdateUser) {
                 onUpdateUser({
@@ -159,7 +165,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     useEffect(() => {
         if (!config || Object.keys(config).length === 0) return;
         const timer = setTimeout(() => {
-            handlePublish(true, true);
+            // Pass undefined for isDraftParam so it preserves the current draft status
+            handlePublish(undefined, true);
         }, 3000);
         return () => clearTimeout(timer);
     }, [config]);
@@ -604,19 +611,67 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             color: config.palette === 'light' ? '#000' : '#fff'
                         }}
                     >
+                        {/* Get Template Dynamic Classes */}
+                        {(() => {
+                            const getTemplateClasses = () => {
+                                const t = config.template || 'classic';
+                                if (t === 'newspaper') return {
+                                    hero: 'border-y border-white/20 text-center flex-col',
+                                    title: 'font-serif text-5xl md:text-7xl uppercase tracking-tight',
+                                    nav: 'border-y border-current justify-between',
+                                    card: 'border border-current rounded-none shadow-none',
+                                    btn: 'rounded-none border-2 border-current bg-transparent'
+                                };
+                                if (t === 'restaurant') return {
+                                    hero: 'flex-col text-center justify-center',
+                                    title: 'font-serif italic text-5xl md:text-6xl text-[var(--builder-primary)] drop-shadow-md',
+                                    nav: 'justify-center',
+                                    card: 'rounded-t-full border border-white/10 text-center',
+                                    btn: 'rounded-full px-12'
+                                };
+                                if (t === 'technology') return {
+                                    hero: 'flex-col md:flex-row items-center',
+                                    title: 'font-mono uppercase tracking-widest text-4xl',
+                                    nav: 'border-b border-[var(--builder-primary)]/30',
+                                    card: 'rounded-xl border border-[var(--builder-primary)]/30 shadow-[0_0_15px_rgba(var(--builder-primary),0.1)]',
+                                    btn: 'rounded-none px-8 font-mono border border-[var(--builder-primary)] hover:bg-[var(--builder-primary)] hover:text-black'
+                                };
+                                if (t === 'football') return {
+                                    hero: 'flex-col md:flex-row items-center',
+                                    title: 'text-6xl md:text-8xl italic uppercase -skew-x-12',
+                                    nav: 'bg-black/20 italic font-black uppercase',
+                                    card: 'rounded-none -skew-x-6 border-b-4 border-[var(--builder-primary)]',
+                                    btn: 'rounded-sm -skew-x-12 px-10'
+                                };
+                                if (t === 'betting') return {
+                                    hero: 'flex-col text-center bg-gradient-to-b from-black/50 to-transparent',
+                                    title: 'text-5xl md:text-7xl font-black uppercase text-[#2fd840]',
+                                    nav: 'bg-black/40 border-b border-[#2fd840]/30',
+                                    card: 'rounded-lg border border-white/5 bg-gradient-to-b from-white/5 to-transparent',
+                                    btn: 'rounded-lg px-8 bg-gradient-to-b from-[#2fd840] to-green-700 shadow-[0_0_20px_rgba(47,216,64,0.4)] text-white'
+                                };
+                                // classic
+                                return {
+                                    hero: 'flex-col md:flex-row items-center',
+                                    title: 'text-4xl md:text-6xl font-black',
+                                    nav: '',
+                                    card: 'rounded-2xl transition-all hover:-translate-y-2',
+                                    btn: 'rounded-full px-8 transition-all hover:scale-105'
+                                };
+                            };
+                            const tc = getTemplateClasses();
+                            
+                            return (
+                                <>
                         {/* Auto-Generated Website Layout */}
                         
                         {/* Navbar */}
-                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'} ${tc.nav}`}>
                             <div className="flex items-center gap-3">
                                 {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
-                                ) : (
-                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white shadow-lg">
-                                        {config.businessName.charAt(0)}
-                                    </div>
-                                )}
-                                <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName}</span>
+                                ) : null}
+                                <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName || 'My Website'}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
                                 {config.navLink1 !== '' && <a href="#services" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
@@ -626,12 +681,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         </nav>
 
                         {/* Hero Section */}
-                        <div className="w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative">
+                        <div className={`w-full flex-1 flex px-6 md:px-12 py-12 md:py-24 gap-12 relative ${tc.hero}`}>
                             {/* Decorative Blur - Hidden on mobile to prevent Safari pixelation bugs */}
                             <div className="hidden md:block absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transform-gpu" style={{ backgroundColor: activeTheme.primary }} />
                             
-                            <div className="flex-1 flex flex-col items-start z-10">
-                                <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
+                            <div className={`flex-1 flex flex-col z-10 ${config.template === 'restaurant' || config.template === 'newspaper' ? 'items-center text-center' : 'items-start'}`}>
+                                <h1 className={`break-words hyphens-auto leading-[1.1] mb-6 ${tc.title}`} style={{ fontFamily: config.template === 'newspaper' || config.template === 'restaurant' ? 'inherit' : config.font }}>
                                     {config.slogan}
                                 </h1>
                                 <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -640,11 +695,11 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 {config.ctaText !== '' && (
                                     <a 
                                         href={config.ctaLink === '#' ? '#contact' : config.ctaLink}
-                                        className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl active:scale-95"
-                                        style={{ 
+                                        className={`py-4 font-black uppercase tracking-widest text-sm hover:shadow-2xl active:scale-95 ${tc.btn}`}
+                                        style={tc.btn.includes('bg-transparent') ? { color: 'inherit' } : { 
                                             backgroundColor: activeTheme.primary, 
                                             color: config.palette === 'light' ? '#fff' : '#000',
-                                            boxShadow: `0 0 30px ${activeTheme.primary}40`
+                                            boxShadow: tc.btn.includes('shadow') ? undefined : `0 0 30px ${activeTheme.primary}40`
                                         }}
                                     >
                                         {config.ctaText ?? 'Επικοινωνήστε Μαζί Μας'}
@@ -652,27 +707,29 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 )}
                             </div>
 
-                            <div className="flex-1 w-full z-10 flex justify-center items-center">
-                                <div 
-                                    className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}
-                                    style={{ transform: 'translateZ(0)' }}
-                                >
-                                    <img 
-                                        src={config.coverImage} 
-                                        alt="Cover" 
-                                        className="w-full h-full object-cover rounded-[30px]" 
-                                    />
+                            {config.coverImage && (
+                                <div className="flex-1 w-full z-10 flex justify-center items-center">
+                                    <div 
+                                        className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}
+                                        style={{ transform: 'translateZ(0)' }}
+                                    >
+                                        <img 
+                                            src={config.coverImage} 
+                                            alt="Cover" 
+                                            className="w-full h-full object-cover rounded-[30px]" 
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         {/* Feature Cards / Posts */}
                         {config.features && config.features.length > 0 && (
                             <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
+                                {config.featuresTitle !== '' && <h3 className={`text-4xl mb-16 text-center tracking-tight ${config.template === 'newspaper' || config.template === 'restaurant' ? 'font-serif italic' : 'font-black'}`}>{config.featuresTitle ?? 'Features'}</h3>}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {config.features?.map((feat, idx) => (
-                                        <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
+                                        <div key={idx} className={`p-8 flex flex-col gap-4 overflow-hidden relative group ${tc.card}`} style={{ backgroundColor: activeTheme.card }}>
                                             {feat.image ? (
                                                 <div 
                                                     className="-mx-8 -mt-8 mb-6 h-[250px] md:h-[280px] flex justify-center items-center overflow-hidden cursor-pointer relative group/img"
@@ -754,7 +811,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <Icons.Linkedin className="w-5 h-5" />
                             </div>
                         </footer>
-
+                                </>
+                            );
+                        })()}
                     </motion.div>
                 </div>
             </div>
