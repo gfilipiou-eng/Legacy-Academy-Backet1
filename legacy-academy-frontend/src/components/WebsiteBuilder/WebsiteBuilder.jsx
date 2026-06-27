@@ -4,7 +4,7 @@ import * as Icons from 'lucide-react';
 import { useTranslation } from '../../translations';
 import axios from '../../api';
 import { simulateAIGeneration } from './aiSimulator';
-
+import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate } from './WebsiteTemplates';
 const XIcon = ({ className }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -611,62 +611,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             color: config.palette === 'light' ? '#000' : '#fff'
                         }}
                     >
-                        {/* Get Template Dynamic Classes */}
-                        {(() => {
-                            const getTemplateClasses = () => {
-                                const t = config.template || 'classic';
-                                if (t === 'newspaper') return {
-                                    hero: 'border-y border-white/20 text-center flex-col',
-                                    title: 'font-serif text-5xl md:text-7xl uppercase tracking-tight',
-                                    nav: 'border-y border-current justify-between',
-                                    card: 'border border-current rounded-none shadow-none',
-                                    btn: 'rounded-none border-2 border-current bg-transparent'
-                                };
-                                if (t === 'restaurant') return {
-                                    hero: 'flex-col text-center justify-center',
-                                    title: 'font-serif italic text-5xl md:text-6xl text-[var(--builder-primary)] drop-shadow-md',
-                                    nav: 'justify-center',
-                                    card: 'rounded-t-full border border-white/10 text-center',
-                                    btn: 'rounded-full px-12'
-                                };
-                                if (t === 'technology') return {
-                                    hero: 'flex-col md:flex-row items-center',
-                                    title: 'font-mono uppercase tracking-widest text-4xl',
-                                    nav: 'border-b border-[var(--builder-primary)]/30',
-                                    card: 'rounded-xl border border-[var(--builder-primary)]/30 shadow-[0_0_15px_rgba(var(--builder-primary),0.1)]',
-                                    btn: 'rounded-none px-8 font-mono border border-[var(--builder-primary)] hover:bg-[var(--builder-primary)] hover:text-black'
-                                };
-                                if (t === 'football') return {
-                                    hero: 'flex-col md:flex-row items-center',
-                                    title: 'text-6xl md:text-8xl italic uppercase -skew-x-12',
-                                    nav: 'bg-black/20 italic font-black uppercase',
-                                    card: 'rounded-none -skew-x-6 border-b-4 border-[var(--builder-primary)]',
-                                    btn: 'rounded-sm -skew-x-12 px-10'
-                                };
-                                if (t === 'betting') return {
-                                    hero: 'flex-col text-center bg-gradient-to-b from-black/50 to-transparent',
-                                    title: 'text-5xl md:text-7xl font-black uppercase text-[#2fd840]',
-                                    nav: 'bg-black/40 border-b border-[#2fd840]/30',
-                                    card: 'rounded-lg border border-white/5 bg-gradient-to-b from-white/5 to-transparent',
-                                    btn: 'rounded-lg px-8 bg-gradient-to-b from-[#2fd840] to-green-700 shadow-[0_0_20px_rgba(47,216,64,0.4)] text-white'
-                                };
-                                // classic
-                                return {
-                                    hero: 'flex-col md:flex-row items-center',
-                                    title: 'text-4xl md:text-6xl font-black',
-                                    nav: '',
-                                    card: 'rounded-2xl transition-all hover:-translate-y-2',
-                                    btn: 'rounded-full px-8 transition-all hover:scale-105'
-                                };
-                            };
-                            const tc = getTemplateClasses();
-                            
-                            return (
-                                <>
-                        {/* Auto-Generated Website Layout */}
-                        
-                        {/* Navbar */}
-                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'} ${tc.nav}`}>
+                        {/* Global Navbar */}
+                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3">
                                 {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
@@ -674,114 +620,75 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName || 'My Website'}</span>
                             </div>
                             <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                {config.navLink1 !== '' && <a href="#services" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
-                                {config.navLink2 !== '' && <a href="#about" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
-                                {config.navLink3 !== '' && <a href="#contact" onClick={(e) => e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
+                                {config.navLink1 !== '' && <a href="#services" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                                {config.navLink2 !== '' && <a href="#about" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
+                                {config.navLink3 !== '' && <a href="#contact" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                             </div>
                         </nav>
 
-                        {/* Hero Section */}
-                        <div className={`w-full flex-1 flex px-6 md:px-12 py-12 md:py-24 gap-12 relative ${tc.hero}`}>
-                            {/* Decorative Blur - Hidden on mobile to prevent Safari pixelation bugs */}
-                            <div className="hidden md:block absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transform-gpu" style={{ backgroundColor: activeTheme.primary }} />
-                            
-                            <div className={`flex-1 flex flex-col z-10 ${config.template === 'restaurant' || config.template === 'newspaper' ? 'items-center text-center' : 'items-start'}`}>
-                                <h1 className={`break-words hyphens-auto leading-[1.1] mb-6 ${tc.title}`} style={{ fontFamily: config.template === 'newspaper' || config.template === 'restaurant' ? 'inherit' : config.font }}>
-                                    {config.slogan}
-                                </h1>
-                                <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                                    {config.description}
-                                </p>
-                                {config.ctaText !== '' && (
-                                    <a 
-                                        href={config.ctaLink === '#' ? '#contact' : config.ctaLink}
-                                        className={`py-4 font-black uppercase tracking-widest text-sm hover:shadow-2xl active:scale-95 ${tc.btn}`}
-                                        style={tc.btn.includes('bg-transparent') ? { color: 'inherit' } : { 
-                                            backgroundColor: activeTheme.primary, 
-                                            color: config.palette === 'light' ? '#fff' : '#000',
-                                            boxShadow: tc.btn.includes('shadow') ? undefined : `0 0 30px ${activeTheme.primary}40`
-                                        }}
-                                    >
-                                        {config.ctaText ?? 'Επικοινωνήστε Μαζί Μας'}
-                                    </a>
-                                )}
-                            </div>
+                        {/* Render Template Body based on config.template */}
+                        {(() => {
+                            const tmplProps = { config, activeTheme, setZoomImage };
+                            switch (config.template) {
+                                case 'newspaper': return <NewspaperTemplate {...tmplProps} />;
+                                case 'restaurant': return <RestaurantTemplate {...tmplProps} />;
+                                case 'technology': return <TechnologyTemplate {...tmplProps} />;
+                                case 'football': return <FootballTemplate {...tmplProps} />;
+                                case 'betting': return <BettingTemplate {...tmplProps} />;
+                                case 'classic':
+                                default:
+                                    return <ClassicTemplate {...tmplProps} />;
+                            }
+                        })()}
 
-                            {config.coverImage && (
-                                <div className="flex-1 w-full z-10 flex justify-center items-center">
-                                    <div 
-                                        className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}
-                                        style={{ transform: 'translateZ(0)' }}
-                                    >
-                                        <img 
-                                            src={config.coverImage} 
-                                            alt="Cover" 
-                                            className="w-full h-full object-cover rounded-[30px]" 
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Feature Cards / Posts */}
-                        {config.features && config.features.length > 0 && (
-                            <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                {config.featuresTitle !== '' && <h3 className={`text-4xl mb-16 text-center tracking-tight ${config.template === 'newspaper' || config.template === 'restaurant' ? 'font-serif italic' : 'font-black'}`}>{config.featuresTitle ?? 'Features'}</h3>}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {config.features?.map((feat, idx) => (
-                                        <div key={idx} className={`p-8 flex flex-col gap-4 overflow-hidden relative group ${tc.card}`} style={{ backgroundColor: activeTheme.card }}>
-                                            {feat.image ? (
-                                                <div 
-                                                    className="-mx-8 -mt-8 mb-6 h-[250px] md:h-[280px] flex justify-center items-center overflow-hidden cursor-pointer relative group/img"
-                                                    onClick={() => setZoomImage(feat.image)}
+                        {/* Shop Section is globally available below any template if products exist */}
+                        {config.hasStore && config.products && config.products.length > 0 && (
+                            <div id="shop" className={`w-full px-6 md:px-12 py-24 border-t ${config.palette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
+                                <h3 className="break-words hyphens-auto text-4xl font-black mb-4 text-center tracking-tight">Our Products</h3>
+                                <p className="break-words hyphens-auto text-center opacity-60 max-w-2xl mx-auto mb-16">Premium selection of our best items.</p>
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                                    {config.products.map(product => (
+                                        <div key={product.id} className="group rounded-3xl overflow-hidden shadow-2xl transition-all hover:-translate-y-2 flex flex-col" style={{ backgroundColor: activeTheme.card }}>
+                                            <div className="w-full aspect-square overflow-hidden relative bg-black/20">
+                                                {product.image ? (
+                                                    <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center">
+                                                        <Icons.Image className="w-12 h-12 opacity-20" />
+                                                    </div>
+                                                )}
+                                                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+                                                    <span className="break-words hyphens-auto text-white font-black">€{product.price}</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-6 flex-1 flex flex-col">
+                                                <h4 className="text-xl font-bold mb-4">{product.name}</h4>
+                                                <div className="flex-1"></div>
+                                                <button 
+                                                    onClick={e=>e.preventDefault()}
+                                                    className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-colors mt-auto"
+                                                    style={{ backgroundColor: activeTheme.primary, color: config.palette === 'light' ? '#fff' : '#000' }}
                                                 >
-                                                    {/* Premium blurred background layer to fill empty spaces */}
-                                                    <div className="absolute inset-0 bg-black/20 z-0"></div>
-                                                    <img src={feat.image} className="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110 z-0" alt="blur-bg" />
-                                                    
-                                                    {/* The actual image, completely visible */}
-                                                    <img src={feat.image} alt={feat.title} className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover/img:scale-105 drop-shadow-2xl" />
-                                                </div>
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
-                                                    <Icons.Star className="w-6 h-6" />
-                                                </div>
-                                            )}
-                                            <h4 className="text-xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
-                                            <p className="opacity-60 text-sm leading-relaxed relative z-10 break-words hyphens-auto">{feat.desc}</p>
-                                            {feat.link && feat.link.trim() !== '' && (
-                                                <div className="mt-4">
-                                                    <a 
-                                                        href={feat.link.startsWith('http') ? feat.link : `https://${feat.link}`} 
-                                                        onClick={(e) => e.preventDefault()}
-                                                        className="relative z-10 inline-flex items-center justify-center px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg"
-                                                        style={{ 
-                                                            backgroundColor: activeTheme.primary, 
-                                                            color: config.palette === 'light' ? '#fff' : '#000',
-                                                            boxShadow: `0 6px 20px -5px ${activeTheme.primary}60`
-                                                        }}
-                                                    >
-                                                        {feat.linkText || 'Learn More'}
-                                                    </a>
-                                                </div>
-                                            )}
+                                                    Buy Now
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         )}
 
-                        {/* About Section */}
+                        {/* About and Contact Sections appended globally if defined */}
                         {config.aboutText && (
                             <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
                                 {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
-                                <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
+                                <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg break-words hyphens-auto">
                                     {config.aboutText}
                                 </p>
                             </div>
                         )}
 
-                        {/* Contact Section */}
                         {(config.contactEmail || config.contactPhone) && (
                             <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
                                 {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
@@ -803,17 +710,26 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         )}
 
                         {/* Footer */}
-                        <footer className={`w-full px-6 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
+                        <footer className={`w-full px-6 md:px-12 py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
                             <div className="text-sm font-bold opacity-50">© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
-                            <div className="flex gap-4 opacity-50">
-                                <Icons.Twitter className="w-5 h-5" />
-                                <Icons.Instagram className="w-5 h-5" />
-                                <Icons.Linkedin className="w-5 h-5" />
+                            <div className="flex gap-6 opacity-50">
+                                {config.socialX && (
+                                    <a href={config.socialX} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">
+                                        <Icons.Twitter className="w-6 h-6" />
+                                    </a>
+                                )}
+                                {config.socialInstagram && (
+                                    <a href={config.socialInstagram} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">
+                                        <Icons.Instagram className="w-6 h-6" />
+                                    </a>
+                                )}
+                                {config.socialLinkedin && (
+                                    <a href={config.socialLinkedin} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">
+                                        <Icons.Linkedin className="w-6 h-6" />
+                                    </a>
+                                )}
                             </div>
                         </footer>
-                                </>
-                            );
-                        })()}
                     </motion.div>
                 </div>
             </div>
