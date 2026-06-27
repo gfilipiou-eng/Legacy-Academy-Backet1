@@ -1260,8 +1260,8 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     <ProfileAvatar user={commentAuthor} />
                 </div>
                 {isFounder && (
-                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
+                    <div className="absolute -bottom-1 -right-1 overflow-visible">
+                        <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
                     </div>
                 )}
             </div>
@@ -1588,8 +1588,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                             {isAuthorFounder && (
-                                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                                    <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
+                                <div className="absolute -bottom-1 -right-1 overflow-visible">
+                                    <AvatarFounderBadge className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
                                 </div>
                             )}
                         </div>
@@ -2538,8 +2538,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                             {isFounder && (
-                                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 overflow-visible">
-                                    <AvatarFounderBadge className="w-4 h-4 shrink-0" />
+                                <div className="absolute -bottom-1 -right-1 overflow-visible">
+                                    <AvatarFounderBadge className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
                                 </div>
                             )}
                         </div>
