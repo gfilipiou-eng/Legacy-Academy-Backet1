@@ -5905,11 +5905,11 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                    <div className="flex flex-col gap-4 sm:gap-6 w-full">
                         {category.missions.map(m => (
                             <div
                                 key={m.id}
-                                className={`w-full p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                                className={`w-full p-5 sm:p-6 border rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
                                     hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
                                 }`}
                             >
@@ -5924,7 +5924,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                                     type="button"
                                     disabled={submitting || hasCompletedToday}
                                     onClick={() => handleCompleteMission(m.id)}
-                                    className={`w-full px-8 py-4 rounded-xl text-base font-black uppercase tracking-widest transition-all duration-300 touch-manipulation ${
+                                    className={`w-full sm:w-[200px] sm:shrink-0 px-8 py-4 rounded-xl text-base font-black uppercase tracking-widest transition-all duration-300 touch-manipulation ${
                                         hasCompletedToday
                                             ? 'bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed'
                                             : 'bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700] text-black shadow-xl shadow-[var(--gold-primary)]/40 hover:scale-105 active:scale-95'
