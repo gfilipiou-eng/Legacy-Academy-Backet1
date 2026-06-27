@@ -249,6 +249,15 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
     );
   }
 
+  // Merge live settings from allUsers for the main post author
+  const postAuthorId = String(post.author?._id || post.authorId || post.user);
+  const foundPostAuthorInAllUsers = (allUsers || []).find(u => String(u._id) === postAuthorId);
+  const mergedPostAuthor = foundPostAuthorInAllUsers
+    ? { ...(post.author || {}), settings: { ...(post.author?.settings || {}), ...(foundPostAuthorInAllUsers.settings || {}) }, role: foundPostAuthorInAllUsers.role || post.author?.role || post.authorRole }
+    : (post.author || { username: post.authorName, profilePic: post.authorProfilePic, settings: post.authorSettings, role: post.authorRole });
+  const mergedPostFounder = (mergedPostAuthor?.role || post.authorRole) === 'Founder';
+  const postShowBadge = mergedPostFounder ? true : (mergedPostAuthor?.settings?.showBadge !== false);
+
   return shell(
     <>
       <header className="shrink-0 border-b border-white/10 bg-[#0a0a0a]/95 flex items-center justify-between px-3 sm:px-4 py-3 z-50">
@@ -272,12 +281,12 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
           <div className="flex gap-3">
             <div
               className="relative w-11 h-11 shrink-0 cursor-pointer"
-              onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
+              onClick={() => onViewProfile && onViewProfile(mergedPostAuthor)}
             >
               <div className="w-full h-full rounded-full overflow-hidden border border-white/15">
-                <ProfileAvatar user={post.author || { username: post.authorName, profilePic: post.authorProfilePic }} />
+                <ProfileAvatar user={mergedPostAuthor} />
               </div>
-              {(post.author?.role || post.authorRole) === 'Founder' && (
+              {mergedPostFounder && (
                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                   <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -290,17 +299,17 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                 <button
                   type="button"
                   className="font-bold text-white text-[15px] text-left hover:underline touch-manipulation"
-                  onClick={() => onViewProfile && onViewProfile(post.author || { username: post.authorName, profilePic: post.authorProfilePic })}
+                  onClick={() => onViewProfile && onViewProfile(mergedPostAuthor)}
                 >
-                  {post.author?.username || post.authorName}
+                  {mergedPostAuthor.username || post.authorName}
                 </button>
                 <VerifiedBadge
-                  isFounder={(post.author?.role || post.authorRole) === 'Founder'}
-                  isUser={(post.author?.role || post.authorRole) !== 'Founder'}
+                  isFounder={mergedPostFounder}
+                  isUser={!mergedPostFounder && postShowBadge}
                   className="w-3.5 h-3.5 shrink-0"
-                  user={post.author || { settings: post.authorSettings, role: post.authorRole }}
+                  user={mergedPostAuthor}
                 />
-                <span className="text-gray-500 text-[13px] break-all">{`@${String(post.author?.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
+                <span className="text-gray-500 text-[13px] break-all">{`@${String(mergedPostAuthor.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
                 <span className="text-gray-600 text-[13px]">·</span>
                 <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
               </div>
@@ -354,13 +363,13 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
               return (
                 <div key={c._id || i} className={`comment-view__item py-4 px-2 flex gap-3 relative border-b border-white/[0.06] ${activeMenuId === c._id ? 'z-20' : ''}`}>
                   <div
-                    className="relative shrink-0 w-10 h-10 cursor-pointer touch-manipulation"
-                    onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
+                    className="relative shrink-0 w-10 h-10 cursor-pointer touch-manipulation mt-1"
+                    onClick={() => onViewProfile && onViewProfile(mergedCommentAuthor)}
                   >
                     <div className="w-full h-full rounded-full overflow-hidden">
-                      <ProfileAvatar user={c.author || { username: c.authorName, profilePic: c.authorProfilePic }} />
+                      <ProfileAvatar user={mergedCommentAuthor} />
                     </div>
-                    {isCommentFounder && (
+                    {mergedCommentFounder && (
                       <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                         <div className="w-3.5 h-3.5 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 rounded-full flex items-center justify-center">
                           <svg viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" className="w-2.5 h-2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -374,9 +383,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                       <button
                         type="button"
                         className="font-bold text-[15px] text-white truncate max-w-[40vw] touch-manipulation"
-                        onClick={() => onViewProfile && onViewProfile(c.author || { username: c.authorName, profilePic: c.authorProfilePic })}
+                        onClick={() => onViewProfile && onViewProfile(mergedCommentAuthor)}
                       >
-                        {c.authorName}
+                        {mergedCommentAuthor.username || c.authorName}
                       </button>
                       <VerifiedBadge
                         isFounder={mergedCommentFounder}
