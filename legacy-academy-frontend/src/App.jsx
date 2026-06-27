@@ -5907,12 +5907,12 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     
-                    <div className="w-full overflow-x-auto pb-6 snap-x snap-mandatory custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
-                        <div className="flex gap-4 sm:gap-6 w-max px-1">
+                    <div className="w-full overflow-x-auto md:overflow-visible pb-6 md:pb-0 snap-x snap-mandatory md:snap-none custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
+                        <div className="flex md:grid gap-4 sm:gap-6 w-max md:w-full px-1 md:px-0 md:grid-cols-2 lg:grid-cols-3">
                             {category.missions.map(m => (
                                 <div
                                     key={m.id}
-                                    className={`shrink-0 w-[85vw] sm:w-[320px] snap-start p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                                    className={`shrink-0 w-[85vw] md:w-auto snap-start md:snap-align-none p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
                                         hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
                                     }`}
                                 >
