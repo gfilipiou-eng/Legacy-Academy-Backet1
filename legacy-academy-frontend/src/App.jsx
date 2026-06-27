@@ -5869,71 +5869,20 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                 </div>
             )}
 
-            <div className="flex flex-col gap-4 mb-4">
-                {/* Search Bar */}
-                <div className="relative w-full sm:w-80 group">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Icons.Search className="w-4 h-4 text-white/40 group-focus-within:text-[var(--gold-primary)] transition-colors" />
-                    </div>
-                    <input 
-                        type="text"
-                        placeholder={t('SEARCH_PLACEHOLDER', 'Search missions...')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#111] border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--gold-primary)]/50 focus:ring-1 focus:ring-[var(--gold-primary)]/50 transition-all shadow-inner"
-                    />
-                </div>
-
-                {/* Category Tabs */}
-                <div className="flex flex-wrap gap-2">
-                    {missionCategories.map((category) => (
-                        <button
-                            key={category.id}
-                            type="button"
-                            onClick={() => setExpandedCategory(category.id)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 touch-manipulation ${
-                                expandedCategory === category.id
-                                    ? `bg-gradient-to-r ${category.color} text-black border-transparent shadow-lg shadow-${category.color.split(' ')[0].split('-')[1]}-500/20`
-                                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-                            }`}
-                        >
-                            <span className="text-lg">{category.icon}</span>
-                            <span className="font-bold text-sm uppercase tracking-wide">{t(category.nameKey)}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Active Category */}
-            {missionCategories
-                .filter(cat => cat.id === expandedCategory)
-                .map(category => {
-                    const filteredMissions = category.missions.filter(m => {
-                        if (!searchQuery) return true;
-                        const q = searchQuery.toLowerCase();
-                        const title = t(m.titleKey).toLowerCase();
-                        const desc = t(m.descKey).toLowerCase();
-                        return title.includes(q) || desc.includes(q);
-                    });
-
-                    return (
+            {/* All Categories */}
+            <div className="flex flex-col gap-12 mt-6">
+            {missionCategories.map(category => (
                 <div key={category.id} className="space-y-4">
                     <div className="space-y-1">
-                        <h4 className="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <h4 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider flex items-center gap-2">
                             <span>{category.icon}</span>
                             {t(category.nameKey)}
                         </h4>
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     
-                    {filteredMissions.length === 0 && (
-                        <div className="py-10 text-center text-white/40 text-sm font-bold uppercase tracking-wider border border-white/5 rounded-2xl bg-white/[0.02]">
-                            No missions found matching "{searchQuery}"
-                        </div>
-                    )}
-                    
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {filteredMissions.map(m => (
+                        {category.missions.map(m => (
                             <div
                                 key={m.id}
                                 className={`p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
@@ -5963,7 +5912,8 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         ))}
                     </div>
                 </div>
-            )})}
+            ))}
+            </div>
             <MissionsLeaderboardModal 
                 isOpen={showLeaderboard}
                 onClose={() => setShowLeaderboard(false)}
