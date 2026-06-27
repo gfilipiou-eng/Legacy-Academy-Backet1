@@ -5876,23 +5876,21 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             )}
 
             {/* Quick Navigation Shortcuts */}
-            <div className="w-full overflow-x-auto pb-4 custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
-                <div className="flex gap-3 w-max px-1">
-                    {missionCategories.map(cat => (
-                        <button
-                            key={`nav-${cat.id}`}
-                            type="button"
-                            onClick={() => {
-                                const el = document.getElementById(`category-${cat.id}`);
-                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }}
-                            className={`shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-300 touch-manipulation liquid-glass-video-panel`}
-                        >
-                            <span className="text-lg">{cat.icon}</span>
-                            <span className="font-bold text-xs uppercase tracking-widest">{t(cat.nameKey)}</span>
-                        </button>
-                    ))}
-                </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-4">
+                {missionCategories.map(cat => (
+                    <button
+                        key={`nav-${cat.id}`}
+                        type="button"
+                        onClick={() => {
+                            const el = document.getElementById(`category-${cat.id}`);
+                            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }}
+                        className={`shrink-0 flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-300 touch-manipulation liquid-glass-video-panel`}
+                    >
+                        <span className="text-base sm:text-lg">{cat.icon}</span>
+                        <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest">{t(cat.nameKey)}</span>
+                    </button>
+                ))}
             </div>
 
             {/* All Categories */}
@@ -5907,15 +5905,14 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                         <p className="text-sm text-gray-400 font-medium">{t(category.descriptionKey)}</p>
                     </div>
                     
-                    <div className="w-full overflow-x-auto md:overflow-visible pb-6 md:pb-0 snap-x snap-mandatory md:snap-none custom-scrollbar" style={{ scrollBehavior: 'smooth' }}>
-                        <div className="flex md:grid gap-4 sm:gap-6 w-max md:w-full px-1 md:px-0 md:grid-cols-2 lg:grid-cols-3">
-                            {category.missions.map(m => (
-                                <div
-                                    key={m.id}
-                                    className={`shrink-0 w-[85vw] md:w-auto snap-start md:snap-align-none p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
-                                        hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
-                                    }`}
-                                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
+                        {category.missions.map(m => (
+                            <div
+                                key={m.id}
+                                className={`w-full p-5 sm:p-6 border rounded-2xl flex flex-col items-start justify-between gap-5 transition-all duration-300 liquid-glass-video-panel ${
+                                    hasCompletedToday ? 'opacity-65 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.01] hover:border-white/20'
+                                }`}
+                            >
                                 <div className="flex items-start gap-5 w-full">
                                     <span className="text-4xl sm:text-5xl shrink-0">{m.icon}</span>
                                     <div className="flex-1 w-full">
@@ -5937,7 +5934,6 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                                 </button>
                             </div>
                         ))}
-                        </div>
                     </div>
                 </div>
             ))}
