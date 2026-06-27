@@ -146,7 +146,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             
             if (!quiet) {
                 setPublished(true);
-                if (isDraft) {
+                if (finalIsDraft) {
                     setShowSaveSuccess(true);
                     setTimeout(() => setShowSaveSuccess(false), 3000);
                 } else {
