@@ -24,10 +24,10 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // Resolve effective badge color (prop takes priority over user settings)
     let effectiveBadgeColor = badgeColorProp || user?.settings?.badgeColor;
 
-    // If no custom color is set, Founders default to 'x_gold' and users default to 'x_blue'
+    // If no custom color is set, Founders default to 'founder_gold' and users default to 'x_blue'
     if (!effectiveBadgeColor) {
         if (isGold) {
-            effectiveBadgeColor = 'x_gold';
+            effectiveBadgeColor = 'founder_gold';
         } else {
             effectiveBadgeColor = 'x_blue';
         }
@@ -43,6 +43,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (effectiveBadgeColor === 'black_white') { isSolid = true; solidColor = '#000000'; checkColor = '#ffffff'; }
         else if (effectiveBadgeColor === 'white_black') { isSolid = true; solidColor = '#ffffff'; checkColor = '#000000'; }
         else if (effectiveBadgeColor === 'x_gold')      { isSolid = true; solidColor = '#e6c34f'; checkColor = '#000000'; } // X Gold has black check
+        else if (effectiveBadgeColor === 'founder_gold'){ isSolid = true; solidColor = '#e6c34f'; checkColor = 'transparent'; } // Pure gold star without inner circle
         else if (effectiveBadgeColor === 'x_blue')      { isSolid = true; solidColor = '#1D9BF0'; checkColor = '#ffffff'; } // X Blue has white check
         else if (effectiveBadgeColor === 'ig_blue')     { isSolid = true; solidColor = '#0095f6'; checkColor = '#ffffff'; } // IG Blue has white check
         else if (['metal-blue', 'obsidian-gold', 'liquid-gold', 'live-gold', 'ig_gold'].includes(effectiveBadgeColor)) {
@@ -53,9 +54,16 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     const BADGE_PATH = "M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.706 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z";
 
     if (isSolid) {
+        if (effectiveBadgeColor === 'founder_gold') {
+            return (
+                <svg viewBox="0 0 24 24" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+                    <path fill={solidColor} d={BADGE_PATH} />
+                </svg>
+            );
+        }
         return (
             <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
-                <circle cx="11" cy="11" r="6" fill={checkColor} />
+                {checkColor !== 'transparent' && <circle cx="11" cy="11" r="6" fill={checkColor} />}
                 <path fill={solidColor} d={BADGE_PATH} />
             </svg>
         );
