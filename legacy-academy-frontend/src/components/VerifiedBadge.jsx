@@ -13,6 +13,7 @@ const FounderPremiumBadge = ({ className }) => (
                 <stop offset="100%" stopColor="#854D0E" />
             </linearGradient>
         </defs>
+        <circle cx="11" cy="11" r="6" fill="#000000" />
         <path fill="url(#founderPremiumGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" d={BADGE_PATH} />
     </svg>
 );
@@ -31,7 +32,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     let baseColor = isGold ? '#F6E27A' : '#2F80ED';
     let darkColor  = isGold ? '#CB9B51' : '#1CB5E0';
     let gradId     = isGold ? 'vb_gold3DGrad' : 'vb_blue3DGrad';
-    let checkColor = '#ffffff'; // Default checkmark is white
+    let checkColor = '#000000'; // Default checkmark is black
     
     let isHolo = false;
     let isMetallic = isGold; // founders start metallic by default
@@ -57,12 +58,12 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (effectiveBadgeColor === 'neon-purple'){ baseColor = '#B026FF'; darkColor = '#590FB7'; gradId = 'vb_purple3DGrad'; }
         else if (effectiveBadgeColor === 'blue')       { baseColor = '#2F80ED'; darkColor = '#1CB5E0'; gradId = 'vb_blue3DGrad'; }
         else if (effectiveBadgeColor === 'holographic') { isHolo = true; }
-        else if (effectiveBadgeColor === 'black_white') { isSolid = true; solidColor = '#000000'; checkColor = '#ffffff'; }
+        else if (effectiveBadgeColor === 'black_white') { isSolid = true; solidColor = '#000000'; checkColor = '#ffffff'; } // Exception: white tick on black badge
         else if (effectiveBadgeColor === 'white_black') { isSolid = true; solidColor = '#ffffff'; checkColor = '#000000'; }
-        else if (effectiveBadgeColor === 'x_gold')      { isSolid = true; solidColor = '#e6c34f'; checkColor = '#000000'; } // X Gold has black check
-        else if (effectiveBadgeColor === 'founder_gold'){ isSolid = true; solidColor = '#e6c34f'; checkColor = 'transparent'; } // Pure gold star without inner circle
-        else if (effectiveBadgeColor === 'x_blue')      { isSolid = true; solidColor = '#1D9BF0'; checkColor = '#ffffff'; } // X Blue has white check
-        else if (effectiveBadgeColor === 'ig_blue')     { isSolid = true; solidColor = '#0095f6'; checkColor = '#ffffff'; } // IG Blue has white check
+        else if (effectiveBadgeColor === 'x_gold')      { isSolid = true; solidColor = '#e6c34f'; checkColor = '#000000'; }
+        else if (effectiveBadgeColor === 'founder_gold'){ isSolid = true; solidColor = '#e6c34f'; checkColor = '#000000'; }
+        else if (effectiveBadgeColor === 'x_blue')      { isSolid = true; solidColor = '#1D9BF0'; checkColor = '#000000'; }
+        else if (effectiveBadgeColor === 'ig_blue')     { isSolid = true; solidColor = '#0095f6'; checkColor = '#000000'; }
         else if (['metal-blue', 'obsidian-gold', 'liquid-gold', 'live-gold', 'ig_gold'].includes(effectiveBadgeColor)) {
             isMetallic = true;
         }
