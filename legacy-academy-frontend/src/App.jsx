@@ -7281,7 +7281,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     </div>
 
                     <div className="flex flex-wrap gap-2.5 mb-2">
-                        <div onClick={() => setIsStory(!isStory)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10'}`}>
+                        <div onClick={() => setIsStory(prev => !prev)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${isStory ? 'bg-[var(--gold-primary)]/10 border-[var(--gold-primary)]/50 shadow-lg shadow-[var(--gold-primary)]/10' : 'bg-white/5 border-white/10'}`}>
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isStory ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)] scale-110' : 'border-gray-500'}`}>
                                 {isStory && <Icons.Check className="w-3.5 h-3.5 text-black font-black" />}
                             </div>
@@ -7290,7 +7290,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider mt-0.5 truncate">{t('STORY_DURATION')}</span>
                             </div>
                         </div>
-                        <div onClick={() => setIs18Plus(!is18Plus)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
+                        <div onClick={() => setIs18Plus(prev => !prev)} className={`flex-1 flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-2xl border ${is18Plus ? 'bg-red-500/10 border-red-500/50 shadow-lg shadow-red-500/10' : 'bg-white/5 border-white/10'}`}>
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${is18Plus ? 'border-red-500 bg-red-500 scale-110' : 'border-gray-500'}`}>
                                 {is18Plus && <Icons.Check className="w-3.5 h-3.5 text-white font-black" />}
                             </div>
@@ -11098,7 +11098,7 @@ const App = () => {
                         t={t}
                     />
 
-                    <CreateModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
+                    <CreateModal isOpen={isCreateOpen} onClose={() => { setIsCreateOpen(false); setCreateModeStory(false); }} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {selectedPost && (
                         <PostDetailModal
