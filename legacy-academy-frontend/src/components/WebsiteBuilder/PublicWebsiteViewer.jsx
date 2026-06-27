@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
+import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate } from './WebsiteTemplates';
 
 const XIcon = ({ className }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -60,128 +61,22 @@ export const PublicWebsiteViewer = ({ config }) => {
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <div className="w-full flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12 relative min-h-[80vh]">
-                {/* Decorative Blur - Hidden on mobile to prevent Safari pixelation bugs */}
-                <div className="hidden md:block absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none transform-gpu" style={{ backgroundColor: activeTheme.primary }} />
-                
-                <div className="flex-1 flex flex-col items-start z-10">
-                    <h1 className="break-words hyphens-auto text-4xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6" style={{ fontFamily: config.font }}>
-                        {config.slogan}
-                    </h1>
-                    <p className={`text-lg md:text-xl mb-10 leading-relaxed max-w-lg ${config.palette === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                        {config.description}
-                    </p>
-                    {config.ctaText !== '' && (
-                        <a 
-                            href={config.ctaLink === '#' ? '#contact' : (config.ctaLink || '#contact')}
-                            className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all hover:scale-105 hover:shadow-2xl active:scale-95"
-                            style={{ 
-                                backgroundColor: activeTheme.primary, 
-                                color: config.palette === 'light' ? '#fff' : '#000',
-                                boxShadow: `0 0 30px ${activeTheme.primary}40`
-                            }}
-                        >
-                            {config.ctaText ?? 'Επικοινωνήστε Μαζί Μας'}
-                        </a>
-                    )}
-                </div>
+            {/* Render Template Body based on config.template */}
+            {(() => {
+                const tmplProps = { config, activeTheme, setZoomImage };
+                switch (config.template) {
+                    case 'newspaper': return <NewspaperTemplate {...tmplProps} />;
+                    case 'restaurant': return <RestaurantTemplate {...tmplProps} />;
+                    case 'technology': return <TechnologyTemplate {...tmplProps} />;
+                    case 'football': return <FootballTemplate {...tmplProps} />;
+                    case 'betting': return <BettingTemplate {...tmplProps} />;
+                    case 'classic':
+                    default:
+                        return <ClassicTemplate {...tmplProps} />;
+                }
+            })()}
 
-                <div className="flex-1 w-full z-10 flex justify-center items-center">
-                    <div 
-                        className={`w-full max-w-[300px] md:max-w-[450px] aspect-square rounded-[30px] overflow-hidden shadow-2xl ${config.palette === 'light' ? 'border-4 border-white' : 'border-4 border-white/10'}`}
-                        style={{ transform: 'translateZ(0)' }}
-                    >
-                        <img 
-                            src={config.coverImage} 
-                            alt="Cover" 
-                            className="w-full h-full object-cover rounded-[30px]" 
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Feature Cards / Posts */}
-            {config.features && config.features.length > 0 && (
-                <div id="services" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.featuresTitle !== '' && <h3 className="text-4xl font-black mb-16 text-center tracking-tight">{config.featuresTitle ?? 'Features'}</h3>}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                        {config.features?.map((feat, idx) => (
-                            <div key={idx} className="p-8 rounded-2xl flex flex-col gap-4 transition-all hover:-translate-y-2 overflow-hidden relative group" style={{ backgroundColor: activeTheme.card }}>
-                                {feat.image ? (
-                                    <div 
-                                        className="-mx-8 -mt-8 mb-6 h-[250px] md:h-[280px] flex justify-center items-center overflow-hidden cursor-pointer relative group/img"
-                                        onClick={() => setZoomImage(feat.image)}
-                                    >
-                                        {/* Premium blurred background layer to fill empty spaces */}
-                                        <div className="absolute inset-0 bg-black/20 z-0"></div>
-                                        <img src={feat.image} className="absolute inset-0 w-full h-full object-cover blur-xl opacity-60 scale-110 z-0" alt="blur-bg" />
-                                        
-                                        {/* The actual image, completely visible */}
-                                        <img src={feat.image} alt={feat.title} className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover/img:scale-105 drop-shadow-2xl" />
-                                    </div>
-                                ) : (
-                                    <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: `${activeTheme.primary}20`, color: activeTheme.primary }}>
-                                        <Icons.Star className="w-6 h-6" />
-                                    </div>
-                                )}
-                                <h4 className="text-xl font-bold relative z-10 break-words hyphens-auto">{feat.title}</h4>
-                                <p className="opacity-60 text-sm leading-relaxed relative z-10 break-words hyphens-auto">{feat.desc}</p>
-                                {feat.link && feat.link.trim() !== '' && (
-                                    <div className="mt-4">
-                                        <a 
-                                            href={feat.link.startsWith('http') ? feat.link : `https://${feat.link}`} 
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="relative z-10 inline-flex items-center justify-center px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-wider transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 shadow-lg"
-                                            style={{ 
-                                                backgroundColor: activeTheme.primary, 
-                                                color: config.palette === 'light' ? '#fff' : '#000',
-                                                boxShadow: `0 6px 20px -5px ${activeTheme.primary}60`
-                                            }}
-                                        >
-                                            {feat.linkText || 'Learn More'}
-                                        </a>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* About Section */}
-            {config.aboutText && (
-                <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                    {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
-                    <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg">
-                        {config.aboutText}
-                    </p>
-                </div>
-            )}
-
-            {/* Contact Section */}
-            {(config.contactEmail || config.contactPhone) && (
-                <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                    {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
-                        {config.contactEmail && (
-                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
-                                <Icons.Mail className="w-5 h-5 opacity-50" />
-                                <span className="font-bold">{config.contactEmail}</span>
-                            </div>
-                        )}
-                        {config.contactPhone && (
-                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
-                                <Icons.Phone className="w-5 h-5 opacity-50" />
-                                <span className="font-bold">{config.contactPhone}</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Shop Section */}
+            {/* Shop Section is globally available below any template if products exist */}
             {config.hasStore && config.products && config.products.length > 0 && (
                 <div id="shop" className={`w-full px-6 md:px-12 py-24 border-t ${config.palette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
                     <h3 className="break-words hyphens-auto text-4xl font-black mb-4 text-center tracking-tight">Our Products</h3>
@@ -218,6 +113,36 @@ export const PublicWebsiteViewer = ({ config }) => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            )}
+
+            {/* About and Contact Sections appended globally if defined */}
+            {config.aboutText && (
+                <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
+                    {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
+                    <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg break-words hyphens-auto">
+                        {config.aboutText}
+                    </p>
+                </div>
+            )}
+
+            {(config.contactEmail || config.contactPhone) && (
+                <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                    {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
+                        {config.contactEmail && (
+                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                <Icons.Mail className="w-5 h-5 opacity-50" />
+                                <span className="font-bold">{config.contactEmail}</span>
+                            </div>
+                        )}
+                        {config.contactPhone && (
+                            <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                <Icons.Phone className="w-5 h-5 opacity-50" />
+                                <span className="font-bold">{config.contactPhone}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

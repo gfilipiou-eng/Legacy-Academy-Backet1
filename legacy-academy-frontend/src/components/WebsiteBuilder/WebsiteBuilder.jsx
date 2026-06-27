@@ -54,30 +54,27 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     const existingWebsite = initialConfig || {};
     
     const [config, setConfig] = useState({
-        businessName: existingWebsite.businessName || user?.username || 'My Business',
-        slogan: existingWebsite.slogan ?? 'Building the future of digital excellence.',
-        description: existingWebsite.description ?? 'We provide premium services to help your business grow and achieve unprecedented success in the modern digital landscape.',
+        template: existingWebsite.template || 'classic',
+        businessName: existingWebsite.businessName || '',
+        slogan: existingWebsite.slogan || '',
+        description: existingWebsite.description || '',
         logo: existingWebsite.logo || '',
-        coverImage: existingWebsite.coverImage || 'https://res.cloudinary.com/ddehek3eo/image/upload/v1781296353/legacyacademy/g2cp4zxk3ro1vqxrnwkt.jpg',
+        coverImage: existingWebsite.coverImage || '',
         palette: existingWebsite.palette || 'gold',
         font: existingWebsite.font || 'Inter',
-        ctaText: existingWebsite.ctaText ?? 'Επικοινωνήστε Μαζί Μας',
-        ctaLink: existingWebsite.ctaLink ?? '#',
-        navLink1: existingWebsite.navLink1 ?? 'Υπηρεσίες',
-        navLink2: existingWebsite.navLink2 ?? 'Σχετικά',
-        navLink3: existingWebsite.navLink3 ?? 'Επικοινωνία',
-        featuresTitle: existingWebsite.featuresTitle ?? 'Τα Storyline μας',
-        features: existingWebsite.features || [
-            { title: 'Premium Quality 1', desc: 'We deliver nothing but the absolute best results for our clients.' },
-            { title: 'Premium Quality 2', desc: 'We deliver nothing but the absolute best results for our clients.' },
-            { title: 'Premium Quality 3', desc: 'We deliver nothing but the absolute best results for our clients.' }
-        ],
-        aboutText: existingWebsite.aboutText ?? 'We are a leading agency specializing in high-end digital solutions. Our team is dedicated to pushing the boundaries of what is possible on the web.',
-        contactEmail: existingWebsite.contactEmail ?? 'contact@example.com',
-        contactPhone: existingWebsite.contactPhone ?? '+1 (555) 123-4567',
-        socialX: existingWebsite.socialX ?? 'https://x.com',
-        socialInstagram: existingWebsite.socialInstagram ?? 'https://instagram.com',
-        socialLinkedin: existingWebsite.socialLinkedin ?? 'https://linkedin.com',
+        ctaText: existingWebsite.ctaText || '',
+        ctaLink: existingWebsite.ctaLink || '',
+        navLink1: existingWebsite.navLink1 || '',
+        navLink2: existingWebsite.navLink2 || '',
+        navLink3: existingWebsite.navLink3 || '',
+        featuresTitle: existingWebsite.featuresTitle || '',
+        features: existingWebsite.features || [],
+        aboutText: existingWebsite.aboutText || '',
+        contactEmail: existingWebsite.contactEmail || '',
+        contactPhone: existingWebsite.contactPhone || '',
+        socialX: existingWebsite.socialX || '',
+        socialInstagram: existingWebsite.socialInstagram || '',
+        socialLinkedin: existingWebsite.socialLinkedin || '',
         hasStore: existingWebsite.hasStore || false,
         products: existingWebsite.products || []
     });
@@ -294,6 +291,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.businessName || ''}
                                 onChange={(e) => updateConfig('businessName', e.target.value)}
+                                placeholder="e.g. Acme Corp"
                                 className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
@@ -303,6 +301,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 type="text" 
                                 value={config.slogan || ''}
                                 onChange={(e) => updateConfig('slogan', e.target.value)}
+                                placeholder="e.g. Building the future."
                                 className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
                             />
                         </div>
@@ -311,6 +310,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             <textarea 
                                 value={config.description || ''}
                                 onChange={(e) => updateConfig('description', e.target.value)}
+                                placeholder="e.g. We provide premium services..."
                                 rows="3"
                                 className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md resize-none"
                             />
@@ -539,14 +539,29 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 pt-4 border-t border-white/10"><Icons.Palette className="w-3 h-3" /> Aesthetics</div>
                         
                         <div>
+                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Website Template</label>
+                            <div className="grid grid-cols-2 gap-2 mb-6">
+                                {['classic', 'newspaper', 'restaurant', 'technology', 'football', 'betting'].map(tmpl => (
+                                    <button
+                                        key={tmpl}
+                                        onClick={() => updateConfig('template', tmpl)}
+                                        className={`w-full text-center px-2 py-3 rounded-xl border transition-all text-[11px] font-black uppercase tracking-wider ${config.template === tmpl ? 'border-[var(--builder-primary)] bg-[var(--builder-primary)]/10 text-white' : 'border-white/10 bg-white/5 hover:border-white/30 text-white/50 hover:bg-white/5'}`}
+                                    >
+                                        {tmpl}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Color Theme</label>
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-wrap items-center gap-3">
                                 {Object.keys(themeColors).map(c => (
                                     <button 
                                         key={c}
                                         type="button"
                                         onClick={() => updateConfig('palette', c)}
-                                        className={`w-10 h-10 rounded-full border-2 transition-all ${config.palette === c ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
+                                        className={`shrink-0 w-10 h-10 rounded-full border-2 transition-all ${config.palette === c ? 'border-white scale-110' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'}`}
                                         style={{ backgroundColor: themeColors[c].primary }}
                                         title={c.charAt(0).toUpperCase() + c.slice(1)}
                                     />

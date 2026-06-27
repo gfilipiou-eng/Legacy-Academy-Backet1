@@ -24,7 +24,7 @@ import { useTranslation } from './translations';
 import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import ImageLightbox from './components/ImageLightbox';
-import VerifiedBadge from './components/VerifiedBadge';
+import VerifiedBadge, { AvatarFounderBadge } from './components/VerifiedBadge';
 import socket from './socket';
 import BottomNavbar from './components/BottomNavbar';
 import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
@@ -1261,7 +1261,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 </div>
                 {isFounder && (
                     <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <VerifiedBadge isFounder={isFounder} isUser={false} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} />
+                        <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
                     </div>
                 )}
             </div>
@@ -1589,7 +1589,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                             {isAuthorFounder && (
                                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                                    <VerifiedBadge isFounder={isAuthorFounder} isUser={false} className="w-3.5 h-3.5 shrink-0" user={author} />
+                                    <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
                                 </div>
                             )}
                         </div>
@@ -1774,7 +1774,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col liquid-glass-control rounded-[24px] overflow-hidden focus-within:ring-1 focus-within:ring-white/30 transition-all duration-300">
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col bg-white/5 border border-white/10 rounded-[24px] overflow-hidden focus-within:bg-white/10 focus-within:border-white/20 transition-all duration-300 touch-manipulation">
                                 <textarea
                                     id={`comment-input-${post._id}`}
                                     placeholder="Add a comment..."
@@ -2539,7 +2539,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                             {isFounder && (
                                 <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 overflow-visible">
-                                    <VerifiedBadge isFounder={isFounder} isUser={false} className="w-4 h-4 shrink-0" user={author} />
+                                    <AvatarFounderBadge className="w-4 h-4 shrink-0" />
                                 </div>
                             )}
                         </div>
@@ -4838,7 +4838,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                                                                     )}
                                                                     {cardBrand === 'empire' && (
                                                                         <span className="text-[10px] font-black text-amber-400 tracking-widest flex items-center gap-1">
-                                                                            <VerifiedBadge isFounder={true} isUser={false} className="w-3.5 h-3.5" />
+                                                                            <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
                                                                             LΞC
                                                                         </span>
                                                                     )}
@@ -5206,7 +5206,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                     <div className="mb-6 p-4 sm:p-5 bg-[#1a0f00]/30 border border-amber-500/10 rounded-2xl shadow-lg relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
                         <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                            <VerifiedBadge isFounder={true} isUser={false} className="w-3.5 h-3.5" />
+                            <AvatarFounderBadge className="w-3.5 h-3.5 shrink-0" />
                             Founder Treasury Dashboard
                         </h3>
                         <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 pt-1">
@@ -9945,8 +9945,10 @@ const App = () => {
 
     const viewProfile = (u) => {
         const fullUser = resolveFullUser(u, users);
-        setProfileUser(fullUser);
-        setIsProfileOpen(true);
+        React.startTransition(() => {
+            setProfileUser(fullUser);
+            setIsProfileOpen(true);
+        });
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
@@ -10156,17 +10158,13 @@ const App = () => {
                                     {authMode === 'login' && (
                                         <form onSubmit={(e) => { e.preventDefault(); /* login logic handled by button onClick */ }}>
                                             <div className="relative group mb-3">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type="email" placeholder="Email address" id="l-email" name="l-email" aria-label="Email address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type="email" placeholder="Email address" id="l-email" name="l-email" aria-label="Email address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
                                             </div>
                                             <div className="relative group mb-3">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" name="l-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
-                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
+                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" name="l-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
                                             </div>
@@ -10218,28 +10216,22 @@ const App = () => {
                                                 )}
                                                 <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
                                             </div>
-                                            {[{ id: 'r-username', type: 'text', icon: <Icons.User className="w-4 h-4" />, ph: 'Username', val: formData.username, max: 19 },
-          { id: 'r-email', type: 'email', icon: <Icons.Mail className="w-4 h-4" />, ph: 'Email Address', val: formData.email },
+                                            {[{ id: 'r-username', type: 'text', icon: <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />, ph: 'Username', val: formData.username, max: 19 },
+          { id: 'r-email', type: 'email', icon: <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />, ph: 'Email Address', val: formData.email },
         ].map(f => (
-                                                <div key={f.id} className="relative group">
-                                                    <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                    <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10">{f.icon}</span>
-                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-transparent py-3.5 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <div key={f.id} className="relative group mb-3">
+                                                    {f.icon}
+                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
                                                 </div>
                                             ))}
-                                            <div className="relative group">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
-                                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 z-10">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
+                                            <div className="relative group mb-3">
+                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
                                             </div>
-                                            <div className="relative group">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-transparent py-3.5 px-4 text-white text-sm font-medium outline-none placeholder:text-white/20 resize-none h-20 z-10" />
-                                                <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/15 z-10">{(formData.bio || '').length}/500</div>
+                                            <div className="relative group mb-3">
+                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 px-4 text-white text-sm font-medium outline-none placeholder:text-white/30 resize-none h-20 transition-all duration-300 z-10" />
+                                                <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/40 z-20">{(formData.bio || '').length}/500</div>
                                             </div>
                                             <div className="flex flex-col gap-2">
                                                 <label className="text-[10px] font-black text-white/40 uppercase tracking-widest px-1">SELECT LANGUAGE</label>
@@ -10313,10 +10305,8 @@ const App = () => {
                                         <form onSubmit={(e) => { e.preventDefault(); /* submit handled by button */ }}>
                                             <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your email address to receive a secure password reset link.</p>
                                             <div className="relative group mb-3">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type="email" placeholder="Email Address" id="f-email" name="f-email" aria-label="Email Address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
+                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type="email" placeholder="Email Address" id="f-email" name="f-email" aria-label="Email Address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
                                             </div>
 
                                             {authError && (
@@ -10359,11 +10349,9 @@ const App = () => {
                                         <form onSubmit={(e) => { e.preventDefault(); }}>
                                             <p className="text-xs text-white/40 mb-2 text-center leading-relaxed">Enter your new clearance codes.</p>
                                             <div className="relative group mb-3">
-                                                <div className="absolute inset-0 rounded-2xl bg-white/[0.03] group-focus-within:bg-white/[0.06] transition-colors duration-300" />
-                                                <div className="absolute inset-0 rounded-2xl border border-white/[0.08] group-focus-within:border-[var(--gold-primary)]/40 transition-colors duration-300" />
-                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25 group-focus-within:text-[var(--gold-primary)]/60 transition-colors duration-300 z-10" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="New Password" id="r-password" name="r-password" aria-label="New Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-transparent py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/20 z-10" />
-                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/60 transition-colors z-10">
+                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="New Password" id="r-password" name="r-password" aria-label="New Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
                                             </div>
@@ -10834,12 +10822,11 @@ const App = () => {
                                             ) : activeTab === 'search' && searchQuery && (
                                                 <div className="space-y-2">
                                                     {users.filter(u => u.username.toLowerCase().includes(searchQuery.toLowerCase()) && u._id !== user._id).slice(0, 5).map(u => (
-                                                        <div key={u._id} onClick={() => viewProfile(u)} className="flex items-center gap-3 p-3 bg-black rounded-none  cursor-pointer hover:border-white transition-colors">
-                                                            <div className="w-10 h-10 relative group shrink-0">
-                                                                <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                                                <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
-                                                                    <ProfileAvatar user={u} cacheKey={imgKey} />
-                                                                </div>
+                                                        <div key={u._id} onClick={() => viewProfile(u)} className="group flex items-center gap-3 p-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 rounded-[100px] shadow-sm cursor-pointer transition-all duration-300 relative overflow-hidden max-w-full">
+                                                            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                                            <div className="w-10 h-10 relative group shrink-0 border border-white/20 shadow-inner group-hover:scale-[1.03] transition-all duration-300 rounded-full z-10 overflow-hidden">
+                                                                <ProfileAvatar user={u} cacheKey={imgKey} />
+                                                            </div>
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-1.5">
