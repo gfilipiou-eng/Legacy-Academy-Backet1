@@ -6008,7 +6008,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher \} => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher }) => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
@@ -6445,7 +6445,7 @@ const ProfileModal = ({
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
     {isMe && (
-        <button onClick={() => if (onOpenAccountSwitcher) onOpenAccountSwitcher();} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
+        <button onClick={() => { if (onOpenAccountSwitcher) onOpenAccountSwitcher(); }} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
             <Icons.ChevronDown className="w-3.5 h-3.5 text-white/70" />
         </button>
     )}
@@ -8752,7 +8752,7 @@ const App = () => {
     useEffect(() => {
         if (!user && mainScrollRef.current) {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'auto' });
-            setShowScrollTop(false);
+            
         }
         window.scrollTo(0, 0);
     }, [authMode, user]);
@@ -11172,14 +11172,7 @@ const App = () => {
         </main>
                     </div>
 
-                    {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (
-                        <button
-                            onClick={scrollToTop}
-                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] backdrop-blur-2xl border border-[#ffffff]/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
-                        >
-                            <Icons.ArrowUp className="w-8 h-8 sm:w-10 sm:h-10" />
-                        </button>
-                    )}
+                    <ScrollToTop mainScrollRef={mainScrollRef} />
 
                     {/* CREATE FAB (Bluesky Style) */}
                     {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost) && (
