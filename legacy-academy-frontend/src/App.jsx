@@ -6420,7 +6420,13 @@ const ProfileModal = ({
                     }} className="p-2.5 -ml-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95 text-white transition-all duration-300 flex items-center justify-center">
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
-                    <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}{getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
+                    <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
+    {isMe && (
+        <button onClick={() => setIsAccountSwitcherOpen(true)} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
+            <Icons.ChevronDown className="w-3.5 h-3.5 text-white/70" />
+        </button>
+    )}
+    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -8385,6 +8391,12 @@ const App = () => {
 
     const isPublicExperience = Boolean(publicProfileUsername || viewPostId || publicSiteUsername);
     const [user, setUser] = useState(null);
+    const [savedAccounts, setSavedAccounts] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('savedAccounts')) || [];
+        } catch { return []; }
+    });
+    const [isAccountSwitcherOpen, setIsAccountSwitcherOpen] = useState(false);
     const [matrixOverlay, setMatrixOverlay] = useState(() => localStorage.getItem('matrixOverlay') === 'true');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
@@ -8449,6 +8461,17 @@ const App = () => {
         localStorage.setItem('language', userData.settings?.language || 'en');
         localStorage.setItem('themeColor', userData.settings?.theme || '#ffd700');
         startTransition(() => setUser(userData));
+        setSavedAccounts(prev => {
+            const currentToken = localStorage.getItem('token');
+            if (!currentToken) return prev;
+            let newList = [...prev];
+            const existingIdx = newList.findIndex(a => a.user?._id === userData._id);
+            const accObj = { user: userData, token: currentToken };
+            if (existingIdx >= 0) newList[existingIdx] = accObj;
+            else newList.push(accObj);
+            localStorage.setItem('savedAccounts', JSON.stringify(newList));
+            return newList;
+        });
     }, []);
 
     const googleLogin = useGoogleLogin({
@@ -8486,6 +8509,29 @@ const App = () => {
 
     const handleGoogleSignIn = () => {
         googleLogin();
+    };
+    
+    const switchAccount = (acc) => {
+        if (!acc || !acc.token || !acc.user) return;
+        localStorage.setItem('token', acc.token);
+        localStorage.setItem('user', JSON.stringify(acc.user));
+        
+        // Ensure new token is picked up by axios interceptors automatically (they read localStorage)
+        setToken(acc.token);
+        setUser(acc.user);
+        setIsAccountSwitcherOpen(false);
+        addToast(`Switched to ${acc.user.username}`, 'success');
+        
+        // Force full reload to properly re-initialize sockets and states cleanly
+        window.location.reload();
+    };
+    
+    const removeSavedAccount = (accId) => {
+        setSavedAccounts(prev => {
+            const newList = prev.filter(a => a.user._id !== accId);
+            localStorage.setItem('savedAccounts', JSON.stringify(newList));
+            return newList;
+        });
     };
 
     const [posts, setPosts] = useState([]);
@@ -10310,12 +10356,12 @@ const App = () => {
                                                 setAuthLoading(true);
                                                 setAuthError('');
                                                 try {
-                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase().trim().toLowerCase(), password: formData.password });
+                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password });
                                                     localStorage.setItem('token', res.data.token);
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     setAuthError(e.response?.data?.message || "Invalid clearance codes or account not found.");
-                                                    setAuthLoading(false); // Only stop loading if error
+                                                    setAuthLoading(false);
                                                 } 
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -11008,9 +11054,9 @@ const App = () => {
                         </div>
                     
         {activeTab === 'missions' && showMissionsScrollTop && (
-            <div className="missions-scroll-top" onClick={() => mainScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-            </div>
+            <button className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] backdrop-blur-2xl border border-[#ffffff]/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out" onClick={() => mainScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+    </button>
         )}
         </main>
                     </div>
