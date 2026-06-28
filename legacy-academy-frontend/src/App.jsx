@@ -8516,9 +8516,10 @@ const App = () => {
         }
         startTransition(() => setUser(userData));
         setSavedAccounts(prev => {
-            const currentToken = localStorage.getItem('token');
-            if (!currentToken) return prev;
-            let newList = [...prev];
+              let currentToken = null;
+              try { currentToken = localStorage.getItem('token'); } catch(e) {}
+              if (!currentToken) return prev;
+              let newList = Array.isArray(prev) ? [...prev] : [];
             const existingIdx = newList.findIndex(a => a.user?._id === userData._id);
             const accObj = { 
                 token: currentToken, 
