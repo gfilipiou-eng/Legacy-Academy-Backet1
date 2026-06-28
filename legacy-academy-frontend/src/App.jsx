@@ -2168,7 +2168,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
                             </div>
                             <div
                                 ref={seekRef}
-                                className="w-full h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer relative group/seek shadow-[0_0_10px_rgba(0,0,0,0.5)] border border-white/5"
+                                className="w-full h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer relative group/seek shadow-md border border-white/5"
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleMouseDown}
                             >
@@ -2256,7 +2256,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                     </span>
                     <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
                     {getActiveStreak(note?.sender) > 0 && (
-                        <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{getActiveStreak(note?.sender)}{isTopStreak(note?.sender) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>
+                        <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center">🔥{getActiveStreak(note?.sender)}{isTopStreak(note?.sender) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>
                     )}
                     {note.sender?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor] ? (
                         <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[note.sender.profileDescriptor].accentClass.replace(/rounded-none/g, '').replace(/!/g, '')}`}>
@@ -2547,7 +2547,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </span>
                     </div>
                 )}
-                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
+                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible items-center p-3 sm:p-4 mb-3 sm:mb-4 bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[20px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative`}>
+<div className="absolute inset-0 rounded-[20px] bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
                         <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
@@ -2558,7 +2559,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* RIGHT COL: CONTENT */}
                     <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-visible">
                         {/* Header */}
-                        <div className="flex items-start justify-between gap-2 mb-1 sm:mb-2 -mt-1 sm:-mt-0.5 min-w-0 w-full max-w-full">
+                        <div className="flex items-center justify-between gap-2 min-w-0 w-full max-w-full z-10 relative">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
@@ -2570,7 +2571,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                             </div>
                                         )}
-                                        {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{getActiveStreak(author)}{isTopStreak(author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                        {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center">🔥{getActiveStreak(author)}{isTopStreak(author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                         <span className={handleClass}>{formatUserHandle(author?.username)}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -2582,7 +2583,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {!isReadOnly && <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />}
                         </div>
 
-                        <div className="space-y-3 mt-1">
+                        <div className="space-y-3 mt-2 px-1">
                             {post.desc && (
                                 <div className="space-y-2">
                                     {shouldBlur ? (
@@ -3181,7 +3182,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -3231,7 +3232,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {chatUser?.username}
-                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(chatUser)}{isTopStreak(chatUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(chatUser)}{isTopStreak(chatUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                         <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={chatUser} />
                                     </div>
                                     {(() => {
@@ -3362,7 +3363,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="flex-1 relative flex items-center bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-1 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(255,215,0,0.1)] transition-all duration-300 group overflow-hidden">
+                                    <div className="flex-1 relative flex items-center bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-1 focus-within:border-[var(--gold-primary)]/50 focus-within: transition-all duration-300 group overflow-hidden">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -4587,7 +4588,7 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 
     return (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-fade-in">
-            <div className="bg-[#050505] border border-amber-500/10 rounded-[32px] max-w-[480px] w-full max-h-[90vh] overflow-y-auto no-scrollbar relative flex flex-col p-6 sm:p-8 text-left box-border shadow-[0_0_50px_rgba(217,119,6,0.05)]">
+            <div className="bg-[#050505] border border-amber-500/10 rounded-[32px] max-w-[480px] w-full max-h-[90vh] overflow-y-auto no-scrollbar relative flex flex-col p-6 sm:p-8 text-left box-border shadow-2xl">
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
 
                 {showPaymentSelector && (
@@ -5422,7 +5423,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
                                     <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
-                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                                 </div>
                                 <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
@@ -5598,13 +5599,13 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-[#0a0a0c] border border-orange-500/30 rounded-3xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-[0_0_50px_rgba(249,115,22,0.15)] relative overflow-hidden"
+                className="bg-[#0a0a0c] border border-orange-500/30 rounded-3xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400" />
                 
                 <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.4)] shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-lg shrink-0">
                             <Icons.Trophy className="w-6 h-6 text-black" />
                         </div>
                         <div className="min-w-0">
@@ -5622,7 +5623,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         onClick={() => setActiveTab('active')}
                         className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
                             activeTab === 'active' 
-                            ? 'bg-orange-500/20 text-orange-500 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.2)]' 
+                            ? 'bg-orange-500/20 text-orange-500 border border-orange-500/30 ' 
                             : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
                         }`}
                     >
@@ -5632,7 +5633,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         onClick={() => setActiveTab('allTime')}
                         className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
                             activeTab === 'allTime' 
-                            ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.2)]' 
+                            ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 ' 
                             : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
                         }`}
                     >
@@ -5904,7 +5905,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     {getActiveStreak(user) > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
-                                🔥 {getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>} {t('MISSION_STREAK')}
+                                🔥 {getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>} {t('MISSION_STREAK')}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest shrink-0 border border-white/5 bg-white/5 rounded-full px-2 py-1">
                                 ⏳ {hasCompletedToday ? 'Next in' : 'Reset in'} {timeLeft}
@@ -6448,7 +6449,7 @@ const ProfileModal = ({
             <Icons.ChevronDown className="w-3.5 h-3.5 text-white/70" />
         </button>
     )}
-    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
+    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -6804,7 +6805,7 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
                                         <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
@@ -6937,7 +6938,7 @@ const ProfileModal = ({
                                                 }
                                             }}
                                             defaultValue=""
-                                            className="w-full px-4 py-4 bg-gradient-to-br from-red-900/40 to-red-950/60 backdrop-blur-xl border-2 border-red-500/30 rounded-2xl hover:border-red-500/60 hover:from-red-900/60 hover:to-red-950/80 transition-all duration-300 text-white font-black text-[11px] uppercase tracking-[0.15em] appearance-none cursor-pointer relative shadow-[0_0_20px_rgba(239,68,68,0.15)] focus:outline-none focus:border-red-400 focus:shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+                                            className="w-full px-4 py-4 bg-gradient-to-br from-red-900/40 to-red-950/60 backdrop-blur-xl border-2 border-red-500/30 rounded-2xl hover:border-red-500/60 hover:from-red-900/60 hover:to-red-950/80 transition-all duration-300 text-white font-black text-[11px] uppercase tracking-[0.15em] appearance-none cursor-pointer relative shadow-lg focus:outline-none focus:border-red-400 focus:shadow-xl"
                                         >
                                             <option value="" disabled className="bg-gray-900 text-white">{t('BAN_DAYS') || 'BAN DAYS'}</option>
                                             <option value="1" className="bg-gray-900 text-white">{t('BAN_1_DAY') || 'BAN 1 DAY'}</option>
@@ -7950,7 +7951,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                         <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
-                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(publicUser)}{isTopStreak(publicUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(publicUser)}{isTopStreak(publicUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -8142,10 +8143,10 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
 
     return (
         <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-[#0f0f13] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] shadow-[0_0_50px_rgba(249,115,22,0.1)]">
+            <div className="bg-[#0f0f13] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] shadow-2xl">
                 <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-500 to-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-500 to-red-600 flex items-center justify-center ">
                             <Icons.Trophy className="w-6 h-6 text-white" />
                         </div>
                         <div>
@@ -8166,7 +8167,7 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
                             <img src={u.profilePic || 'https://via.placeholder.com/150'} alt={u.username} className="w-12 h-12 rounded-full object-cover border border-white/10" />
                             <div className="flex-1 min-w-0 flex items-center gap-2">
                                 <div className="font-bold text-white text-base truncate">{u.username}</div>
-                                {isTopStreak(u) && <span className="px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none shrink-0 flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}
+                                {isTopStreak(u) && <span className="px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none shrink-0 flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full">
                                 <span className="text-orange-500 text-sm leading-none">🔥</span>
@@ -10686,7 +10687,7 @@ const App = () => {
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] to-[#ffb700]" />
                             
                             <div className="p-4 sm:p-8 text-center flex flex-col items-center">
-                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-2 sm:mb-4 border border-[var(--gold-primary)]/20 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-2 sm:mb-4 border border-[var(--gold-primary)]/20 shadow-lg">
                                     <Icons.Lock className="w-4 h-4 sm:w-6 sm:h-6 text-[var(--gold-primary)]" />
                                 </div>
                                 
@@ -11114,7 +11115,7 @@ const App = () => {
                                                                     <div className="font-bold text-white text-xs sm:text-sm">
                                                                         {u.username}
                                                                     </div>
-                                                                    {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                                                    {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                                                     <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{[...new Set((u.followers || []).filter(id => users.some(us => isSameId(us._id, id))))].length} {t('FOLLOWERS_COUNT')}</div>
@@ -11450,7 +11451,7 @@ const App = () => {
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
                                             </div>
                                         )}
-                                        {getActiveStreak(shareModalPost?.author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(shareModalPost?.author)}{isTopStreak(shareModalPost?.author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                        {getActiveStreak(shareModalPost?.author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(shareModalPost?.author)}{isTopStreak(shareModalPost?.author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                     </div>
                                     <div className="flex items-center gap-2 mt-1.5 shrink-0 text-gray-400 text-xs">
                                         <div className="truncate">{formatUserHandle(shareModalPost.author?.username)}</div>
@@ -11542,7 +11543,7 @@ const App = () => {
                             <div className="flex flex-col items-center justify-center gap-2 mb-1">
                                 <div className="font-black text-white text-2xl flex items-center justify-center gap-2 leading-none">
                                     {shareModalProfile.username}
-                                    {getActiveStreak(shareModalProfile) > 0 && <span className="text-orange-500 font-bold text-lg shrink-0">🔥{getActiveStreak(shareModalProfile)}{isTopStreak(shareModalProfile) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_10px_rgba(249,115,22,0.6)] tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                    {getActiveStreak(shareModalProfile) > 0 && <span className="text-orange-500 font-bold text-lg shrink-0">🔥{getActiveStreak(shareModalProfile)}{isTopStreak(shareModalProfile) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                     <VerifiedBadge isFounder={shareModalProfile.role === 'Founder'} isUser={shareModalProfile.role !== 'Founder'} className="w-6 h-6 shrink-0" user={shareModalProfile} />
                                 </div>
                                 {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
