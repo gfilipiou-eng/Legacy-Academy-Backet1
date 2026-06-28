@@ -15,7 +15,8 @@ export const isTopStreak = (u) => {
     return streak > 0 && streak === window.topStreakValue;
 };
 
-import axios from './api';
+import axios, { getSafeToken, setSafeToken, removeSafeToken } from './api';
+const decodeJWT = (t) => { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return null; } };
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Icons } from './components/Icons';
@@ -8509,9 +8510,9 @@ const App = () => {
             if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
                 console.warn("Storage full! Nuking localStorage to recover...");
                 try {
-                    const backupToken = localStorage.getItem('token');
+                    const backupToken = getSafeToken();
                     localStorage.clear();
-                    if (backupToken) localStorage.setItem('token', backupToken);
+                    if (backupToken) setSafeToken(backupToken);
                     localStorage.setItem('user', JSON.stringify(userData));
                 } catch(err) {}
             }
@@ -8519,7 +8520,7 @@ const App = () => {
         startTransition(() => setUser(userData));
         setSavedAccounts(prev => {
               let currentToken = null;
-              try { currentToken = localStorage.getItem('token'); } catch(e) {}
+              try { currentToken = getSafeToken(); } catch(e) {}
               if (!currentToken) return prev;
               let newList = Array.isArray(prev) ? [...prev] : [];
             const existingIdx = newList.findIndex(a => a.user?._id === userData._id);
@@ -8562,12 +8563,12 @@ const App = () => {
                     picture: userInfo.data.picture
                 });
                 try {
-        localStorage.setItem('token', res.data.token);
+        setSafeToken(res.data.token);
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
                   localStorage.clear();
-                  localStorage.setItem('token', res.data.token);
+                  setSafeToken(res.data.token);
               } catch(err) {}
           }
     }
@@ -8593,7 +8594,7 @@ const App = () => {
     
     const switchAccount = async (acc) => {
         if (!acc || !acc.token || !acc.user) return;
-        localStorage.setItem('token', acc.token);
+        setSafeToken(acc.token);
         
         try {
             // Fetch full user data to avoid loading missing data on boot
@@ -8776,7 +8777,7 @@ const App = () => {
         if (!newData) {
             setUser(null);
             localStorage.removeItem('user');
-            localStorage.removeItem('token');
+            removeSafeToken();
             return;
         }
         setUser(prev => {
@@ -8912,7 +8913,7 @@ const App = () => {
 
     useEffect(() => {
         const saved = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
+        const token = getSafeToken();
         
         // 🔥 SAFETY: Validate user data
         let userData = null;
@@ -8927,22 +8928,37 @@ const App = () => {
                     // Corrupted user data in localStorage - CLEAR IT!
                     console.warn("⚠️ [SAFETY] Corrupted user data detected in localStorage, clearing...");
                     localStorage.removeItem('user');
-                    localStorage.removeItem('token');
+                    removeSafeToken();
                     userData = null;
                 }
             } catch (e) {
                 console.warn("⚠️ [SAFETY] Could not parse user from localStorage, clearing...");
                 localStorage.removeItem('user');
-                localStorage.removeItem('token');
+                removeSafeToken();
                 userData = null;
             }
         }
 
         if (userData && token) {
             setUser(userData);
-            // CLEAN ALL STATE: Reset users/posts and fetch fresh
             setUsers([]);
             setPosts([]);
+        } else if (token && !userData) {
+            // Memory Fallback Recovery: Token survived (e.g. via Cookie), but user data didn't (Quota/Memory clear).
+            const decoded = decodeJWT(token);
+            if (decoded && decoded.id) {
+                // Auto-fetch user silently
+                axios.get('/users').then(res => {
+                    const me = res.data.find(u => u._id === decoded.id);
+                    if (me) {
+                        setUser(me);
+                        safeSetItem('user', JSON.stringify(me));
+                    } else { removeSafeToken(); setUser(null); }
+                }).catch(() => {
+                    // Ignore, they'll see login
+                    removeSafeToken(); setUser(null);
+                });
+            } else { removeSafeToken(); setUser(null); }
         } else if (saved && !token) {
             localStorage.removeItem('user');
             setUser(null);
@@ -10251,7 +10267,7 @@ const App = () => {
         if (user) {
             socket.emit('logout', user._id);
         }
-        localStorage.removeItem('token');
+        removeSafeToken();
         localStorage.removeItem('user');
         // Do NOT call setUser(null) here. It causes a React re-render crash before the page reloads.
         window.location.replace('/');
@@ -10441,12 +10457,12 @@ const App = () => {
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password.trim() });
                                                     try {
-        localStorage.setItem('token', res.data.token);
+        setSafeToken(res.data.token);
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
                   localStorage.clear();
-                  localStorage.setItem('token', res.data.token);
+                  setSafeToken(res.data.token);
               } catch(err) {}
           }
     }
@@ -10551,12 +10567,12 @@ const App = () => {
                                                     if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
                                                     const res = await axios.post('/auth/register', fd);
                                                     try {
-        localStorage.setItem('token', res.data.token);
+        setSafeToken(res.data.token);
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
                   localStorage.clear();
-                  localStorage.setItem('token', res.data.token);
+                  setSafeToken(res.data.token);
               } catch(err) {}
           }
     }

@@ -1,16 +1,42 @@
 import axios from "axios";
 
-// FORCE LIVE CONNECTION
-// Πλέον συνδέεται ΠΑΝΤΑ στο Render για να μην έχεις θέματα με Localhost.
+export const getSafeToken = () => {
+    let t = window.__AUTH_TOKEN__;
+    if (!t) {
+        try { t = localStorage.getItem("token"); } catch(e) {}
+    }
+    if (!t) {
+        const match = document.cookie.match(/(^| )legacy_token=([^;]+)/);
+        if (match) t = match[2];
+    }
+    window.__AUTH_TOKEN__ = t;
+    return t;
+};
+
+export const setSafeToken = (token) => {
+    window.__AUTH_TOKEN__ = token;
+    try { document.cookie = "legacy_token=${token}; path=/; max-age=31536000"; } catch(e) {}
+    try { localStorage.setItem("token", token); } catch(e) {
+        if (e.name === 'QuotaExceededError' || e?.message?.toLowerCase()?.includes('quota')) {
+            try { localStorage.clear(); localStorage.setItem("token", token); } catch(err) {}
+        }
+    }
+};
+
+export const removeSafeToken = () => {
+    window.__AUTH_TOKEN__ = null;
+    try { document.cookie = "legacy_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; } catch(e) {}
+    try { localStorage.removeItem("token"); } catch(e) {}
+};
+
 const API = axios.create({
     baseURL: "https://legacy-academy-backet1.onrender.com/api",
 });
 
-// Αυτό το κομμάτι στέλνει το Token σου αυτόματα σε κάθε αίτημα
 API.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
+    const token = getSafeToken();
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = "Bearer $token";
     }
     return config;
 });
