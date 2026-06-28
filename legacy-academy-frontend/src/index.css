@@ -136,31 +136,37 @@ body.bg-f1-aston {
 }
 
 .text-link-chip--url {
-  border-color: rgba(56, 189, 248, 0.28);
-  background: rgba(14, 165, 233, 0.12);
-  color: #bae6fd;
-  text-decoration: none;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-decoration: none;
 }
 
 .text-link-chip--url:hover {
-  background: rgba(14, 165, 233, 0.2);
-  border-color: rgba(56, 189, 248, 0.42);
-  color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 
 .text-link-chip--tag,
 .text-link-chip--mention {
-  border-color: rgba(29, 155, 240, 0.28);
-  background: rgba(29, 155, 240, 0.1);
-  color: #7cc8f8;
-  cursor: pointer;
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    color: #e2e8f0;
+    cursor: pointer;
 }
 
 .text-link-chip--tag:hover,
 .text-link-chip--mention:hover {
-  background: rgba(29, 155, 240, 0.18);
-  border-color: rgba(29, 155, 240, 0.42);
-  color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
 }
 
 @keyframes float {
