@@ -8178,6 +8178,7 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
     );
 };
 
+const safeSetItem = (key, value) => { try { localStorage.setItem(key, value); } catch(e) { console.warn('safeSetItem caught error for ' + key); } };
 const App = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLang = searchParams.get('lang');
@@ -8608,7 +8609,7 @@ const App = () => {
     const removeSavedAccount = (accId) => {
         setSavedAccounts(prev => {
             const newList = prev.filter(a => a.user._id !== accId);
-            localStorage.setItem('savedAccounts', JSON.stringify(newList));
+              safeSetItem('savedAccounts', JSON.stringify(newList));
             return newList;
         });
     };
@@ -8779,7 +8780,10 @@ const App = () => {
             return;
         }
         setUser(prev => {
-            const current = prev || JSON.parse(localStorage.getItem('user') || '{ }');
+            let current = prev;
+            if (!current) {
+                try { current = JSON.parse(localStorage.getItem('user') || '{ }'); } catch(e) { current = {}; }
+            }
             // Cache-break the new image if it's identical base path
             let nextPic = newData.profilePic;
             if (current.profilePic && nextPic && !nextPic.startsWith('blob:') && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
@@ -8791,7 +8795,7 @@ const App = () => {
             if (storageMerged.profilePic && storageMerged.profilePic.startsWith('blob:')) {
                 storageMerged.profilePic = current.profilePic && !current.profilePic.startsWith('blob:') ? current.profilePic : "";
             }
-            localStorage.setItem('user', JSON.stringify(storageMerged));
+            safeSetItem('user', JSON.stringify(storageMerged));
             return merged;
         });
     };
@@ -8857,7 +8861,7 @@ const App = () => {
             if (storageMerged.coverPic && storageMerged.coverPic.startsWith('blob:')) {
                 storageMerged.coverPic = user?.coverPic && !user.coverPic.startsWith('blob:') ? user.coverPic : "";
             }
-            localStorage.setItem('user', JSON.stringify(storageMerged));
+            safeSetItem('user', JSON.stringify(storageMerged));
             setImgKey(Date.now());
             try { window.sessionStorage.removeItem(`public-profile-cache-v3:${updatedUser.username}`); } catch (e) {}
         }
@@ -9073,7 +9077,7 @@ const App = () => {
             setUser(prev => {
                 if (!prev) return prev;
                 const updated = { ...prev, notifications: [data, ...(prev.notifications || [])] };
-                localStorage.setItem('user', JSON.stringify(updated));
+                safeSetItem('user', JSON.stringify(updated));
                 return updated;
             });
             
@@ -9413,7 +9417,7 @@ const App = () => {
         try {
             const res = await axios.get(`/posts?limit=30`);
             setPosts(res.data);
-            localStorage.setItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
+            safeSetItem('cached_posts', JSON.stringify(res.data.slice(0, 20)));
         } catch (e) { }
         finally {
             const elapsed = Date.now() - startTime;
@@ -9510,7 +9514,7 @@ const App = () => {
                                     ...(me?.settings || {})
                                 }
                             };
-                            localStorage.setItem('user', JSON.stringify(updated));
+                            safeSetItem('user', JSON.stringify(updated));
                             return updated;
                         }
                         return prev;
@@ -9554,7 +9558,7 @@ const App = () => {
             setUser(prev => {
                 if (!prev) return prev;
                 const updated = { ...prev, notifications: res.data };
-                localStorage.setItem('user', JSON.stringify(updated));
+                safeSetItem('user', JSON.stringify(updated));
                 return updated;
             });
         } catch (e) { }
@@ -9570,7 +9574,7 @@ const App = () => {
                 if (!prev || !prev.notifications) return prev;
                 const updatedNotifications = prev.notifications.map(n => ({ ...n, read: true }));
                 const updated = { ...prev, notifications: updatedNotifications };
-                localStorage.setItem('user', JSON.stringify(updated));
+                safeSetItem('user', JSON.stringify(updated));
                 return updated;
             });
             // Update the users array as well to ensure total consistency
@@ -9783,7 +9787,7 @@ const App = () => {
                 setPosts(prev => {
                     const next = prev.map(p => String(p._id) === String(safeId) ? { ...p, likes, dislikes } : p);
                     // Update cache immediately so it persists on reload
-                    localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
+                    safeSetItem('cached_posts', JSON.stringify(next.slice(0, 20)));
                     return next;
                 });
                 if (selectedPost && String(selectedPost._id) === String(safeId)) {
@@ -9837,7 +9841,7 @@ const App = () => {
             if (Array.isArray(likes) && Array.isArray(dislikes)) {
                 setPosts(prev => {
                     const next = prev.map(p => String(p._id) === String(safeId) ? { ...p, likes, dislikes } : p);
-                    localStorage.setItem('cached_posts', JSON.stringify(next.slice(0, 20)));
+                    safeSetItem('cached_posts', JSON.stringify(next.slice(0, 20)));
                     return next;
                 });
                 if (selectedPost && String(selectedPost._id) === String(safeId)) {
@@ -10039,7 +10043,7 @@ const App = () => {
             setUser(prev => {
                 if (!prev) return prev;
                 const updated = { ...prev, notifications: updatedNotifs || [], followers: followers || prev.followers, following: following || prev.following, followRequests: followRequests || prev.followRequests };
-                localStorage.setItem('user', JSON.stringify(updated));
+                safeSetItem('user', JSON.stringify(updated));
                 return updated;
             });
 
@@ -10081,7 +10085,7 @@ const App = () => {
             setUser(prev => {
                 if (!prev) return prev;
                 const updated = { ...prev, notifications: updatedNotifs || [], followRequests: followRequests || prev.followRequests };
-                localStorage.setItem('user', JSON.stringify(updated));
+                safeSetItem('user', JSON.stringify(updated));
                 return updated;
             });
 
