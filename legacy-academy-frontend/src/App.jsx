@@ -6443,11 +6443,6 @@ const ProfileModal = ({
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
-    {isMe && (
-        <button onClick={() => { if (onOpenAccountSwitcher) onOpenAccountSwitcher(); }} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
-            <Icons.ChevronDown className="w-3.5 h-3.5 text-white/70" />
-        </button>
-    )}
     {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
@@ -8443,7 +8438,7 @@ const App = () => {
             return parsed;
         } catch { return []; }
     });
-    const [isAccountSwitcherOpen, setIsAccountSwitcherOpen] = useState(false);
+    
     const [matrixOverlay, setMatrixOverlay] = useState(() => localStorage.getItem('matrixOverlay') === 'true');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
@@ -11183,7 +11178,7 @@ const App = () => {
                         </button>
                     )}
 
-                    <ProfileModal onOpenAccountSwitcher={() => setIsAccountSwitcherOpen(true)}
+                    <ProfileModal 
                         isOpen={isProfileOpen}
                         onClose={() => { setIsProfileOpen(false); }}
                         profileUser={profileUser}
