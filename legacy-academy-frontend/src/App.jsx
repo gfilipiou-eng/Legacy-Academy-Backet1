@@ -6007,7 +6007,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher \} => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
     // 🔥 INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
@@ -6444,7 +6444,7 @@ const ProfileModal = ({
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
     {isMe && (
-        <button onClick={() => setIsAccountSwitcherOpen(true)} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
+        <button onClick={() => if (onOpenAccountSwitcher) onOpenAccountSwitcher();} className="ml-1 p-1 hover:bg-white/10 rounded-full transition-colors active:scale-95">
             <Icons.ChevronDown className="w-3.5 h-3.5 text-white/70" />
         </button>
     )}
@@ -8414,6 +8414,7 @@ const App = () => {
 
     const isPublicExperience = Boolean(publicProfileUsername || viewPostId || publicSiteUsername);
     const [user, setUser] = useState(null);
+    const [isRestoringSession, setIsRestoringSession] = useState(true);
     const [savedAccounts, setSavedAccounts] = useState(() => {
         try {
             const raw = localStorage.getItem('savedAccounts');
@@ -8926,26 +8927,27 @@ const App = () => {
             }
         }
 
+        setIsRestoringSession(false);
         if (userData && token) {
             setUser(userData);
             setUsers([]);
             setPosts([]);
         } else if (token && !userData) {
-            // Memory Fallback Recovery: Token survived (e.g. via Cookie), but user data didn't (Quota/Memory clear).
+            setIsRestoringSession(true);
             const decoded = decodeJWT(token);
             if (decoded && decoded.id) {
                 // Auto-fetch user silently
-                axios.get('/users').then(res => {
-                    const me = res.data.find(u => u._id === decoded.id);
+                axios.get('/users/find/' + decoded.id).then(res => {
+                    const me = res.data;
                     if (me) {
                         setUser(me);
                         safeSetItem('user', JSON.stringify(me));
-                    } else { removeSafeToken(); setUser(null); }
+                    } else { removeSafeToken(); setUser(null); setIsRestoringSession(false); }
                 }).catch(() => {
                     // Ignore, they'll see login
-                    removeSafeToken(); setUser(null);
+                    removeSafeToken(); setUser(null); setIsRestoringSession(false);
                 });
-            } else { removeSafeToken(); setUser(null); }
+            } else { removeSafeToken(); setUser(null); setIsRestoringSession(false); }
         } else if (saved && !token) {
             localStorage.removeItem('user');
             setUser(null);
@@ -11188,7 +11190,7 @@ const App = () => {
                         </button>
                     )}
 
-                    <ProfileModal
+                    <ProfileModal onOpenAccountSwitcher={() => setIsAccountSwitcherOpen(true)}
                         isOpen={isProfileOpen}
                         onClose={() => { setIsProfileOpen(false); }}
                         profileUser={profileUser}
@@ -11629,6 +11631,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
