@@ -92,20 +92,36 @@ const BottomNavbar = memo(({
 
     const touchStartX = useRef(0);
     const touchEndX = useRef(0);
+    const touchStartY = useRef(0);
+    const touchEndY = useRef(0);
     const minSwipeDistance = 40; // minimum distance in px to trigger swipe
 
     const handleTouchStart = (e) => {
         touchStartX.current = e.targetTouches[0].clientX;
         touchEndX.current = e.targetTouches[0].clientX;
+        if (e.type === 'touchstart') {
+            touchStartY.current = e.targetTouches[0].clientY;
+            touchEndY.current = e.targetTouches[0].clientY;
+        } else {
+            touchEndY.current = e.targetTouches[0].clientY;
+        }
     };
 
     const handleTouchMove = (e) => {
-        if (e.cancelable) e.preventDefault();
+        // removed preventDefault to allow vertical scroll
         touchEndX.current = e.targetTouches[0].clientX;
+        if (e.type === 'touchstart') {
+            touchStartY.current = e.targetTouches[0].clientY;
+            touchEndY.current = e.targetTouches[0].clientY;
+        } else {
+            touchEndY.current = e.targetTouches[0].clientY;
+        }
     };
 
     const handleTouchEnd = () => {
         const distance = touchStartX.current - touchEndX.current;
+        const yDistance = Math.abs(touchStartY.current - touchEndY.current);
+        if (yDistance > 30) return;
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
 
@@ -138,7 +154,7 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className="fixed bottom-[calc(158px-7rem+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-2 sm:px-4"
+            className="fixed bottom-0 pb-[calc(24px+env(safe-area-inset-bottom))] sm:pb-[calc(32px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-2 sm:px-4"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -154,11 +170,7 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(activeTab === 'home')}>
                         {activeTab === 'home' && (
-                            <motion.div 
-                                layoutId="navActiveBackground"
-                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                            />
+                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
                         <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'home' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
                     </div>
@@ -173,11 +185,7 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(activeTab === 'search')}>
                         {activeTab === 'search' && (
-                            <motion.div 
-                                layoutId="navActiveBackground"
-                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                            />
+                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
                         <Icons.Search className={iconClass(activeTab === 'search')} fill={activeTab === 'search' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'search' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
                     </div>
@@ -204,11 +212,7 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>
                         {activeTab === 'alerts' && (
-                            <motion.div 
-                                layoutId="navActiveBackground"
-                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                            />
+                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'alerts' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
                         {unreadCount > 0 && (
@@ -231,11 +235,7 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(isProfileActive)}>
                         {isProfileActive && (
-                            <motion.div 
-                                layoutId="navActiveBackground"
-                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                className="absolute inset-0 bottom-nav-item-active pointer-events-none"
-                            />
+                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
                         <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />

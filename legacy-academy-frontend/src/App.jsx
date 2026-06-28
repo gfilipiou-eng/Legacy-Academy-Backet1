@@ -27,6 +27,7 @@ import CommentView from './CommentView';
 import ImageLightbox from './components/ImageLightbox';
 import VerifiedBadge, { AvatarFounderBadge } from './components/VerifiedBadge';
 import socket from './socket';
+import ScrollToTop from './components/ScrollToTop';
 import BottomNavbar from './components/BottomNavbar';
 import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
 // --- CONFIG ---
@@ -8666,8 +8667,7 @@ const App = () => {
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
-    const [showScrollTop, setShowScrollTop] = useState(false);
-    const mainScrollRef = useRef(null);
+        const mainScrollRef = useRef(null);
     const selectedPostRef = useRef(selectedPost);
     const postsRef = useRef(posts);
     const usersRef = useRef(users);
@@ -8693,19 +8693,6 @@ const App = () => {
     const [tradeAmount, setTradeAmount] = useState('');
     const [is18PlusVerified, setIs18PlusVerified] = useState(false);
     const [showAgeModal, setShowAgeModal] = useState(false);
-
-    const lastScrollTime = useRef(0);
-    const handleScroll = (e) => {
-        const now = Date.now();
-        if (now - lastScrollTime.current < 48) return;
-        lastScrollTime.current = now;
-
-        if (e.target.scrollTop > 500) {
-            setShowScrollTop(true);
-        } else {
-            setShowScrollTop(false);
-        }
-    };
 
     const scrollToTop = () => {
         if (mainScrollRef.current) {
@@ -10762,7 +10749,7 @@ const App = () => {
                 <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
-                        <main ref={mainScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
+                        <main ref={mainScrollRef}  className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
                         <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[#ffffff] border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
@@ -11642,6 +11629,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 
