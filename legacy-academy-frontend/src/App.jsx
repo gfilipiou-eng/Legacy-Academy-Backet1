@@ -8506,8 +8506,10 @@ const App = () => {
         } catch (e) {
             if (e.name === 'QuotaExceededError' || e.message?.toLowerCase().includes('quota')) {
                 console.warn("Storage full! Nuking localStorage to recover...");
+                const backupToken = localStorage.getItem('token');
                 localStorage.clear();
                 try {
+                    if (backupToken) localStorage.setItem('token', backupToken);
                     localStorage.setItem('user', JSON.stringify(userData));
                 } catch(err) {}
             }
