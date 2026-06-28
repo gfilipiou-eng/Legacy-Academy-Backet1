@@ -1284,7 +1284,6 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     </span>
                     <span className="x-comment__dot">·</span>
                     <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
-  <button type="button" onClick={() => onReply && onReply(commentAuthor?.username)} className="x-comment__time ml-2 hover:text-white transition-colors">Reply</button>
                 </div>
 
                 {/* Edit mode */}
@@ -1346,6 +1345,18 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         )}
                     </>
                 )}
+            {/* Action Bar (X Style) */}
+            <div className="flex items-center gap-6 mt-1.5 text-gray-500">
+                <button 
+                    type="button" 
+                    onClick={(e) => { e.stopPropagation(); onReply && onReply(commentAuthor?.username); }} 
+                    className="flex items-center gap-1.5 hover:text-[#1d9bf0] transition-colors group"
+                >
+                    <div className="p-1.5 -ml-1.5 rounded-full group-hover:bg-[#1d9bf0]/10 transition-colors">
+                        <Icons.Comment className="w-4 h-4" />
+                    </div>
+                </button>
+            </div>
             </div>
 
             {/* Options Dropdown / Bottom Sheet (Edit/Delete) */}
@@ -1731,7 +1742,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         ) : (
                             <div className="px-1 py-1">
                                 {(Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
-                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`} />
+                                    <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`}
+    onReply={(username) => {
+        setCommentText((prev) => prev ? prev + ' @' + username + ' ' : '@' + username + ' ');
+        setIsWritingComment(true);
+    }} />
                                 ))}
                             </div>
                         )}
@@ -2774,7 +2789,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 </div>
                                 <div className="border-t border-white/[0.06] mt-4">
                                     {(post.comments || []).slice().reverse().map(c => (
-                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`} />
+                                        <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`}
+    onReply={(username) => {
+        setCommentText((prev) => prev ? prev + ' @' + username + ' ' : '@' + username + ' ');
+        setIsWritingComment(true);
+    }} />
                                     ))}
                                 </div>
                             </div>
