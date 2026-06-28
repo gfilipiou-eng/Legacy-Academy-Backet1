@@ -1193,7 +1193,7 @@ const NeuralNarratorButton = ({ text }) => {
     );
 };
 
-const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile, userBadgeKey }) => {
+const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t = (k) => k, lang, onViewProfile, userBadgeKey , onReply}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.text);
     const [translatedText, setTranslatedText] = useState(null);
@@ -1284,6 +1284,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     </span>
                     <span className="x-comment__dot">·</span>
                     <span className="x-comment__time"><CyberDate date={comment.createdAt} t={t} lang={lang} /></span>
+  <button type="button" onClick={() => onReply && onReply(commentAuthor?.username)} className="x-comment__time ml-2 hover:text-white transition-colors">Reply</button>
                 </div>
 
                 {/* Edit mode */}
@@ -4355,6 +4356,13 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
                     const updatedUser = res.data;
                     localStorage.setItem('user', JSON.stringify(updatedUser));
                     if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
 
                     setProcessingStep('success');
                     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -4460,6 +4468,13 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
             
             setProcessingStep('success');
             await new Promise(resolve => setTimeout(resolve, 1500));
@@ -4499,6 +4514,13 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
             
             setSuccessMsg(`Satoshi Nakamoto Protocol executed successfully! Recaptured all treasury funds into your private founder balance.`);
             fetchGlobalPool();
@@ -4521,6 +4543,13 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
             setSuccessMsg(`Withdrawal of ${amt.toFixed(6)} LΞC completed successfully!`);
             setWithdrawAmount('');
             
@@ -5678,6 +5707,13 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             const updatedUser = res.data;
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
         } catch (err) {
             console.error(err);
             const msg = err.response?.data?.message || err.response?.data?.error || "Failed to submit completion";
@@ -6451,6 +6487,13 @@ const ProfileModal = ({
                                         }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
                                     } catch (e) { 
                                         console.error("❌ Profile picture upload error:", e);
@@ -6502,6 +6545,13 @@ const ProfileModal = ({
 
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
                                             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
                                             if (addToast) addToast('Profile picture removed', 'success');
                                         } catch (err) { 
                                             console.error(err);
@@ -6551,6 +6601,13 @@ const ProfileModal = ({
 
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
                                             if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
                                             if (addToast) addToast('Background removed', 'success');
                                         } catch (err) { 
                                             console.error(err);
@@ -6586,6 +6643,13 @@ const ProfileModal = ({
                                         }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
+            // Recalculate top streak immediately
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Luxury background updated!', 'success');
                                     } catch (err) { alert("Failed to update luxury background."); }
                                     finally { setCoverUploading(false); e.target.value = ''; }
@@ -8430,6 +8494,7 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
     const [activeTab, setActiveTab] = useState('home');
+    const [showMissionsScrollTop, setShowMissionsScrollTop] = useState(false);
     const [feedSortOrder, setFeedSortOrder] = useState('newest');
     const [isFeedSortMenuOpen, setIsFeedSortMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -10933,7 +10998,13 @@ const App = () => {
                                 </>
                             )}
                         </div>
-                    </main>
+                    
+        {activeTab === 'missions' && showMissionsScrollTop && (
+            <div className="missions-scroll-top" onClick={() => mainScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </div>
+        )}
+        </main>
                     </div>
 
                     {showScrollTop && !isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && (

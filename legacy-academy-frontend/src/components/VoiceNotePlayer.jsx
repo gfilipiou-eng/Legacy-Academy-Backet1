@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Icons } from './Icons';
 
+let globalActiveAudio = null;
+
 export const VoiceNotePlayer = ({ src, t = (k) => k }) => {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -13,10 +15,29 @@ export const VoiceNotePlayer = ({ src, t = (k) => k }) => {
         if (!audioRef.current) return;
         if (isPlaying) {
             audioRef.current.pause();
+            if (globalActiveAudio === audioRef.current) {
+                globalActiveAudio = null;
+            }
         } else {
+            if (globalActiveAudio && globalActiveAudio !== audioRef.current) {
+                globalActiveAudio.pause();
+                globalActiveAudio.currentTime = 0;
+            }
+            globalActiveAudio = audioRef.current;
             audioRef.current.play();
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                if (globalActiveAudio === audioRef.current) {
+                    globalActiveAudio = null;
+                }
+            }
+        };
+    }, []);
 
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);

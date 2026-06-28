@@ -391,14 +391,14 @@ button:active {
 
 .bottom-nav-glass {
   position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(5, 5, 5, 0.2) !important;
-  backdrop-filter: blur(40px) saturate(240%);
-  -webkit-backdrop-filter: blur(40px) saturate(240%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(2, 2, 2, 0.1) !important;
+  backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 250%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 60px)) saturate(var(--dynamic-saturate, 250%));
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
     0 16px 40px rgba(0, 0, 0, 0.6), 
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.4),
-    inset 0 -1.5px 2px rgba(0, 0, 0, 0.3);
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.1);
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -2575,12 +2575,11 @@ textarea:focus {
 
 /* Profile page glass card */
 .profile-glass-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.2) 100%);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
-  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.3) 100%);
+  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 200%));
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 200%));
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.15);
 }
 
 /* CommentView bottom sheet glass */
@@ -2588,4 +2587,63 @@ textarea:focus {
   background: rgba(8,8,10,0.96) !important;
   backdrop-filter: blur(40px) !important;
   -webkit-backdrop-filter: blur(40px) !important;
+}
+
+
+/* Premium Badge Styles */
+.premium-badge-glow {
+  background: linear-gradient(135deg, rgba(29, 155, 240, 0.2) 0%, rgba(29, 155, 240, 0.05) 100%);
+  border: 1px solid rgba(29, 155, 240, 0.4);
+  box-shadow: 0 0 15px rgba(29, 155, 240, 0.3), inset 0 0 8px rgba(29, 155, 240, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #1D9BF0;
+  text-shadow: 0 0 8px rgba(29, 155, 240, 0.5);
+}
+
+.premium-badge-gold {
+  background: linear-gradient(135deg, rgba(250, 214, 32, 0.2) 0%, rgba(250, 214, 32, 0.05) 100%);
+  border: 1px solid rgba(250, 214, 32, 0.4);
+  box-shadow: 0 0 15px rgba(250, 214, 32, 0.3), inset 0 0 8px rgba(250, 214, 32, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FAD620;
+  text-shadow: 0 0 8px rgba(250, 214, 32, 0.5);
+}
+
+/* Premium Bio Typography */
+.premium-bio-text {
+  font-weight: 500;
+  line-height: 1.6;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  letter-spacing: 0.01em;
+}
+
+.missions-scroll-top {
+  position: absolute;
+  bottom: 90px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(29, 155, 240, 0.9);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 15px rgba(29,155,240,0.4);
+  z-index: 50;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+}
+
+.missions-scroll-top:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 20px rgba(29,155,240,0.6);
+}
+
+.missions-scroll-top:active {
+  transform: translateY(2px) scale(0.95);
 }
