@@ -8499,9 +8499,19 @@ const App = () => {
     };
 
     const commitAuthenticatedUser = useCallback((userData) => {
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('language', userData.settings?.language || 'en');
-        localStorage.setItem('themeColor', userData.settings?.theme || '#ffd700');
+        try {
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('language', userData.settings?.language || 'en');
+            localStorage.setItem('themeColor', userData.settings?.theme || '#ffd700');
+        } catch (e) {
+            if (e.name === 'QuotaExceededError' || e.message?.toLowerCase().includes('quota')) {
+                console.warn("Storage full! Nuking localStorage to recover...");
+                localStorage.clear();
+                try {
+                    localStorage.setItem('user', JSON.stringify(userData));
+                } catch(err) {}
+            }
+        }
         startTransition(() => setUser(userData));
         setSavedAccounts(prev => {
             const currentToken = localStorage.getItem('token');
@@ -8519,7 +8529,13 @@ const App = () => {
             };
             if (existingIdx >= 0) newList[existingIdx] = accObj;
             else newList.push(accObj);
-            localStorage.setItem('savedAccounts', JSON.stringify(newList));
+            try {
+                localStorage.setItem('savedAccounts', JSON.stringify(newList));
+            } catch (e) {
+                console.error("Failed to save accounts array due to quota.", e);
+                localStorage.removeItem('savedAccounts');
+                return [];
+            }
             return newList;
         });
     }, []);
@@ -8540,7 +8556,14 @@ const App = () => {
                     name: userInfo.data.name,
                     picture: userInfo.data.picture
                 });
-                localStorage.setItem('token', res.data.token);
+                try {
+        localStorage.setItem('token', res.data.token);
+    } catch(e) {
+        if (e.name === 'QuotaExceededError' || e.message?.toLowerCase().includes('quota')) {
+            localStorage.clear();
+            localStorage.setItem('token', res.data.token);
+        }
+    }
                 commitAuthenticatedUser(res.data.user);
                 addToast("Connected via Secure Google Protocol!", "success");
             } catch (err) {
@@ -10407,7 +10430,14 @@ const App = () => {
                                                 setAuthError('');
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password.trim() });
-                                                    localStorage.setItem('token', res.data.token);
+                                                    try {
+        localStorage.setItem('token', res.data.token);
+    } catch(e) {
+        if (e.name === 'QuotaExceededError' || e.message?.toLowerCase().includes('quota')) {
+            localStorage.clear();
+            localStorage.setItem('token', res.data.token);
+        }
+    }
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     if (e.response) {
@@ -10508,7 +10538,14 @@ const App = () => {
                                                     fd.append('theme', '#ffd700'); // Always use default theme
                                                     if (registerFileRef.current.files[0]) fd.append('image', registerFileRef.current.files[0]);
                                                     const res = await axios.post('/auth/register', fd);
-                                                    localStorage.setItem('token', res.data.token);
+                                                    try {
+        localStorage.setItem('token', res.data.token);
+    } catch(e) {
+        if (e.name === 'QuotaExceededError' || e.message?.toLowerCase().includes('quota')) {
+            localStorage.clear();
+            localStorage.setItem('token', res.data.token);
+        }
+    }
                                                     if (formData.language) localStorage.setItem('language', formData.language);
                                                     localStorage.setItem('themeColor', '#ffd700');
                                                     commitAuthenticatedUser(res.data.user);
