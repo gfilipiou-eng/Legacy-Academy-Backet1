@@ -2498,8 +2498,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     };
 
     const [showComments, setShowComments] = useState(false);
-    const [commentText, setCommentText] = useState('');
-    const [showMenu, setShowMenu] = useState(false);
+      const [commentText, setCommentText] = useState('');
+      const [isWritingComment, setIsWritingComment] = useState(false);
+      const [showMenu, setShowMenu] = useState(false);
 
 
 
