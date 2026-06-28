@@ -10387,11 +10387,15 @@ const App = () => {
                                                 setAuthLoading(true);
                                                 setAuthError('');
                                                 try {
-                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password });
+                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password.trim() });
                                                     localStorage.setItem('token', res.data.token);
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
-                                                    setAuthError(e.response?.data?.message || "Invalid clearance codes or account not found.");
+                                                    if (e.response) {
+                                                        setAuthError(e.response?.data?.message || 'Invalid clearance codes or account not found.');
+                                                    } else {
+                                                        setAuthError('Local Error: ' + (e.message || 'Unknown error. Check Private Browsing or Cookies.'));
+                                                    }
                                                     setAuthLoading(false);
                                                 } 
                                             }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
