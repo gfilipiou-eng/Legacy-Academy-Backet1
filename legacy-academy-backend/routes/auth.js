@@ -21,7 +21,7 @@ router.post("/register", upload.single("image"), async (req, res) => {
 
         const newUser = new User({
             username: req.body.username,
-            email: req.body.email,
+            email: req.body.email ? req.body.email.trim().toLowerCase() : req.body.email,
             password: hashedPassword,
             bio: req.body.bio || "Entrepreneur. Legacy Member.",
             profilePic: profilePic,
@@ -49,7 +49,7 @@ router.post("/register", upload.single("image"), async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
+        const user = await User.findOne({ email: req.body.email ? req.body.email.trim().toLowerCase() : req.body.email });
         if (!user) return res.status(404).json({ message: "Agent not found." });
 
         if (!user.password) {

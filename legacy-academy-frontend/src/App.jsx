@@ -9102,6 +9102,14 @@ const App = () => {
             const uid = safeId(data);
             console.log("📡 [SOCKET] User updated real-time:", uid);
             handleUpdateUser(data);
+            
+            // Recalculate top streak immediately for socket updates
+            setUsers(prev => {
+                const list = prev || [];
+                const mergedList = list.map(u => safeId(u) === data._id ? {...u, ...data} : u);
+                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
+                return mergedList;
+            });
 
             // Targeted re-sync immediately to ensure DB is perfect
             fetchUsers(uid);
@@ -10302,7 +10310,7 @@ const App = () => {
                                                 setAuthLoading(true);
                                                 setAuthError('');
                                                 try {
-                                                    const res = await axios.post('/auth/login', { email: formData.email, password: formData.password });
+                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase().trim().toLowerCase(), password: formData.password });
                                                     localStorage.setItem('token', res.data.token);
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
@@ -10442,7 +10450,7 @@ const App = () => {
                                                 setAuthLoading(true);
                                                 setAuthError('');
                                                 try {
-                                                    const res = await axios.post('/auth/forgot-password', { email: formData.email });
+                                                    const res = await axios.post('/auth/forgot-password', { email: formData.email.trim().toLowerCase() });
                                                     if (res.data.success && res.data.message.includes('missing')) {
                                                         addToast('Email system is currently disabled on the server. Please contact support.', 'error');
                                                     } else {
