@@ -2547,11 +2547,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         </span>
                     </div>
                 )}
-                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible items-center p-3 sm:p-4 mb-3 sm:mb-4 bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[20px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative`}>
-<div className="absolute inset-0 rounded-[20px] bg-gradient-to-tr from-white/0 via-white/5 to-white/0 pointer-events-none"></div>
+                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border-2 border-white/15 overflow-hidden bg-[#050505]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border border-white/20 overflow-hidden bg-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
@@ -2559,7 +2558,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* RIGHT COL: CONTENT */}
                     <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-visible">
                         {/* Header */}
-                        <div className="flex items-center justify-between gap-2 min-w-0 w-full max-w-full z-10 relative">
+                        <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
@@ -2583,7 +2582,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {!isReadOnly && <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />}
                         </div>
 
-                        <div className="space-y-3 mt-2 px-1">
+                        <div className="space-y-3 mt-1">
                             {post.desc && (
                                 <div className="space-y-2">
                                     {shouldBlur ? (
