@@ -5454,13 +5454,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         <div className="flex items-center gap-5 mt-4 pt-3 border-t border-white/10">
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
-                                    {[...new Set((user?.followers || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
+                                    {[...new Set(user?.followers || [])].length}
                                 </span>
                                 <span className="text-[12px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
                             </div>
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
-                                    {[...new Set((user?.following || []).filter(id => allUsers.some(u => isSameId(u._id, id))))].length}
+                                    {[...new Set(user?.following || [])].length}
                                 </span>
                                 <span className="text-[12px] text-gray-500">{t('FOLLOWING')}</span>
                             </div>
@@ -6884,10 +6884,10 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
+                                            {[...new Set(displayUser?.followers || [])].length}
                                         </span>
                                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
-                                            {[...new Set((displayUser?.followers || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                            {[...new Set(displayUser?.followers || [])].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
 
@@ -6896,7 +6896,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {[...new Set((displayUser?.following || []).filter(id => (allUsers || []).some(u => isSameId(u._id, id))))].length}
+                                            {[...new Set(displayUser?.following || [])].length}
                                         </span>
                                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -8368,7 +8368,7 @@ const App = () => {
 
                 while (retries > 0 && isActive) {
                     try {
-                        const res = await axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 12000 });
+                        const res = await axios.get(`/users/username/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 60000 });
                         latestUser = res?.data || null;
                         if (!isActive) return;
                         setPublicUser(latestUser);
@@ -8392,7 +8392,7 @@ const App = () => {
             const loadPosts = async () => {
                 for (let attempt = 0; attempt <= 2 && isActive; attempt += 1) {
                     try {
-                        const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 15000 });
+                        const res = await axios.get(`/users/public/posts/${encodeURIComponent(normalizedUsername)}?t=${Date.now()}`, { timeout: 60000 });
                         if (!isActive) return;
                         const nextPosts = Array.isArray(res?.data)
                             ? res.data.filter(p => p.isStory !== true && String(p.isStory) !== 'true')
@@ -8945,8 +8945,6 @@ const App = () => {
         setIsRestoringSession(false);
         if (userData && token) {
             setUser(userData);
-            setUsers([]);
-            setPosts([]);
         } else if (token && !userData) {
             setIsRestoringSession(true);
             const decoded = decodeJWT(token);
@@ -10284,6 +10282,7 @@ const App = () => {
         }
         removeSafeToken();
         localStorage.removeItem('user');
+        clearLargeCaches();
         // Do NOT call setUser(null) here. It causes a React re-render crash before the page reloads.
         window.location.replace('/');
     };
@@ -11143,7 +11142,7 @@ const App = () => {
                                                                     {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                                                     <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
                                                                 </div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{[...new Set((u.followers || []).filter(id => users.some(us => isSameId(us._id, id))))].length} {t('FOLLOWERS_COUNT')}</div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{[...new Set(u.followers || [])].length} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
                                                         </div>
@@ -11584,11 +11583,11 @@ const App = () => {
                             {/* Stats */}
                             <div className="flex items-center justify-center gap-8 w-full border-t border-white/10 pt-6">
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{[...new Set((shareModalProfile.followers || []).filter(id => (users || []).some(u => isSameId(u._id, id))))].length}</div>
+                                    <div className="font-black text-white text-xl">{[...new Set(shareModalProfile.followers || [])].length}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Followers</div>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{[...new Set((shareModalProfile.following || []).filter(id => (users || []).some(u => isSameId(u._id, id))))].length}</div>
+                                    <div className="font-black text-white text-xl">{[...new Set(shareModalProfile.following || [])].length}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Following</div>
                                 </div>
                             </div>
