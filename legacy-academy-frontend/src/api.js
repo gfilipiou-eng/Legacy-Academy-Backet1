@@ -18,9 +18,12 @@ export const setSafeToken = (token) => {
     window.__AUTH_TOKEN__ = token;
     try { document.cookie = `legacy_token=${token}; path=/; max-age=31536000`; } catch(e) {}
     try { localStorage.setItem("token", token); } catch(e) {
-        if (e.name === 'QuotaExceededError' || e?.message?.toLowerCase()?.includes('quota')) {
-            try { localStorage.clear(); localStorage.setItem("token", token); } catch(err) {}
-        }
+            try {
+                localStorage.removeItem('cached_posts');
+                localStorage.removeItem('cached_messages');
+                localStorage.removeItem('cached_users');
+                localStorage.setItem("token", token);
+            } catch(err) {}
     }
 };
 

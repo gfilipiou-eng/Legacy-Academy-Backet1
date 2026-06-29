@@ -775,6 +775,14 @@ const resolveFullUser = (partial, database) => {
     return result;
 };
 
+const clearLargeCaches = () => {
+    try {
+        localStorage.removeItem('cached_posts');
+        localStorage.removeItem('cached_messages');
+        localStorage.removeItem('cached_users');
+    } catch(e) {}
+};
+
 // --- COMPONENTS ---
 
 const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAudioSubmit, t, loading }) => {
@@ -8519,11 +8527,9 @@ const App = () => {
             localStorage.setItem('themeColor', userData.settings?.theme || '#ffd700');
         } catch (e) {
             if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
-                console.warn("Storage full! Nuking localStorage to recover...");
+                console.warn("Storage full! Clearing cache keys to recover...");
                 try {
-                    const backupToken = getSafeToken();
-                    localStorage.clear();
-                    if (backupToken) setSafeToken(backupToken);
+                    clearLargeCaches();
                     localStorage.setItem('user', JSON.stringify(userData));
                 } catch(err) {}
             }
@@ -8578,7 +8584,7 @@ const App = () => {
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
-                  localStorage.clear();
+                  clearLargeCaches();
                   setSafeToken(res.data.token);
               } catch(err) {}
           }
@@ -10470,7 +10476,7 @@ const App = () => {
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
-                  localStorage.clear();
+                  clearLargeCaches();
                   setSafeToken(res.data.token);
               } catch(err) {}
           }
@@ -10580,7 +10586,7 @@ const App = () => {
     } catch(e) {
         if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
               try {
-                  localStorage.clear();
+                  clearLargeCaches();
                   setSafeToken(res.data.token);
               } catch(err) {}
           }
