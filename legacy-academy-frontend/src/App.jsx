@@ -7859,7 +7859,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
     if (!publicUser) {
         // If still loading, show spinner not error
-        if (publicUserLoading) {
+        if (loadingUser) {
             return (
                 <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor }}>
                     <PlatformLoadingPanel label="GATHERING INTEL..." />
