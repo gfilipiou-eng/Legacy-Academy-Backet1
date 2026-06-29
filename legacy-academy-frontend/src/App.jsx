@@ -738,13 +738,23 @@ const isSameId = (id1, id2) => {
  * SAFE: Will NEVER return a user with _id: 'unknown' or overwrite others.
  */
 const resolveFullUser = (partial, database) => {
+    if (!partial) return null;
     const uid = safeId(partial);
-    if (!uid) return null;
 
-    const dbUser = (database || []).find(u => isSameId(u._id, uid));
-    const base = dbUser || partial;
+    const dbUser = (database || []).find(u => {
+        if (uid && isSameId(u._id, uid)) return true;
+        if (typeof partial === 'string') {
+            const cleanUsername = partial.trim().replace(/^@+/, '').replace(/\+/g, ' ').toLowerCase();
+            const cleanDbUsername = (u.username || '').trim().replace(/^@+/, '').toLowerCase();
+            if (cleanUsername === cleanDbUsername) return true;
+            if (cleanUsername.replace(/\s+/g, '') === cleanDbUsername.replace(/\s+/g, '')) return true;
+        }
+        return false;
+    });
     
-    if (!base) return null;
+    const base = typeof dbUser === 'object' && dbUser !== null ? dbUser : (typeof partial === 'object' && partial !== null ? partial : {});
+    
+    if (Object.keys(base).length === 0 && !uid) return null;
 
     const result = { ...base };
     
@@ -757,7 +767,11 @@ const resolveFullUser = (partial, database) => {
         });
     }
     
-    result._id = uid;
+    if (dbUser && dbUser._id) {
+        result._id = dbUser._id;
+    } else if (uid) {
+        result._id = uid;
+    }
     return result;
 };
 
@@ -8312,7 +8326,7 @@ const App = () => {
 
         let isActive = true;
         let decoded = '';
-        try { decoded = decodeURIComponent(String(targetUsername || '')); } catch(e) { decoded = String(targetUsername || ''); }
+        try { decoded = decodeURIComponent(String(targetUsername || '').replace(/\+/g, ' ')); } catch(e) { decoded = String(targetUsername || '').replace(/\+/g, ' '); }
         const normalizedUsername = decoded.trim().replace(/^@+/, '');
 
         const loadPublicProfile = async () => {
@@ -8931,17 +8945,28 @@ const App = () => {
             setIsRestoringSession(true);
             const decoded = decodeJWT(token);
             if (decoded && decoded.id) {
-                // Auto-fetch user silently
-                axios.get('/users/find/' + decoded.id).then(res => {
-                    const me = res.data;
-                    if (me) {
-                        setUser(me);
-                        safeSetItem('user', JSON.stringify(me));
-                    } else { removeSafeToken(); setUser(null); setIsRestoringSession(false); }
-                }).catch(() => {
-                    // Ignore, they'll see login
-                    removeSafeToken(); setUser(null); setIsRestoringSession(false);
-                });
+                // Auto-fetch user silently with retry
+                const fetchUserWithRetry = (retryCount = 0) => {
+                    axios.get('/users/find/' + decoded.id).then(res => {
+                        const me = res.data;
+                        if (me) {
+                            setUser(me);
+                            safeSetItem('user', JSON.stringify(me));
+                            setIsRestoringSession(false);
+                        } else {
+                            removeSafeToken(); setUser(null); setIsRestoringSession(false);
+                        }
+                    }).catch(err => {
+                        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+                            removeSafeToken(); setUser(null); setIsRestoringSession(false);
+                        } else if (retryCount < 6) {
+                            setTimeout(() => fetchUserWithRetry(retryCount + 1), 5000);
+                        } else {
+                            setIsRestoringSession(false);
+                        }
+                    });
+                };
+                fetchUserWithRetry();
             } else { removeSafeToken(); setUser(null); setIsRestoringSession(false); }
         } else if (saved && !token) {
             localStorage.removeItem('user');
@@ -10439,7 +10464,7 @@ const App = () => {
                                                 setAuthLoading(true);
                                                 setAuthError('');
                                                 try {
-                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password.trim() });
+                                                    const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password });
                                                     try {
         setSafeToken(res.data.token);
     } catch(e) {
