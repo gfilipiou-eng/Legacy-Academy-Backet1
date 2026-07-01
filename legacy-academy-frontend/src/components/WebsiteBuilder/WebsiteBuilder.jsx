@@ -228,7 +228,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
 
             {/* ACTION BAR (Fixed at bottom for both PC and Mobile) */}
-            <div className="fixed bottom-0 left-0 w-full bg-[#050505] border-t border-white/10 p-4 z-[4000] flex gap-3 shadow-[0_-20px_40px_rgba(0,0,0,0.9)] pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-md">
+            <div className="fixed bottom-0 left-0 w-full p-4 z-[4000] flex gap-3 shadow-[0_-20px_40px_rgba(0,0,0,0.9)] pb-[calc(1rem+env(safe-area-inset-bottom))]"
+                 style={{
+                     background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(5,5,5,0.98) 100%)',
+                     backdropFilter: 'blur(30px) saturate(180%)',
+                     WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+                     borderTop: '1px solid rgba(255,255,255,0.12)',
+                     boxShadow: '0 -20px 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)'
+                 }}
+            >
                 <button 
                     onClick={() => handlePublish(true)}
                     disabled={saving}
@@ -245,9 +253,21 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
 
             {/* LEFT SIDEBAR - Form Inputs */}
-            <div className={`w-full md:w-[400px] bg-[#09090b] border-r border-white/10 flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}>
+            <div className={`w-full md:w-[400px] flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}
+                 style={{
+                     background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(9,9,11,0.95)',
+                     backdropFilter: 'blur(28px) saturate(180%)',
+                     WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                     borderRight: '1px solid rgba(255,255,255,0.12)'
+                 }}
+            >
                 {/* Header */}
-                <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 shrink-0 bg-white/[0.02]">
+                <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 shrink-0"
+                     style={{
+                         background: 'rgba(255,255,255,0.03)',
+                         boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.05)'
+                     }}
+                >
                     <div className="flex items-center gap-3">
                         <button onClick={onExit} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors -ml-2">
                             <Icons.ArrowLeft className="w-5 h-5 text-white/70" />

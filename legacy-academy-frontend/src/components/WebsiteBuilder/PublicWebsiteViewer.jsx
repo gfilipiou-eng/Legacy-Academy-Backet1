@@ -46,7 +46,18 @@ export const PublicWebsiteViewer = ({ config }) => {
             }}
         >
             {/* Navbar */}
-            <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+            <nav className={`sticky top-0 z-30 shrink-0 w-full px-6 md:px-12 py-4 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/10' : 'border-b border-white/10'}`}
+                 style={{
+                     background: config.palette === 'light' 
+                         ? 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.85) 100%)'
+                         : 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                     backdropFilter: 'blur(28px) saturate(180%)',
+                     WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                     boxShadow: config.palette === 'light'
+                         ? '0 4px 20px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.6)'
+                         : '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)'
+                 }}
+            >
                 <div className="flex items-center gap-3">
                     {config.logo ? (
                         <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />

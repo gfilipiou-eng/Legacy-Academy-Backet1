@@ -113,12 +113,28 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all">
+                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full hover:bg-white/10 flex items-center justify-center transition-all"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+                                    backdropFilter: 'blur(24px)',
+                                    WebkitBackdropFilter: 'blur(24px)',
+                                    border: '1px solid rgba(255,255,255,0.12)',
+                                    boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+                                }}
+                        >
                             <Icons.ArrowLeft className="w-5 h-5 text-white/70" />
                         </button>
                         <h1 className="text-3xl font-black text-white">{t('MY_WEBSITES', 'My Websites')}</h1>
                     </div>
-                    <div className="text-sm font-bold text-gray-500 bg-white/5 px-4 py-2 rounded-full">
+                    <div className="text-sm font-bold text-gray-500 px-4 py-2 rounded-full"
+                         style={{
+                             background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                             backdropFilter: 'blur(24px)',
+                             WebkitBackdropFilter: 'blur(24px)',
+                             border: '1px solid rgba(255,255,255,0.12)',
+                             boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+                         }}
+                    >
                         {websites.length} / 2 {t('SAVED', 'Saved')}
                     </div>
                 </div>
@@ -129,13 +145,26 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             key={idx} 
                             onClick={() => setActiveWebsiteIndex(idx)}
                             type="button"
-                            className="bg-black border border-white/10 rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--builder-primary)] transition-all hover:-translate-y-1 shadow-xl text-left touch-manipulation appearance-none"
+                            className="rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--builder-primary)] transition-all hover:-translate-y-1 text-left touch-manipulation appearance-none"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(10,10,12,0.95)',
+                                backdropFilter: 'blur(28px) saturate(180%)',
+                                WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                                border: '1px solid rgba(255,255,255,0.12)',
+                                boxShadow: '0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)',
+                            }}
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
                                     {site.businessName?.charAt(0) || 'W'}
                                 </div>
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 bg-green-500/10 px-3 py-1 rounded-full flex items-center gap-1">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 px-3 py-1 rounded-full flex items-center gap-1"
+                                      style={{
+                                          background: 'rgba(34,197,94,0.12)',
+                                          backdropFilter: 'blur(20px)',
+                                          border: '1px solid rgba(34,197,94,0.25)'
+                                      }}
+                                >
                                     <Icons.Globe className="w-3 h-3" /> {t('PUBLISHED', 'Published')}
                                 </span>
                             </div>
@@ -147,11 +176,23 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 <p className="text-sm text-white/50 truncate w-full text-left">{site.slogan || t('NO_SLOGAN', 'No slogan yet')}</p>
                             </div>
 
-                            <div className="flex items-center gap-2 pt-4 border-t border-white/5 w-full">
-                                <button type="button" onClick={(e) => handleCopyLink(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleCopyLink(idx, e); }} className="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2 touch-manipulation">
+                            <div className="flex items-center gap-2 pt-4 border-t w-full" style={{borderColor: 'rgba(255,255,255,0.12)'}}>
+                                <button type="button" onClick={(e) => handleCopyLink(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleCopyLink(idx, e); }} className="flex-1 py-2 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2 touch-manipulation"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                                            backdropFilter: 'blur(24px)',
+                                            border: '1px solid rgba(255,255,255,0.12)',
+                                        }}
+                                >
                                     <Icons.Link className="w-4 h-4" /> {t('COPY_LINK', 'Copy Link')}
                                 </button>
-                                <button type="button" onClick={(e) => handleDeletePrompt(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleDeletePrompt(idx, e); }} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-xs font-bold text-red-500 transition-all touch-manipulation relative z-20">
+                                <button type="button" onClick={(e) => handleDeletePrompt(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleDeletePrompt(idx, e); }} className="px-4 py-2 rounded-lg text-xs font-bold text-red-500 transition-all touch-manipulation relative z-20"
+                                        style={{
+                                            background: 'linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(239,68,68,0.05) 100%)',
+                                            backdropFilter: 'blur(24px)',
+                                            border: '1px solid rgba(239,68,68,0.25)'
+                                        }}
+                                >
                                     <Icons.Trash className="w-4 h-4" />
                                 </button>
                             </div>
@@ -163,10 +204,22 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             type="button"
                             onClick={handleCreateNew}
                             onTouchEnd={(e) => { e.preventDefault(); handleCreateNew(); }}
-                            className="border-2 border-dashed border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 hover:bg-white/[0.02] transition-all min-h-[250px] group w-full touch-manipulation appearance-none"
+                            className="rounded-3xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all min-h-[250px] group w-full touch-manipulation appearance-none"
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%), rgba(10,10,12,0.9)',
+                                backdropFilter: 'blur(28px)',
+                                WebkitBackdropFilter: 'blur(28px)',
+                                border: '2px dashed rgba(255,255,255,0.12)',
+                            }}
                         >
-                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <Icons.Plus className="w-8 h-8 text-white/50 group-hover:text-white" />
+                            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                                 style={{
+                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+                                     border: '1px solid rgba(255,255,255,0.15)',
+                                     boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+                                 }}
+                            >
+                                <Icons.Plus className="w-8 h-8 text-white/50 group-hover:text-white transition-colors" />
                             </div>
                             <h3 className="text-lg font-bold text-white mb-1">{t('CREATE_NEW_WEBSITE', 'Create New Website')}</h3>
                             <p className="text-sm text-gray-500">{t('CREATE_LIMIT_MSG', 'You can create up to {{count}} more').replace('{{count}}', 2 - websites.length)}</p>
