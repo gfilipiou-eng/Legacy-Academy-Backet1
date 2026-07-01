@@ -2437,7 +2437,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const isOwner = isSameId(author?._id || author, user?._id);
     const hasEnoughEquity = user ? (user.sharesBalance || 0) >= 0.01 : false;
     const isNSFW = post.is18Plus;
-    const shouldBlur = isNSFW && !isOwner && !revealed;
+    const shouldBlur = isNSFW && Boolean(user?.settings?.blur18Plus) && !revealed;
     const canDelete = isOwner || isCurrentUserFounder;
 
     const handleRevealClick = (e) => {
