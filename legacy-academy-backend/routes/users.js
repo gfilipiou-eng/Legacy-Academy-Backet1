@@ -142,14 +142,38 @@ router.post("/cover-pic", verifyToken, upload.single("image"), async (req, res) 
     }
 });
 
+// Helper to clean up array: unique + valid user IDs
+const cleanIdArray = (arr) => {
+    const seen = new Set();
+    return (arr || []).filter(id => {
+        const strId = String(id);
+        if (seen.has(strId)) return false;
+        seen.add(strId);
+        return true;
+    });
+};
+
 // GET ALL USERS (Search)
 router.get("/", verifyToken, async (req, res) => {
     try {
         const users = await User.find().select('username role profilePic coverPic isPrivate followers following followRequests bio profileDescriptor founderAffiliation settings lastSeen missionsStreak lastMissionCompleted');
-        const mappedUsers = users.map(u => ({
-            ...u._doc,
-            followRequests: u.followRequests || []
-        }));
+        
+        // Get all valid user IDs
+        const validUserIds = new Set(users.map(u => u._id.toString()));
+        
+        const mappedUsers = users.map(u => {
+            const cleanedFollowers = cleanIdArray(u.followers).filter(id => validUserIds.has(id));
+            const cleanedFollowing = cleanIdArray(u.following).filter(id => validUserIds.has(id));
+            const cleanedFollowRequests = cleanIdArray(u.followRequests).filter(id => validUserIds.has(id));
+            
+            return {
+                ...u._doc,
+                followers: cleanedFollowers,
+                following: cleanedFollowing,
+                followRequests: cleanedFollowRequests
+            };
+        });
+        
         res.status(200).json(mappedUsers);
     } catch (err) {
         res.status(500).json([]);
@@ -925,11 +949,20 @@ router.get("/find/:id", verifyToken, async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json("User not found");
 
+        // Clean up followers/following (unique + valid users)
+        const allUsers = await User.find().select('_id');
+        const validUserIds = new Set(allUsers.map(u => u._id.toString()));
+        const cleanedFollowers = cleanIdArray(user.followers).filter(id => validUserIds.has(id));
+        const cleanedFollowing = cleanIdArray(user.following).filter(id => validUserIds.has(id));
+        const cleanedFollowRequests = cleanIdArray(user.followRequests).filter(id => validUserIds.has(id));
+
         const { password, email, ...others } = user._doc;
         res.status(200).json({
             ...others,
-            followRequests: user.followRequests || [],
-            isRequested: user.followRequests?.some(id => String(id) === String(req.user?.id || req.user?.userId))
+            followers: cleanedFollowers,
+            following: cleanedFollowing,
+            followRequests: cleanedFollowRequests,
+            isRequested: cleanedFollowRequests.some(id => String(id) === String(req.user?.id || req.user?.userId))
         });
     } catch (err) {
         res.status(500).json(err);
