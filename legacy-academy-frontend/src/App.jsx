@@ -478,6 +478,15 @@ const getFounderAffiliation = (userLike) => {
     }
     return '';
 };
+const getUniqueCount = (arr) => {
+    if (!arr || !Array.isArray(arr)) return 0;
+    const set = new Set();
+    arr.forEach(id => {
+        const safe = safeId(id);
+        if (safe) set.add(safe);
+    });
+    return set.size;
+};
 const founderAffiliationHref = (username) => {
     const params = new URLSearchParams(window.location.search);
     params.set('profile', sanitizeAffiliation(username));
@@ -5454,13 +5463,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         <div className="flex items-center gap-5 mt-4 pt-3 border-t border-white/10">
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
-                                    {[...new Set(user?.followers || [])].length}
+                                    {getUniqueCount(user?.followers)}
                                 </span>
                                 <span className="text-[12px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
                             </div>
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
                                 <span className="font-bold text-white text-[13px] tabular-nums">
-                                    {[...new Set(user?.following || [])].length}
+                                    {getUniqueCount(user?.following)}
                                 </span>
                                 <span className="text-[12px] text-gray-500">{t('FOLLOWING')}</span>
                             </div>
@@ -6884,10 +6893,10 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
                                     }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {[...new Set(displayUser?.followers || [])].length}
+                                            {getUniqueCount(displayUser?.followers)}
                                         </span>
                                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
-                                            {[...new Set(displayUser?.followers || [])].length === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
+                                            {getUniqueCount(displayUser?.followers) === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
 
@@ -6896,7 +6905,7 @@ const ProfileModal = ({
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
                                     }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
-                                            {[...new Set(displayUser?.following || [])].length}
+                                            {getUniqueCount(displayUser?.following)}
                                         </span>
                                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
@@ -8024,7 +8033,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWERS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {publicUser.followers?.length || 0}
+                            {getUniqueCount(publicUser.followers)}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                             {t('FOLLOWERS') || 'FOLLOWERS'}
@@ -8034,7 +8043,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     {/* FOLLOWING */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
-                            {publicUser.following?.length || 0}
+                            {getUniqueCount(publicUser.following)}
                         </span>
                         <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
@@ -11142,7 +11151,7 @@ const App = () => {
                                                                     {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                                                     <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
                                                                 </div>
-                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{[...new Set(u.followers || [])].length} {t('FOLLOWERS_COUNT')}</div>
+                                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{getUniqueCount(u.followers)} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
                                                             <button className="px-3 py-1.5 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest">{t('VIEW')}</button>
                                                         </div>
@@ -11583,11 +11592,11 @@ const App = () => {
                             {/* Stats */}
                             <div className="flex items-center justify-center gap-8 w-full border-t border-white/10 pt-6">
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{[...new Set(shareModalProfile.followers || [])].length}</div>
+                                    <div className="font-black text-white text-xl">{getUniqueCount(shareModalProfile.followers)}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Followers</div>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <div className="font-black text-white text-xl">{[...new Set(shareModalProfile.following || [])].length}</div>
+                                    <div className="font-black text-white text-xl">{getUniqueCount(shareModalProfile.following)}</div>
                                     <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Following</div>
                                 </div>
                             </div>
