@@ -479,12 +479,15 @@ const getFounderAffiliation = (userLike) => {
     return '';
 };
 const getUniqueCount = (arr) => {
+    console.log('📊 getUniqueCount called with:', arr);
     if (!arr || !Array.isArray(arr)) return 0;
     const set = new Set();
-    arr.forEach(id => {
+    arr.forEach((id, index) => {
         const safe = safeId(id);
+        console.log(`  Index ${index}: id=${id}, safeId=${safe}, type=${typeof safe}`);
         if (safe) set.add(String(safe));
     });
+    console.log('  Final set size:', set.size);
     return set.size;
 };
 const founderAffiliationHref = (username) => {
