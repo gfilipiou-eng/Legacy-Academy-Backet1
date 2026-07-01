@@ -150,7 +150,7 @@ const UserSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function() {
     if (this.isModified('followers')) {
         this.followers = cleanIdArray(this.followers);
     }
@@ -160,7 +160,6 @@ UserSchema.pre('save', function(next) {
     if (this.isModified('followRequests')) {
         this.followRequests = cleanIdArray(this.followRequests);
     }
-    next();
 });
 
 export default mongoose.model("User", UserSchema);
