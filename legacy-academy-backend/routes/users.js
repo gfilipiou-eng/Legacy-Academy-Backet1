@@ -995,4 +995,56 @@ router.delete("/:id", verifyToken, async (req, res) => {
     }
 });
 
+// ONE-TIME ADMIN ENDPOINT: Clean up all followers/following arrays
+router.post("/admin/cleanup-followers", verifyToken, async (req, res) => {
+    if (req.user.role !== 'Admin' && req.user.role !== 'Founder') {
+        return res.status(403).json({ message: "Unauthorized" });
+    }
+    try {
+        const allUsers = await User.find();
+        let cleanedCount = 0;
+        
+        for (const user of allUsers) {
+            let modified = false;
+            
+            // Clean followers
+            const originalFollowers = [...(user.followers || [])];
+            const uniqueFollowers = [...new Set(originalFollowers.map(id => String(id)))];
+            if (originalFollowers.length !== uniqueFollowers.length) {
+                user.followers = uniqueFollowers;
+                modified = true;
+            }
+            
+            // Clean following
+            const originalFollowing = [...(user.following || [])];
+            const uniqueFollowing = [...new Set(originalFollowing.map(id => String(id)))];
+            if (originalFollowing.length !== uniqueFollowing.length) {
+                user.following = uniqueFollowing;
+                modified = true;
+            }
+            
+            // Clean follow requests
+            const originalRequests = [...(user.followRequests || [])];
+            const uniqueRequests = [...new Set(originalRequests.map(id => String(id)))];
+            if (originalRequests.length !== uniqueRequests.length) {
+                user.followRequests = uniqueRequests;
+                modified = true;
+            }
+            
+            if (modified) {
+                await user.save();
+                cleanedCount++;
+            }
+        }
+        
+        res.status(200).json({ 
+            message: `Successfully cleaned up ${cleanedCount} user(s)`, 
+            totalUsers: allUsers.length 
+        });
+    } catch (err) {
+        console.error("Cleanup error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 export default router;

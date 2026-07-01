@@ -483,7 +483,7 @@ const getUniqueCount = (arr) => {
     const set = new Set();
     arr.forEach(id => {
         const safe = safeId(id);
-        if (safe) set.add(safe);
+        if (safe) set.add(String(safe));
     });
     return set.size;
 };

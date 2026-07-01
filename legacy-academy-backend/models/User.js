@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+// Helper to clean up duplicate IDs in array
+const cleanIdArray = (arr) => {
+    const seen = new Set();
+    return (arr || []).filter(id => {
+        const strId = String(id);
+        if (seen.has(strId)) return false;
+        seen.add(strId);
+        return true;
+    });
+};
+
 const UserSchema = new mongoose.Schema(
     {
         username: {
@@ -138,5 +149,18 @@ const UserSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+UserSchema.pre('save', function(next) {
+    if (this.isModified('followers')) {
+        this.followers = cleanIdArray(this.followers);
+    }
+    if (this.isModified('following')) {
+        this.following = cleanIdArray(this.following);
+    }
+    if (this.isModified('followRequests')) {
+        this.followRequests = cleanIdArray(this.followRequests);
+    }
+    next();
+});
 
 export default mongoose.model("User", UserSchema);
