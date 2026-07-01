@@ -5577,8 +5577,6 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 
 const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
     const [leaders, setLeaders] = useState([]);
-    const [allTimeLeaders, setAllTimeLeaders] = useState([]);
-    const [activeTab, setActiveTab] = useState('active'); // 'active' or 'allTime'
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -5587,7 +5585,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
             setLoading(true);
             try {
                 const getMissionsCount = (user) => Math.max(user.missionsCompletedCount || 0, getActiveStreak(user));
-                const getHighestStreak = (user) => Math.max(user.highestStreak || 0, getActiveStreak(user));
                 
                 const allRes = await axios.get('/users');
                 const allUsers = allRes.data || [];
@@ -5601,17 +5598,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                     })
                     .slice(0, 50);
                     
-                // Hall of Fame (sorted by all-time highest streak)
-                const allTimeSorted = [...allUsers]
-                    .sort((a, b) => {
-                        const highestDiff = getHighestStreak(b) - getHighestStreak(a);
-                        if (highestDiff !== 0) return highestDiff;
-                        return getMissionsCount(b) - getMissionsCount(a);
-                    })
-                    .slice(0, 50);
-                    
                 setLeaders(activeSorted);
-                setAllTimeLeaders(allTimeSorted);
             } catch (err) {
                 console.error("Failed to fetch users:", err);
             } finally {
@@ -5623,7 +5610,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
 
     if (!isOpen) return null;
 
-    const currentData = activeTab === 'active' ? leaders : allTimeLeaders;
+    const currentData = leaders;
     const top3 = currentData.slice(0, 3);
     const rest = currentData.slice(3);
 
@@ -5660,43 +5647,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </button>
                     </div>
 
-                    <div className="px-4 sm:px-6 py-3 border-b border-white/5 flex gap-2 overflow-x-auto custom-scrollbar shrink-0">
-                        <button
-                            onClick={() => setActiveTab('active')}
-                            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${
-                                activeTab === 'active' 
-                                ? 'text-orange-400' 
-                                : 'text-gray-400 hover:text-white'
-                            }`}
-                            style={activeTab === 'active' ? {
-                                background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.05) 100%)',
-                                border: '1px solid rgba(249, 115, 22, 0.4)',
-                                backdropFilter: 'blur(24px)'
-                            } : {
-                                background: 'rgba(255,255,255,0.03)',
-                                border: '1px solid rgba(255,255,255,0.05)'
-                            }}
-                        >
-                            🔥 {t('ACTIVE_WARRIORS', 'Active Warriors')}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('allTime')}
-                            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${
-                                activeTab === 'allTime' 
-                                ? 'text-yellow-400' 
-                                : 'text-gray-400 hover:text-white'
-                            }`}
-                            style={activeTab === 'allTime' ? {
-                                background: 'linear-gradient(135deg, rgba(250, 204, 21, 0.2) 0%, rgba(250, 204, 21, 0.05) 100%)',
-                                border: '1px solid rgba(250, 204, 21, 0.4)',
-                                backdropFilter: 'blur(24px)'
-                            } : {
-                                background: 'rgba(255,255,255,0.03)',
-                                border: '1px solid rgba(255,255,255,0.05)'
-                            }}
-                        >
-                            👑 {t('ALL_TIME_STREAKS', 'Hall of Fame')}
-                        </button>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10 custom-scrollbar">
@@ -5710,7 +5660,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                             </div>
                         ) : (
                             <>
-                                {/* Hall of Fame - Top 3 */}
+                                {/* Top 3 */}
                                 {top3.length > 0 && (
                                     <div className="mb-6">
                                         <div className="flex items-end justify-center gap-2 sm:gap-4 pt-4">
@@ -5727,9 +5677,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[1].username}</p>
-                                                    <p className="text-xs font-bold text-gray-400">
-                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[1].highestStreak || 0, getActiveStreak(top3[1]))}` : `🔥 ${getActiveStreak(top3[1])}`}
-                                                    </p>
+                                                    <p className="text-xs font-bold text-gray-400">🔥 {getActiveStreak(top3[1])}</p>
                                                     <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center"
                                                          style={{border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
                                                         <span className="text-xs font-black text-gray-400">SILVER</span>
@@ -5748,14 +5696,21 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                              style={{boxShadow: '0 6px 30px rgba(250, 204, 21, 0.5), inset 0 2px 0 rgba(255,255,255,0.5)'}}>
                                                             <ProfileAvatar user={top3[0]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
-                                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                                                            <span className="text-3xl">👑</span>
+                                                        <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                                                            <svg viewBox="0 0 64 40" fill="none" className="w-12 h-8 drop-shadow-[0_0_10px_rgba(250,204,21,0.6)]">
+                                                                <path d="M8 28C8 28 12 36 32 36C52 36 56 28 56 28L56 12L50 8L46 20L40 12L36 20L30 10L24 20L18 10L14 20L8 12L8 28Z" fill="url(#gold)"/>
+                                                                <defs>
+                                                                    <linearGradient id="gold" x1="32" y1="8" x2="32" y2="36" gradientUnits="userSpaceOnUse">
+                                                                        <stop stop-color="#FFD700"/>
+                                                                        <stop offset="0.5" stop-color="#FFA500"/>
+                                                                        <stop offset="1" stop-color="#FF8C00"/>
+                                                                    </linearGradient>
+                                                                </defs>
+                                                            </svg>
                                                         </div>
                                                     </div>
                                                     <p className="text-base sm:text-lg font-black text-yellow-400 mt-2 truncate w-full text-center">{top3[0].username}</p>
-                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500">
-                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[0].highestStreak || 0, getActiveStreak(top3[0]))}` : `🔥 ${getActiveStreak(top3[0])}`}
-                                                    </p>
+                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500">🔥 {getActiveStreak(top3[0])}</p>
                                                     <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center"
                                                          style={{border: '1px solid rgba(250, 204, 21, 0.5)', boxShadow: '0 6px 30px rgba(250, 204, 21, 0.4)'}}>
                                                         <span className="text-xs sm:text-sm font-black text-yellow-200">GOLD</span>
@@ -5776,9 +5731,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[2].username}</p>
-                                                    <p className="text-xs font-bold text-amber-600">
-                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[2].highestStreak || 0, getActiveStreak(top3[2]))}` : `🔥 ${getActiveStreak(top3[2])}`}
-                                                    </p>
+                                                    <p className="text-xs font-bold text-amber-600">🔥 {getActiveStreak(top3[2])}</p>
                                                     <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center"
                                                          style={{border: '1px solid rgba(217,119,6,0.4)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
                                                         <span className="text-xs font-black text-amber-300">BRONZE</span>
@@ -5793,8 +5746,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                 {rest.map((u, idx) => {
                                     const rank = idx + 4;
                                     const currentStreak = getActiveStreak(u);
-                                    const highestStreak = Math.max(u.highestStreak || 0, currentStreak);
-                                    const displayStreak = activeTab === 'allTime' ? highestStreak : currentStreak;
                                     
                                     return (
                                     <motion.div 
@@ -5822,8 +5773,8 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                 {u._id === currentUser?._id && <span className="shrink-0 text-[9px] bg-[#bf953f]/20 text-[#bf953f] px-2 py-0.5 rounded-full uppercase tracking-widest border border-[#bf953f]/30">{t('YOU', 'You')}</span>}
                                             </div>
                                             <div className="flex items-center gap-3 mt-1">
-                                                <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${displayStreak > 0 ? (activeTab === 'allTime' ? 'text-yellow-400' : 'text-orange-400') : 'text-gray-500'}`}>
-                                                    {displayStreak > 0 ? (activeTab === 'allTime' ? '👑' : '🔥') : '💨'} {displayStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{activeTab === 'allTime' ? t('HIGHEST_STREAK', 'Record') : t('STREAK', 'Streak')}</span>
+                                                <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${currentStreak > 0 ? 'text-orange-400' : 'text-gray-500'}`}>
+                                                    {currentStreak > 0 ? '🔥' : '💨'} {currentStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
                                                 </div>
                                                 <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
                                                     🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
