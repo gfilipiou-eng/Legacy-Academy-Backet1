@@ -5647,8 +5647,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </button>
                     </div>
 
-                    </div>
-
                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10 custom-scrollbar">
                         {loading ? (
                             <div className="flex justify-center py-12">
