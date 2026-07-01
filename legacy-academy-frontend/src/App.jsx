@@ -5623,17 +5623,13 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                 className="w-full max-w-2xl flex flex-col max-h-[85vh] sm:max-h-[90vh] relative"
             >
                 <div 
-                    className="w-full bg-gradient-to-br from-[#0f0f12] to-[#050507] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
-                    style={{
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)'
-                    }}
+                    className="w-full bg-gradient-to-br from-[#0f0f12] to-[#050507] border border-white/10 rounded-3xl overflow-hidden"
                 >
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400" />
                     
                     <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-lg shrink-0"
-                                 style={{boxShadow: '0 4px 20px rgba(249, 115, 22, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'}}>
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shrink-0">
                                 <Icons.Trophy className="w-6 h-6 text-black" />
                             </div>
                             <div className="min-w-0">
@@ -5666,18 +5662,16 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             {top3[1] && (
                                                 <div className="flex flex-col items-center w-1/3 max-w-[110px]">
                                                     <div className="w-12 h-12 flex items-center justify-center mb-2">
-                                                        <span className="text-2xl font-black text-gray-300 drop-shadow-[0_0_8px_rgba(209,213,219,0.6)]">2</span>
+                                                        <span className="text-2xl font-black text-gray-300">2</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-gray-300"
-                                                             style={{boxShadow: '0 4px 20px rgba(209,213,219,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'}}>
+                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-gray-300">
                                                             <ProfileAvatar user={top3[1]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[1].username}</p>
                                                     <p className="text-xs font-bold text-gray-400">🔥 {getActiveStreak(top3[1])}</p>
-                                                    <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center"
-                                                         style={{border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                                                    <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-gray-400">SILVER</span>
                                                     </div>
                                                 </div>
@@ -5687,30 +5681,16 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             {top3[0] && (
                                                 <div className="flex flex-col items-center w-1/3 max-w-[140px] z-10">
                                                     <div className="w-16 h-16 flex items-center justify-center mb-2">
-                                                        <span className="text-4xl font-black text-yellow-400 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]">1</span>
+                                                        <span className="text-4xl font-black text-yellow-400">1</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-yellow-400"
-                                                             style={{boxShadow: '0 6px 30px rgba(250, 204, 21, 0.5), inset 0 2px 0 rgba(255,255,255,0.5)'}}>
+                                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-yellow-400">
                                                             <ProfileAvatar user={top3[0]} size="large" priority={true} className="w-full h-full" />
-                                                        </div>
-                                                        <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-                                                            <svg viewBox="0 0 64 40" fill="none" className="w-12 h-8 drop-shadow-[0_0_10px_rgba(250,204,21,0.6)]">
-                                                                <path d="M8 28C8 28 12 36 32 36C52 36 56 28 56 28L56 12L50 8L46 20L40 12L36 20L30 10L24 20L18 10L14 20L8 12L8 28Z" fill="url(#gold)"/>
-                                                                <defs>
-                                                                    <linearGradient id="gold" x1="32" y1="8" x2="32" y2="36" gradientUnits="userSpaceOnUse">
-                                                                        <stop stop-color="#FFD700"/>
-                                                                        <stop offset="0.5" stop-color="#FFA500"/>
-                                                                        <stop offset="1" stop-color="#FF8C00"/>
-                                                                    </linearGradient>
-                                                                </defs>
-                                                            </svg>
                                                         </div>
                                                     </div>
                                                     <p className="text-base sm:text-lg font-black text-yellow-400 mt-2 truncate w-full text-center">{top3[0].username}</p>
                                                     <p className="text-xs sm:text-sm font-bold text-yellow-500">🔥 {getActiveStreak(top3[0])}</p>
-                                                    <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center"
-                                                         style={{border: '1px solid rgba(250, 204, 21, 0.5)', boxShadow: '0 6px 30px rgba(250, 204, 21, 0.4)'}}>
+                                                    <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs sm:text-sm font-black text-yellow-200">GOLD</span>
                                                     </div>
                                                 </div>
@@ -5720,18 +5700,16 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             {top3[2] && (
                                                 <div className="flex flex-col items-center w-1/3 max-w-[110px]">
                                                     <div className="w-12 h-12 flex items-center justify-center mb-2">
-                                                        <span className="text-2xl font-black text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.6)]">3</span>
+                                                        <span className="text-2xl font-black text-amber-600">3</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full overflow-hidden border-3 border-amber-700"
-                                                             style={{boxShadow: '0 4px 20px rgba(217,119,6,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'}}>
+                                                        <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full overflow-hidden border-3 border-amber-700">
                                                             <ProfileAvatar user={top3[2]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[2].username}</p>
                                                     <p className="text-xs font-bold text-amber-600">🔥 {getActiveStreak(top3[2])}</p>
-                                                    <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center"
-                                                         style={{border: '1px solid rgba(217,119,6,0.4)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                                                    <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-amber-300">BRONZE</span>
                                                     </div>
                                                 </div>
@@ -5752,12 +5730,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.05 }}
                                         className={`p-4 rounded-2xl flex items-center gap-4 transition-all ${u._id === currentUser?._id ? 'bg-gradient-to-r from-[#bf953f]/15 to-[#bf953f]/5 border-2 border-[#bf953f]/40 scale-[1.01]' : 'bg-gradient-to-r from-white/5 to-white/2 border border-white/10 hover:border-white/20 hover:scale-[1.01]'}`}
-                                        style={{
-                                            backdropFilter: 'blur(24px)',
-                                            boxShadow: u._id === currentUser?._id 
-                                                ? '0 8px 30px rgba(191,149,63,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
-                                                : '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)'
-                                        }}
                                     >
                                         <div className="w-10 h-10 shrink-0 flex items-center justify-center font-black text-xl text-white/40">
                                             #{rank}
