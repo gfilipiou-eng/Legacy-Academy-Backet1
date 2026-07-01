@@ -933,7 +933,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         };
     }, [String(rawUrl || ''), cacheKey]);
 
-    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 600 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
+    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
@@ -5623,97 +5623,221 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
 
     if (!isOpen) return null;
 
+    const currentData = activeTab === 'active' ? leaders : allTimeLeaders;
+    const top3 = currentData.slice(0, 3);
+    const rest = currentData.slice(3);
+
     return createPortal(
-        <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6" style={{ isolation: 'isolate' }}>
-            <div 
+        <div className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4" style={{ isolation: 'isolate' }}>
+            <motion.div 
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-[#0a0a0c] border border-orange-500/30 rounded-3xl w-full max-w-lg max-h-[80vh] flex flex-col shadow-2xl relative overflow-hidden"
+                className="w-full max-w-2xl flex flex-col max-h-[85vh] sm:max-h-[90vh] relative"
             >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400" />
-                
-                <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-lg shrink-0">
-                            <Icons.Trophy className="w-6 h-6 text-black" />
-                        </div>
-                        <div className="min-w-0">
-                            <h2 className="text-xl font-black text-white uppercase tracking-widest truncate">{t('RANK_LIST', 'Rank List')}</h2>
-                            <p className="text-xs text-orange-500 font-bold uppercase tracking-wider truncate">{t('TOP_WARRIORS', 'Top Warriors')}</p>
-                        </div>
-                    </div>
-                    <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-white/70 hover:text-white">
-                        <Icons.X className="w-5 h-5" />
-                    </button>
-                </div>
-
-                <div className="px-4 sm:px-6 py-2 border-b border-white/5 flex gap-2 overflow-x-auto custom-scrollbar shrink-0">
-                    <button
-                        onClick={() => setActiveTab('active')}
-                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
-                            activeTab === 'active' 
-                            ? 'bg-orange-500/20 text-orange-500 border border-orange-500/30 ' 
-                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
-                        }`}
-                    >
-                        🔥 {t('ACTIVE_WARRIORS', 'Active Warriors')}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('allTime')}
-                        className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
-                            activeTab === 'allTime' 
-                            ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 ' 
-                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-transparent'
-                        }`}
-                    >
-                        👑 {t('ALL_TIME_STREAKS', 'Hall of Fame')}
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 relative z-10 custom-scrollbar">
-                    {loading ? (
-                        <div className="flex justify-center py-10">
-                            <Icons.Loader className="w-8 h-8 text-orange-500 animate-spin" />
-                        </div>
-                    ) : (activeTab === 'active' ? leaders : allTimeLeaders).length === 0 ? (
-                        <div className="text-center py-10 text-white/50 font-bold uppercase tracking-widest text-sm">
-                            {t('NO_ACTIVE_STREAKS', 'No active streaks yet')}
-                        </div>
-                    ) : (
-                        (activeTab === 'active' ? leaders : allTimeLeaders).map((u, idx) => {
-                            const currentStreak = getActiveStreak(u);
-                            const highestStreak = Math.max(u.highestStreak || 0, currentStreak);
-                            const displayStreak = activeTab === 'allTime' ? highestStreak : currentStreak;
-                            
-                            return (
-                            <div key={u._id} className={`p-4 rounded-2xl flex items-center gap-4 border transition-all ${u._id === currentUser?._id ? 'bg-[#bf953f]/10 border-[#bf953f]/30' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
-                                <div className={`w-8 h-8 shrink-0 flex items-center justify-center font-black text-lg ${idx === 0 ? 'text-yellow-400 text-2xl drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]' : idx === 1 ? 'text-gray-300 text-xl drop-shadow-[0_0_5px_rgba(209,213,219,0.5)]' : idx === 2 ? 'text-amber-600 text-xl drop-shadow-[0_0_5px_rgba(217,119,6,0.5)]' : 'text-white/30 text-base'}`}>
-                                    #{idx + 1}
-                                </div>
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 relative">
-                                    <ProfileAvatar user={u} className="border-2 border-white/10" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="font-black text-white text-sm sm:text-base flex items-center gap-2 min-w-0">
-                                        <span className="truncate">{u.username}</span>
-                                        {u._id === currentUser?._id && <span className="shrink-0 text-[9px] bg-[#bf953f]/20 text-[#bf953f] px-2 py-0.5 rounded-full uppercase tracking-widest">{t('YOU', 'You')}</span>}
-                                    </div>
-                                    <div className="flex flex-col items-start gap-1 mt-1">
-                                        <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${displayStreak > 0 ? (activeTab === 'allTime' ? 'text-yellow-500' : 'text-orange-500') : 'text-gray-500'}`}>
-                                            {displayStreak > 0 ? (activeTab === 'allTime' ? '👑' : '🔥') : '💨'} {displayStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{activeTab === 'allTime' ? t('HIGHEST_STREAK', 'Record') : t('STREAK', 'Streak')}</span>
-                                        </div>
-                                        <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
-                                            🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                <div 
+                    className="w-full bg-gradient-to-br from-[#0f0f12] to-[#050507] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+                    style={{
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)'
+                    }}
+                >
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-red-500 to-orange-400" />
+                    
+                    <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center shadow-lg shrink-0"
+                                 style={{boxShadow: '0 4px 20px rgba(249, 115, 22, 0.4), inset 0 1px 0 rgba(255,255,255,0.3)'}}>
+                                <Icons.Trophy className="w-6 h-6 text-black" />
                             </div>
-                            );
-                        })
-                    )}
+                            <div className="min-w-0">
+                                <h2 className="text-xl font-black text-white uppercase tracking-widest truncate">{t('RANK_LIST', 'Rank List')}</h2>
+                                <p className="text-xs text-orange-500 font-bold uppercase tracking-wider truncate">{t('TOP_WARRIORS', 'Top Warriors')}</p>
+                            </div>
+                        </div>
+                        <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-white/70 hover:text-white"
+                                style={{backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)'}}>
+                            <Icons.X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="px-4 sm:px-6 py-3 border-b border-white/5 flex gap-2 overflow-x-auto custom-scrollbar shrink-0">
+                        <button
+                            onClick={() => setActiveTab('active')}
+                            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${
+                                activeTab === 'active' 
+                                ? 'text-orange-400' 
+                                : 'text-gray-400 hover:text-white'
+                            }`}
+                            style={activeTab === 'active' ? {
+                                background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.05) 100%)',
+                                border: '1px solid rgba(249, 115, 22, 0.4)',
+                                backdropFilter: 'blur(24px)'
+                            } : {
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.05)'
+                            }}
+                        >
+                            🔥 {t('ACTIVE_WARRIORS', 'Active Warriors')}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('allTime')}
+                            className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${
+                                activeTab === 'allTime' 
+                                ? 'text-yellow-400' 
+                                : 'text-gray-400 hover:text-white'
+                            }`}
+                            style={activeTab === 'allTime' ? {
+                                background: 'linear-gradient(135deg, rgba(250, 204, 21, 0.2) 0%, rgba(250, 204, 21, 0.05) 100%)',
+                                border: '1px solid rgba(250, 204, 21, 0.4)',
+                                backdropFilter: 'blur(24px)'
+                            } : {
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.05)'
+                            }}
+                        >
+                            👑 {t('ALL_TIME_STREAKS', 'Hall of Fame')}
+                        </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10 custom-scrollbar">
+                        {loading ? (
+                            <div className="flex justify-center py-12">
+                                <Icons.Loader className="w-10 h-10 text-orange-500 animate-spin" />
+                            </div>
+                        ) : currentData.length === 0 ? (
+                            <div className="text-center py-10 text-white/50 font-bold uppercase tracking-widest text-sm">
+                                {t('NO_ACTIVE_STREAKS', 'No active streaks yet')}
+                            </div>
+                        ) : (
+                            <>
+                                {/* Hall of Fame - Top 3 */}
+                                {top3.length > 0 && (
+                                    <div className="mb-6">
+                                        <div className="flex items-end justify-center gap-2 sm:gap-4 pt-4">
+                                            {/* 2nd Place */}
+                                            {top3[1] && (
+                                                <div className="flex flex-col items-center w-1/3 max-w-[110px]">
+                                                    <div className="w-12 h-12 flex items-center justify-center mb-2">
+                                                        <span className="text-2xl font-black text-gray-300 drop-shadow-[0_0_8px_rgba(209,213,219,0.6)]">2</span>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-gray-300"
+                                                             style={{boxShadow: '0 4px 20px rgba(209,213,219,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'}}>
+                                                            <ProfileAvatar user={top3[1]} size="large" priority={true} className="w-full h-full" />
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[1].username}</p>
+                                                    <p className="text-xs font-bold text-gray-400">
+                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[1].highestStreak || 0, getActiveStreak(top3[1]))}` : `🔥 ${getActiveStreak(top3[1])}`}
+                                                    </p>
+                                                    <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center"
+                                                         style={{border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                                                        <span className="text-xs font-black text-gray-400">SILVER</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            {/* 1st Place */}
+                                            {top3[0] && (
+                                                <div className="flex flex-col items-center w-1/3 max-w-[140px] z-10">
+                                                    <div className="w-16 h-16 flex items-center justify-center mb-2">
+                                                        <span className="text-4xl font-black text-yellow-400 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]">1</span>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-yellow-400"
+                                                             style={{boxShadow: '0 6px 30px rgba(250, 204, 21, 0.5), inset 0 2px 0 rgba(255,255,255,0.5)'}}>
+                                                            <ProfileAvatar user={top3[0]} size="large" priority={true} className="w-full h-full" />
+                                                        </div>
+                                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                                                            <span className="text-3xl">👑</span>
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-base sm:text-lg font-black text-yellow-400 mt-2 truncate w-full text-center">{top3[0].username}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500">
+                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[0].highestStreak || 0, getActiveStreak(top3[0]))}` : `🔥 ${getActiveStreak(top3[0])}`}
+                                                    </p>
+                                                    <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center"
+                                                         style={{border: '1px solid rgba(250, 204, 21, 0.5)', boxShadow: '0 6px 30px rgba(250, 204, 21, 0.4)'}}>
+                                                        <span className="text-xs sm:text-sm font-black text-yellow-200">GOLD</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            {/* 3rd Place */}
+                                            {top3[2] && (
+                                                <div className="flex flex-col items-center w-1/3 max-w-[110px]">
+                                                    <div className="w-12 h-12 flex items-center justify-center mb-2">
+                                                        <span className="text-2xl font-black text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.6)]">3</span>
+                                                    </div>
+                                                    <div className="relative">
+                                                        <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full overflow-hidden border-3 border-amber-700"
+                                                             style={{boxShadow: '0 4px 20px rgba(217,119,6,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'}}>
+                                                            <ProfileAvatar user={top3[2]} size="large" priority={true} className="w-full h-full" />
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[2].username}</p>
+                                                    <p className="text-xs font-bold text-amber-600">
+                                                        {activeTab === 'allTime' ? `👑 ${Math.max(top3[2].highestStreak || 0, getActiveStreak(top3[2]))}` : `🔥 ${getActiveStreak(top3[2])}`}
+                                                    </p>
+                                                    <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center"
+                                                         style={{border: '1px solid rgba(217,119,6,0.4)', boxShadow: '0 4px 20px rgba(0,0,0,0.5)'}}>
+                                                        <span className="text-xs font-black text-amber-300">BRONZE</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Rest of the list */}
+                                {rest.map((u, idx) => {
+                                    const rank = idx + 4;
+                                    const currentStreak = getActiveStreak(u);
+                                    const highestStreak = Math.max(u.highestStreak || 0, currentStreak);
+                                    const displayStreak = activeTab === 'allTime' ? highestStreak : currentStreak;
+                                    
+                                    return (
+                                    <motion.div 
+                                        key={u._id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className={`p-4 rounded-2xl flex items-center gap-4 transition-all ${u._id === currentUser?._id ? 'bg-gradient-to-r from-[#bf953f]/15 to-[#bf953f]/5 border-2 border-[#bf953f]/40 scale-[1.01]' : 'bg-gradient-to-r from-white/5 to-white/2 border border-white/10 hover:border-white/20 hover:scale-[1.01]'}`}
+                                        style={{
+                                            backdropFilter: 'blur(24px)',
+                                            boxShadow: u._id === currentUser?._id 
+                                                ? '0 8px 30px rgba(191,149,63,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
+                                                : '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)'
+                                        }}
+                                    >
+                                        <div className="w-10 h-10 shrink-0 flex items-center justify-center font-black text-xl text-white/40">
+                                            #{rank}
+                                        </div>
+                                        <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 relative">
+                                            <ProfileAvatar user={u} size="large" className="w-full h-full border-2 border-white/15" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-black text-white text-sm sm:text-base flex items-center gap-2 min-w-0">
+                                                <span className="truncate">{u.username}</span>
+                                                {u._id === currentUser?._id && <span className="shrink-0 text-[9px] bg-[#bf953f]/20 text-[#bf953f] px-2 py-0.5 rounded-full uppercase tracking-widest border border-[#bf953f]/30">{t('YOU', 'You')}</span>}
+                                            </div>
+                                            <div className="flex items-center gap-3 mt-1">
+                                                <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${displayStreak > 0 ? (activeTab === 'allTime' ? 'text-yellow-400' : 'text-orange-400') : 'text-gray-500'}`}>
+                                                    {displayStreak > 0 ? (activeTab === 'allTime' ? '👑' : '🔥') : '💨'} {displayStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{activeTab === 'allTime' ? t('HIGHEST_STREAK', 'Record') : t('STREAK', 'Streak')}</span>
+                                                </div>
+                                                <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
+                                                    🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                    );
+                                })}
+                            </>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </motion.div>
         </div>,
         document.body
     );
