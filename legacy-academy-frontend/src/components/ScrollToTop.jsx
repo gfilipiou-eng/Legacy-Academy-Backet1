@@ -31,10 +31,10 @@ const ScrollToTop = ({ mainScrollRef, onScrollToTop }) => {
                 }
                 if (onScrollToTop) onScrollToTop();
             }}
-            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-4 sm:right-8 z-[950] w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
             aria-label="Scroll to top"
         >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 sm:w-8 sm:h-8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10">
                 <path d="M12 19V5"></path>
                 <path d="m5 12 7-7 7 7"></path>
             </svg>
