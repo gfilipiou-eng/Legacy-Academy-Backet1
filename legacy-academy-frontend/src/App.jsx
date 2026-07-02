@@ -10,9 +10,7 @@ export const getActiveStreak = (u) => {
 };
 
 export const isTopStreak = (u) => {
-    if (!u || u.isPrivate || !window.topStreakValue) return false;
-    const streak = getActiveStreak(u);
-    return streak > 0 && streak === window.topStreakValue;
+    return false;
 };
 
 import axios, { getSafeToken, setSafeToken, removeSafeToken } from './api';
@@ -6558,7 +6556,7 @@ const ProfileModal = ({
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
-    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}</>)}</div>
+    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -6914,7 +6912,7 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
                                         <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(displayUser)}{isTopStreak(displayUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(displayUser)}</span>}
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
@@ -8060,7 +8058,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                         <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
-                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(publicUser)}{isTopStreak(publicUser) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(publicUser)}</span>}
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
@@ -8276,7 +8274,7 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
                             <img src={u.profilePic || 'https://via.placeholder.com/150'} alt={u.username} className="w-12 h-12 rounded-full object-cover border border-white/10" />
                             <div className="flex-1 min-w-0 flex items-center gap-2">
                                 <div className="font-bold text-white text-base truncate">{u.username}</div>
-                                {isTopStreak(u) && <span className="px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none shrink-0 flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}
+
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full">
                                 <span className="text-orange-500 text-sm leading-none">🔥</span>
