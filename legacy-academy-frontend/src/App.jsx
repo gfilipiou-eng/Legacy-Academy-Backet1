@@ -5578,6 +5578,8 @@ const LegalModal = ({ isOpen, onClose, title, content, t }) => {
 const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
     const [leaders, setLeaders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -5606,6 +5608,19 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
             }
         };
         fetchLeaders();
+    }, [isOpen]);
+
+    // Scroll handler for leaderboard
+    useEffect(() => {
+        if (!isOpen) return;
+        const el = scrollRef.current;
+        if (!el) return;
+        
+        const handleScroll = () => {
+            setShowScrollTop(el.scrollTop > 300);
+        };
+        el.addEventListener('scroll', handleScroll, { passive: true });
+        return () => el.removeEventListener('scroll', handleScroll);
     }, [isOpen]);
 
     if (!isOpen) return null;
@@ -5643,7 +5658,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10 custom-scrollbar">
+                    <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative z-10 custom-scrollbar">
                         {loading ? (
                             <div className="flex justify-center py-12">
                                 <Icons.Loader className="w-10 h-10 text-orange-500 animate-spin" />
@@ -5757,6 +5772,23 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                             </>
                         )}
                     </div>
+                    
+                    {showScrollTop && (
+                        <button
+                            onClick={() => {
+                                if (scrollRef.current) {
+                                    scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                                }
+                            }}
+                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            aria-label="Scroll to top"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" className="w-8 h-8 sm:w-10 sm:h-10">
+                                <path d="M12 19V5"></path>
+                                <path d="m5 12 7-7 7 7"></path>
+                            </svg>
+                        </button>
+                    )}
                 </div>
             </motion.div>
         </div>,
