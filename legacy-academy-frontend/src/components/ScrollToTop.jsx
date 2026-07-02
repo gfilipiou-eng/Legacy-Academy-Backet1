@@ -31,10 +31,13 @@ const ScrollToTop = ({ mainScrollRef, onScrollToTop }) => {
                 }
                 if (onScrollToTop) onScrollToTop();
             }}
-            className="fixed bottom-[calc(env(safe-area-inset-bottom)+70px)] sm:bottom-24 right-4 sm:right-8 z-50 p-3 sm:p-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:bg-white/20 hover:scale-110 active:scale-95 transition-all duration-300 group"
+            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
             aria-label="Scroll to top"
         >
-            <Icons.ArrowUp className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-y-1 transition-transform" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10">
+                <path d="M12 19V5"></path>
+                <path d="m5 12 7-7 7 7"></path>
+            </svg>
         </button>
     );
 };

@@ -5453,7 +5453,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
                                     <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
-                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center">🔥{getActiveStreak(user)}</span>}
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                                 </div>
                                 <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
@@ -5796,6 +5796,13 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
         return () => clearInterval(interval);
     }, []);
 
+    // Clear error when mission is completed today
+    useEffect(() => {
+        if (hasCompletedToday) {
+            setErrorMsg(null);
+        }
+    }, [hasCompletedToday]);
+
     const handleCompleteMission = async (missionId) => {
         if (submitting || hasCompletedToday) return;
         setSubmitting(true);
@@ -5980,7 +5987,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     {getActiveStreak(user) > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
-                                🔥 {getActiveStreak(user)}{isTopStreak(user) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>} {t('MISSION_STREAK')}
+                                🔥 {getActiveStreak(user)} {t('MISSION_STREAK')}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest shrink-0 border border-white/5 bg-white/5 rounded-full px-2 py-1">
                                 ⏳ {hasCompletedToday ? 'Next in' : 'Reset in'} {timeLeft}
@@ -11242,11 +11249,6 @@ const App = () => {
                             )}
                         </div>
                     
-        {activeTab === 'missions' && showMissionsScrollTop && (
-            <button className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#ffffff]/10 shrink-0 flex-none flex items-center justify-center text-[var(--gold-primary)] backdrop-blur-2xl border border-[#ffffff]/20 hover:scale-105 active:scale-95 transition-all duration-500 ease-out" onClick={() => mainScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
-    </button>
-        )}
         </main>
                     </div>
 
