@@ -2333,7 +2333,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             </div>
 
             {note.postImage && (
-                <div className="w-12 h-12 rounded-xl border border-white/10 overflow-hidden shrink-0 transition-transform group-hover:scale-105">
+                <div className="w-12 h-12 rounded-xl border border-white/10 overflow-hidden shrink-0">
                     <img 
                         src={resolveMediaUrl(note.postImage)} 
                         className="w-full h-full object-cover opacity-80" 
@@ -2377,7 +2377,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
-                        <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transition-transform duration-300 group-hover:scale-105 group-active:scale-95 transform-gpu`}>
+                        <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transform-gpu`}>
                             <div className="w-full h-full rounded-full overflow-hidden bg-black border border-black">
                                 {hasStoryMedia && storyMediaUrl ? (
                                     <img 
@@ -6981,7 +6981,7 @@ const ProfileModal = ({
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0 shadow-md rounded-full">
                                         <div className="w-full h-full rounded-full overflow-hidden">
-                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover" />
                                         </div>
                                     </div>
                                 </div>
@@ -7274,7 +7274,7 @@ const ProfileModal = ({
                                                     }
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transition-transform duration-300 group-hover:scale-105 group-active:scale-95 transform-gpu cursor-pointer">
+                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transform-gpu cursor-pointer">
                                                                 <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative">
                                                                 {hasMedia ? (
                                                                     isNativeVideo ? (
@@ -7818,7 +7818,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                             </div>
                         ) : (
                             <div className="w-full py-10 sm:py-12 border-2 border-dashed border-white/20 bg-white/[0.02] rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-white/50 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/50 hover:bg-white/[0.05] hover:text-[var(--gold-primary)]">
-                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-white/5 flex items-center justify-center border border-white/10 transition-transform duration-300 group-hover:scale-105">
+                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
                                     <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8" />
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
@@ -8142,7 +8142,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer rounded-full" 
+                                className="w-full h-full object-cover cursor-pointer rounded-full" 
                                 alt="" 
                                 loading="eager" 
                                 decoding="async" 
