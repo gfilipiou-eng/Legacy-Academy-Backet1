@@ -27,6 +27,18 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// --- MANDATORY MANUAL CORS HEADERS FIRST ---
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // --- SMART & SECURE MIDDLEWARES ---
 
 // 0. Enable CORS first!
