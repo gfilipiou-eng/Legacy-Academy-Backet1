@@ -328,10 +328,10 @@ const isPostMediaPath = (value) => {
     const path = String(value || '').trim();
     if (!path || path === 'undefined' || path === 'null' || path === '[object Object]') return false;
     if (path.startsWith('blob:')) return true;
-    if (path.includes('cloudinary.com') && (path.includes('/image/upload/') || path.includes('/video/upload/'))) return true;
+    if (path.includes('cloudinary.com') && (path.includes('/image/upload/') || path.includes('/video/upload/') || path.includes('/audio/upload/'))) return true;
     if (/^\/?uploads\//i.test(path) || path.includes('/uploads/')) return true;
     if (isYouTubeUrl(path)) return true;
-    if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|mp4|mov|webm|avi|m4v)(\?|#|$)/i.test(path)) return true;
+    if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|mp4|mov|webm|avi|m4v|mp3|wav|ogg|flac|m4a|aac)(\?|#|$)/i.test(path)) return true;
     if (/^https?:\/\//i.test(path)) return false;
     if (!path.startsWith('http')) return true;
     return false;
@@ -339,7 +339,7 @@ const isPostMediaPath = (value) => {
 
 const postHasMedia = (post) => {
     if (!post) return false;
-    return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl);
+    return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl) || isPostMediaPath(post.audio);
 };
 
 const parseText = (text, onHashtagClick, onMentionClick) => {
@@ -1691,10 +1691,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                         </div>
                     </div>
 
-                    {/* Image/Video Section */}
+                    {/* Image/Video/Audio Section */}
                     {postHasMedia(post) && (
                         <div className="w-full bg-[#050505] flex items-center justify-center relative overflow-hidden shrink-0 mt-2">
-                            {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                            {isPostMediaPath(post.audio) ? (
+                                <div className="w-full p-4">
+                                    <AudioPlayer audioUrl={resolveMediaUrl(post.audio)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
+                                </div>
+                            ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer
                                     src={resolveMediaUrl(post.videoUrl || post.image)}
                                     poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)}
@@ -2411,6 +2415,110 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     );
 };
 
+const AudioPlayer = memo(({ audioUrl, trackName }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const audioRef = useRef(null);
+
+    const togglePlay = () => {
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
+        }
+    };
+
+    const handleTimeUpdate = () => {
+        if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+        }
+    };
+
+    const handleLoadedMetadata = () => {
+        if (audioRef.current) {
+            setDuration(audioRef.current.duration);
+        }
+    };
+
+    const handleSeek = (e) => {
+        const time = parseFloat(e.target.value);
+        if (audioRef.current) {
+            audioRef.current.currentTime = time;
+            setCurrentTime(time);
+        }
+    };
+
+    const formatTime = (seconds) => {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+    return (
+        <div className="w-full p-4 sm:p-6 bg-gradient-to-br from-[#121212] to-[#181818] rounded-2xl border border-white/10 shadow-xl flex flex-col gap-4">
+            <audio 
+                ref={audioRef}
+                src={audioUrl} 
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={() => setIsPlaying(false)}
+            />
+            
+            <div className="flex items-center gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-[#1DB954] to-[#1ed760] flex items-center justify-center shrink-0 shadow-lg">
+                    <Icons.Music className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="text-white font-bold text-sm sm:text-base truncate">{trackName}</div>
+                    <div className="text-white/50 text-xs sm:text-sm mt-1">Audio</div>
+                </div>
+                <button 
+                    onClick={togglePlay}
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1DB954] flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-[#1DB954]/40"
+                >
+                    {isPlaying ? (
+                        <Icons.Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
+                    ) : (
+                        <Icons.Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-1" />
+                    )}
+                </button>
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <div className="relative w-full h-1.5 sm:h-2 bg-white/20 rounded-full cursor-pointer group">
+                    <div 
+                        className="absolute top-0 left-0 h-full bg-[#1DB954] rounded-full transition-all duration-100"
+                        style={{ width: `${progressPercent}%` }}
+                    />
+                    <input 
+                        type="range"
+                        min="0"
+                        max={duration || 100}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ left: `calc(${progressPercent}% - 6px)` }}
+                    />
+                </div>
+                <div className="flex justify-between text-[10px] sm:text-xs text-white/50 font-bold">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                </div>
+            </div>
+        </div>
+    );
+});
+
 const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null, openCommentsInModal = false }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
@@ -2660,7 +2768,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {postHasMedia(post) && (
                                 <div className={`${mediaWrapClass} relative overflow-hidden group/media`}>
                                     <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
-                                        {(post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
+                                        {isPostMediaPath(post.audio) ? (
+                                            <AudioPlayer audioUrl={resolveMediaUrl(post.audio)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
+                                        ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                             <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh] liquid-glass-video-panel rounded-2xl' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
                                         ) : post.image && (
                                             imgError ? (
@@ -2679,7 +2789,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     onDoubleClick={onMediaClick ? () => onMediaClick(post) : undefined}
                                                     onError={() => {
                                                         setImgError(true);
-                                                        // Auto-cleanup broken link (Only for Author/Founder)
                                                         if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
                                                     }}
                                                 />
@@ -7428,7 +7537,13 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
         setIsSubmitting(true);
         const fd = new FormData();
         fd.append('desc', desc);
-        if (file) fd.append('image', file);
+        if (file) {
+            if (file.type.startsWith('audio')) {
+                fd.append('audio', file);
+            } else {
+                fd.append('image', file);
+            }
+        }
         fd.append('isStory', isStory);
         fd.append('is18Plus', is18Plus);
 
@@ -7502,10 +7617,14 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                             <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--gold-primary)]/20 shadow-[0_10px_40px_rgba(212,175,55,0.06)] flex items-center justify-center transition-all duration-400 hover:border-[var(--gold-primary)]/40 hover:shadow-[0_15px_50px_rgba(212,175,55,0.1)] hover:-translate-y-0.5">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
+                                ) : isAudio ? (
+                                    <div className="w-full p-4">
+                                        <AudioPlayer audioUrl={preview} trackName={audioName || "Audio Preview"} />
+                                    </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); setIsAudio(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
                                     <Icons.X className="w-4 h-4 text-slate-100" />
                                 </button>
                             </div>
@@ -7516,11 +7635,11 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image or Video</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
                                 </div>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/*, video/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*, video/*, audio/*" hidden onChange={handleFileChange} />
                     </div>
 
                     <div className="flex flex-wrap gap-2.5 mb-2">
@@ -7572,16 +7691,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     useEffect(() => {
         if (post) {
             setDesc(post.desc || '');
-            setPreview(post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null));
+            setPreview(post.audio ? resolveMediaUrl(post.audio) : (post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null)));
             const isYT = isYouTubeUrl(post.videoUrl);
             const isVid = isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
-            const isAud = post.image?.match(/\.(mp3|wav|ogg|webm|m4a)$/i) || false;
+            const isAud = post.audio ? true : (post.image?.match(/\.(mp3|wav|ogg|webm|m4a)$/i) || false);
             setIsVideo(isVid);
             setIsAudio(isAud);
             setYoutubeUrl(isYT ? post.videoUrl : '');
             setIs18Plus(post.is18Plus || false);
-            if (post.image) {
-                const url = new URL(resolveMediaUrl(post.image));
+            if (post.image || post.audio) {
+                const url = new URL(resolveMediaUrl(post.audio || post.image));
                 setAudioName(url.pathname.split('/').pop() || '');
             }
         }
@@ -7630,7 +7749,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
         const file = fileRef.current?.files[0];
 
         if (file) {
-            fd.append('image', file);
+            if (file.type.startsWith('audio')) {
+                fd.append('audio', file);
+            } else {
+                fd.append('image', file);
+            }
         } 
 
         try {
@@ -7695,10 +7818,14 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                             <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-[#111] border border-white/10 flex items-center justify-center">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
+                                ) : isAudio ? (
+                                    <div className="w-full p-4">
+                                        <AudioPlayer audioUrl={preview} trackName={audioName || "Audio Preview"} />
+                                    </div>
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-white/20 transition-all duration-250">
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); setIsAudio(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-white/20 transition-all duration-250">
                                     <Icons.X className="w-4 h-4 text-slate-100" />
                                 </button>
                             </div>
@@ -7709,11 +7836,11 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image or Video</span>
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
                                 </div>
                             </div>
                         )}
-                        <input type="file" ref={fileRef} accept="image/*, video/*" hidden onChange={handleFileChange} />
+                        <input type="file" ref={fileRef} accept="image/*, video/*, audio/*" hidden onChange={handleFileChange} />
                     </div>
                 </div>
 
