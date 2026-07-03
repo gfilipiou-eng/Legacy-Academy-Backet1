@@ -493,7 +493,7 @@ const founderAffiliationHref = (username) => {
     const params = new URLSearchParams(window.location.search);
     params.set('profile', sanitizeAffiliation(username));
     const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
-    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#e80000';
     params.set('lang', savedLang);
     params.set('theme', savedTheme);
     return `/?${params.toString()}`;
@@ -501,7 +501,7 @@ const founderAffiliationHref = (username) => {
 const buildPublicUrl = (type, value, extraParams = {}) => {
     const params = new URLSearchParams(window.location.search);
     const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
-    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+    const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#e80000';
     params.set(type, value);
     params.set('lang', savedLang);
     params.set('theme', savedTheme);
@@ -7953,7 +7953,7 @@ const applyZoom = (zoom) => {
 };
 
 const PublicProfileSkeleton = () => (
-    <div className="min-h-screen bg-black w-full flex flex-col relative overflow-hidden" style={{ '--gold-primary': '#D4AF37' }}>
+    <div className="min-h-screen bg-black w-full flex flex-col relative overflow-hidden" style={{ '--gold-primary': '#e80000' }}>
         <div className="w-full h-[25vh] sm:h-[30vh] bg-[#111] relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-[#111] via-[#222] to-[#111] animate-[shimmer_2s_infinite]" style={{ backgroundSize: '200% 100%' }} />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black" />
@@ -7985,7 +7985,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
     const urlThemeParam = searchParams.get('theme');
-    const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#ffd700';
+    const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#e80000';
     const [zoomImage, setZoomImage] = useState(null);
     const [confirmed18Plus, setConfirmed18Plus] = useState(false);
     const profileScrollRef = useRef(null);
@@ -8043,7 +8043,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
     if (loadingUser && !publicUser) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor }}>
+            <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor || '#e80000' }}>
                 <PlatformLoadingPanel label="GATHERING INTEL..." />
             </div>
         );
@@ -8053,13 +8053,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
         // If still loading, show spinner not error
         if (loadingUser) {
             return (
-                <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor }}>
+                <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor || '#e80000' }}>
                     <PlatformLoadingPanel label="GATHERING INTEL..." />
                 </div>
             );
         }
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor }}>
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor || '#e80000' }}>
                 <div className="w-20 h-20 rounded-[2rem] bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-10 h-10"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
                 </div>
@@ -8076,7 +8076,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
     if (publicUser?.settings?.is18PlusProfile && !confirmed18Plus) {
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor }}>
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center gap-6" style={{ '--gold-primary': themeColor || '#e80000' }}>
                 <div className="w-20 h-20 rounded-[2rem] bg-red-950/20 border border-red-500/20 flex items-center justify-center text-red-500">
                     <Icons.AlertCircle className="w-10 h-10" />
                 </div>
@@ -8107,7 +8107,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
             ref={profileScrollRef}
             tabIndex={-1}
             className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-white flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
-            style={{ '--gold-primary': themeColor, backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}
+            style={{ '--gold-primary': themeColor || '#e80000', backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}
         >
 
             {resolvedPublicCoverPic && (
@@ -8499,7 +8499,7 @@ const App = () => {
         params.delete('site');
         params.delete('index');
         const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
-        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#e80000';
         params.set('lang', savedLang);
         params.set('theme', savedTheme);
         const searchString = params.toString();
@@ -8511,7 +8511,7 @@ const App = () => {
     const openPublicPost = useCallback((postId) => {
         const params = new URLSearchParams(window.location.search);
         const savedLang = params.get('lang') || localStorage.getItem('language') || 'en';
-        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#ffd700';
+        const savedTheme = params.get('theme') || localStorage.getItem('themeColor') || '#e80000';
         params.set('postId', postId);
         params.set('lang', savedLang);
         params.set('theme', savedTheme);

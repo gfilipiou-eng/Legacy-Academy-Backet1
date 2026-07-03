@@ -17,11 +17,11 @@
   --c-white: 255 255 255;
   --c-dark-bg: 5 5 5;
   background-color: rgb(var(--c-black));
-  --gold-primary: #D4AF37;
-  --gold-secondary: #AA8B2C;
-  --gold-glow: rgba(212, 175, 55, 0);
-  --gold-glow-soft: rgba(212, 175, 55, 0);
-  --gold-primary-rgb: 212, 175, 55;
+  --gold-primary: #e80000;
+  --gold-secondary: #b30000;
+  --gold-glow: rgba(232, 0, 0, 0.4);
+  --gold-glow-soft: rgba(232, 0, 0, 0.15);
+  --gold-primary-rgb: 232, 0, 0;
   --ai-cyan: #00f2ff;
   --ai-glow: rgba(0, 242, 255, 0);
   --carbon-black: #050505;
