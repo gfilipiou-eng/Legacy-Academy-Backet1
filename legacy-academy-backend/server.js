@@ -30,7 +30,12 @@ const app = express();
 // --- SMART & SECURE MIDDLEWARES ---
 
 // 0. Enable CORS first!
-app.use(cors());
+app.use(cors({
+  origin: ["https://legacyacademyintel.vercel.app", "http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
 // 2. Response Compression (Smart/Fast API)
 app.use(compression());
