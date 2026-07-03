@@ -45,4 +45,14 @@ API.interceptors.request.use((config) => {
     return config;
 });
 
+export const fetchBubbles = async () => {
+    const response = await API.get("/bubbles");
+    return response.data;
+};
+
+export const createBubble = async (text) => {
+    const response = await API.post("/bubbles", { text });
+    return response.data;
+};
+
 export default API;

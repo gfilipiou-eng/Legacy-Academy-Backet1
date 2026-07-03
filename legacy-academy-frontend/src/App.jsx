@@ -28,6 +28,7 @@ import socket from './socket';
 import ScrollToTop from './components/ScrollToTop';
 import BottomNavbar from './components/BottomNavbar';
 import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
+import BubbleSpace from './components/Bubbles/BubbleSpace';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
@@ -8397,6 +8398,7 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
 
 const safeSetItem = (key, value) => { try { localStorage.setItem(key, value); } catch(e) { console.warn('safeSetItem caught error for ' + key); } };
 const App = () => {
+    const [isBubbleSpaceOpen, setIsBubbleSpaceOpen] = useState(false);
     const searchParams = new URLSearchParams(window.location.search);
     const urlLang = searchParams.get('lang');
     const urlTheme = searchParams.get('theme');
@@ -11438,6 +11440,10 @@ const App = () => {
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
+                    {isBubbleSpaceOpen && (
+                        <BubbleSpace onClose={() => setIsBubbleSpaceOpen(false)} />
+                    )}
+
                     <BottomNavbar
                         activeTab={activeTab}
                         onTabChange={(tab) => {
@@ -11455,6 +11461,7 @@ const App = () => {
                         onProfile={() => user && viewProfile(user)}
                         ProfileAvatar={ProfileAvatar}
                         isProfileActive={isProfileOpen && profileUser && user && isSameId(profileUser._id, user._id)}
+                        onOpenBubbles={() => setIsBubbleSpaceOpen(true)}
                     />
 
                     <NavigationDrawer

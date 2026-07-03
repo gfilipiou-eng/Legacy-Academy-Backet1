@@ -83,6 +83,7 @@ const BottomNavbar = memo(({
     onProfile,
     ProfileAvatar,
     isProfileActive = false,
+    onOpenBubbles,
 }) => {
     const unreadCount = useMemo(
         () => (alerts || []).filter((n) => !n.read).length,
@@ -198,8 +199,20 @@ const BottomNavbar = memo(({
                     aria-label="Create"
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group"
                 >
-                    <div className="w-[50px] h-[50px] sm:w-[52px] sm:h-[52px] bg-[#1D9BF0] flex items-center justify-center rounded-full text-white hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-black">
-                        <Icons.Plus className="w-7 h-7 sm:w-7 sm:h-7 stroke-[3]" shapeRendering="geometricPrecision" />
+                    <div className="w-[45px] h-[45px] sm:w-[48px] sm:h-[48px] bg-[#1D9BF0] flex items-center justify-center rounded-full text-white hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-black">
+                        <Icons.Plus className="w-6 h-6 sm:w-7 sm:h-7 stroke-[3]" shapeRendering="geometricPrecision" />
+                    </div>
+                </button>
+
+                {/* Tab: Bubbles */}
+                <button
+                    type="button"
+                    onClick={() => { playCyberSFX('menu'); if(onOpenBubbles) onOpenBubbles(); }}
+                    aria-label="Bubbles"
+                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
+                >
+                    <div className={navItemBaseClass}>
+                        <span style={{ fontSize: '24px' }}>🫧</span>
                     </div>
                 </button>
 
