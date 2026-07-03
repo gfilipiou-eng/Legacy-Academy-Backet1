@@ -932,7 +932,9 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const isFounder = user?.role === 'Founder';
     let baseClass = 'w-full h-full object-cover rounded-full';
     if (className) {
-        baseClass = `${baseClass} ${className}`;
+        // Remove redundant w-full, h-full, object-cover if already passed in className
+        const cleanedClassName = className.replace(/w-full|h-full|object-cover|rounded-full/g, '').trim();
+        baseClass = `${baseClass} ${cleanedClassName}`.trim();
     }
     const finalClassName = baseClass.replace(/rounded-none/g, '');
 
@@ -7548,7 +7550,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md glass-panel p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -7759,7 +7761,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md glass-panel p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
