@@ -7705,38 +7705,35 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                         <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold-primary)]" /> {t('DESCRIPTION') || 'DESCRIPTION'}
                         </div>
-                        <div className="relative group">
-                            <div className="absolute -inset-0.5 bg-gradient-to-tr from-[var(--gold-primary)]/20 to-transparent rounded-[1.5rem] blur opacity-30 group-focus-within:opacity-100 transition-opacity" />
-                            <textarea
-                                value={desc}
-                                onChange={e => setDesc(e.target.value)}
-                                maxLength={300}
-                                placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                className="relative w-full bg-black/50 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[120px] resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/50 focus:ring-1 focus:ring-[var(--gold-primary)]/25 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
-                            />
-                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
-                                {desc.length} / 300
-                            </div>
+                        <textarea
+                            value={desc}
+                            onChange={e => setDesc(e.target.value)}
+                            maxLength={300}
+                            placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
+                            className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[120px] resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/50 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
+                        />
+                        <div className="text-right text-[10px] font-black text-gray-500 uppercase tracking-widest pr-1">
+                            {desc.length} / 300
                         </div>
                     </div>
 
                     {/* Media Upload & Preview */}
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group mt-2">
                         {preview ? (
-                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--gold-primary)]/20 shadow-[0_10px_40px_rgba(212,175,55,0.06)] flex items-center justify-center transition-all duration-400 hover:border-[var(--gold-primary)]/40 hover:shadow-[0_15px_50px_rgba(212,175,55,0.1)] hover:-translate-y-0.5">
+                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-[#111] border border-white/10 flex items-center justify-center">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
                                 ) : (
                                     <img src={preview} className="w-full h-full object-contain max-h-[220px]" alt="Preview" />
                                 )}
-                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-[var(--gold-primary)]/20 transition-all duration-250 hover:scale-110 shadow-[0_3px_10px_rgba(0,0,0,0.25)]">
+                                <button onClick={(e) => { e.stopPropagation(); setPreview(null); setIsVideo(false); if (fileRef.current) fileRef.current.value = ''; }} className="absolute top-2.5 right-2.5 p-2 bg-slate-950/85 hover:bg-slate-900 rounded-full backdrop-blur-xl border border-white/20 transition-all duration-250">
                                     <Icons.X className="w-4 h-4 text-slate-100" />
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-[var(--gold-primary)]/20 bg-gradient-to-br from-[var(--gold-primary)]/8 via-amber-500/3 to-transparent rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-[var(--gold-primary)]/80 cursor-pointer transition-all duration-400 hover:border-[var(--gold-primary)]/50 hover:bg-gradient-to-br hover:from-[var(--gold-primary)]/15 hover:via-amber-500/6 hover:to-transparent hover:text-[var(--gold-primary)] hover:-translate-y-0.5 shadow-[0_10px_40px_rgba(212,175,55,0.04)]">
-                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/20 via-amber-400/10 to-transparent flex items-center justify-center border border-[var(--gold-primary)]/30 shadow-[0_5px_20px_rgba(212,175,55,0.1)] transition-transform duration-400 group-hover:scale-110">
-                                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8 text-[var(--gold-primary)]" />
+                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-white/20 bg-white/[0.02] rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-white/50 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/50 hover:bg-white/[0.05] hover:text-[var(--gold-primary)]">
+                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-white/5 flex items-center justify-center border border-white/10 transition-transform duration-300 group-hover:scale-105">
+                                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8" />
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
