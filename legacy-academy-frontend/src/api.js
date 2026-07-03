@@ -34,7 +34,7 @@ export const removeSafeToken = () => {
 };
 
 const API = axios.create({
-    baseURL: "https://legacy-academy-backet1.onrender.com/api",
+    baseURL: "https://legacy-academy-backend.onrender.com/api",
 });
 
 API.interceptors.request.use((config) => {
