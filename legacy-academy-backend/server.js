@@ -31,7 +31,7 @@ const app = express();
 
 // 0. Enable CORS first!
 app.use(cors({
-  origin: ["https://legacyacademyintel.vercel.app", "http://localhost:3000"],
+  origin: (origin, callback) => callback(null, true),
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
