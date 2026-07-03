@@ -138,20 +138,23 @@
   display: flex;
   width: 100%;
   max-width: 500px;
-  gap: 10px;
+  gap: 8px;
+  box-sizing: border-box;
 }
 
 .bubble-input {
   flex: 1;
+  min-width: 0;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 12px 20px;
+  padding: 12px 16px;
   color: white;
-  font-size: 1rem;
+  font-size: 0.95rem;
   backdrop-filter: blur(10px);
   outline: none;
   transition: border 0.3s;
+  box-sizing: border-box;
 }
 
 .bubble-input:focus {
@@ -162,13 +165,15 @@
   background: linear-gradient(135deg, #00f2ff, #ff00ff);
   border: none;
   border-radius: 20px;
-  padding: 0 20px;
+  padding: 0 16px;
   color: white;
   font-weight: bold;
+  font-size: 0.9rem;
   cursor: pointer;
   box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
   transition: transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .bubble-blow-btn:hover:not(:disabled) {

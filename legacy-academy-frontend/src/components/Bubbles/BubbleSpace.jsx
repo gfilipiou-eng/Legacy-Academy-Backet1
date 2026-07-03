@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './bubbles.css';
 import { useTranslation } from '../../translations';
+import { Icons } from '../Icons';
 import Bubble from './Bubble';
 import { fetchBubbles, createBubble } from '../../api'; // We'll need to add these to api.js
 
@@ -88,7 +89,7 @@ const BubbleSpace = ({ onClose }) => {
       ref={containerRef}
     >
       <button className="bubble-close-btn" onClick={onClose}>
-        <i className="fa-solid fa-xmark"></i>
+        <Icons.X className="w-6 h-6 text-white" />
       </button>
 
       <div className="bubble-space-canvas">
