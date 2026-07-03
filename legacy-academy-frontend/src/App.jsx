@@ -8035,7 +8035,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 onClick={() => setZoomImage(resolvedPublicProfilePic)}
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-white/5 text-4xl font-bold uppercase text-white/40">
+                            <div className="w-full h-full flex items-center justify-center bg-black/40 rounded-full text-4xl font-bold uppercase text-white/40">
                                 {publicUser.username?.[0]}
                             </div>
                         )}
