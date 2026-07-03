@@ -255,6 +255,10 @@ if (typeof document !== 'undefined') {
         .animate-ghost-pulse {
             animation: ghost-pulse 2s ease-in-out infinite;
         }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
     `;
     document.head.appendChild(style);
 }
@@ -10504,9 +10508,15 @@ const App = () => {
 
                     {/* MAIN GLASS CARD */}
                     <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-8 pb-12">
-                        <div className="relative bg-black/40 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                            <div className="absolute top-0 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                            <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
+                        <div className="relative bg-black/20 backdrop-blur-[60px] border border-white/15 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                            {/* Enhanced liquid glass effects */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50" />
+                            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                            <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
+                            {/* Subtle shimmer animation */}
+                            <div className="absolute inset-0 overflow-hidden">
+                                <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/15 to-transparent animate-[shimmer_3s_infinite]" />
+                            </div>
 
                             <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
