@@ -10822,67 +10822,59 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-end md:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl">
-                        <div className="relative w-full max-w-[420px] p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/30 via-transparent to-[var(--gold-primary)]/20 rounded-[28px] md:rounded-[32px] shadow-2xl overflow-hidden">
-                            <div className="relative bg-black/35 backdrop-blur-[60px] border border-white/10 rounded-[26px] md:rounded-[30px] overflow-y-auto no-scrollbar max-h-[95dvh]">
-                                {/* Enhanced Liquid Glass Effects */}
-                                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
-                                <div className="absolute top-0 left-0 right-0 h-[120px] bg-gradient-to-b from-[var(--gold-primary)]/15 to-transparent pointer-events-none" />
+                        <div className="relative bg-black/35 backdrop-blur-[60px] border border-white/10 rounded-[24px] md:rounded-[28px] max-w-[420px] w-full overflow-y-auto no-scrollbar max-h-[95dvh]">
+                            {/* Simple Liquid Glass Effects */}
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
+                            <div className="absolute top-0 left-0 right-0 h-[100px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
+                            
+                            <div className="relative p-5 sm:p-8 text-center flex flex-col items-center">
+                                {/* Icon */}
+                                <div className="w-14 h-14 sm:w-18 sm:h-18 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-4 sm:mb-5 border border-[var(--gold-primary)]/30">
+                                    <Icons.Lock className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--gold-primary)]" />
+                                </div>
                                 
-                                <div className="relative p-5 sm:p-8 text-center flex flex-col items-center">
-                                    {/* Icon with Premium Glow */}
-                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[var(--gold-primary)]/15 rounded-full flex items-center justify-center mb-5 sm:mb-6 border border-[var(--gold-primary)]/40 shadow-[0_0_40px_rgba(255,215,0,0.3)] relative group">
-                                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--gold-primary)]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                        <Icons.Lock className="w-8 h-8 sm:w-9 sm:h-9 text-[var(--gold-primary)] relative z-10" />
-                                    </div>
-                                    
-                                    <h2 className="text-lg sm:text-[24px] font-black text-white uppercase tracking-[0.25em] mb-1 sm:mb-2">Exclusive Network</h2>
-                                    <div className="text-[9px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.35em] font-bold mb-5 sm:mb-7">Legacy Academy Membership</div>
-                                    
-                                    {/* Features List - Premium Glass */}
-                                    <div className="w-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[20px] p-4 sm:p-6 mb-5 sm:mb-7 text-left space-y-3 sm:space-y-4 relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/5 via-transparent to-[var(--gold-primary)]/5 pointer-events-none" />
-                                        {[
-                                            { title: "Private Members Network", desc: "An elite social ecosystem designed strictly for verified individuals." },
-                                            { title: "Strategic Insights", desc: "Curated knowledge and high-value strategies reserved for the inner circle." },
-                                            { title: "Daily Missions & Rankings", desc: "Complete strategic missions to build your streak and rank up." },
-                                            { title: "Website Builder", desc: "Entrepreneurs can launch their own high-end custom websites." },
-                                            { title: "Encrypted P2P Comms", desc: "Secure chat, blue verified badge, and elite inner circle access." }
-                                        ].map((feature, i) => (
-                                            <div key={i} className="flex items-start gap-3.5 relative z-10 group p-2 rounded-xl hover:bg-white/5 transition-all duration-300">
-                                                <div className="mt-0.5 shrink-0 text-[var(--gold-primary)] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]">
-                                                    <Icons.Check className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={3} />
-                                                </div>
-                                                <div>
-                                                    <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase group-hover:text-[var(--gold-primary)] transition-colors duration-300">{feature.title}</div>
-                                                    <div className="text-[9px] sm:text-[11px] text-white/50 leading-tight mt-0.5">{feature.desc}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    
-                                    {/* Price Card - Premium Glass */}
-                                    <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/30 via-transparent to-[var(--gold-primary)]/20 rounded-[20px] mb-4 sm:mb-6 shadow-[0_0_25px_rgba(255,215,0,0.2)]">
-                                        <div className="w-full h-full bg-black/25 backdrop-blur-xl border border-white/10 rounded-[18px] p-4 sm:p-5 relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/15 via-transparent to-[var(--gold-primary)]/5 pointer-events-none" />
-                                            <div className="relative text-2xl sm:text-4xl font-black text-white flex items-center justify-center gap-1.5">
-                                                <span className="text-[var(--gold-primary)] drop-shadow-[0_0_10px_rgba(255,215,0,0.7)]">49€</span>
-                                                <span className="text-[9px] sm:text-[11px] text-gray-400 uppercase tracking-widest mt-1.5">/ MONTH</span>
+                                <h2 className="text-base sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2">Exclusive Network</h2>
+                                <div className="text-[9px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-5 sm:mb-7">Legacy Academy Membership</div>
+                                
+                                {/* Features List - Glass */}
+                                <div className="w-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[20px] p-4 sm:p-6 mb-5 sm:mb-7 text-left space-y-3 sm:space-y-4">
+                                    {[
+                                        { title: "Private Members Network", desc: "An elite social ecosystem designed strictly for verified individuals." },
+                                        { title: "Strategic Insights", desc: "Curated knowledge and high-value strategies reserved for the inner circle." },
+                                        { title: "Daily Missions & Rankings", desc: "Complete strategic missions to build your streak and rank up." },
+                                        { title: "Website Builder", desc: "Entrepreneurs can launch their own high-end custom websites." },
+                                        { title: "Encrypted P2P Comms", desc: "Secure chat, blue verified badge, and elite inner circle access." }
+                                    ].map((feature, i) => (
+                                        <div key={i} className="flex items-start gap-3.5">
+                                            <div className="mt-0.5 shrink-0"><Icons.Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                            <div>
+                                                <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">{feature.title}</div>
+                                                <div className="text-[9px] sm:text-[11px] text-white/50 leading-tight mt-0.5">{feature.desc}</div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    {/* CTA Button - Premium Gold Gradient */}
-                                    <div className="w-full mb-4 sm:mb-6 p-[1px] bg-gradient-to-r from-[var(--gold-primary)] via-[#ffd700] to-[var(--gold-primary)] rounded-2xl shadow-[0_0_25px_rgba(255,215,0,0.3)] group">
-                                        <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-[#1a1400] font-black uppercase tracking-[0.3em] rounded-2xl hover:shadow-[0_0_40px_rgba(255,215,0,0.6)] active:scale-95 transition-all duration-300 text-[10px] sm:text-[12px] relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                            <span className="relative">Unlock Access</span>
-                                        </button>
-                                    </div>
-                                    
-                                    <button onClick={() => setShowPaywall(false)} className="text-[9px] sm:text-[11px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/70 transition-colors underline decoration-white/20 underline-offset-4 pb-1">
-                                        Return to Login
-                                    </button>
+                                    ))}
                                 </div>
+                                
+                                {/* Price Card - Glass */}
+                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[20px] mb-4 sm:mb-6">
+                                    <div className="w-full h-full bg-black/25 backdrop-blur-xl border border-white/10 rounded-[18px] p-4 sm:p-5 relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
+                                        <div className="relative text-2xl sm:text-4xl font-black text-white flex items-center justify-center gap-1.5">
+                                            49€ 
+                                            <span className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-widest mt-1.5">/ MONTH</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* CTA Button - Gold Gradient */}
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-[#1a1400] font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-4 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <span className="relative">Unlock Access</span>
+                                </button>
+                                
+                                <button onClick={() => setShowPaywall(false)} className="text-[9px] sm:text-[11px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/70 transition-colors underline decoration-white/20 underline-offset-4 pb-1">
+                                    Return to Login
+                                </button>
                             </div>
                         </div>
                     </div>
