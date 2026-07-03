@@ -6627,6 +6627,7 @@ const ProfileModal = ({
                                         }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
+                                        if (setImgKey) setImgKey(Date.now());
             // Recalculate top streak immediately
             setUsers(prev => {
                 const list = prev || [];
@@ -6636,8 +6637,8 @@ const ProfileModal = ({
             });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
                                     } catch (e) { 
-                                        console.error("❌ Profile picture upload error:", e);
-                                        alert("Failed to update profile picture."); 
+                                        console.error("❌ Profile picture upload error:", e.response?.data || e.message);
+                                        alert("Failed to update profile picture: " + (e.response?.data?.message || e.message)); 
                                     }
                                     finally { 
                                         setProfileUploading(false); 
@@ -6783,6 +6784,7 @@ const ProfileModal = ({
                                         }
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
+                                        if (setImgKey) setImgKey(Date.now());
             // Recalculate top streak immediately
             setUsers(prev => {
                 const list = prev || [];
@@ -6791,7 +6793,10 @@ const ProfileModal = ({
                 return mergedList;
             });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Luxury background updated!', 'success');
-                                    } catch (err) { alert("Failed to update luxury background."); }
+                                    } catch (err) { 
+                                        console.error("❌ Luxury background upload error:", err.response?.data || err.message);
+                                        alert("Failed to update luxury background: " + (err.response?.data?.message || err.message)); 
+                                    }
                                     finally { setCoverUploading(false); e.target.value = ''; }
                                 }
                             }} />
@@ -8081,12 +8086,37 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
  
                 {/* BIO CARD */}
                 {publicUser.bio && (
-                    <div className="profile-copy-block mt-6 p-5 backdrop-blur-2xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
-                        <p className="profile-copy-text text-xs sm:text-sm text-[var(--app-text)] opacity-90 font-medium italic select-text whitespace-pre-wrap break-words">
-                            {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
-                        </p>
+                    <div className="mt-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
+                        <div className="w-full h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-black/50 hover:border-white/20">
+                            <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                </svg>
+                            </div>
+                            <p className="text-xs sm:text-sm text-white/90 font-medium select-text whitespace-pre-wrap break-words">
+                                {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
+                            </p>
+                        </div>
                     </div>
                 )}
+
+                {/* INSPIRATION CARD */}
+                <div className="mt-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/30 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem]">
+                    <div className="w-full h-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-center shadow-lg relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-center gap-2 mb-3">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 text-[var(--gold-primary)]">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">MINDSET</span>
+                            </div>
+                            <p className="text-xs sm:text-sm text-white/80 font-medium italic">
+                                "The only limit is the one you set for yourself. Discipline is the bridge between goals and accomplishment."
+                            </p>
+                        </div>
+                    </div>
+                </div>
  
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
