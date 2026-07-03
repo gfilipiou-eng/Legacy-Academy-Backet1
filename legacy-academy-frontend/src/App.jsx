@@ -6658,7 +6658,7 @@ const ProfileModal = ({
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
-    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1">🔥 {getActiveStreak(displayUser)}</span>}</>)}</div>
+    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1 text-[13px] flex items-center gap-0.5"><span className="text-[13px]">🔥</span>{getActiveStreak(displayUser)}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -6989,7 +6989,7 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
                                         <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(displayUser)}</span>}
+                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><span className="text-base sm:text-lg">🔥</span>{getActiveStreak(displayUser)}</span>}
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
@@ -8157,7 +8157,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                         <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
-                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0">🔥 {getActiveStreak(publicUser)}</span>}
+                        {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><span className="text-base sm:text-lg">🔥</span>{getActiveStreak(publicUser)}</span>}
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
                             <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
