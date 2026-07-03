@@ -6628,13 +6628,6 @@ const ProfileModal = ({
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                         if (setImgKey) setImgKey(Date.now());
-            // Recalculate top streak immediately
-            setUsers(prev => {
-                const list = prev || [];
-                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
-                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
-                return mergedList;
-            });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
                                     } catch (e) { 
                                         console.error("❌ Profile picture upload error:", e.response?.data || e.message);
@@ -6686,13 +6679,6 @@ const ProfileModal = ({
 
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
                                             if (onUpdateUser) onUpdateUser(updatedUser);
-            // Recalculate top streak immediately
-            setUsers(prev => {
-                const list = prev || [];
-                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
-                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
-                return mergedList;
-            });
                                             if (addToast) addToast('Profile picture removed', 'success');
                                         } catch (err) { 
                                             console.error(err);
@@ -6742,13 +6728,6 @@ const ProfileModal = ({
 
                                             localStorage.setItem('user', JSON.stringify(updatedUser));
                                             if (onUpdateUser) onUpdateUser(updatedUser);
-            // Recalculate top streak immediately
-            setUsers(prev => {
-                const list = prev || [];
-                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
-                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
-                return mergedList;
-            });
                                             if (addToast) addToast('Background removed', 'success');
                                         } catch (err) { 
                                             console.error(err);
@@ -6785,13 +6764,6 @@ const ProfileModal = ({
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                         if (setImgKey) setImgKey(Date.now());
-            // Recalculate top streak immediately
-            setUsers(prev => {
-                const list = prev || [];
-                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
-                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
-                return mergedList;
-            });
                                         if (addToast) addToast(t('PROFILE_UPDATED') || 'Luxury background updated!', 'success');
                                     } catch (err) { 
                                         console.error("❌ Luxury background upload error:", err.response?.data || err.message);
@@ -10819,7 +10791,7 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-end md:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl">
-                        <div className="relative bg-black/35 backdrop-blur-[60px] border border-white/10 rounded-[24px] md:rounded-[28px] max-w-[420px] w-full overflow-y-auto no-scrollbar max-h-[95dvh]">
+                        <div className="relative bg-black/35 backdrop-blur-[60px] border border-white/10 rounded-[24px] md:rounded-[28px] max-w-[420px] w-full">
                             {/* Simple Liquid Glass Effects */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
                             <div className="absolute top-0 left-0 right-0 h-[100px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
@@ -10864,7 +10836,7 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-[#1a1400] font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-4 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-4 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <span className="relative">Unlock Access</span>
                                 </button>
