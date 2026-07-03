@@ -593,46 +593,37 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`group inline-flex items-center p-[1px] rounded-full transition-all duration-500 cursor-pointer select-none relative overflow-hidden shadow-lg max-w-full ${className}`}
+            className={`group inline-flex items-center rounded-full transition-all duration-300 cursor-pointer select-none relative overflow-hidden bg-neutral-900/60 hover:bg-neutral-800/80 border border-white/5 hover:border-white/10 ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
-            {/* Premium Gradient Border Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-[var(--gold-primary)]/50 to-white/20 rounded-full opacity-60 group-hover:opacity-100 animate-gradient-xy transition-opacity duration-500" />
-            
-            {/* Inner Content Container - Liquid Glass Transparent Black */}
-            <div className="relative flex items-center gap-3 bg-black/40 backdrop-blur-2xl pl-1 pr-5 py-1 rounded-full w-full h-full border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] group-hover:shadow-[inset_0_0_20px_rgba(255,215,0,0.08)] transition-all duration-500 z-10">
+            <div className="relative flex items-center gap-2.5 pl-1 pr-4 py-1 rounded-full w-full h-full z-10">
                 
-                {/* Decorative glow behind avatar */}
-                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--gold-primary)]/20 blur-md rounded-full group-hover:bg-[var(--gold-primary)]/40 transition-colors duration-500" />
-
-                {/* The Circular Avatar with Gold Ring */}
-                <div className="relative w-9 h-9 rounded-full shrink-0 border-[1.5px] border-[var(--gold-primary)]/40 group-hover:border-[var(--gold-primary)] p-[1.5px] transition-colors duration-500 z-10 overflow-hidden bg-black">
-                    <div className="w-full h-full rounded-full overflow-hidden relative">
-                        {isLoading ? (
-                            <div className="w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm ">
-                                <Icons.Loader className="w-3 h-3 text-[var(--gold-primary)]/50 animate-spin" />
-                            </div>
-                        ) : resolvedProfilePic ? (
-                            <img 
-                                src={resolvedProfilePic} 
-                                alt="" 
-                                className="w-full h-full object-cover transition-transform duration-700" 
-                                loading="lazy" 
-                                decoding="async" 
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-neutral-800 to-neutral-950">
-                                <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
-                                    {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                                </span>
-                            </div>
-                        )}
-                    </div>
+                {/* The Circular Avatar */}
+                <div className="relative w-7 h-7 rounded-full shrink-0 overflow-hidden bg-black">
+                    {isLoading ? (
+                        <div className="w-full h-full flex items-center justify-center bg-neutral-800">
+                            <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
+                        </div>
+                    ) : resolvedProfilePic ? (
+                        <img 
+                            src={resolvedProfilePic} 
+                            alt="" 
+                            className="w-full h-full object-cover transition-transform duration-500" 
+                            loading="lazy" 
+                            decoding="async" 
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-neutral-800">
+                            <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
+                                {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                            </span>
+                        </div>
+                    )}
                 </div>
                 
                 {/* The Text Info */}
                 <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
-                    <span className="text-[13px] sm:text-[14px] font-black text-white/95 leading-none tracking-wide group-hover:text-[var(--gold-primary)] transition-colors duration-300 drop-shadow-sm">
+                    <span className="text-[13px] sm:text-[14px] font-bold text-white/90 leading-none tracking-wide group-hover:text-white transition-colors duration-300">
                         @{normalizedUsername}
                     </span>
                 </div>
@@ -2896,8 +2887,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className="mt-4 pt-4 border-t border-white/5 space-y-4 animate-fade-in relative z-20">
                                 <div className="flex gap-3">
                                     <div className="w-10 h-10 relative group shrink-0">
-                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                        <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
+                                        <div className="w-full h-full rounded-full overflow-hidden">
                                             <ProfileAvatar user={user} />
                                         </div>
                                     </div>
@@ -3322,7 +3312,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     onClick={() => { setActiveChat(u); }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div><div className="absolute inset-[3px] rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-500'}`} /></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[#0a0a0a] ${online ? 'bg-green-500' : 'bg-gray-500'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0">🔥{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
@@ -3365,8 +3355,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
                                 <div className="w-10 h-10 relative group shrink-0">
-                                    <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                    <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
+                                    <div className="w-full h-full rounded-full overflow-hidden">
                                         <ProfileAvatar user={chatUser} />
                                     </div>
                                 </div>
@@ -5791,7 +5780,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         <span className="text-2xl font-black text-gray-300">2</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-gray-300">
+                                                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden">
                                                             <ProfileAvatar user={top3[1]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
                                                     </div>
@@ -5810,7 +5799,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         <span className="text-4xl font-black text-yellow-400">1</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-yellow-400">
+                                                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden">
                                                             <ProfileAvatar user={top3[0]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
                                                     </div>
@@ -5829,7 +5818,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         <span className="text-2xl font-black text-amber-600">3</span>
                                                     </div>
                                                     <div className="relative">
-                                                        <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full overflow-hidden border-3 border-amber-700">
+                                                        <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-full overflow-hidden">
                                                             <ProfileAvatar user={top3[2]} size="large" priority={true} className="w-full h-full" />
                                                         </div>
                                                     </div>
@@ -5861,7 +5850,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             #{rank}
                                         </div>
                                         <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 relative">
-                                            <ProfileAvatar user={u} size="large" className="w-full h-full border-2 border-white/15" />
+                                            <ProfileAvatar user={u} size="large" className="w-full h-full" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="font-black text-white text-sm sm:text-base flex items-center gap-2 min-w-0">
@@ -6694,8 +6683,7 @@ const ProfileModal = ({
                                     setActiveList(null);
                                 }} className="flex items-center gap-3 p-3  rounded-none cursor-pointer   border border-transparent w-full max-w-full">
                                       <div className="w-11 h-11 relative group shrink-0">
-                                          <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                          <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
+                                          <div className="w-full h-full rounded-full overflow-hidden">
                                               <ProfileAvatar user={u} />
                                           </div>
                                       </div>
@@ -6989,9 +6977,8 @@ const ProfileModal = ({
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
-                                    <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0">
-                                        <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                                        <div className="absolute inset-[4px] rounded-full overflow-hidden">
+                                    <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0 shadow-md rounded-full">
+                                        <div className="w-full h-full rounded-full overflow-hidden">
                                             <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         </div>
                                     </div>
@@ -7585,8 +7572,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                           <div className="w-10 h-10 relative group shrink-0">
-                              <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-500"></div>
-                              <div className="absolute inset-[2.5px] rounded-full overflow-hidden">
+                              <div className="w-full h-full rounded-full overflow-hidden">
                                   <ProfileAvatar user={user} />
                               </div>
                           </div>
@@ -8150,7 +8136,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                 {/* AVATAR & IDENTITY */}
                 <div className="relative mt-8 mb-4">
-                    <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-black/40 p-1.5 backdrop-blur-md border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.55)] relative group transition-all duration-500">
+                    <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full relative group transition-all duration-500 shadow-md">
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
@@ -8161,7 +8147,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 onClick={() => setZoomImage(resolvedPublicProfilePic)}
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-black/40 rounded-full text-4xl font-bold uppercase text-white/40">
+                            <div className="w-full h-full flex items-center justify-center bg-neutral-800 rounded-full text-4xl font-bold uppercase text-white/60">
                                 {publicUser.username?.[0]}
                             </div>
                         )}
