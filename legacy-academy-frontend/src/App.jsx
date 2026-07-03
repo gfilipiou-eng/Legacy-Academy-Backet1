@@ -10796,17 +10796,17 @@ const App = () => {
                             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
                             <div className="absolute top-0 left-0 right-0 h-[100px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
                             
-                            <div className="relative p-5 sm:p-8 text-center flex flex-col items-center">
+                            <div className="relative p-3 sm:p-8 text-center flex flex-col items-center">
                                 {/* Icon */}
-                                <div className="w-14 h-14 sm:w-18 sm:h-18 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-4 sm:mb-5 border border-[var(--gold-primary)]/30">
-                                    <Icons.Lock className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--gold-primary)]" />
+                                <div className="w-10 h-10 sm:w-18 sm:h-18 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-3 sm:mb-5 border border-[var(--gold-primary)]/30">
+                                    <Icons.Lock className="w-5 h-5 sm:w-7 sm:h-7 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-base sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2">Exclusive Network</h2>
-                                <div className="text-[9px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-5 sm:mb-7">Legacy Academy Membership</div>
+                                <h2 className="text-sm sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-0.5 sm:mb-2">Exclusive Network</h2>
+                                <div className="text-[8px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-3 sm:mb-7">Legacy Academy Membership</div>
                                 
                                 {/* Features List - Glass */}
-                                <div className="w-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[20px] p-4 sm:p-6 mb-5 sm:mb-7 text-left space-y-3 sm:space-y-4">
+                                <div className="w-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[20px] p-3 sm:p-6 mb-3 sm:mb-7 text-left space-y-2 sm:space-y-4">
                                     {[
                                         { title: "Private Members Network", desc: "An elite social ecosystem designed strictly for verified individuals." },
                                         { title: "Strategic Insights", desc: "Curated knowledge and high-value strategies reserved for the inner circle." },
@@ -10825,10 +10825,10 @@ const App = () => {
                                 </div>
                                 
                                 {/* Price Card - Glass */}
-                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[20px] mb-4 sm:mb-6">
-                                    <div className="w-full h-full bg-black/25 backdrop-blur-xl border border-white/10 rounded-[18px] p-4 sm:p-5 relative overflow-hidden">
+                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[20px] mb-3 sm:mb-6">
+                                    <div className="w-full h-full bg-black/25 backdrop-blur-xl border border-white/10 rounded-[18px] p-3 sm:p-5 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
-                                        <div className="relative text-2xl sm:text-4xl font-black text-white flex items-center justify-center gap-1.5">
+                                        <div className="relative text-xl sm:text-4xl font-black text-white flex items-center justify-center gap-1.5">
                                             49€ 
                                             <span className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-widest mt-1.5">/ MONTH</span>
                                         </div>
@@ -10836,7 +10836,7 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-4 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[9px] sm:text-[12px] relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <span className="relative">Unlock Access</span>
                                 </button>
