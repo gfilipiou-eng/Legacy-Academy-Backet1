@@ -8099,25 +8099,6 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         </div>
                     </div>
                 )}
-
-                {/* INSPIRATION CARD */}
-                <div className="mt-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/30 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem]">
-                    <div className="w-full h-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-center shadow-lg relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
-                        <div className="relative z-10">
-                            <div className="flex items-center justify-center gap-2 mb-3">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 text-[var(--gold-primary)]">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                </svg>
-                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">MINDSET</span>
-                            </div>
-                            <p className="text-xs sm:text-sm text-white/80 font-medium italic">
-                                "The only limit is the one you set for yourself. Discipline is the bridge between goals and accomplishment."
-                            </p>
-                        </div>
-                    </div>
-                </div>
- 
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
