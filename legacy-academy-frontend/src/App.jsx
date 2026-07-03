@@ -10512,17 +10512,14 @@ const App = () => {
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
-                                        {/* Black background container, especially for mobile */}
-                                        <div className="p-2 sm:p-3 bg-black rounded-2xl sm:rounded-3xl">
-                                            <img
-                                                src={ASSET_PATHS.logo}
-                                                alt="Legacy Academy"
-                                                className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
-                                                decoding="async"
-                                                fetchPriority="high"
-                                                loading="eager"
-                                            />
-                                        </div>
+                                        <img
+                                            src={ASSET_PATHS.logo}
+                                            alt="Legacy Academy"
+                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
+                                            decoding="async"
+                                            fetchPriority="high"
+                                            loading="eager"
+                                        />
                                     </div>
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
