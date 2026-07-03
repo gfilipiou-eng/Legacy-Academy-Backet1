@@ -220,21 +220,39 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
     }
 });
 
-router.post("/", verifyToken, upload.single("image"), async (req, res) => {
+// Accept either 'image' or 'audio' field
+router.post("/", verifyToken, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), async (req, res) => {
     try {
-        let mediaUrl = "";
-        let mediaType = "text";
+        let imageUrl = "";
+        let audioUrl = "";
+        let videoUrl = "";
 
-        if (req.file) {
-            mediaUrl = req.file.path; // Cloudinary path
-            mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
+        // Handle image file
+        if (req.files && req.files.image && req.files.image[0]) {
+            imageUrl = req.files.image[0].path;
+        }
+
+        // Handle audio file
+        if (req.files && req.files.audio && req.files.audio[0]) {
+            audioUrl = req.files.audio[0].path;
+        }
+
+        // Check if image is actually video
+        let mediaType = "text";
+        if (imageUrl) {
+            // We need to check mimetype—wait, we don't have req.file here, let's get from req.files.image[0]
+            mediaType = req.files.image[0].mimetype.startsWith("video") ? "video" : "image";
+            if (mediaType === "video") {
+                videoUrl = imageUrl;
+            }
         }
 
         const newPost = new Post({
             author: req.user.id,
             desc: req.body.desc,
-            image: mediaUrl,
-            videoUrl: req.file && mediaType === "video" ? mediaUrl : (req.body.videoUrl || ""),
+            image: imageUrl,
+            audioUrl: audioUrl,
+            videoUrl: videoUrl || (req.body.videoUrl || ""),
             likes: [],
             dislikes: [],
             comments: [],
@@ -483,7 +501,7 @@ router.put("/:id/comment/:commentId", verifyToken, async (req, res) => {
 });
 
 // EDIT POST
-router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
+router.put("/:id", verifyToken, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).json("Post not found");
@@ -497,15 +515,21 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
             }
 
             // Handle Media Update if provided
-            if (req.file) {
-                const mediaUrl = req.file.path;
-                const mediaType = req.file.mimetype.startsWith("video") ? "video" : "image";
+            if (req.files && req.files.image && req.files.image[0]) {
+                const mediaUrl = req.files.image[0].path;
+                const mediaType = req.files.image[0].mimetype.startsWith("video") ? "video" : "image";
                 updateData.image = mediaUrl;
                 updateData.videoUrl = mediaType === "video" ? mediaUrl : "";
+                updateData.audioUrl = ""; // Clear audio if uploading image/video
+            } else if (req.files && req.files.audio && req.files.audio[0]) {
+                updateData.audioUrl = req.files.audio[0].path;
+                updateData.image = ""; // Clear image if uploading audio
+                updateData.videoUrl = ""; // Clear video if uploading audio
             } else if (req.body.videoUrl) {
                 // For YouTube URLs
                 updateData.videoUrl = req.body.videoUrl;
                 updateData.image = ""; // Clear existing image
+                updateData.audioUrl = ""; // Clear audio
             }
 
             const updatedPost = await Post.findByIdAndUpdate(
