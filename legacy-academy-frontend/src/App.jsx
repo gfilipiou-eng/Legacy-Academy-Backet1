@@ -10507,13 +10507,13 @@ const App = () => {
                     </div>
 
                     {/* MAIN GLASS CARD */}
-                    <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-8 pb-12">
+                    <div className="relative w-[92%] sm:w-full max-w-[420px] mx-auto z-10 mt-safe-top pt-4 pb-12">
                         <div className="relative bg-black/35 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
                             {/* Simple, clean liquid glass */}
                             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
-                            <div className="relative p-8 pb-10 overflow-y-auto max-h-[90dvh] no-scrollbar">
+                            <div className="relative p-5 pb-8 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
@@ -10601,11 +10601,11 @@ const App = () => {
                                     )}
                                     {authMode === 'register' && (
                                         <>
-                                            <div onClick={() => registerFileRef.current.click()} className="w-20 h-20 mx-auto rounded-full bg-white/5 overflow-hidden cursor-pointer relative group mb-2 flex items-center justify-center border border-white/10 hover:border-white/20 transition-colors">
+                                            <div onClick={() => registerFileRef.current.click()} className="w-16 h-16 mx-auto rounded-full bg-white/5 overflow-hidden cursor-pointer relative group mb-3 flex items-center justify-center border border-white/10 hover:border-white/20 transition-colors">
                                                 {registerPreview ? <img src={registerPreview} className="w-full h-full object-cover rounded-full" /> : (
                                                     <div className="flex flex-col items-center gap-1 text-white/20 group-hover:text-white/40 transition-colors">
-                                                        <Icons.Camera className="w-6 h-6" />
-                                                        <span className="text-[8px] uppercase tracking-wider font-black">Photo</span>
+                                                        <Icons.Camera className="w-5 h-5" />
+                                                        <span className="text-[7px] uppercase tracking-wider font-black">Photo</span>
                                                     </div>
                                                 )}
                                                 <input type="file" ref={registerFileRef} hidden accept="image/*" onChange={(e) => { const file = e.target.files[0]; if (file) setRegisterPreview(URL.createObjectURL(file)); }} />
@@ -10613,23 +10613,23 @@ const App = () => {
                                             {[{ id: 'r-username', type: 'text', icon: <Icons.User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />, ph: 'Username', val: formData.username, max: 19 },
           { id: 'r-email', type: 'email', icon: <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />, ph: 'Email Address', val: formData.email },
         ].map(f => (
-                                                <div key={f.id} className="relative group mb-3">
+                                                <div key={f.id} className="relative group mb-2.5">
                                                     {f.icon}
-                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3.5 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
                                                 </div>
                                             ))}
-                                            <div className="relative group mb-3">
+                                            <div className="relative group mb-2.5">
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
                                                 <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
                                             </div>
-                                            <div className="relative group mb-3">
-                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 px-4 text-white text-sm font-medium outline-none placeholder:text-white/30 resize-none h-20 transition-all duration-300 z-10" />
-                                                <div className="absolute bottom-2 right-3 text-[9px] font-black text-white/40 z-20">{(formData.bio || '').length}/500</div>
+                                            <div className="relative group mb-2.5">
+                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3 px-4 text-white text-sm font-medium outline-none placeholder:text-white/30 resize-none h-16 transition-all duration-300 z-10" />
+                                                <div className="absolute bottom-1.5 right-3 text-[8px] font-black text-white/40 z-20">{(formData.bio || '').length}/500</div>
                                             </div>
-                                            <div className="flex flex-col gap-2">
-                                                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest px-1">SELECT LANGUAGE</label>
-                                                <div className="grid grid-cols-4 gap-2">
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-[9px] font-black text-white/40 uppercase tracking-widest px-1">SELECT LANGUAGE</label>
+                                                <div className="grid grid-cols-4 gap-1.5">
                                                     {[
                                                         { code: 'en', label: 'English', flag: '🇬🇧' },
                                                         { code: 'el', label: 'Ελληνικά', flag: '🇬🇷' },
@@ -10643,19 +10643,19 @@ const App = () => {
                                                         <button
                                                             key={lang.code}
                                                             onClick={() => setFormData(prev => ({ ...prev, language: lang.code }))}
-                                                            className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border transition-all duration-200 ${formData.language === lang.code ? 'border-white bg-white/10 text-white' : 'border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/[0.05] hover:border-white/30'}`}
+                                                            className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl border transition-all duration-200 ${formData.language === lang.code ? 'border-white bg-white/10 text-white' : 'border-white/10 bg-white/[0.02] text-white/50 hover:bg-white/[0.05] hover:border-white/30'}`}
                                                         >
-                                                            <span className="text-xl">{lang.flag}</span>
-                                                            <span className="text-[8px] font-black uppercase tracking-wider">{lang.label}</span>
+                                                            <span className="text-lg">{lang.flag}</span>
+                                                            <span className="text-[7px] font-black uppercase tracking-wider">{lang.label}</span>
                                                         </button>
                                                     ))}
                                                 </div>
                                             </div>
 
                                             {authError && (
-                                                <div className="mt-3 mb-1 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
-                                                    <Icons.AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-                                                    <span className="text-red-400 text-[10px] font-black uppercase tracking-widest leading-tight">{authError}</span>
+                                                <div className="mt-2.5 mb-1 p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-2.5">
+                                                    <Icons.AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
+                                                    <span className="text-red-400 text-[9px] font-black uppercase tracking-widest leading-tight">{authError}</span>
                                                 </div>
                                             )}
 
@@ -10693,7 +10693,7 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-3.5 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black">
@@ -10701,7 +10701,7 @@ const App = () => {
                                                     </div>
                                                 ) : <span className="relative">CREATE ACCOUNT</span>}
                                             </button>
-                                            <button type="button" className="mt-3.5 w-full text-xs text-white/25 cursor-pointer text-center pt-1 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
+                                            <button type="button" className="mt-3 w-full text-xs text-white/25 cursor-pointer text-center pt-0.5 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </>
                                     )}
                                     {authMode === 'forgot' && (
