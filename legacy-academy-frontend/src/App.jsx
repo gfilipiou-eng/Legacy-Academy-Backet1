@@ -339,7 +339,7 @@ const isPostMediaPath = (value) => {
 
 const postHasMedia = (post) => {
     if (!post) return false;
-    return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl) || isPostMediaPath(post.audio);
+    return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl) || isPostMediaPath(post.audioUrl);
 };
 
 const parseText = (text, onHashtagClick, onMentionClick) => {
@@ -1694,9 +1694,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     {/* Image/Video/Audio Section */}
                     {postHasMedia(post) && (
                         <div className="w-full bg-[#050505] flex items-center justify-center relative overflow-hidden shrink-0 mt-2">
-                            {isPostMediaPath(post.audio) ? (
+                            {isPostMediaPath(post.audioUrl) ? (
                                 <div className="w-full p-4">
-                                    <AudioPlayer audioUrl={resolveMediaUrl(post.audio)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
+                                    <AudioPlayer audioUrl={resolveMediaUrl(post.audioUrl)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
                                 </div>
                             ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                 <NeuralVideoPlayer
@@ -2768,8 +2768,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             {postHasMedia(post) && (
                                 <div className={`${mediaWrapClass} relative overflow-hidden group/media`}>
                                     <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
-                                        {isPostMediaPath(post.audio) ? (
-                                            <AudioPlayer audioUrl={resolveMediaUrl(post.audio)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
+                                        {isPostMediaPath(post.audioUrl) ? (
+                                            <AudioPlayer audioUrl={resolveMediaUrl(post.audioUrl)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
                                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
                                             <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh] liquid-glass-video-panel rounded-2xl' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
                                         ) : post.image && (
@@ -7691,16 +7691,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
     useEffect(() => {
         if (post) {
             setDesc(post.desc || '');
-            setPreview(post.audio ? resolveMediaUrl(post.audio) : (post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null)));
+            setPreview(post.audioUrl ? resolveMediaUrl(post.audioUrl) : (post.image ? resolveMediaUrl(post.image) : (post.thumbnailUrl ? resolveMediaUrl(post.thumbnailUrl) : null)));
             const isYT = isYouTubeUrl(post.videoUrl);
             const isVid = isYT ? false : (post.videoUrl ? true : (post.image?.match(/\.(mp4|mov|webm)$/i) ? true : false));
-            const isAud = post.audio ? true : (post.image?.match(/\.(mp3|wav|ogg|webm|m4a)$/i) || false);
+            const isAud = post.audioUrl ? true : (post.image?.match(/\.(mp3|wav|ogg|webm|m4a)$/i) || false);
             setIsVideo(isVid);
             setIsAudio(isAud);
             setYoutubeUrl(isYT ? post.videoUrl : '');
             setIs18Plus(post.is18Plus || false);
-            if (post.image || post.audio) {
-                const url = new URL(resolveMediaUrl(post.audio || post.image));
+            if (post.image || post.audioUrl) {
+                const url = new URL(resolveMediaUrl(post.audioUrl || post.image));
                 setAudioName(url.pathname.split('/').pop() || '');
             }
         }
