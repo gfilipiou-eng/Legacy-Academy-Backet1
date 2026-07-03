@@ -6943,18 +6943,27 @@ const ProfileModal = ({
                                     </div>
                                 </div>
 
-                                <div className="profile-copy-block mb-6 backdrop-blur-xl text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-white/[0.05] hover:border-sky-300/25">
-                                    <p className="profile-copy-text text-[var(--app-text)] opacity-90 font-medium select-text italic">
-                                        {parseText(
-                                            displayUser?.bio && displayUser.bio.trim() !== "" ? displayUser.bio : t("DEFAULT_BIO"),
-                                            (tag) => onHashtagClick?.(tag),
-                                            (username) => {
-                                                const u = allUsers?.find(user => String(user.username).toLowerCase() === String(username).toLowerCase());
-                                                if (u && onViewProfile) onViewProfile(u);
-                                            }
-                                        )}
-                                    </p>
-                                </div>
+                                {displayUser?.bio && displayUser.bio.trim() !== "" && (
+                                    <div className="mb-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
+                                        <div className="w-full h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-black/50 hover:border-white/20">
+                                            <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                                                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                                </svg>
+                                            </div>
+                                            <p className="text-white/90 font-medium select-text whitespace-pre-wrap break-words">
+                                                {parseText(
+                                                    displayUser.bio,
+                                                    (tag) => onHashtagClick?.(tag),
+                                                    (username) => {
+                                                        const u = allUsers?.find(user => String(user.username).toLowerCase() === String(username).toLowerCase());
+                                                        if (u && onViewProfile) onViewProfile(u);
+                                                    }
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}
                                 <div className="grid grid-cols-4 gap-2 w-full">
