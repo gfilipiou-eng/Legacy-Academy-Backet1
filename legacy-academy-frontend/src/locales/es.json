@@ -513,5 +513,9 @@
   "MISSION_MIND_JOURNAL": "Deep Journaling",
   "MISSION_MIND_JOURNAL_DESC": "Write down your thoughts, fears, and ultimate goals. Clarify the path.",
   "MISSION_COMBAT_ENDURANCE": "Blood & Sweat",
-  "MISSION_COMBAT_ENDURANCE_DESC": "Push your body until you want to quit, then do 10 more."
+  "MISSION_COMBAT_ENDURANCE_DESC": "Push your body until you want to quit, then do 10 more.",
+  "BUBBLES": "Burbujas de Pensamiento",
+  "BUBBLES_PLACEHOLDER": "¿Qué hay en tu burbuja?",
+  "BUBBLES_BLOWING": "Soplando...",
+  "BUBBLES_BLOW_BTN": "Soplar Burbuja 🫧"
 }

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './bubbles.css';
+import { useTranslation } from '../../translations';
 import Bubble from './Bubble';
 import { fetchBubbles, createBubble } from '../../api'; // We'll need to add these to api.js
 
 const BubbleSpace = ({ onClose }) => {
+  const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
   const [isBlowing, setIsBlowing] = useState(false);
@@ -107,7 +109,7 @@ const BubbleSpace = ({ onClose }) => {
         <form onSubmit={handleBlowBubble} className="bubble-form">
           <input 
             type="text" 
-            placeholder="What's in your bubble?" 
+            placeholder={t('BUBBLES_PLACEHOLDER', "What's in your bubble?")} 
             value={newBubbleText}
             onChange={(e) => setNewBubbleText(e.target.value)}
             maxLength={100}
@@ -118,7 +120,7 @@ const BubbleSpace = ({ onClose }) => {
             className="bubble-blow-btn"
             disabled={!newBubbleText.trim() || isBlowing}
           >
-            {isBlowing ? "Blowing..." : "Blow Bubble 🫧"}
+            {isBlowing ? t('BUBBLES_BLOWING', "Blowing...") : t('BUBBLES_BLOW_BTN', "Blow Bubble 🫧")}
           </button>
         </form>
         <div className="bubble-character-count">
