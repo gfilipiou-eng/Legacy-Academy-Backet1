@@ -5,10 +5,9 @@ import { useTranslation } from '../../translations';
 import { Icons } from '../Icons';
 import Bubble from './Bubble';
 import { fetchBubbles, createBubble, deleteBubble } from '../../api';
-import { useSelector } from 'react-redux';
 
-const BubbleSpace = ({ onClose }) => {
-  const { currentUser } = useSelector(state => state.user);
+const BubbleSpace = ({ user, onClose }) => {
+  const currentUser = user;
   const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
@@ -140,6 +139,7 @@ const BubbleSpace = ({ onClose }) => {
             <Bubble 
               key={bubble._id} 
               bubble={bubble} 
+              currentUser={currentUser}
               size={bubble.size}
               initialPosition={{ x: bubble.initialX, y: bubble.initialY }}
               onClick={handlePopBubble}

@@ -11442,7 +11442,7 @@ const App = () => {
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
                     {isBubbleSpaceOpen && (
-                        <BubbleSpace onClose={() => setIsBubbleSpaceOpen(false)} />
+                        <BubbleSpace user={user} onClose={() => setIsBubbleSpaceOpen(false)} />
                     )}
 
                     <BottomNavbar

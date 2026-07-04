@@ -1,10 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useSelector } from 'react-redux';
 import { Icons } from '../Icons';
 
-const Bubble = ({ bubble, onClick, onDelete, size = 120, initialPosition = { x: 0, y: 0 } }) => {
-  const { currentUser } = useSelector(state => state.user);
+const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120, initialPosition = { x: 0, y: 0 } }) => {
   // Randomize floating animation a bit so they don't all move the same
   const durationX = 10 + Math.random() * 10;
   const durationY = 8 + Math.random() * 8;
