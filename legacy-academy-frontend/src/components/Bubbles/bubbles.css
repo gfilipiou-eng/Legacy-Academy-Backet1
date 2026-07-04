@@ -125,8 +125,9 @@
   align-items: center;
   gap: 5px;
   background: rgba(0,0,0,0.4);
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 12px;
+  max-width: 95%;
 }
 
 .bubble-avatar {
@@ -135,12 +136,16 @@
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .bubble-username {
   font-size: 0.7rem;
   font-weight: 500;
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bubble-delete-btn {
@@ -150,25 +155,20 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: rgba(255, 50, 50, 0.2);
-  border: 1px solid rgba(255, 50, 50, 0.5);
-  color: rgba(255, 200, 200, 0.9);
+  background: rgba(255, 50, 50, 0.4);
+  border: 1px solid rgba(255, 50, 50, 0.6);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0;
   transition: all 0.2s ease;
   z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-.bubble:hover .bubble-delete-btn {
-  opacity: 1;
-}
-
-.bubble-delete-btn:hover {
-  background: rgba(255, 50, 50, 0.6);
-  color: white;
+.bubble-delete-btn:hover, .bubble-delete-btn:active {
+  background: rgba(255, 50, 50, 0.8);
   transform: scale(1.1);
 }
 
