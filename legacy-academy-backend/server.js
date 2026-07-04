@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 import userRoute from "./routes/users.js";
 import authRoute from "./routes/auth.js";
 import postRoute from "./routes/posts.js";
-import messageRoute from "./routes/messages.js"; // New route file needed
+import messageRoute from "./routes/messages.js";
+import bubbleRoute from "./routes/bubbles.js";
 import Message from "./models/Message.js";
 import User from "./models/User.js";
 import { verifyToken } from "./middleware/auth.js";
@@ -176,6 +177,7 @@ app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/messages", messageRoute);
+app.use("/api/bubbles", bubbleRoute);
 
 const PORT = process.env.PORT || 8800;
 server.listen(PORT, () => {
