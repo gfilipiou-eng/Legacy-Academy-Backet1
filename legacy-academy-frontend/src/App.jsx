@@ -11177,11 +11177,11 @@ const App = () => {
                                                     onClick={() => setIsFeedSortMenuOpen(!isFeedSortMenuOpen)}
                                                     className="flex items-center gap-2 pb-2.5 font-black text-[11px] sm:text-[12px] uppercase tracking-wider text-white hover:text-white/80 transition-colors"
                                                 >
-                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('NEWEST', 'Νεότερα')}</>}
-                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
-                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">{t('NSFW_18_PLUS', '18+ NSFW')}</span></>}
-                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Δημοφιλή')}</>}
-                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('OLDEST', 'Παλαιότερα')}</>}
+                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Νεότερα</>}
+                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> Hashtags</>}
+                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">18+ NSFW</span></>}
+                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Δημοφιλή</>}
+                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Παλαιότερα</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
                                                 </button>
 
@@ -11195,12 +11195,12 @@ const App = () => {
                                                             className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
-                                                                { id: 'bubbles', label: t('BUBBLES_MENU', 'Φούσκες 🫧'), Icon: Icons.Feather, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
-                                                                { id: 'newest', label: t('NEWEST', 'Νεότερα'), Icon: Icons.Sparkles },
-                                                                { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
-                                                                { id: 'nsfw18plus', label: t('NSFW_18_PLUS', '18+ NSFW'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
-                                                                { id: 'popular', label: t('POPULAR', 'Δημοφιλή'), Icon: Icons.TrendingUp },
-                                                                { id: 'oldest', label: t('OLDEST', 'Παλαιότερα'), Icon: Icons.Clock }
+                                                                { id: 'bubbles', label: 'Φούσκες 🫧', Icon: Icons.Feather, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
+                                                                { id: 'newest', label: 'Νεότερα', Icon: Icons.Sparkles },
+                                                                { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
+                                                                { id: 'nsfw18plus', label: '18+ NSFW', Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
+                                                                { id: 'popular', label: 'Δημοφιλή', Icon: Icons.TrendingUp },
+                                                                { id: 'oldest', label: 'Παλαιότερα', Icon: Icons.Clock }
                                                             ].map(opt => {
                                                                 const isActive = feedSortOrder === opt.id && opt.id !== 'bubbles';
                                                                 const baseActive = opt.activeClass || 'bg-[var(--gold-primary)] text-black';
