@@ -150,26 +150,29 @@
 
 .bubble-delete-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
-  background: rgba(255, 50, 50, 0.4);
-  border: 1px solid rgba(255, 50, 50, 0.6);
-  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 50, 50, 0.3);
+  color: #ff6b6b;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 10;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
 }
 
 .bubble-delete-btn:hover, .bubble-delete-btn:active {
   background: rgba(255, 50, 50, 0.8);
-  transform: scale(1.1);
+  color: white;
+  border-color: rgba(255, 50, 50, 0.8);
+  transform: translateX(-50%) scale(1.1);
 }
 
 /* Input Area */
