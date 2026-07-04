@@ -182,17 +182,19 @@
 }
 
 .bubble-form {
-  display: grid;
-  grid-template-columns: 1fr 44px;
-  gap: 15px 12px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   align-items: center;
 }
 
 .bubble-input {
-  grid-column: 1 / 2;
-  width: 100%;
+  flex: 1;
+  min-width: 150px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 25px;
@@ -207,7 +209,7 @@
 }
 
 .bubble-img-btn {
-  grid-column: 2 / 3;
+  flex-shrink: 0;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
@@ -223,21 +225,25 @@
 
 @media (max-width: 600px) {
   .bubble-input-container {
-    padding: 15px;
+    padding: 12px;
   }
   .bubble-form {
-    grid-template-columns: 1fr 44px;
-    gap: 12px 10px;
+    gap: 8px;
+    flex-wrap: nowrap;
   }
   .bubble-input {
-    padding: 14px 20px;
-    font-size: 1rem;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    min-width: 80px;
   }
   .bubble-blow-btn {
-    min-width: 200px;
-    width: 80%;
-    padding: 14px 20px;
-    font-size: 0.95rem;
+    min-width: 100px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+  .bubble-img-btn {
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -280,10 +286,8 @@
 }
 
 .bubble-blow-btn {
-  grid-column: 1 / -1;
-  justify-self: center;
-  margin: 0 auto;
-  min-width: 250px;
+  flex-shrink: 0;
+  min-width: 180px;
   background: linear-gradient(135deg, #00f2ff, #ff00ff, #00f2ff);
   background-size: 200% 200%;
   border: none;
