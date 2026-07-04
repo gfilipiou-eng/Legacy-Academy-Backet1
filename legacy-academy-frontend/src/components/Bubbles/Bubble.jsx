@@ -85,19 +85,22 @@ const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
           </div>
         )}
 
-        {(bubble.creator?._id || bubble.creator) === currentUser?._id && onDelete && (
-          <button 
-            className="bubble-delete-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(bubble._id);
-            }}
-            title="Delete Bubble"
-          >
-            <Icons.Trash className="w-3.5 h-3.5" />
-          </button>
         )}
       </div>
+
+      {(bubble.creator?._id || bubble.creator) === currentUser?._id && onDelete && (
+        <button 
+          className="bubble-delete-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(bubble._id);
+          }}
+          title="Delete Bubble"
+        >
+          <Icons.X className="w-3.5 h-3.5" />
+        </button>
+      )}
+
       <div className="bubble-glare"></div>
     </motion.div>
   );
