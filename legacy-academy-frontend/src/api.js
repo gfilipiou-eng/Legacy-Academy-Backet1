@@ -33,8 +33,9 @@ export const removeSafeToken = () => {
     try { localStorage.removeItem("token"); } catch(e) {}
 };
 
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const API = axios.create({
-    baseURL: "https://legacy-academy-backet1.onrender.com/api",
+    baseURL: isLocal ? "http://localhost:5000/api" : "https://legacy-academy-backet1.onrender.com/api",
 });
 
 API.interceptors.request.use((config) => {
