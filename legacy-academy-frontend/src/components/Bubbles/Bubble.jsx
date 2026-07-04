@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
+import { Icons } from '../Icons';
 
-const Bubble = ({ bubble, onClick, size = 120, initialPosition = { x: 0, y: 0 } }) => {
+const Bubble = ({ bubble, onClick, onDelete, size = 120, initialPosition = { x: 0, y: 0 } }) => {
+  const { currentUser } = useSelector(state => state.user);
   // Randomize floating animation a bit so they don't all move the same
   const durationX = 10 + Math.random() * 10;
   const durationY = 8 + Math.random() * 8;
@@ -94,6 +97,19 @@ const Bubble = ({ bubble, onClick, size = 120, initialPosition = { x: 0, y: 0 } 
           <div className="mt-2 w-full max-h-[80px] overflow-hidden rounded-lg">
             <img src={bubble.image} alt="bubble" className="w-full h-full object-cover" />
           </div>
+        )}
+
+        {bubble.creator === currentUser?._id && onDelete && (
+          <button 
+            className="bubble-delete-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(bubble._id);
+            }}
+            title="Delete Bubble"
+          >
+            <Icons.Trash className="w-3.5 h-3.5" />
+          </button>
         )}
       </div>
       <div className="bubble-glare"></div>

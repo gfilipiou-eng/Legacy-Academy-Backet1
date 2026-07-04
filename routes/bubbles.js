@@ -45,4 +45,25 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   }
 });
 
+// DELETE a bubble
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const bubble = await Bubble.findById(req.params.id);
+    if (!bubble) {
+      return res.status(404).json({ error: "Bubble not found" });
+    }
+    
+    // Check if the user is the creator
+    if (bubble.creator.toString() !== (req.user.id || req.user.userId)) {
+      return res.status(403).json({ error: "You can only delete your own bubbles" });
+    }
+    
+    await bubble.deleteOne();
+    res.status(200).json({ message: "Bubble deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting bubble:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

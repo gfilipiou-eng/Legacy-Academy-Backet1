@@ -66,4 +66,9 @@ export const createBubble = async (text, imageFile) => {
     }
 };
 
+export const deleteBubble = async (id) => {
+    const response = await API.delete(`/bubbles/${id}`);
+    return response.data;
+};
+
 export default API;

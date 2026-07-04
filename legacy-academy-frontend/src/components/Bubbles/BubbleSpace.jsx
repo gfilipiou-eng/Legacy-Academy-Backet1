@@ -4,7 +4,7 @@ import './bubbles.css';
 import { useTranslation } from '../../translations';
 import { Icons } from '../Icons';
 import Bubble from './Bubble';
-import { fetchBubbles, createBubble } from '../../api'; // We'll need to add these to api.js
+import { fetchBubbles, createBubble, deleteBubble } from '../../api';
 
 const BubbleSpace = ({ onClose }) => {
   const { t } = useTranslation();
@@ -52,6 +52,15 @@ const BubbleSpace = ({ onClose }) => {
     };
   }, []);
 
+  const handleDeleteBubble = async (id) => {
+    try {
+      await deleteBubble(id);
+      setBubbles(prev => prev.filter(b => b._id !== id));
+    } catch (err) {
+      console.error("Error deleting bubble:", err);
+    }
+  };
+
   const handleBlowBubble = async (e) => {
     e.preventDefault();
     if (!newBubbleText.trim() || isBlowing) return;
@@ -80,8 +89,7 @@ const BubbleSpace = ({ onClose }) => {
   };
 
   const handlePopBubble = (bubbleToPop) => {
-    // Simulate popping (the Framer motion tap animation handles the visual scale down)
-    // Then we remove it from state so it unmounts
+    // Simulate popping
     setTimeout(() => {
       setBubbles(prev => prev.filter(b => b._id !== bubbleToPop._id));
     }, 200);
@@ -108,6 +116,7 @@ const BubbleSpace = ({ onClose }) => {
               size={bubble.size}
               initialPosition={{ x: bubble.initialX, y: bubble.initialY }}
               onClick={handlePopBubble}
+              onDelete={handleDeleteBubble}
             />
           ))}
         </AnimatePresence>
