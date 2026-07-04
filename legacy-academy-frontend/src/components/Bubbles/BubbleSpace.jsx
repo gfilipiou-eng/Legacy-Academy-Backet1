@@ -6,8 +6,7 @@ import { Icons } from '../Icons';
 import Bubble from './Bubble';
 import { fetchBubbles, createBubble, deleteBubble } from '../../api';
 
-const BubbleSpace = ({ user, onClose }) => {
-  const { currentUser } = user || {};
+const BubbleSpace = ({ user: currentUser, onClose }) => {
   const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
@@ -121,7 +120,7 @@ const BubbleSpace = ({ user, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md bubble-space-overlay"
+      className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md bubble-space-overlay"
       ref={containerRef}
     >
       <div className="absolute top-5 right-5 z-[60] flex flex-col gap-3">
