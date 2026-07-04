@@ -181,16 +181,25 @@
 }
 
 @media (max-width: 600px) {
+  .bubble-input-container {
+    padding: 10px;
+  }
   .bubble-form {
-    flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: nowrap;
   }
   .bubble-input {
-    order: -1;
-    min-width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    min-width: 100px;
   }
   .bubble-blow-btn {
-    flex: 1;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+  .bubble-img-btn {
+    width: 40px;
+    height: 40px;
   }
 }
 
