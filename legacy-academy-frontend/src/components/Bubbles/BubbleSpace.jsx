@@ -207,7 +207,7 @@ const BubbleSpace = ({ user, onClose }) => {
           {newBubbleText.length}/100
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
