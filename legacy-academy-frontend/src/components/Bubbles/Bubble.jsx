@@ -2,39 +2,28 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '../Icons';
 
-const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120, initialPosition = { x: 0, y: 0 } }) => {
-  // Randomize floating animation a bit so they don't all move the same
-  const durationX = 10 + Math.random() * 10;
-  const durationY = 8 + Math.random() * 8;
+const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
+  // Gentle floating animation
+  const durationY = 3 + Math.random() * 2;
   const delay = Math.random() * 2;
 
-  // Float randomly around initial position
   const floatVariants = {
     initial: {
-      x: initialPosition.x,
-      y: initialPosition.y,
       scale: 0,
       opacity: 0,
+      y: 20,
     },
     animate: {
-      x: [initialPosition.x - 20, initialPosition.x + 20, initialPosition.x - 10, initialPosition.x],
-      y: [initialPosition.y - 20, initialPosition.y + 10, initialPosition.y - 30, initialPosition.y - 10],
+      y: [0, -10, 0],
       scale: 1,
       opacity: 1,
       transition: {
-        x: {
-          duration: durationX,
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
-          delay: delay,
-        },
         y: {
           duration: durationY,
           repeat: Infinity,
           repeatType: "mirror",
           ease: "easeInOut",
-          delay: delay,
+          delay: delay
         },
         scale: {
           duration: 0.5,
@@ -70,7 +59,6 @@ const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120, initialPos
       style={{
         width: size,
         height: size,
-        position: 'absolute',
       }}
       variants={floatVariants}
       initial="initial"

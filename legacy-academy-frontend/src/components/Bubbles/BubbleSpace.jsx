@@ -35,8 +35,6 @@ const BubbleSpace = ({ user, onClose }) => {
         // Add random size and position
         const positionedBubbles = data.map(b => ({
           ...b,
-          initialX: Math.random() * (window.innerWidth - 150),
-          initialY: window.innerHeight - 150 + Math.random() * 50,
           size: b.image ? (160 + Math.random() * 40) : (110 + Math.random() * 50)
         }));
         
@@ -81,15 +79,7 @@ const BubbleSpace = ({ user, onClose }) => {
       fromProfilePic: currentUser?.profilePic || "",
       creator: currentUser?._id,
       isOptimistic: true,
-      x: Math.random() * (containerSize.width - bubbleSize),
-      y: Math.random() * (containerSize.height - bubbleSize),
-      velocity: {
-        x: (Math.random() - 0.5) * 2,
-        y: (Math.random() - 0.5) * 2,
-      },
-      size: bubbleSize,
-      initialX: Math.random() * (containerSize.width - bubbleSize),
-      initialY: Math.random() * (containerSize.height - bubbleSize)
+      size: bubbleSize
     };
 
     setBubbles(prev => [...prev, optimisticBubble]);
@@ -141,7 +131,6 @@ const BubbleSpace = ({ user, onClose }) => {
               bubble={bubble} 
               currentUser={currentUser}
               size={bubble.size}
-              initialPosition={{ x: bubble.initialX, y: bubble.initialY }}
               onClick={handlePopBubble}
               onDelete={handleDeleteBubble}
             />
