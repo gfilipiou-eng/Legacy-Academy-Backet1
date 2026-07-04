@@ -82,12 +82,12 @@ const Bubble = ({ bubble, onClick, size = 120, initialPosition = { x: 0, y: 0 } 
         <p className="bubble-text">{bubble.text}</p>
         {bubble.creator && (
           <div className="bubble-creator">
-          {bubble.fromProfilePic ? (
-            <img src={bubble.fromProfilePic} alt="creator" className="bubble-avatar" />
+          {bubble.fromProfilePic || (bubble.creator && bubble.creator.profilePic) ? (
+            <img src={bubble.fromProfilePic || bubble.creator.profilePic} alt="creator" className="bubble-avatar" />
           ) : (
             <div className="bubble-avatar" style={{ background: '#333' }} />
           )}
-          <span className="bubble-username">@{bubble.fromUsername || 'user'}</span>
+          <span className="bubble-username">@{bubble.fromUsername || (bubble.creator && bubble.creator.username) || 'user'}</span>
         </div>
         )}
         {bubble.image && (
