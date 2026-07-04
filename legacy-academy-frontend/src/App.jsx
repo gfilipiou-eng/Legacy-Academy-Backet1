@@ -11195,13 +11195,14 @@ const App = () => {
                                                             className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
+                                                                { id: 'bubbles', label: t('BUBBLES_MENU', 'Φούσκες 🫧'), Icon: Icons.Feather, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
                                                                 { id: 'newest', label: t('NEWEST', 'Νεότερα'), Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
                                                                 { id: 'nsfw18plus', label: t('NSFW_18_PLUS', '18+ NSFW'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
                                                                 { id: 'popular', label: t('POPULAR', 'Δημοφιλή'), Icon: Icons.TrendingUp },
                                                                 { id: 'oldest', label: t('OLDEST', 'Παλαιότερα'), Icon: Icons.Clock }
                                                             ].map(opt => {
-                                                                const isActive = feedSortOrder === opt.id;
+                                                                const isActive = feedSortOrder === opt.id && opt.id !== 'bubbles';
                                                                 const baseActive = opt.activeClass || 'bg-[var(--gold-primary)] text-black';
                                                                 const baseHover = opt.colorClass ? `hover:bg-white/5 ${opt.colorClass}` : 'hover:bg-white/5 hover:text-white';
                                                                 const colorClass = opt.colorClass && !isActive ? opt.colorClass : '';
@@ -11209,7 +11210,14 @@ const App = () => {
                                                                 return (
                                                                     <button
                                                                         key={opt.id}
-                                                                        onClick={() => { setFeedSortOrder(opt.id); setIsFeedSortMenuOpen(false); }}
+                                                                        onClick={() => { 
+                                                                            if (opt.id === 'bubbles') {
+                                                                                setIsBubbleSpaceOpen(true);
+                                                                            } else {
+                                                                                setFeedSortOrder(opt.id); 
+                                                                            }
+                                                                            setIsFeedSortMenuOpen(false); 
+                                                                        }}
                                                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all ${isActive ? baseActive : `text-gray-400 ${baseHover}`} ${colorClass}`}
                                                                     >
                                                                         <opt.Icon className="w-3.5 h-3.5" />
