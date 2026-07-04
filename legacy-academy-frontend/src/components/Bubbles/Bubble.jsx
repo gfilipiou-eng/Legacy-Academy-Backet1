@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '../Icons';
 
-const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
+const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false }) => {
+  const isOwner = (bubble.creator?._id || bubble.creator) === currentUser?._id;
   // Gentle floating animation
   const durationY = 3 + Math.random() * 2;
   const delay = Math.random() * 2;
@@ -53,14 +54,33 @@ const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
     }
   };
 
+  let finalVariants = floatVariants;
+  if (isDeleteMode && isOwner) {
+    finalVariants = {
+      ...floatVariants,
+      animate: {
+        ...floatVariants.animate,
+        rotate: [-2, 2, -2],
+        transition: {
+          ...floatVariants.animate.transition,
+          rotate: {
+            duration: 0.2,
+            repeat: Infinity,
+            repeatType: "mirror"
+          }
+        }
+      }
+    };
+  }
+
   return (
     <motion.div
-      className="bubble-container"
+      className={`bubble-container ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
       style={{
         width: size,
         height: size,
       }}
-      variants={floatVariants}
+      variants={finalVariants}
       initial="initial"
       animate="animate"
       whileHover="hover"
@@ -87,20 +107,6 @@ const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
 
         )}
       </div>
-
-      {(bubble.creator?._id || bubble.creator) === currentUser?._id && onDelete && (
-        <button 
-          className="bubble-delete-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(bubble._id);
-          }}
-          title="Delete Bubble"
-        >
-          <Icons.X className="w-3.5 h-3.5" />
-        </button>
-      )}
-
       <div className="bubble-glare"></div>
     </motion.div>
   );

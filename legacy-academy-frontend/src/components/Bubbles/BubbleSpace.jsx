@@ -7,12 +7,13 @@ import Bubble from './Bubble';
 import { fetchBubbles, createBubble, deleteBubble } from '../../api';
 
 const BubbleSpace = ({ user, onClose }) => {
-  const currentUser = user;
+  const { currentUser } = user || {};
   const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [isBlowing, setIsBlowing] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(false);
   const containerRef = useRef(null);
   const fileInputRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -104,24 +105,43 @@ const BubbleSpace = ({ user, onClose }) => {
     }
   };
 
-  const handlePopBubble = (bubbleToPop) => {
+  const handleBubbleClick = (bubble) => {
+    if (deleteMode) {
+      if ((bubble.creator?._id || bubble.creator) === currentUser?._id) {
+        handleDeleteBubble(bubble._id);
+      }
+      return;
+    }
+    
     // Simulate popping
     setTimeout(() => {
-      setBubbles(prev => prev.filter(b => b._id !== bubbleToPop._id));
+      setBubbles(prev => prev.filter(b => b._id !== bubble._id));
     }, 200);
   };
 
   return (
-    <motion.div 
-      className="bubble-space-overlay"
-      initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-      animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
-      exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+    <div
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md bubble-space-overlay"
       ref={containerRef}
     >
-      <button className="bubble-close-btn" onClick={onClose}>
-        <Icons.X className="w-6 h-6 text-white" />
-      </button>
+      <div className="absolute top-5 right-5 z-[60] flex flex-col gap-3">
+        <button className="bubble-close-btn" style={{position: 'static'}} onClick={onClose} title="Close">
+          <Icons.X className="w-6 h-6 text-white" />
+        </button>
+        <button 
+          className="bubble-close-btn" 
+          style={{
+            position: 'static', 
+            background: deleteMode ? 'rgba(255, 50, 50, 0.9)' : 'rgba(255, 255, 255, 0.1)',
+            boxShadow: deleteMode ? '0 0 20px rgba(255, 0, 0, 0.6)' : 'none',
+            color: deleteMode ? 'white' : 'white'
+          }} 
+          onClick={() => setDeleteMode(!deleteMode)}
+          title="Delete Mode"
+        >
+          <Icons.Trash className="w-5 h-5" />
+        </button>
+      </div>
 
       <div className="bubble-space-canvas">
         <AnimatePresence>
@@ -131,8 +151,8 @@ const BubbleSpace = ({ user, onClose }) => {
               bubble={bubble} 
               currentUser={currentUser}
               size={bubble.size}
-              onClick={handlePopBubble}
-              onDelete={handleDeleteBubble}
+              isDeleteMode={deleteMode}
+              onClick={() => handleBubbleClick(bubble)}
             />
           ))}
         </AnimatePresence>
