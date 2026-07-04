@@ -10,8 +10,10 @@ const BubbleSpace = ({ onClose }) => {
   const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isBlowing, setIsBlowing] = useState(false);
   const containerRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -52,19 +54,24 @@ const BubbleSpace = ({ onClose }) => {
 
   const handleBlowBubble = async (e) => {
     e.preventDefault();
-    if (!newBubbleText.trim() || newBubbleText.length > 100) return;
+    if (!newBubbleText.trim() || isBlowing) return;
     
     setIsBlowing(true);
     try {
-      const savedBubble = await createBubble(newBubbleText);
-      const bubbleWithSize = {
-        ...savedBubble,
-        initialX: containerSize.width / 2 - 60, // Start from center-ish
-        initialY: containerSize.height - 150, // Start from bottom
-        size: 100 + Math.random() * 60
+      const newB = await createBubble(newBubbleText, selectedImage);
+      // Ensure the new bubble has coordinates right away
+      const bubbleWithPos = {
+        ...newB,
+        x: Math.random() * (containerSize.width - 150),
+        y: Math.random() * (containerSize.height - 150),
+        velocity: {
+          x: (Math.random() - 0.5) * 2,
+          y: (Math.random() - 0.5) * 2,
+        }
       };
-      setBubbles(prev => [...prev, bubbleWithSize]);
+      setBubbles(prev => [...prev, bubbleWithPos]);
       setNewBubbleText("");
+      setSelectedImage(null);
     } catch (err) {
       console.error("Error blowing bubble:", err);
     } finally {
@@ -107,7 +114,34 @@ const BubbleSpace = ({ onClose }) => {
       </div>
 
       <div className="bubble-input-container">
+        {selectedImage && (
+          <div className="bubble-image-preview">
+            <img src={URL.createObjectURL(selectedImage)} alt="Preview" />
+            <button onClick={() => setSelectedImage(null)} type="button">
+              <Icons.X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
         <form onSubmit={handleBlowBubble} className="bubble-form">
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            ref={fileInputRef}
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                setSelectedImage(e.target.files[0]);
+              }
+            }}
+          />
+          <button
+            type="button"
+            className="bubble-img-btn"
+            onClick={() => fileInputRef.current?.click()}
+            title="Add Image"
+          >
+            <Icons.Image className="w-5 h-5 text-white/70" />
+          </button>
           <input 
             type="text" 
             placeholder={t('BUBBLES_PLACEHOLDER', "What's in your bubble?")} 

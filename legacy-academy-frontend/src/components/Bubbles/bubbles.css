@@ -139,7 +139,57 @@
   width: 100%;
   max-width: 500px;
   gap: 8px;
+  align-items: center;
   box-sizing: border-box;
+}
+
+.bubble-img-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.bubble-img-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bubble-image-preview {
+  position: relative;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  max-width: 200px;
+}
+.bubble-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.bubble-image-preview button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+.bubble-image-preview button:hover {
+  background: rgba(255,0,0,0.8);
 }
 
 .bubble-input {

@@ -6,6 +6,10 @@ const BubbleSchema = new mongoose.Schema({
     required: true,
     maxlength: 100
   },
+  image: {
+    type: String,
+    default: ""
+  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

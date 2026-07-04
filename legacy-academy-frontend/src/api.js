@@ -50,9 +50,19 @@ export const fetchBubbles = async () => {
     return response.data;
 };
 
-export const createBubble = async (text) => {
-    const response = await API.post("/bubbles", { text });
-    return response.data;
+export const createBubble = async (text, imageFile) => {
+    if (imageFile) {
+        const formData = new FormData();
+        formData.append("text", text);
+        formData.append("image", imageFile);
+        const response = await API.post("/bubbles", formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+        return response.data;
+    } else {
+        const response = await API.post("/bubbles", { text });
+        return response.data;
+    }
 };
 
 export default API;

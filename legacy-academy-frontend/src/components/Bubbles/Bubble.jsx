@@ -82,12 +82,17 @@ const Bubble = ({ bubble, onClick, size = 120, initialPosition = { x: 0, y: 0 } 
         <p className="bubble-text">{bubble.text}</p>
         {bubble.creator && (
           <div className="bubble-creator">
-            <img 
-              src={bubble.creator.profilePic || "/default-avatar.png"} 
-              alt={bubble.creator.username} 
-              className="bubble-avatar" 
-            />
-            <span className="bubble-username">{bubble.creator.username}</span>
+          {bubble.fromProfilePic ? (
+            <img src={bubble.fromProfilePic} alt="creator" className="bubble-avatar" />
+          ) : (
+            <div className="bubble-avatar" style={{ background: '#333' }} />
+          )}
+          <span className="bubble-username">@{bubble.fromUsername || 'user'}</span>
+        </div>
+        )}
+        {bubble.image && (
+          <div className="mt-2 w-full max-h-[80px] overflow-hidden rounded-lg">
+            <img src={bubble.image} alt="bubble" className="w-full h-full object-cover" />
           </div>
         )}
       </div>

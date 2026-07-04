@@ -1,7 +1,7 @@
 import express from "express";
 import Bubble from "../models/Bubble.js";
 import { verifyToken } from "../middleware/auth.js";
-import User from "../models/User.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -16,29 +16,32 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
-// POST create a new bubble
-router.post("/", verifyToken, async (req, res) => {
+// POST a new bubble
+router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   try {
     const { text } = req.body;
-    
-    if (!text || text.length > 100) {
-      return res.status(400).json({ error: "Text must be between 1 and 100 characters." });
+    if (!text || text.trim() === "") {
+      return res.status(400).json({ error: "Text is required" });
+    }
+
+    let imageUrl = "";
+    if (req.file) {
+      imageUrl = req.file.path;
     }
 
     const newBubble = new Bubble({
-      text,
-      creator: req.user.id
+      text: text.trim(),
+      image: imageUrl,
+      creator: req.user.id || req.user.userId,
+      fromUsername: req.user.username,
+      fromProfilePic: req.user.profilePic || ""
     });
 
     const savedBubble = await newBubble.save();
-    
-    // Populate creator info before returning
-    const populatedBubble = await Bubble.findById(savedBubble._id).populate("creator", "username profilePic");
-    
-    res.status(201).json(populatedBubble);
+    res.status(201).json(savedBubble);
   } catch (err) {
     console.error("Error creating bubble:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
