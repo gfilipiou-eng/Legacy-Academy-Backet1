@@ -103,6 +103,12 @@
   word-break: break-word;
 }
 
+.bubble-has-image .bubble-text {
+  font-size: 0.75rem;
+  -webkit-line-clamp: 2;
+  margin-bottom: 2px;
+}
+
 .bubble-creator {
   display: flex;
   align-items: center;

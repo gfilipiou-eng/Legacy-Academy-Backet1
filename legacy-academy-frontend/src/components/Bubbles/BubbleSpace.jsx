@@ -5,8 +5,10 @@ import { useTranslation } from '../../translations';
 import { Icons } from '../Icons';
 import Bubble from './Bubble';
 import { fetchBubbles, createBubble, deleteBubble } from '../../api';
+import { useSelector } from 'react-redux';
 
 const BubbleSpace = ({ onClose }) => {
+  const { currentUser } = useSelector(state => state.user);
   const { t } = useTranslation();
   const [bubbles, setBubbles] = useState([]);
   const [newBubbleText, setNewBubbleText] = useState("");
@@ -31,12 +33,12 @@ const BubbleSpace = ({ onClose }) => {
       try {
         const data = await fetchBubbles();
         
-        // Assign random initial positions
+        // Add random size and position
         const positionedBubbles = data.map(b => ({
           ...b,
           initialX: Math.random() * (window.innerWidth - 150),
-          initialY: Math.random() * (window.innerHeight - 250),
-          size: 100 + Math.random() * 60 // 100px to 160px
+          initialY: window.innerHeight - 150 + Math.random() * 50,
+          size: b.image ? (160 + Math.random() * 40) : (110 + Math.random() * 50)
         }));
         
         setBubbles(positionedBubbles);
@@ -66,23 +68,48 @@ const BubbleSpace = ({ onClose }) => {
     if (!newBubbleText.trim() || isBlowing) return;
     
     setIsBlowing(true);
+    
+    const tempId = Date.now().toString();
+    const bubbleSize = selectedImage ? (160 + Math.random() * 40) : (110 + Math.random() * 50);
+    const textToSave = newBubbleText;
+    const imgToSave = selectedImage;
+    
+    const optimisticBubble = {
+      _id: tempId,
+      text: textToSave,
+      image: imgToSave ? URL.createObjectURL(imgToSave) : "",
+      fromUsername: currentUser?.username || "user",
+      fromProfilePic: currentUser?.profilePic || "",
+      creator: currentUser?._id,
+      isOptimistic: true,
+      x: Math.random() * (containerSize.width - bubbleSize),
+      y: Math.random() * (containerSize.height - bubbleSize),
+      velocity: {
+        x: (Math.random() - 0.5) * 2,
+        y: (Math.random() - 0.5) * 2,
+      },
+      size: bubbleSize,
+      initialX: Math.random() * (containerSize.width - bubbleSize),
+      initialY: Math.random() * (containerSize.height - bubbleSize)
+    };
+
+    setBubbles(prev => [...prev, optimisticBubble]);
+    setNewBubbleText("");
+    setSelectedImage(null);
+
     try {
-      const newB = await createBubble(newBubbleText, selectedImage);
-      // Ensure the new bubble has coordinates right away
-      const bubbleWithPos = {
-        ...newB,
-        x: Math.random() * (containerSize.width - 150),
-        y: Math.random() * (containerSize.height - 150),
-        velocity: {
-          x: (Math.random() - 0.5) * 2,
-          y: (Math.random() - 0.5) * 2,
-        }
-      };
-      setBubbles(prev => [...prev, bubbleWithPos]);
-      setNewBubbleText("");
-      setSelectedImage(null);
+      const newB = await createBubble(textToSave, imgToSave);
+      
+      setBubbles(prev => prev.map(b => b._id === tempId ? { 
+        ...b, 
+        ...newB, 
+        _id: newB._id, 
+        isOptimistic: false 
+      } : b));
     } catch (err) {
       console.error("Error blowing bubble:", err);
+      // Remove optimistic bubble on error
+      setBubbles(prev => prev.filter(b => b._id !== tempId));
     } finally {
       setIsBlowing(false);
     }

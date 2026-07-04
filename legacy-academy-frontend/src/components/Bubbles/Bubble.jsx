@@ -81,7 +81,7 @@ const Bubble = ({ bubble, onClick, onDelete, size = 120, initialPosition = { x: 
       whileTap="tap"
       onClick={() => onClick(bubble)}
     >
-      <div className="bubble-content">
+      <div className={`bubble-content ${bubble.image ? 'bubble-has-image' : ''}`}>
         <p className="bubble-text">{bubble.text}</p>
         {bubble.creator && (
           <div className="bubble-creator">
@@ -94,8 +94,8 @@ const Bubble = ({ bubble, onClick, onDelete, size = 120, initialPosition = { x: 
         </div>
         )}
         {bubble.image && (
-          <div className="mt-2 w-full max-h-[80px] overflow-hidden rounded-lg">
-            <img src={bubble.image} alt="bubble" className="w-full h-full object-cover" />
+          <div className="mt-1 w-[80%] flex items-center justify-center">
+            <img src={bubble.image} alt="bubble" className="max-w-full max-h-[60px] object-contain rounded-md drop-shadow-md" />
           </div>
         )}
 
