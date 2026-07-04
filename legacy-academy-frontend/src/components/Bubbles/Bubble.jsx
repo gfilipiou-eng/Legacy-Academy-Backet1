@@ -85,7 +85,7 @@ const Bubble = ({ bubble, currentUser, onClick, onDelete, size = 120 }) => {
           </div>
         )}
 
-        {bubble.creator === currentUser?._id && onDelete && (
+        {(bubble.creator?._id || bubble.creator) === currentUser?._id && onDelete && (
           <button 
             className="bubble-delete-btn"
             onClick={(e) => {
