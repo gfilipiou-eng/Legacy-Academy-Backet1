@@ -11195,7 +11195,7 @@ const App = () => {
                                                             className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
-                                                                { id: 'bubbles', label: 'Φούσκες 🫧', Icon: Icons.Feather, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
+                                                                { id: 'bubbles', label: 'Φούσκες 🫧', Icon: Icons.MessageCircle, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
                                                                 { id: 'newest', label: 'Νεότερα', Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
                                                                 { id: 'nsfw18plus', label: '18+ NSFW', Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
