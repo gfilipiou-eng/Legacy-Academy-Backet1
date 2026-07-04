@@ -104,8 +104,6 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
             <img src={bubble.image} alt="bubble" className="max-w-full max-h-[60px] object-contain rounded-md drop-shadow-md" />
           </div>
         )}
-
-        )}
       </div>
       <div className="bubble-glare"></div>
     </motion.div>

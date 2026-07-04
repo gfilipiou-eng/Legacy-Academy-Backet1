@@ -282,6 +282,7 @@
 .bubble-blow-btn {
   grid-column: 1 / -1;
   justify-self: center;
+  margin: 0 auto;
   min-width: 250px;
   background: linear-gradient(135deg, #00f2ff, #ff00ff, #00f2ff);
   background-size: 200% 200%;
