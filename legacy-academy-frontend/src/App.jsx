@@ -2373,6 +2373,17 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const authorName = s.author?.username || 'Agent';
                 const hasStoryMedia = postHasMedia(s);
                 const storyMediaUrl = hasStoryMedia ? (s.thumbnailUrl || s.image || s.videoUrl) : null;
+                const textGradients = [
+                    'from-[#FF416C] to-[#FF4B2B]',
+                    'from-[#4776E6] to-[#8E54E9]',
+                    'from-[#00B4DB] to-[#0083B0]',
+                    'from-[#11998e] to-[#38ef7d]',
+                    'from-[#f12711] to-[#f5af19]',
+                    'from-[#8E2DE2] to-[#4A00E0]',
+                    'from-[#b224ef] to-[#7579ff]',
+                    'from-[#ff9966] to-[#ff5e62]',
+                ];
+                const gradClass = textGradients[i % textGradients.length];
 
                 return (
                     <div key={s._id || i} onClick={() => onViewStory(s)} className={`cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg`}>
@@ -2384,9 +2395,9 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                                 onError={(e) => { e.target.style.display = 'none'; }} 
                             />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#111] p-2 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                <span className="text-white/90 text-[10px] font-medium text-center break-words line-clamp-6 leading-tight">
-                                    {getPostTextPreview(s.desc, 80)}
+                            <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
+                                <span className="text-white text-[12px] sm:text-[13px] font-bold text-center break-words line-clamp-5 leading-snug drop-shadow-md">
+                                    {getPostTextPreview(s.desc, 100)}
                                 </span>
                             </div>
                         )}
@@ -7376,7 +7387,7 @@ const ProfileModal = ({
                                                         </div>
                                                     </div>
                                                 )}
-                                                {userStories.map(s => {
+                                                {userStories.map((s, i) => {
                                                     const isYT = isYouTubeUrl(s.videoUrl);
                                                     const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                                                     const hasMedia = postHasMedia(s);
@@ -7385,6 +7396,18 @@ const ProfileModal = ({
                                                         const yid = getYouTubeId(s.videoUrl);
                                                         if (yid) ytThumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                                                     }
+                                                    const textGradients = [
+                                                        'from-[#FF416C] to-[#FF4B2B]',
+                                                        'from-[#4776E6] to-[#8E54E9]',
+                                                        'from-[#00B4DB] to-[#0083B0]',
+                                                        'from-[#11998e] to-[#38ef7d]',
+                                                        'from-[#f12711] to-[#f5af19]',
+                                                        'from-[#8E2DE2] to-[#4A00E0]',
+                                                        'from-[#b224ef] to-[#7579ff]',
+                                                        'from-[#ff9966] to-[#ff5e62]',
+                                                    ];
+                                                    const gradClass = textGradients[i % textGradients.length];
+
                                                     return (
                                                         <div key={s._id} onClick={() => onOpenDetail(s)} className="cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg">
                                                             {hasMedia ? (
@@ -7407,9 +7430,9 @@ const ProfileModal = ({
                                                                     <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                                                 )
                                                             ) : (
-                                                                <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#111] p-2 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                                                    <span className="text-white/90 text-[8px] font-medium text-center break-words line-clamp-6 leading-tight">
-                                                                        {getPostTextPreview(s.desc, 60)}
+                                                                <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
+                                                                    <span className="text-white text-[11px] sm:text-[12px] font-bold text-center break-words line-clamp-5 leading-snug drop-shadow-md">
+                                                                        {getPostTextPreview(s.desc, 80)}
                                                                     </span>
                                                                 </div>
                                                             )}
