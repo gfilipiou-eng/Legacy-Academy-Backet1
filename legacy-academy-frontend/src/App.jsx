@@ -2693,7 +2693,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
-                                    <div className="flex flex-nowrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full overflow-hidden">
+                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
                                         {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(author)}</span>}
@@ -7076,9 +7076,9 @@ const ProfileModal = ({
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><span className="text-lg sm:text-xl"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
-                                        <div className="mt-4 flex flex-col items-center justify-center gap-2 drop-shadow-2xl select-none">
-                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl" />
-                                            <span className="text-[14px] sm:text-[18px] font-black tracking-widest text-white bg-white/10 px-4 py-2 rounded-xl whitespace-nowrap backdrop-blur-md border border-white/10 shadow-xl uppercase">
+                                        <div className="mt-3.5 flex items-center justify-center gap-3 sm:gap-4 drop-shadow-2xl select-none">
+                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-2xl" />
+                                            <span className="text-[14px] sm:text-[16px] font-black tracking-widest text-white bg-white/10 px-4 py-2 rounded-xl whitespace-nowrap backdrop-blur-md border border-white/10 shadow-xl uppercase">
                                                 {displayUser.settings.footballTeam.strTeam}
                                             </span>
                                         </div>
