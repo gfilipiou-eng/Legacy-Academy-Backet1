@@ -2223,7 +2223,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 });
 
 // Notification item component for Alerts tab
-const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang }) => {
+const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, onDelete, t, lang }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -2348,6 +2348,16 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         alt=""
                     />
                 </div>
+            )}
+
+            {onDelete && (
+                <button 
+                    onClick={(e) => onDelete(note._id, e)}
+                    className="absolute top-3 right-3 p-1.5 text-gray-500 hover:bg-red-500 hover:text-white rounded-full transition-all duration-200 z-10 active:scale-95 bg-black/40 sm:bg-transparent sm:opacity-0 sm:group-hover:opacity-100 sm:hover:bg-red-500 border border-white/5 sm:border-transparent shadow-lg"
+                    title={t('DELETE_NOTIF', 'Delete')}
+                >
+                    <Icons.X className="w-3.5 h-3.5" />
+                </button>
             )}
         </div>
     );
@@ -10539,6 +10549,22 @@ const App = () => {
     };
 
     const deleteNotifications = async () => { try { await axios.delete('/users/notifications'); setAlerts([]); const u = { ...user, notifications: [] }; setUser(u); localStorage.setItem('user', JSON.stringify(u)); cyberDeleteEffect(); } catch (e) { } };
+    const deleteSingleNotification = async (notifId, e) => {
+        if (e) { e.stopPropagation(); e.preventDefault(); }
+        try {
+            await axios.delete(`/users/notifications/${notifId}`);
+            setAlerts(prev => prev.filter(n => n._id !== notifId));
+            setUser(prev => {
+                if (!prev) return prev;
+                const u = { ...prev, notifications: (prev.notifications || []).filter(n => n._id !== notifId) };
+                localStorage.setItem('user', JSON.stringify(u));
+                return u;
+            });
+            cyberDeleteEffect();
+        } catch (err) {
+            console.error('Failed to delete notification', err);
+        }
+    };
 
     // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
     const preloadedProfilePosts = useMemo(() => {
@@ -11218,6 +11244,7 @@ const App = () => {
                                                     onAcceptRequest={handleAcceptRequest}
                                                     onRejectRequest={handleRejectRequest}
                                                     onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }}
+                                                    onDelete={deleteSingleNotification}
                                                     t={t}
                                                     lang={lang}
                                                 />

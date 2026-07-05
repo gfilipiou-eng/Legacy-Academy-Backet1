@@ -989,13 +989,26 @@ router.get("/find/:id", verifyToken, async (req, res) => {
     }
 });
 
-// DELETE NOTIFICATIONS
+// DELETE ALL NOTIFICATIONS
 router.delete("/notifications", verifyToken, async (req, res) => {
     try {
         await User.findByIdAndUpdate(req.user.id, {
             $set: { notifications: [] }
         });
         res.status(200).json("Notifications cleared");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// DELETE SINGLE NOTIFICATION
+router.delete("/notifications/:notifId", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        await User.findByIdAndUpdate(userId, {
+            $pull: { notifications: { _id: req.params.notifId } }
+        });
+        res.status(200).json("Notification deleted");
     } catch (err) {
         res.status(500).json(err);
     }
