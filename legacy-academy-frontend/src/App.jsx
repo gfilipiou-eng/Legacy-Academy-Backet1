@@ -3512,7 +3512,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="w-full min-w-0 relative flex items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] px-4 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden">
+                                    <div className="w-full relative grid grid-cols-[1fr_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden gap-2">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -3531,12 +3531,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                             placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                            className={`w-full max-w-full flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
+                                            className={`w-full bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
                                         />
-                                    <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
-                                        <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
-                                    </div>
+                                        <div className="flex items-center gap-2 justify-end">
+                                            {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
+                                            <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
+                                        </div>
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between gap-2 px-1">
