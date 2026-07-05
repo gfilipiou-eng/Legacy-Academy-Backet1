@@ -9325,25 +9325,29 @@ const App = () => {
                 return updated;
             });
             
-            // Το Toast δείχνει αμέσως την ειδοποίηση
-            let toastMsg = data.text || "New Notification";
-            if (data.type === 'follow') toastMsg = `${data.fromUsername} ${t('NOTIF_FOLLOW', 'started following you')}`;
-            if (data.type === 'like') toastMsg = `${data.fromUsername} ${t('NOTIF_LIKE', 'liked your post')}`;
-            if (data.type === 'comment') toastMsg = `${data.fromUsername} ${t('NOTIF_COMMENT', 'commented on your post')}`;
-            
-            addToast(toastMsg, 'info');
+            // Το Toast δείχνει αμέσως την ειδοποίηση (μόνο αν δεν είναι μήνυμα, γιατί τα μηνύματα έχουν δικό τους toast)
+            if (data.type !== 'message') {
+                let toastMsg = data.text || "New Notification";
+                if (data.type === 'follow') toastMsg = `${data.fromUsername} ${t('NOTIF_FOLLOW', 'started following you')}`;
+                if (data.type === 'like') toastMsg = `${data.fromUsername} ${t('NOTIF_LIKE', 'liked your post')}`;
+                if (data.type === 'comment') toastMsg = `${data.fromUsername} ${t('NOTIF_COMMENT', 'commented on your post')}`;
+                
+                addToast(toastMsg, 'info');
 
-            // Trigger browser notification
-            if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-                try {
-                    new Notification("Legacy Academy Alert", {
-                        body: toastMsg,
-                        icon: '/favicon.ico'
-                    });
-                } catch (e) {
-                    console.error("Browser notification fail", e);
+                // Trigger browser notification
+                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                    try {
+                        new Notification("Legacy Academy Alert", {
+                            body: toastMsg,
+                            icon: '/favicon.ico'
+                        });
+                    } catch (e) {
+                        console.error("Browser notification fail", e);
+                    }
                 }
             }
+
+            // Trigger browser notification handled above
 
             fetchNotifications(true); // silent = true to ensure DB is perfectly synced
         };
@@ -9850,13 +9854,15 @@ const App = () => {
     };
     const stopNotificationPoll = () => { if (_notifInterval.current) { clearInterval(_notifInterval.current); _notifInterval.current = null; } };
 
-    const subscribeToWebPush = async () => {
+    const subscribeToWebPush = async (forcePrompt = false) => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             try {
                 if (Notification.permission === 'default') {
+                    if (!forcePrompt) return; // Silent auto-return unless user clicked the button
                     const perm = await Notification.requestPermission();
                     if (perm !== 'granted') return;
                 } else if (Notification.permission === 'denied') {
+                    if (forcePrompt) addToast("Push notifications are blocked in your browser settings.", "error");
                     return;
                 }
 
@@ -11165,25 +11171,36 @@ const App = () => {
                                             <h2 className="text-xl font-black text-white uppercase tracking-widest">{t('NOTIFICATIONS_TITLE')}</h2>
                                             <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Intelligence Alerts</div>
                                         </div>
-                                        <div className="flex gap-2">
-                                            {alerts.length > 0 && (
-                                                <>
-                                                    <button
-                                                        onClick={markAllNotificationsRead}
-                                                        title={t('MARK_ALL_READ', 'Mark all as read')}
-                                                        className="w-9 h-9 sm:w-auto sm:px-4 bg-green-500/10 rounded-full text-green-500 text-[10px] font-black uppercase tracking-widest border border-green-500/20 flex items-center justify-center gap-0 group shadow-lg"
-                                                    >
-                                                        <Icons.Check className="w-4 h-4 group-hover:scale-110" />
-                                                    </button>
-                                                    <button
-                                                        onClick={deleteNotifications}
-                                                        title={t('CLEAR_ALL')}
-                                                        className="w-9 h-9 sm:w-auto sm:px-4 bg-red-500/10 rounded-full text-red-500 text-[10px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg"
-                                                    >
-                                                        <Icons.Trash className="w-4 h-4 group-hover:scale-110" />
-                                                    </button>
-                                                </>
+                                        <div className="flex flex-col gap-2 items-end">
+                                            {typeof Notification !== 'undefined' && Notification.permission !== 'granted' && Notification.permission !== 'denied' && (
+                                                <button 
+                                                    onClick={() => subscribeToWebPush(true)}
+                                                    className="px-3 py-1.5 bg-[var(--gold-primary)]/10 text-[var(--gold-primary)] border border-[var(--gold-primary)]/30 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[var(--gold-primary)]/20 transition-all shadow-[0_0_15px_rgba(212,175,55,0.15)] flex items-center justify-center gap-1.5"
+                                                >
+                                                    <Icons.Bell className="w-3 h-3" />
+                                                    Enable Push
+                                                </button>
                                             )}
+                                            <div className="flex gap-2">
+                                                {alerts.length > 0 && (
+                                                    <>
+                                                        <button
+                                                            onClick={markAllNotificationsRead}
+                                                            title={t('MARK_ALL_READ', 'Mark all as read')}
+                                                            className="w-8 h-8 sm:w-auto sm:px-3 bg-green-500/10 rounded-full text-green-500 text-[9px] font-black uppercase tracking-widest border border-green-500/20 flex items-center justify-center gap-0 group shadow-lg"
+                                                        >
+                                                            <Icons.Check className="w-3.5 h-3.5 group-hover:scale-110" />
+                                                        </button>
+                                                        <button
+                                                            onClick={deleteNotifications}
+                                                            title={t('CLEAR_ALL')}
+                                                            className="w-8 h-8 sm:w-auto sm:px-3 bg-red-500/10 rounded-full text-red-500 text-[9px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg"
+                                                        >
+                                                            <Icons.Trash className="w-3.5 h-3.5 group-hover:scale-110" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     {alerts.length === 0 ? (
