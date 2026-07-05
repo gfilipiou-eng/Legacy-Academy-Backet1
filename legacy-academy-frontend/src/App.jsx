@@ -7076,9 +7076,9 @@ const ProfileModal = ({
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><span className="text-lg sm:text-xl"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
-                                        <div className="mt-3.5 flex items-center justify-center gap-3 drop-shadow-2xl select-none">
-                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-xl scale-[1.35]" />
-                                            <span className="text-[13px] sm:text-[15px] font-black tracking-widest text-white bg-white/10 px-3.5 py-1.5 rounded-lg whitespace-nowrap backdrop-blur-md border border-white/10 shadow-lg uppercase">
+                                        <div className="mt-4 flex flex-col items-center justify-center gap-2 drop-shadow-2xl select-none">
+                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl" />
+                                            <span className="text-[14px] sm:text-[18px] font-black tracking-widest text-white bg-white/10 px-4 py-2 rounded-xl whitespace-nowrap backdrop-blur-md border border-white/10 shadow-xl uppercase">
                                                 {displayUser.settings.footballTeam.strTeam}
                                             </span>
                                         </div>
