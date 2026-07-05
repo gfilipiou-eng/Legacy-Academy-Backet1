@@ -7383,7 +7383,7 @@ const ProfileModal = ({
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
                                                             </div>
-                                                            <span className="text-[9px] font-black text-white/70 uppercase tracking-widest mt-1 text-center truncate w-full px-1">{t('ADD_STORY')}</span>
+                                                            <span className="text-[10px] font-bold text-white/90 mt-1 text-center truncate w-full px-1">{t('ADD_STORY')}</span>
                                                         </div>
                                                     </div>
                                                 )}

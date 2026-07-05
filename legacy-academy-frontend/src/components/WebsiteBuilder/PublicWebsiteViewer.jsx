@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate } from './WebsiteTemplates';
+import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate, CorporateTemplate, CreativeTemplate, FitnessTemplate, PortfolioTemplate, RealEstateTemplate, GamingTemplate } from './WebsiteTemplates';
 
 const XIcon = ({ className }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -84,6 +84,12 @@ export const PublicWebsiteViewer = ({ config }) => {
                     case 'technology': return <TechnologyTemplate {...tmplProps} />;
                     case 'football': return <FootballTemplate {...tmplProps} />;
                     case 'betting': return <BettingTemplate {...tmplProps} />;
+                    case 'corporate': return <CorporateTemplate {...tmplProps} />;
+                    case 'creative': return <CreativeTemplate {...tmplProps} />;
+                    case 'fitness': return <FitnessTemplate {...tmplProps} />;
+                    case 'portfolio': return <PortfolioTemplate {...tmplProps} />;
+                    case 'realestate': return <RealEstateTemplate {...tmplProps} />;
+                    case 'gaming': return <GamingTemplate {...tmplProps} />;
                     case 'classic':
                     default:
                         return <ClassicTemplate {...tmplProps} />;

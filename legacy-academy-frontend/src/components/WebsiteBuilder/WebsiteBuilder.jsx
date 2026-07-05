@@ -4,7 +4,7 @@ import * as Icons from 'lucide-react';
 import { useTranslation } from '../../translations';
 import axios from '../../api';
 import { simulateAIGeneration } from './aiSimulator';
-import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate } from './WebsiteTemplates';
+import { ClassicTemplate, NewspaperTemplate, RestaurantTemplate, TechnologyTemplate, FootballTemplate, BettingTemplate, CorporateTemplate, CreativeTemplate, FitnessTemplate, PortfolioTemplate, RealEstateTemplate, GamingTemplate } from './WebsiteTemplates';
 const XIcon = ({ className }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -591,7 +591,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Website Template</label>
                             <div className="grid grid-cols-2 gap-2 mb-6">
-                                {['classic', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting'].map(tmpl => (
+                                {['classic', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting', 'portfolio', 'realestate', 'gaming'].map(tmpl => (
                                     <button
                                         key={tmpl}
                                         onClick={() => updateConfig('template', tmpl)}
@@ -678,6 +678,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 case 'technology': return <TechnologyTemplate {...tmplProps} />;
                                 case 'football': return <FootballTemplate {...tmplProps} />;
                                 case 'betting': return <BettingTemplate {...tmplProps} />;
+                                case 'corporate': return <CorporateTemplate {...tmplProps} />;
+                                case 'creative': return <CreativeTemplate {...tmplProps} />;
+                                case 'fitness': return <FitnessTemplate {...tmplProps} />;
+                                case 'portfolio': return <PortfolioTemplate {...tmplProps} />;
+                                case 'realestate': return <RealEstateTemplate {...tmplProps} />;
+                                case 'gaming': return <GamingTemplate {...tmplProps} />;
                                 case 'classic':
                                 default:
                                     return <ClassicTemplate {...tmplProps} />;
