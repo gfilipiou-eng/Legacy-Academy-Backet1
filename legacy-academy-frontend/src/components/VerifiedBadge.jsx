@@ -218,29 +218,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         return <SimpleInstaBadge className={className} fill="#EAB308" tickFill="#000" />;
     };
 
-    const team = user?.settings?.footballTeam;
-
-    if (!team || hideFootball) {
-        return renderMainBadge();
-    }
-
-    return (
-        <span className="inline-flex flex-nowrap whitespace-nowrap items-center gap-1.5 shrink-0 align-middle">
-            {renderMainBadge()}
-            <span 
-                className={`${className} inline-flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95`} 
-                title={`Supporter of ${team.strTeam}`}
-                onClick={(e) => { e.stopPropagation(); alert(`Fan of ${team.strTeam} ⚽`); }}
-            >
-                <img src={team.strBadge} alt={team.strTeam} className="w-full h-full object-contain drop-shadow-md scale-150" />
-            </span>
-            {showFootballText && (
-                <span className="text-[11px] font-bold tracking-wide text-white/90 bg-white/10 px-1.5 py-0.5 rounded-md whitespace-nowrap">
-                    {team.strTeam}
-                </span>
-            )}
-        </span>
-    );
+    return renderMainBadge();
 };
 
 export const AvatarFounderBadge = ({ className = "w-4 h-4 sm:w-5 sm:h-5" }) => (
