@@ -593,7 +593,11 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
 
     return (
         <div 
-            className={`group inline-flex items-center rounded-full transition-all duration-300 select-none relative overflow-hidden bg-neutral-900/60 border border-white/5 ${className}`}
+            onClick={(e) => {
+                e.stopPropagation();
+                window.location.href = founderAffiliationHref(normalizedUsername);
+            }}
+            className={`group inline-flex items-center rounded-full transition-all duration-300 cursor-pointer select-none relative overflow-hidden bg-neutral-900/60 hover:bg-neutral-800/80 border border-white/5 hover:border-white/10 ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
             <div className="relative flex items-center gap-2.5 pl-1 pr-4 py-1 rounded-full w-full h-full z-10">
