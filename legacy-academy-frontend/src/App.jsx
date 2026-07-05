@@ -2272,7 +2272,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
             )}
 
             <div className="relative shrink-0 mt-1">
-                <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 relative group-hover:scale-105 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 relative transition-transform duration-300">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
                 </div>
                 <div className={`absolute -bottom-1 -right-1 ${config.color} rounded-full p-1 border-2 border-black shadow-lg z-10`}>
@@ -2356,7 +2356,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
             {/* CURRENT USER ADD STORY */}
             <div onClick={onAddStory} className={`flex flex-col cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-white/20 shadow-lg transition-all`}>
                 <div className="h-[65%] w-full overflow-hidden">
-                    <ProfileAvatar user={user} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" key={imgKey} cacheKey={imgKey} />
+                    <ProfileAvatar user={user} className="object-cover w-full h-full transition-transform duration-300" key={imgKey} cacheKey={imgKey} />
                 </div>
                 <div className="h-[35%] w-full flex flex-col items-center justify-end pb-2.5 relative bg-[#181818]">
                     <div className="absolute -top-[14px] w-[28px] h-[28px] bg-[#0095f6] text-white rounded-full border-[3px] border-[#181818] flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-md">
@@ -2392,12 +2392,12 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         {hasStoryMedia && storyMediaUrl ? (
                             <img 
                                 src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
-                                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" 
+                                className="w-full h-full object-cover object-center transition-transform duration-500" 
                                 alt="" 
                                 onError={(e) => { e.target.style.display = 'none'; }} 
                             />
                         ) : (
-                            <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
+                            <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center transition-transform duration-500`}>
                                 <span className="text-white text-[12px] sm:text-[13px] font-bold text-center break-words line-clamp-5 leading-snug drop-shadow-md">
                                     {getPostTextPreview(s.desc, 100)}
                                 </span>
