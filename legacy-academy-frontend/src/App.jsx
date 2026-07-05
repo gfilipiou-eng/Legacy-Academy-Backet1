@@ -2348,23 +2348,23 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
 const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     const { t } = useTranslation(user);
-    const storySizeClass = 'w-[68px] h-[68px] sm:w-[72px] sm:h-[72px]';
+    const storyCardClass = 'w-[100px] h-[150px] sm:w-[110px] sm:h-[165px]';
     return (
-        <div className="flex gap-4 overflow-x-auto no-scrollbar py-3 px-4 border-b border-white/5 bg-transparent">
+        <div className="flex gap-3 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-transparent">
             {/* CURRENT USER ADD STORY */}
-            <div onClick={onAddStory} className="flex flex-col items-center gap-1 cursor-pointer shrink-0">
-                <div className={`${storySizeClass} rounded-full relative group`}>
-                    <div className="w-full h-full rounded-full overflow-hidden bg-[#111]">
-                        <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
-                    </div>
-                    <div className="absolute bottom-0 right-0 w-[22px] h-[22px] bg-[#0095f6] text-white rounded-full border-[3px] border-black flex items-center justify-center z-10 group-hover:scale-110 transition-transform">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+            <div onClick={onAddStory} className={`flex flex-col cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-white/20 shadow-lg transition-all`}>
+                <div className="h-[65%] w-full overflow-hidden">
+                    <ProfileAvatar user={user} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" key={imgKey} cacheKey={imgKey} />
+                </div>
+                <div className="h-[35%] w-full flex flex-col items-center justify-end pb-2.5 relative bg-[#181818]">
+                    <div className="absolute -top-[14px] w-[28px] h-[28px] bg-[#0095f6] text-white rounded-full border-[3px] border-[#181818] flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-md">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                     </div>
+                    <span className="text-[11px] font-medium text-white px-1 text-center truncate w-full">{t('YOUR_STORY') || 'Create Story'}</span>
                 </div>
-                <span className="text-[11px] text-gray-400 mt-1 max-w-[72px] truncate text-center">{t('YOUR_STORY') || 'Your story'}</span>
             </div>
 
             {stories && stories.map((s, i) => {
@@ -2375,31 +2375,37 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const storyMediaUrl = hasStoryMedia ? (s.thumbnailUrl || s.image || s.videoUrl) : null;
 
                 return (
-                    <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1 cursor-pointer shrink-0 group">
-                        <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] via-[#d62976] to-[#962fbf] relative transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200`}>
-                            <div className="w-full h-full rounded-full overflow-hidden bg-black border-[2.5px] border-black">
-                                {hasStoryMedia && storyMediaUrl ? (
-                                    <img 
-                                        src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
-                                        className="w-full h-full object-cover object-center" 
-                                        alt="" 
-                                        onError={(e) => { e.target.style.display = 'none'; }} 
-                                    />
-                                ) : (
-                                    <div className="w-full h-full bg-[#222] p-1.5 flex items-center justify-center">
-                                        <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
-                                            {getPostTextPreview(s.desc, 48)}
-                                        </span>
-                                    </div>
-                                )}
+                    <div key={s._id || i} onClick={() => onViewStory(s)} className={`cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg`}>
+                        {hasStoryMedia && storyMediaUrl ? (
+                            <img 
+                                src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
+                                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" 
+                                alt="" 
+                                onError={(e) => { e.target.style.display = 'none'; }} 
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#111] p-2 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <span className="text-white/90 text-[10px] font-medium text-center break-words line-clamp-6 leading-tight">
+                                    {getPostTextPreview(s.desc, 80)}
+                                </span>
                             </div>
-                            {(isNativeVideo || isYT) && (
-                                <div className="absolute bottom-0 right-0 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center border-2 border-black z-10">
-                                    <Icons.Play className="w-2.5 h-2.5 fill-black pl-[1px]" />
-                                </div>
-                            )}
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
+                        
+                        {/* Profile Avatar overlay */}
+                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-black">
+                            <ProfileAvatar user={s.author} className="w-full h-full object-cover" />
                         </div>
-                        <span className="text-[11px] text-gray-200 mt-1 max-w-[72px] truncate text-center group-hover:text-white transition-colors">{authorName}</span>
+
+                        {(isNativeVideo || isYT) && (
+                            <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center justify-center z-10 shadow-sm">
+                                <Icons.Play className="w-3 h-3 fill-white pl-[1px]" />
+                            </div>
+                        )}
+                        
+                        <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 pointer-events-none">
+                            <span className="text-[12px] font-medium text-white truncate block drop-shadow-md">{authorName}</span>
+                        </div>
                     </div>
                 );
             })}
