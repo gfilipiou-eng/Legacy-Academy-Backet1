@@ -63,7 +63,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         else if (effectiveBadgeColor === 'founder_gold'){ isSolid = true; solidColor = '#e6c34f'; checkColor = '#000000'; }
         else if (effectiveBadgeColor === 'x_blue')      { isSolid = true; solidColor = '#1D9BF0'; checkColor = '#000000'; }
         else if (effectiveBadgeColor === 'ig_blue')     { isSolid = true; solidColor = '#0095f6'; checkColor = '#000000'; }
-        else if (['metal-blue', 'obsidian-gold', 'liquid-gold', 'live-gold', 'ig_gold'].includes(effectiveBadgeColor)) {
+        else if (['metal-blue', 'liquid-gold', 'live-gold'].includes(effectiveBadgeColor)) {
             isMetallic = true;
         }
     }
@@ -75,11 +75,12 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         const isIgGold = effectiveBadgeColor === 'ig_gold';
         return (
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
-                <circle cx="20" cy="20" r="12" fill={isIgGold ? "#000000" : "#000000"} />
+                {/* Black background so the tick cutout shows as black */}
+                <circle cx="20" cy="20" r="20" fill="#000000" />
                 {isIgGold ? (
                     <>
                         <defs>
-                            <linearGradient id="founderGoldGradInsta" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient id="igGoldBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#FFF7D6" />
                                 <stop offset="25%" stopColor="#FDE047" />
                                 <stop offset="50%" stopColor="#EAB308" />
@@ -87,7 +88,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                                 <stop offset="100%" stopColor="#854D0E" />
                             </linearGradient>
                         </defs>
-                        <path fill="url(#founderGoldGradInsta)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                        <path fill="url(#igGoldBadgeGrad)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                     </>
                 ) : (
                     <path fill="rgb(0, 149, 246)" d={INSTA_BADGE_PATH} fillRule="evenodd" />

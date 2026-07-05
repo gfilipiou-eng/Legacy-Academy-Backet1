@@ -4070,14 +4070,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 {[
                                                     { id: 'gold', label: t('BADGE_ROYAL_GOLD', 'Royal Gold'), color: '#FFD700' },
                                                     { id: 'live-gold', label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold'), color: '#F6E27A', isLive: true },
-                                                    { id: 'obsidian-gold', label: t('BADGE_OBSIDIAN_GOLD', 'Obsidian Gold'), color: '#111', ring: '#FFD700' },
                                                     { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid Gold'), color: '#FFDF00' },
                                                     { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon Purple'), color: '#B026FF' },
                                                     { id: 'holographic', label: t('BADGE_HOLO', 'Holographic'), isHolo: true },
                                                     { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Black & White'), color: '#000000', ring: '#ffffff' },
                                                     { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'White & Black'), color: '#FFFFFF', ring: '#000000' },
                                                     { id: 'x_gold', label: t('BADGE_X_GOLD', 'X Gold'), color: '#e6c34f' },
-                                                    { id: 'ig_gold', label: t('BADGE_IG_GOLD', 'IG Gold'), isGradient: true, gradient: 'linear-gradient(45deg, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)' }
+                                                    { id: 'ig_gold', label: t('BADGE_IG_GOLD', 'IG Gold ✦'), isIgGold: true }
                                                 ].map(b => (
                                                     <button
                                                         key={b.id}
@@ -4091,8 +4090,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0 animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }} />
                                                         ) : b.isHolo ? (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
-                                                        ) : b.isGradient ? (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: b.gradient }} />
+                                                        ) : b.isIgGold ? (
+                                                            <svg viewBox="0 0 40 40" className="w-4 h-4 shrink-0">
+                                                                <circle cx="20" cy="20" r="12" fill="#000" />
+                                                                <defs><linearGradient id="igGoldPreview" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FFF7D6" /><stop offset="50%" stopColor="#EAB308" /><stop offset="100%" stopColor="#854D0E" /></linearGradient></defs>
+                                                                <path fill="url(#igGoldPreview)" d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fillRule="evenodd" />
+                                                            </svg>
                                                         ) : b.ring ? (
                                                             <div className="w-3.5 h-3.5 rounded-full shrink-0 border-[1.5px]" style={{ backgroundColor: b.color, borderColor: b.ring }} />
                                                         ) : (
