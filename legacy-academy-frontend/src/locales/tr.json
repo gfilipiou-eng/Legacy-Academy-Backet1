@@ -154,7 +154,7 @@
   "YOUTUBE_PH": "YouTube URL (isteğe bağlı)",
   "YOUTUBE_NOTE": "Not: YouTube videoları 20 dakika veya daha kısa olmalıdır.",
   "ADD_MEDIA": "Medya ekle",
-  "ADD_STORY": "Storyline'a ekle",
+  "ADD_STORY": "Storyline'a Ekle",
   "STORY_DURATION": "24S İÇİNDE KAYBOLUR",
   "POST_STORY": "HİKAYE PAYLAŞ",
   "STATUS_FOLLOWING": "TAKİP EDİYOR",
@@ -620,5 +620,7 @@
   "BUBBLES_PLACEHOLDER": "Baloncuğunda ne var?",
   "BUBBLES_BLOWING": "Üfleniyor...",
   "BUBBLES_BLOW_BTN": "Baloncuk Üfle 🫧",
-  "YOUR_STORY": "HİKAYEN"
+  "YOUR_STORY": "Storyline'a Ekle",
+  "ACTIVE_DEVICES": "Aktif Cihazlar",
+  "SESSION_MONITORING": "Oturum izleme"
 }

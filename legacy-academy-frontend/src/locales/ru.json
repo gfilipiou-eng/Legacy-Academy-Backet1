@@ -154,7 +154,7 @@
   "YOUTUBE_PH": "YouTube URL (необязательно)",
   "YOUTUBE_NOTE": "Примечание: видео на YouTube должны быть не длиннее 20 минут.",
   "ADD_MEDIA": "Добавить медиа",
-  "ADD_STORY": "В сюжетную линию",
+  "ADD_STORY": "В Storyline",
   "STORY_DURATION": "ИСЧЕЗНЕТ ЧЕРЕЗ 24Ч",
   "POST_STORY": "ОПУБЛИКОВАТЬ ИСТОРИЮ",
   "STATUS_FOLLOWING": "ПОДПИСАН",
@@ -620,5 +620,7 @@
   "BUBBLES_PLACEHOLDER": "Что в твоем пузыре?",
   "BUBBLES_BLOWING": "Надуваем...",
   "BUBBLES_BLOW_BTN": "Надуть Пузырь 🫧",
-  "YOUR_STORY": "ТВОЯ ИСТОРИЯ"
+  "YOUR_STORY": "В Storyline",
+  "ACTIVE_DEVICES": "Активные устройства",
+  "SESSION_MONITORING": "Мониторинг сеансов"
 }
