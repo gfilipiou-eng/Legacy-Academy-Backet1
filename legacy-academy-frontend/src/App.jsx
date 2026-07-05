@@ -3513,27 +3513,30 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="w-full relative grid grid-cols-[minmax(0,1fr)_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden gap-2">
-                                        <input
-                                            id="chat-input"
-                                            name="chat-message"
-                                            type="text"
-                                            value={inputText}
-                                            onChange={(e) => {
-                                                let val = e.target.value;
-                                                if (isPhonetic) {
-                                                    const pos = e.target.selectionStart;
-                                                    const char = val.slice(pos - 1, pos);
-                                                    if (GREEK_PHONETIC[char]) {
-                                                        val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
+                                    <div className="w-full relative grid grid-cols-[minmax(0,1fr)_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 transition-all duration-300 group overflow-hidden gap-2">
+                                        <div className="min-w-0 w-full overflow-hidden">
+                                            <input
+                                                id="chat-input"
+                                                name="chat-message"
+                                                type="text"
+                                                value={inputText}
+                                                onChange={(e) => {
+                                                    let val = e.target.value;
+                                                    if (isPhonetic) {
+                                                        const pos = e.target.selectionStart;
+                                                        const char = val.slice(pos - 1, pos);
+                                                        if (GREEK_PHONETIC[char]) {
+                                                            val = val.slice(0, pos - 1) + GREEK_PHONETIC[char] + val.slice(pos);
+                                                        }
                                                     }
-                                                }
-                                                setInputText(val);
-                                            }}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                            placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                            className={`w-full min-w-0 bg-transparent py-2.5 text-[16px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
-                                        />
+                                                    setInputText(val);
+                                                }}
+                                                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                                placeholder={isRecording ? t('RECORDING') : "Send a message..."}
+                                                style={{ fontSize: '16px' }}
+                                                className={`w-full min-w-0 bg-transparent py-2.5 text-base text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
+                                            />
+                                        </div>
                                         <div className="flex items-center gap-2 justify-end">
                                             {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
                                             <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
