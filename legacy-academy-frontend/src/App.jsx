@@ -11293,8 +11293,8 @@ const App = () => {
                                                     className="flex items-center gap-2 pb-2.5 font-black text-[11px] sm:text-[12px] uppercase tracking-wider text-white hover:text-white/80 transition-colors"
                                                 >
                                                     {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('NEWEST', 'Newest')}</>}
-                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> Hashtags</>}
-                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">18+ NSFW</span></>}
+                                                    {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> {t('HASHTAGS', 'Hashtags')}</>}
+                                                    {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">{t('NSFW_18_PLUS', '18+ NSFW')}</span></>}
                                                     {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Popular')}</>}
                                                     {feedSortOrder === 'images' && <><Icons.Image className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('IMAGES', 'Images')}</>}
                                                     {feedSortOrder === 'videos' && <><Icons.Video className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('VIDEOS', 'Videos')}</>}
@@ -11315,8 +11315,8 @@ const App = () => {
                                                             {[
                                                                 { id: 'bubbles', label: t('BUBBLES', 'Thought Bubbles'), Icon: Icons.ThoughtBubble, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
                                                                 { id: 'newest', label: t('NEWEST', 'Newest'), Icon: Icons.Sparkles },
-                                                                { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
-                                                                { id: 'nsfw18plus', label: '18+ NSFW', Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
+                                                                { id: 'hashtags', label: t('HASHTAGS', 'Hashtags'), Icon: Icons.Hash },
+                                                                { id: 'nsfw18plus', label: t('NSFW_18_PLUS', '18+ NSFW'), Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
                                                                 { id: 'popular', label: t('POPULAR', 'Popular'), Icon: Icons.TrendingUp },
                                                                 { id: 'oldest', label: t('OLDEST', 'Oldest'), Icon: Icons.Clock }
                                                             ].map(opt => {
