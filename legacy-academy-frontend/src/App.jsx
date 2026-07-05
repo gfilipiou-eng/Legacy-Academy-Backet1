@@ -134,22 +134,23 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                 // SAVE CREDITS: Use 'q_auto' (Balanced) for high visual fidelity with storage savings
                 // Increased widths to avoid pixelation on high-PPI displays
                 if (isPoster && isVideo) {
-                    transform = `so_0.0,f_auto,q_auto,w_800,c_limit`;
+                    transform = `so_0.0,f_auto,q_auto:best,w_1200,c_limit`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.jpg');
                 } else if (isAvatar && isVideo) {
-                    // Animated avatars: WebP (animated) + 350px
-                    transform = `w_350,h_350,c_fill,so_0,eo_2,q_auto,f_webp,fl_animated`;
+                    // Animated avatars: WebP (animated) + 500px
+                    transform = `w_500,h_500,c_fill,so_0,eo_2,q_auto:best,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // 600px + q_auto:best for maximum quality as requested
-                    transform = `w_600,h_600,c_fill,g_face,q_auto:best,f_auto`;
+                    // 800px + q_auto:best for sharp avatars on Retina / desktop
+                    transform = `w_800,h_800,c_fill,g_face,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
-                    transform = `w_2000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                    transform = `w_3000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
                 } else if (width && !isNaN(width)) {
-                    transform = `w_${Math.min(width, 1200)},c_limit,q_auto,${isVideo ? 'vc_auto' : 'f_auto'}`;
+                    transform = `w_${Math.min(width, 2400)},c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
                 } else {
-                    transform = `c_limit,w_1920,q_auto:best,f_auto`;
+                    // Default: 2400px max, best quality — crisp on all monitors
+                    transform = `c_limit,w_2400,q_auto:best,f_auto`;
                 }
 
                 url = parts[0] + '/upload/' + transform + '/' + parts[1];

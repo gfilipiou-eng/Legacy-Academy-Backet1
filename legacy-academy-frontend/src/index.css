@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -48,6 +48,20 @@ body {
   position: relative;
   transition: background-color 0.3s ease;
 }
+
+/* ===== GLOBAL IMAGE QUALITY — No pixelation on desktop ===== */
+img, video {
+  image-rendering: -webkit-optimize-contrast; /* Safari / older Webkit */
+  image-rendering: crisp-edges;
+  image-rendering: high-quality;
+}
+
+@supports (image-rendering: smooth) {
+  img, video {
+    image-rendering: smooth;
+  }
+}
+
 
 body.bg-dark {
   --app-bg: #000000;
