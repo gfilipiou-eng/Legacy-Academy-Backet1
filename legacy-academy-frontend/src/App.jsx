@@ -2557,7 +2557,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
     const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
     const metaGapClass = compact ? 'gap-1.5 sm:gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer break-words min-w-0 max-w-full' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer break-words min-w-0 max-w-full';
+    const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer truncate shrink min-w-0 max-w-[50%]' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer truncate shrink min-w-0 max-w-[50%]';
     const handleClass = compact ? 'text-sky-100/80 text-[11px] sm:text-[13px] leading-snug break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
     const bodyTextClass = compact ? 'post-card-body-text text-[13px] sm:text-[14px] text-white/95 leading-[1.5] font-normal whitespace-pre-wrap break-words pb-0.5' : 'post-card-body-text text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-normal whitespace-pre-wrap break-words pr-1 pb-1';
     const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
@@ -2693,7 +2693,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
-                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
+                                    <div className="flex flex-nowrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full overflow-hidden">
                                         <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
                                         {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(author)}</span>}
@@ -7072,8 +7072,8 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none uppercase tracking-[0.1em] flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
                                         <span className="profile-headline font-black text-white text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><span className="text-lg sm:text-xl"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} />
+                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><span className="text-lg sm:text-xl"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
                                         <div className="mt-3.5 flex items-center justify-center gap-3 drop-shadow-2xl select-none">
