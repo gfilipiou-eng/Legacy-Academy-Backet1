@@ -8,26 +8,18 @@ async function run() {
         { name: 'aris', url: 'https://en.wikipedia.org/wiki/Aris_Thessaloniki_F.C.' }
     ];
     for (const t of teams) {
-        const res = await fetch(t.url);
+        const res = await fetch(t.url, { headers: { 'User-Agent': 'Bot/1.0' } });
         const html = await res.text();
-        const match = html.match(/src="\/\/upload\.wikimedia\.org\/(wikipedia\/(?:commons|el|en)\/)(?:thumb\/)?([^"]+\.svg)/);
+        const match = html.match(/<table class="infobox[^>]*>.*?src="(\/\/upload\.wikimedia\.org\/wikipedia\/[^"]+)"/is);
         if (match) {
-            const svgUrl = 'https://upload.wikimedia.org/' + match[1] + match[2];
-            console.log(t.name, svgUrl);
-            const svgRes = await fetch(svgUrl);
-            const svgData = await svgRes.text();
-            fs.writeFileSync('src/assets/' + t.name + '.svg', svgData);
+            const fileUrl = 'https:' + match[1];
+            console.log(t.name, fileUrl);
+            const imgRes = await fetch(fileUrl, { headers: { 'User-Agent': 'Bot/1.0' } });
+            const imgData = Buffer.from(await imgRes.arrayBuffer());
+            const ext = fileUrl.endsWith('.svg') ? '.svg' : '.png';
+            fs.writeFileSync('src/assets/' + t.name + ext, imgData);
         } else {
-            const pngMatch = html.match(/src="\/\/upload\.wikimedia\.org\/(wikipedia\/(?:commons|el|en)\/)(?:thumb\/)?([^"]+\.png)/);
-            if(pngMatch) {
-                const pngUrl = 'https://upload.wikimedia.org/' + pngMatch[1] + pngMatch[2];
-                console.log(t.name, pngUrl);
-                const pRes = await fetch(pngUrl);
-                const pData = Buffer.from(await pRes.arrayBuffer());
-                fs.writeFileSync('src/assets/' + t.name + '.png', pData);
-            } else {
-                console.log('Not found for', t.name);
-            }
+            console.log('Not found for', t.name);
         }
     }
 }
