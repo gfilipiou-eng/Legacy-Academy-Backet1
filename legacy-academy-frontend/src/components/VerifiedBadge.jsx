@@ -225,7 +225,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     }
 
     return (
-        <span className="inline-flex items-center gap-1.5 shrink-0 align-middle">
+        <span className="inline-flex flex-nowrap whitespace-nowrap items-center gap-1.5 shrink-0 align-middle">
             {renderMainBadge()}
             <span 
                 className={`${className} inline-flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95`} 
@@ -235,7 +235,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 <img src={team.strBadge} alt={team.strTeam} className="w-full h-full object-contain drop-shadow-md" />
             </span>
             {showFootballText && (
-                <span className="text-[11px] font-bold tracking-wide text-white/90 bg-white/10 px-1.5 py-0.5 rounded-md">
+                <span className="text-[11px] font-bold tracking-wide text-white/90 bg-white/10 px-1.5 py-0.5 rounded-md whitespace-nowrap">
                     {team.strTeam}
                 </span>
             )}
