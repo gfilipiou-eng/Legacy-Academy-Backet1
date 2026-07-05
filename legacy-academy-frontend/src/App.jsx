@@ -7076,10 +7076,10 @@ const ProfileModal = ({
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} showFootballText={true} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
-                                        <div className="mt-4 flex justify-center w-full">
-                                            <div className={`profile-descriptor-badge inline-flex items-center justify-center gap-2.5 rounded-full border px-6 py-2 backdrop-blur-2xl transition-all duration-300 hover:scale-105 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
-                                                <SelectedProfileDescriptorIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                                                <span className="text-xs sm:text-sm font-black uppercase tracking-[0.25em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                        <div className="mt-3 flex justify-center">
+                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
+                                                <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
+                                                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                             </div>
                                         </div>
                                     )}
