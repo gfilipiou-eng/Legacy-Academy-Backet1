@@ -89,21 +89,55 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         );
     }
 
-    // Liquid Gold — rich molten gold
+    // Dynamic Gold — spinning animated aurora gold
     if (effectiveBadgeColor === 'liquid-gold' || effectiveBadgeColor === 'live-gold') {
+        const isLive = effectiveBadgeColor === 'live-gold';
         return (
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
-                    <linearGradient id="vb_liquidGold" x1="0%" y1="100%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#92400E" />
-                        <stop offset="25%" stopColor="#D97706" />
-                        <stop offset="50%" stopColor="#FDE68A" />
-                        <stop offset="75%" stopColor="#F59E0B" />
-                        <stop offset="100%" stopColor="#92400E" />
-                    </linearGradient>
+                    {isLive ? (
+                        <linearGradient id="vb_dynGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#FFFFFF">
+                                <animate attributeName="stopColor" values="#FFFFFF;#FFD700;#FF8C00;#FFD700;#FFFFFF" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="30%" stopColor="#FFD700">
+                                <animate attributeName="stopColor" values="#FFD700;#FF8C00;#FFEC6E;#FF6B00;#FFD700" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="65%" stopColor="#FF8C00">
+                                <animate attributeName="stopColor" values="#FF8C00;#FFEC6E;#FFD700;#FFFFFF;#FF8C00" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="100%" stopColor="#92400E">
+                                <animate attributeName="stopColor" values="#92400E;#D97706;#92400E;#FF8C00;#92400E" dur="2s" repeatCount="indefinite" />
+                            </stop>
+                        </linearGradient>
+                    ) : (
+                        // Liquid Glass Gold
+                        <>
+                            <linearGradient id="vb_liquidGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#FFF9C4" stopOpacity="1" />
+                                <stop offset="20%" stopColor="#FFD700" stopOpacity="0.95" />
+                                <stop offset="45%" stopColor="#F59E0B" stopOpacity="0.9" />
+                                <stop offset="70%" stopColor="#D97706" stopOpacity="0.95" />
+                                <stop offset="100%" stopColor="#92400E" stopOpacity="1" />
+                            </linearGradient>
+                            <linearGradient id="vb_glassSheen" x1="0%" y1="0%" x2="40%" y2="60%">
+                                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.55" />
+                                <stop offset="60%" stopColor="#FFFFFF" stopOpacity="0.05" />
+                                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                            </linearGradient>
+                        </>
+                    )}
                 </defs>
                 <circle cx="20" cy="20" r="11" fill="#000" />
-                <path fill="url(#vb_liquidGold)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                {isLive ? (
+                    <path fill="url(#vb_dynGold)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                ) : (
+                    <>
+                        <path fill="url(#vb_liquidGlass)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                        {/* Glass sheen overlay */}
+                        <path fill="url(#vb_glassSheen)" d={INSTA_BADGE_PATH} fillRule="evenodd" style={{ mixBlendMode: 'screen' }} />
+                    </>
+                )}
             </svg>
         );
     }
@@ -125,34 +159,56 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         );
     }
 
-    // Holographic — animated rainbow
+    // Holographic — animated rainbow with sparkle stars
     if (effectiveBadgeColor === 'holographic') {
         return (
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_holoInsta" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FF0080">
-                            <animate attributeName="stopColor" values="#FF0080;#FFD700;#00FF94;#00C8FF;#A855F7;#FF0080" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#FF0080;#FFD700;#00FF94;#00C8FF;#A855F7;#FF0080" dur="3s" repeatCount="indefinite" />
                         </stop>
                         <stop offset="20%" stopColor="#FF8C00">
-                            <animate attributeName="stopColor" values="#FF8C00;#00FF94;#00C8FF;#A855F7;#FF0080;#FF8C00" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#FF8C00;#00FF94;#00C8FF;#A855F7;#FF0080;#FF8C00" dur="3s" repeatCount="indefinite" />
                         </stop>
                         <stop offset="40%" stopColor="#FFD700">
-                            <animate attributeName="stopColor" values="#FFD700;#00C8FF;#A855F7;#FF0080;#FF8C00;#FFD700" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#FFD700;#00C8FF;#A855F7;#FF0080;#FF8C00;#FFD700" dur="3s" repeatCount="indefinite" />
                         </stop>
                         <stop offset="60%" stopColor="#00FF94">
-                            <animate attributeName="stopColor" values="#00FF94;#A855F7;#FF0080;#FF8C00;#FFD700;#00FF94" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#00FF94;#A855F7;#FF0080;#FF8C00;#FFD700;#00FF94" dur="3s" repeatCount="indefinite" />
                         </stop>
                         <stop offset="80%" stopColor="#00C8FF">
-                            <animate attributeName="stopColor" values="#00C8FF;#FF0080;#FF8C00;#FFD700;#00FF94;#00C8FF" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#00C8FF;#FF0080;#FF8C00;#FFD700;#00FF94;#00C8FF" dur="3s" repeatCount="indefinite" />
                         </stop>
                         <stop offset="100%" stopColor="#A855F7">
-                            <animate attributeName="stopColor" values="#A855F7;#FF8C00;#FFD700;#00FF94;#00C8FF;#A855F7" dur="4s" repeatCount="indefinite" />
+                            <animate attributeName="stopColor" values="#A855F7;#FF8C00;#FFD700;#00FF94;#00C8FF;#A855F7" dur="3s" repeatCount="indefinite" />
                         </stop>
                     </linearGradient>
                 </defs>
                 <circle cx="20" cy="20" r="11" fill="#000" />
-                <path fill="url(#vb_holoInsta)" d={INSTA_BADGE_PATH} fillRule="evenodd" style={{ filter: 'drop-shadow(0 0 2px rgba(168,85,247,0.7))' }} />
+                <path fill="url(#vb_holoInsta)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                {/* Animated sparkle stars */}
+                <g fill="white">
+                    <circle cx="6" cy="8" r="1.2">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                        <animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="33" cy="10" r="1">
+                        <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.5s" repeatCount="indefinite" />
+                        <animate attributeName="r" values="0.3;1.2;0.3" dur="2s" begin="0.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="8" cy="31" r="1.1">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0.9s" repeatCount="indefinite" />
+                        <animate attributeName="r" values="0.4;1.3;0.4" dur="1.8s" begin="0.9s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="34" cy="30" r="0.9">
+                        <animate attributeName="opacity" values="0;1;0" dur="2.2s" begin="0.3s" repeatCount="indefinite" />
+                        <animate attributeName="r" values="0.3;1.1;0.3" dur="2.2s" begin="0.3s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="20" cy="4" r="1">
+                        <animate attributeName="opacity" values="0;1;0" dur="1.6s" begin="1.1s" repeatCount="indefinite" />
+                    </circle>
+                </g>
             </svg>
         );
     }

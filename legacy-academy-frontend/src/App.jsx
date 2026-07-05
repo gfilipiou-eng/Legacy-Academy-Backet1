@@ -4067,7 +4067,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     {user?.role === 'Founder' ? (
                                         <div className="grid grid-cols-3 gap-2">
                                             {[
-                                                { id: 'founder_gold',  label: t('BADGE_ROYAL_GOLD', 'Royal Gold') },
                                                 { id: 'live-gold',     label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold') },
                                                 { id: 'liquid-gold',   label: t('BADGE_LIQUID_GOLD', 'Liquid Gold') },
                                                 { id: 'neon-purple',   label: t('BADGE_PURPLE', 'Neon Purple') },
