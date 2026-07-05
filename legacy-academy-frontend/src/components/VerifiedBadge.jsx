@@ -21,6 +21,183 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
     </svg>
 );
 
+// Elite Illuminati badge — Eye of Providence, animated blink + pulsing green glow
+const IlluminatiBadge = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+        <defs>
+            <clipPath id="vb_illumClip">
+                <path d={INSTA_STAR_PATH} />
+            </clipPath>
+            <linearGradient id="vb_illumTriGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFE566" />
+                <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+            <radialGradient id="vb_illumEyeGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#00FF00" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#004400" stopOpacity="0" />
+            </radialGradient>
+            <filter id="vb_illumGlowF" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="1.2" result="b" />
+                <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+        </defs>
+        <g clipPath="url(#vb_illumClip)">
+            {/* Dark background */}
+            <rect x="0" y="0" width="40" height="40" fill="#060810" />
+            {/* Subtle dark bg gradient */}
+            <circle cx="20" cy="22" r="18" fill="#0D1530" />
+
+            {/* Pulsing eye glow */}
+            <ellipse cx="20" cy="22" rx="8" ry="6" fill="url(#vb_illumEyeGlow)">
+                <animate attributeName="rx" values="6;10;6" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="ry" values="5;8;5" dur="2.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" />
+            </ellipse>
+
+            {/* Pyramid / Triangle */}
+            <polygon points="20,9 33,31 7,31" fill="none" stroke="url(#vb_illumTriGold)" strokeWidth="1.6" filter="url(#vb_illumGlowF)">
+                <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
+            </polygon>
+            {/* Pyramid inner horizontal line (eye level) */}
+            <line x1="10.5" y1="22" x2="29.5" y2="22" stroke="url(#vb_illumTriGold)" strokeWidth="0.7" strokeOpacity="0.4" />
+
+            {/* Light rays from top of pyramid */}
+            {[[-18,3],[-10,1],[0,-2],[10,1],[18,3]].map(([dx, dy], i) => (
+                <line key={i}
+                    x1={20 + dx * 0.4} y1={9 + dy * 0.4}
+                    x2={20 + dx} y2={9 + dy - 3}
+                    stroke="#FFE566" strokeWidth="0.8" strokeOpacity="0.6"
+                    strokeLinecap="round">
+                    <animate attributeName="stroke-opacity" values="0.3;0.9;0.3" dur="2.5s" begin={`${i * 0.12}s`} repeatCount="indefinite" />
+                </line>
+            ))}
+
+            {/* Eye white — animates open/close */}
+            <ellipse cx="20" cy="22" rx="5.5" ry="3.8" fill="#F5FFE8" filter="url(#vb_illumGlowF)">
+                {/* Blink: open most of time, close briefly */}
+                <animate attributeName="ry" values="3.8;3.8;3.8;0.15;3.8;3.8" dur="5s" repeatCount="indefinite" keyTimes="0;0.5;0.7;0.75;0.8;1" />
+            </ellipse>
+
+            {/* Iris — green */}
+            <circle cx="20" cy="22" r="2.6" fill="#00CC44">
+                <animate attributeName="r" values="2.6;2.6;0.05;2.6;2.6" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
+                <animate attributeName="fill" values="#00CC44;#00FF55;#00CC44" dur="2.5s" repeatCount="indefinite" />
+            </circle>
+            {/* Pupil — black */}
+            <circle cx="20" cy="22" r="1.3" fill="#000000">
+                <animate attributeName="r" values="1.3;1.3;0.02;1.3;1.3" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
+            </circle>
+            {/* Eye highlight */}
+            <circle cx="21.5" cy="21" r="0.7" fill="white" opacity="0.85">
+                <animate attributeName="opacity" values="0.85;0.85;0;0.85;0.85" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
+            </circle>
+
+            {/* Bottom base glow line */}
+            <line x1="7" y1="31" x2="33" y2="31" stroke="#FFE566" strokeWidth="1" strokeOpacity="0.5">
+                <animate attributeName="stroke-opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite" />
+            </line>
+        </g>
+    </svg>
+);
+// ── MASONIC SYMBOL (Standalone) ──
+const MasonicSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+        <defs>
+            <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFF2A8" />
+                <stop offset="50%" stopColor="#D4AF37" />
+                <stop offset="100%" stopColor="#A07820" />
+            </linearGradient>
+            <filter id="vb_shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1" stdDeviation="1" floodColor="#000" floodOpacity="0.8" />
+            </filter>
+        </defs>
+        <g filter="url(#vb_shadow)">
+            <path d="M20 34 L5 19 L8 16 L20 28 L32 16 L35 19 Z" fill="url(#vb_masonicGold)" />
+            <path d="M20 5 L6 31 L10 31 L20 12 L30 31 L34 31 Z" fill="url(#vb_masonicGold)" />
+            <circle cx="20" cy="7" r="3.5" fill="url(#vb_masonicGold)" />
+            <text x="20" y="24" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="12" fontWeight="bold" fontFamily="Georgia, serif">G</text>
+        </g>
+    </svg>
+);
+
+// ── FOOTBALL SYMBOLS ──
+const PaokSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+        <defs>
+            <clipPath id="paok_shield"><path d="M6 4 L34 4 L34 20 C34 32 20 38 20 38 C20 38 6 32 6 20 Z" /></clipPath>
+        </defs>
+        <g clipPath="url(#paok_shield)">
+            <rect x="0" y="0" width="40" height="40" fill="#000000" />
+            <rect x="8" y="16" width="6" height="24" fill="#FFFFFF" />
+            <rect x="17" y="16" width="6" height="24" fill="#FFFFFF" />
+            <rect x="26" y="16" width="6" height="24" fill="#FFFFFF" />
+            <text x="20" y="13.5" textAnchor="middle" fill="#FFFFFF" fontSize="8" fontWeight="900" fontFamily="Arial, sans-serif" letterSpacing="0.5">ΠΑΟΚ</text>
+        </g>
+        <path d="M6 4 L34 4 L34 20 C34 32 20 38 20 38 C20 38 6 32 6 20 Z" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+    </svg>
+);
+
+const OlympiacosSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+        <circle cx="20" cy="20" r="19" fill="#D30000" stroke="#FFFFFF" strokeWidth="1.5" />
+        <circle cx="20" cy="20" r="13" fill="#FFFFFF" />
+        <path id="oly_arc" d="M 8 20 A 12 12 0 0 1 32 20" fill="none" />
+        <text fill="#FFFFFF" fontSize="4.5" fontWeight="bold" letterSpacing="0.5">
+            <textPath href="#oly_arc" startOffset="50%" textAnchor="middle">ΟΛΥΜΠΙΑΚΟΣ</textPath>
+        </text>
+        <path d="M16 15 C19 12 24 13 25 17 C26 21 23 25 19 26 C16 26 15 24 16 21 C14 20 14 17 16 15 Z" fill="#D30000" />
+    </svg>
+);
+
+const AekSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+        <defs>
+            <clipPath id="aek_shield"><path d="M6 4 L34 4 L34 20 C34 32 20 38 20 38 C20 38 6 32 6 20 Z" /></clipPath>
+            <linearGradient id="aek_gold" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FFF000" />
+                <stop offset="100%" stopColor="#D4AF37" />
+            </linearGradient>
+        </defs>
+        <g clipPath="url(#aek_shield)">
+            <rect x="0" y="0" width="40" height="40" fill="url(#aek_gold)" />
+            <path d="M20 15 L11 12 L11 20 L16 22 L13 29 L20 23 L27 29 L24 22 L29 20 L29 12 Z" fill="#000000" />
+            <path d="M18 9 L20 5 L22 9 Z" fill="#000000" />
+            <circle cx="16" cy="14.5" r="1.5" fill="url(#aek_gold)" />
+            <circle cx="24" cy="14.5" r="1.5" fill="url(#aek_gold)" />
+            <text x="20" y="35" textAnchor="middle" fill="#000000" fontSize="6" fontWeight="900" fontFamily="Arial">A.E.K.</text>
+        </g>
+        <path d="M6 4 L34 4 L34 20 C34 32 20 38 20 38 C20 38 6 32 6 20 Z" fill="none" stroke="#000000" strokeWidth="1.5" />
+    </svg>
+);
+
+const PaoSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+        <circle cx="20" cy="20" r="19" fill="#007A33" stroke="#FFFFFF" strokeWidth="1.5" />
+        <circle cx="20" cy="20" r="16" fill="#FFFFFF" />
+        <g fill="#007A33">
+            <circle cx="20" cy="11.5" r="5" />
+            <circle cx="12.5" cy="21" r="5" />
+            <circle cx="27.5" cy="21" r="5" />
+            <path d="M20 18 L17 33 L23 33 Z" />
+        </g>
+    </svg>
+);
+
+const ArisSymbol = ({ className }) => (
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+        <defs>
+            <clipPath id="aris_shield"><path d="M8 4 L32 4 L32 22 C32 32 20 38 20 38 C20 38 8 32 8 22 Z" /></clipPath>
+        </defs>
+        <g clipPath="url(#aris_shield)">
+            <rect x="0" y="0" width="40" height="40" fill="#FFD700" />
+            <text x="20" y="14" textAnchor="middle" fill="#000000" fontSize="8" fontWeight="900" fontFamily="Arial">ΑΡΗΣ</text>
+            <path d="M14 30 L16 16 C16 16 20 14 24 16 L26 30 L23 22 L17 22 Z" fill="#000000" />
+        </g>
+        <path d="M8 4 L32 4 L32 22 C32 32 20 38 20 38 C20 38 8 32 8 22 Z" fill="none" stroke="#000000" strokeWidth="1.5" />
+    </svg>
+);
+
 const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp }) => {
     if (user?.settings?.showBadge === false) return null;
 
@@ -32,91 +209,31 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         effectiveBadgeColor = isGold ? 'ig_gold' : 'x_blue';
     }
 
+    // ── ELITE ILLUMINATI (Founder only) ──
+    if (effectiveBadgeColor === 'illuminati') {
+        return <IlluminatiBadge className={className} />;
+    }
+
     // ── FOOTBALL BADGES (available for ALL roles) ──
     if (effectiveBadgeColor === 'paok') {
-        return <SimpleInstaBadge className={className} fill="#000000" tickFill="#FFFFFF" />;
+        return <PaokSymbol className={className} />;
     }
     if (effectiveBadgeColor === 'olympiacos') {
-        return (
-            <SimpleInstaBadge className={className} gradientId="vb_olGrad" tickFill="#FFFFFF"
-                gradientDef={
-                    <linearGradient id="vb_olGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FF2A2A" />
-                        <stop offset="100%" stopColor="#8B0000" />
-                    </linearGradient>
-                }
-            />
-        );
+        return <OlympiacosSymbol className={className} />;
     }
     if (effectiveBadgeColor === 'aek') {
-        return (
-            <SimpleInstaBadge className={className} gradientId="vb_aekGrad" tickFill="#000000"
-                gradientDef={
-                    <linearGradient id="vb_aekGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FFE066" />
-                        <stop offset="50%" stopColor="#FFD700" />
-                        <stop offset="100%" stopColor="#B8860B" />
-                    </linearGradient>
-                }
-            />
-        );
+        return <AekSymbol className={className} />;
     }
     if (effectiveBadgeColor === 'panathinaikos') {
-        return (
-            <SimpleInstaBadge className={className} gradientId="vb_paoGrad" tickFill="#FFFFFF"
-                gradientDef={
-                    <linearGradient id="vb_paoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#00A550" />
-                        <stop offset="100%" stopColor="#005C2E" />
-                    </linearGradient>
-                }
-            />
-        );
+        return <PaoSymbol className={className} />;
     }
     if (effectiveBadgeColor === 'aris') {
-        return (
-            <SimpleInstaBadge className={className} gradientId="vb_arisGrad" tickFill="#000000"
-                gradientDef={
-                    <linearGradient id="vb_arisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FFE566" />
-                        <stop offset="100%" stopColor="#E6B800" />
-                    </linearGradient>
-                }
-            />
-        );
+        return <ArisSymbol className={className} />;
     }
 
     // ── MASONIC BADGE (Founder only) ──
     if (effectiveBadgeColor === 'masonic') {
-        return (
-            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
-                <defs>
-                    <clipPath id="vb_masonicClip">
-                        <path d={INSTA_STAR_PATH} />
-                    </clipPath>
-                    <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#E8C84A" />
-                        <stop offset="50%" stopColor="#D4AF37" />
-                        <stop offset="100%" stopColor="#A07820" />
-                    </linearGradient>
-                </defs>
-                <g clipPath="url(#vb_masonicClip)">
-                    {/* Dark navy background */}
-                    <rect x="0" y="0" width="40" height="40" fill="#0A0C18" />
-                    {/* Subtle background glow */}
-                    <circle cx="20" cy="20" r="14" fill="#1A1F3A" />
-                    {/* Square (carpenter's L-square) — bottom layer */}
-                    <path d="M12 29 L12 15 L27 15" stroke="url(#vb_masonicGold)" strokeWidth="2.2" fill="none" strokeLinecap="square" />
-                    {/* Compass legs — top layer */}
-                    <line x1="20" y1="10" x2="12.5" y2="28" stroke="url(#vb_masonicGold)" strokeWidth="2" strokeLinecap="round" />
-                    <line x1="20" y1="10" x2="27.5" y2="28" stroke="url(#vb_masonicGold)" strokeWidth="2" strokeLinecap="round" />
-                    {/* Compass hinge bar */}
-                    <line x1="15" y1="20.5" x2="25" y2="20.5" stroke="url(#vb_masonicGold)" strokeWidth="1.5" strokeLinecap="round" />
-                    {/* G letter */}
-                    <text x="20" y="26" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="9" fontWeight="bold" fontFamily="Georgia, 'Times New Roman', serif">G</text>
-                </g>
-            </svg>
-        );
+        return <MasonicSymbol className={className} />;
     }
 
     // ── USER BADGES ──

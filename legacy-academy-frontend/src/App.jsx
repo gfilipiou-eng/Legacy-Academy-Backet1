@@ -4077,6 +4077,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
                                                     { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
                                                     { id: 'masonic',     label: t('BADGE_MASONIC', 'Masonic') },
+                                                    { id: 'illuminati',  label: t('BADGE_ILLUMINATI', 'Elite Eye') },
                                                 ].map(b => {
                                                     const isSelected = badgeColor === b.id;
                                                     return (
