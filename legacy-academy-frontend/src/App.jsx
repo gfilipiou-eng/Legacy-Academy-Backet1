@@ -3799,18 +3799,25 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'footballTeam') payload = { settings: { footballTeam: val } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
+            
+            // OPTIMISTIC UPDATE FOR ALL SETTINGS
+            if (payload && payload.settings) {
+                const baseUserForOptimistic = latestUserRef.current || user || {};
+                const nextUser = {
+                    ...baseUserForOptimistic,
+                    settings: {
+                        ...(baseUserForOptimistic?.settings || {}),
+                        ...(payload.settings || {})
+                    }
+                };
+                latestUserRef.current = nextUser;
+                onUpdateUser?.(nextUser);
+            }
+
             if (key === 'showProfileShareButton') {
                 const nextToggleValue = Boolean(val);
-                const baseUser = latestUserRef.current || user || {};
                 pendingShareToggleRef.current = nextToggleValue;
                 setShowProfileShareButton(nextToggleValue);
-                onUpdateUser?.({
-                    ...baseUser,
-                    settings: {
-                        ...(baseUser?.settings || {}),
-                        showProfileShareButton: nextToggleValue
-                    }
-                });
             }
             const res = await axios.put('/users/settings', payload);
             const baseUser = latestUserRef.current || user || {};
