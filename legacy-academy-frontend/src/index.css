@@ -2332,9 +2332,11 @@ button:active,
 
 /* Premium Glassmorphic Identity Descriptors */
 .descriptor-entrepreneur {
-  color: #ff9f57 !important;
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.16) 0%, rgba(249, 115, 22, 0.06) 100%) !important;
-  border-color: rgba(249, 115, 22, 0.35) !important;
+  color: #00ffaa !important;
+  background: linear-gradient(135deg, rgba(0, 255, 170, 0.15) 0%, rgba(0, 150, 100, 0.05) 100%) !important;
+  border-color: rgba(0, 255, 170, 0.4) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.2) !important;
+  text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .descriptor-creator {
@@ -2371,9 +2373,10 @@ button:active,
 /* Micro-animations and Highlight on Hover */
 @media (hover: hover) {
   .descriptor-entrepreneur:hover {
-    border-color: rgba(249, 115, 22, 0.5) !important;
-    transform: translateY(-1px) scale(1.02);
-  }
+  border-color: rgba(0, 255, 170, 0.8) !important;
+  box-shadow: 0 0 25px rgba(0, 255, 170, 0.4) !important;
+  transform: translateY(-2px) scale(1.05);
+}
   .descriptor-creator:hover {
     border-color: rgba(56, 189, 248, 0.5) !important;
     transform: translateY(-1px) scale(1.02);

@@ -4094,8 +4094,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
                                                     { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
                                                     { id: 'masonic',     label: t('BADGE_MASONIC', 'Masonic') },
-                                                    { id: 'illuminati',  label: t('BADGE_ILLUMINATI', 'Elite Eye') },
-                                                ].map(b => {
+                                                    ].map(b => {
                                                     const isSelected = badgeColor === b.id;
                                                     return (
                                                         <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
@@ -6931,10 +6930,10 @@ const ProfileModal = ({
                                 const file = e.target.files[0];
                                 if (file) {
                                     // Ο Founder έχει όριο 500MB, οι άλλοι έχουν 90MB
-                                    const maxUploadSize = displayUser?.role === 'Founder' ? 500 * 1024 * 1024 : 90 * 1024 * 1024;
+                                    const maxUploadSize = 50000 * 1024 * 1024;
                                     
                                     if (file.size > maxUploadSize) { 
-                                        alert(displayUser?.role === 'Founder' ? "File too large. Max 500MB for Founders" : "File too large. Max 90MB"); 
+                                        alert('File too large. Please keep under 50GB'); 
                                         return e.target.value = ''; 
                                     }
                                     
@@ -7590,10 +7589,10 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
         if (!file) return;
 
         // Ο Founder έχει όριο 500MB, οι άλλοι 90MB (όπως και στο profile cover)
-        const maxUploadSize = user?.role === 'Founder' ? 500 * 1024 * 1024 : 90 * 1024 * 1024;
+        const maxUploadSize = 50000 * 1024 * 1024;
         
         if (file.size > maxUploadSize) {
-            alert(user?.role === 'Founder' ? "File too large. Max 500MB for Founders" : "File too large. Max 90MB");
+            alert('File too large. Please keep under 50GB');
             e.target.value = '';
             return;
         }
@@ -11431,7 +11430,7 @@ const App = () => {
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
                                                     <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white z-10 pointer-events-none drop-shadow-[0_1px_6px_rgba(255,255,255,0.18)]" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full liquid-glass-control rounded-2xl py-4 pl-12 pr-4 font-semibold tracking-[0.01em] outline-none focus:ring-1 focus:ring-white/30 text-white placeholder:text-white/50 transition-all duration-300 touch-manipulation" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl py-4 pl-12 pr-4 font-black tracking-wider outline-none focus:ring-2 focus:ring-[var(--gold-primary)] text-white placeholder:text-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] focus:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300 touch-manipulation" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
