@@ -4130,11 +4130,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         </div>
                                         
                                         {footballTeam ? (
-                                            <div className="relative p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center gap-4">
-                                                <img src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-12 h-12 object-contain drop-shadow-md" />
+                                            <div className="relative p-5 rounded-2xl border border-white/[0.1] bg-white/[0.03] flex items-center gap-5 shadow-lg backdrop-blur-md">
+                                                <img src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl transition-transform hover:scale-110" />
                                                 <div>
-                                                    <div className="text-white font-bold tracking-wide">{footballTeam.strTeam}</div>
-                                                    <div className="text-gray-400 text-xs">Your designated supporter team</div>
+                                                    <div className="text-white font-black text-base sm:text-lg tracking-wider drop-shadow-md">{footballTeam.strTeam}</div>
+                                                    <div className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Your designated supporter team</div>
                                                 </div>
                                             </div>
                                         ) : (
@@ -7068,10 +7068,10 @@ const ProfileModal = ({
 
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
-                                    <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
-                                        <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><span className="text-base sm:text-lg"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
-                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} showFootballText={true} />
+                                    <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
+                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
+                                        {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><span className="text-lg sm:text-xl"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
+                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} showFootballText={true} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
                                         <div className="mt-3 flex justify-center">
@@ -7086,9 +7086,16 @@ const ProfileModal = ({
                                             <FounderAffiliationBadge username={displayFounderAffiliation} size="sm" maxTextWidth="max-w-none" className="max-w-full" />
                                         </div>
                                     )}
-                                    <div className="profile-handle-row text-gray-400 text-sm font-bold mt-1.5 flex items-center gap-2">
-                                        @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
-                                        <div className={`w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} title={isUserOnline(displayUser, currentUser) ? t('ONLINE') : t('OFFLINE')} />
+                                    <div className="profile-handle-row flex flex-col items-center gap-2 mt-1.5">
+                                        <div className="text-gray-400 text-sm font-bold">
+                                            @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
+                                        </div>
+                                        <div className={`mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 ${isUserOnline(displayUser, currentUser) ? 'bg-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-white/5'}`}>
+                                            <div className={`w-2 h-2 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+                                            <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest ${isUserOnline(displayUser, currentUser) ? 'text-green-400' : 'text-gray-400'}`}>
+                                                {isUserOnline(displayUser, currentUser) ? t('ONLINE', 'ONLINE') : t('OFFLINE', 'OFFLINE')}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
