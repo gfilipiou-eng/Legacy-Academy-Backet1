@@ -2687,3 +2687,12 @@ textarea:focus {
   -webkit-backface-visibility: hidden;
   isolation: isolate;
 }
+
+ @ k e y f r a m e s   c y b e r R a i n   { 
+     0 %   {   t r a n s f o r m :   t r a n s l a t e Y ( - 1 0 0 v h ) ;   o p a c i t y :   0 ;   } 
+     1 0 %   {   o p a c i t y :   1 ;   } 
+     9 0 %   {   o p a c i t y :   1 ;   } 
+     1 0 0 %   {   t r a n s f o r m :   t r a n s l a t e Y ( 1 0 0 v h ) ;   o p a c i t y :   0 ;   } 
+ } 
+  
+ 

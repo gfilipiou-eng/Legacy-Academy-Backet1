@@ -3325,28 +3325,41 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
                 {/* CHAT WINDOW */}
                 <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
-                    {/* Cosmic Background */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                        {/* Animated Stars */}
+                    {/* Tech Space Live Background */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
+                        {/* Deep Space Nebula */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_30%,rgba(6,182,212,0.15)_0%,transparent_40%),radial-gradient(circle_at_90%_80%,rgba(139,92,246,0.15)_0%,transparent_40%),radial-gradient(circle_at_50%_50%,rgba(249,115,22,0.05)_0%,transparent_60%)] animate-pulse duration-[10s]" />
+                        
+                        {/* Cyber Grid */}
+                        <div 
+                            className="absolute inset-0 opacity-[0.03]"
+                            style={{
+                                backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+                                backgroundSize: '30px 30px',
+                                transform: 'perspective(500px) rotateX(60deg) scale(2.5) translateY(-50%)',
+                                transformOrigin: 'top center'
+                            }}
+                        />
+
+                        {/* Animated Tech Particles */}
                         <div className="absolute inset-0">
-                            {Array.from({ length: 50 }).map((_, i) => (
+                            {Array.from({ length: 40 }).map((_, i) => (
                                 <div 
                                     key={i}
-                                    className="absolute rounded-full bg-white"
+                                    className="absolute bg-cyan-400"
                                     style={{
                                         left: `${Math.random() * 100}%`,
                                         top: `${Math.random() * 100}%`,
-                                        width: `${Math.random() * 2 + 1}px`,
-                                        height: `${Math.random() * 2 + 1}px`,
-                                        opacity: `${Math.random() * 0.6 + 0.2}`,
-                                        animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
+                                        width: `${Math.random() > 0.5 ? 1 : 2}px`,
+                                        height: `${Math.random() * 15 + 5}px`,
+                                        opacity: `${Math.random() * 0.5 + 0.1}`,
+                                        filter: 'blur(1px)',
+                                        animation: `cyberRain ${Math.random() * 2 + 1}s linear infinite`,
                                         animationDelay: `${Math.random() * 2}s`
                                     }}
                                 />
                             ))}
                         </div>
-                        {/* Nebula Effect */}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(139,92,246,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(34,211,238,0.06)_0%,transparent_45%),radial-gradient(circle_at_40%_20%,rgba(249,115,22,0.05)_0%,transparent_40%)]" />
                     </div>
                     {activeChat ? (
                         <>
@@ -3405,72 +3418,83 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }
                                         };
 
-                                        return (
                                             <div 
                                                 key={m._id || i}
                                                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                                 exit={{ opacity: 0, scale: 0.9, filter: 'blur(8px)', x: isOwn ? 20 : -20, transition: { duration: 0.4, ease: "easeInOut" } }}
                                                 layout
-                                                className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group/msg items-center gap-2`}
+                                                className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group/msg items-end gap-2`}
                                             >
-                                                {isOwn && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => { e.stopPropagation(); toggleLockMessage(); }}
-                                                        className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] border shadow-none opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200 z-10 shrink-0 ${m.isLocked ? 'bg-[var(--gold-primary)] text-black border-[var(--gold-primary)] opacity-100' : 'bg-black text-gray-400 border-white/20 hover:bg-white/10'}`}
-                                                        title={m.isLocked ? t('UNLOCK_MESSAGE', 'Ξεκλείδωμα μηνύματος για αυτόματη διαγραφή') : t('LOCK_MESSAGE', 'Κλείδωμα μηνύματος για μόνιμη αποθήκευση')}
-                                                    >
-                                                        <Icons.Lock className="w-3.5 h-3.5" />
-                                                    </button>
+                                                {!isOwn && (
+                                                    <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 mb-1">
+                                                        <ProfileAvatar user={chatUser} />
+                                                    </div>
                                                 )}
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`max-w-[85%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[22px] text-[15px] shadow-xl relative border cursor-pointer select-none overflow-hidden ${isOwn ? 'bg-cyan-950/40 border-cyan-500/30 text-white rounded-br-sm shadow-[0_8px_32px_rgba(6,182,212,0.15)]' : 'bg-purple-950/30 border-purple-500/20 text-white rounded-bl-sm shadow-[0_8px_32px_rgba(147,51,234,0.1)]'} ${m.isLocked ? 'ring-2 ring-[var(--gold-primary)]/90 shadow-[0_0_25px_rgba(245,158,11,0.3)]' : ''} hover:scale-[1.02] transition-all duration-300`}
+                                                    className={`max-w-[75%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[20px] text-[15px] shadow-2xl relative cursor-pointer select-none overflow-hidden transition-all duration-300 ${isOwn ? 'rounded-br-sm' : 'rounded-bl-sm'} ${m.isLocked ? (isOwn ? 'bg-cyan-950/60 border-l-4 border-l-cyan-400 text-white' : 'bg-purple-950/60 border-l-4 border-l-purple-400 text-white') : (isOwn ? 'bg-gradient-to-br from-cyan-600/90 to-blue-600/90 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]' : 'bg-white/10 backdrop-blur-md text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/5')}`}
                                                 >
-                                                {/* Glass/Sparkle overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] via-transparent to-white/[0.02] pointer-events-none rounded-[22px]" />
-                                                {/* Animated glow border */}
-                                                <div className="absolute inset-0 rounded-[22px] p-[1px] pointer-events-none overflow-hidden">
-                                                    <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50 animate-shimmer" />
-                                                </div>
-                                                {/* IMAGE ATTACHMENT */}
-                                                {imageUrl && (
-                                                    <div className="mb-2 relative z-10">
-                                                        <img
-                                                            src={resolveMediaUrl(imageUrl)}
-                                                            alt=""
-                                                            className="max-w-full max-h-[300px] rounded-[14px] object-cover cursor-pointer hover:opacity-90 transition-opacity "
-                                                            onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
-                                                            loading="lazy"
-                                                            onError={(e) => e.target.style.display = 'none'} // Hide if broken
-                                                        />
-                                                    </div>
-                                                )}
-                                                {/* AUDIO ATTACHMENT */}
-                                                {realAudio ? (
-                                                    <div className="flex flex-col gap-2 relative z-10">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-2 h-2 rounded-full  bg-[var(--gold-primary)]" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]">{t('VOICE_NOTE')}</span>
+                                                    {/* Glass/Sparkle overlay */}
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.1] via-transparent to-black/[0.2] pointer-events-none" />
+                                                    
+                                                    {/* Ephemeral Indicator */}
+                                                    {!m.isLocked && (
+                                                        <div className="absolute top-1 right-2 opacity-30 group-hover/msg:opacity-100 transition-opacity flex items-center gap-1">
+                                                            <Icons.Flame className="w-3 h-3 text-orange-400 animate-pulse" />
                                                         </div>
-                                                        <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                        {m.text && <p className="font-medium leading-relaxed mt-1 text-white/95">{m.text}</p>}
-                                                    </div>
-                                                ) : (
-                                                    m.text && !imageUrl ? <p className="leading-relaxed font-medium text-white/95 relative z-10">{m.text}</p> : (m.text && imageUrl ? <p className="mt-2 leading-relaxed font-medium text-white/95 relative z-10">{m.text}</p> : null)
-                                                )}
-                                                <div className="flex justify-end items-center gap-1.5 mt-1 opacity-70 relative z-10">
-                                                    <div className="flex items-center gap-1.5 shrink-0">
-                                                        <CyberDate date={m.createdAt} t={t} lang={lang} />
-                                                    </div>
-                                                    {isOwn && (
-                                                        <Icons.Check className={`w-3.5 h-3.5 ${m.isRead ? 'text-[var(--gold-primary)]' : 'text-gray-500'}`} />
                                                     )}
+
+                                                    {/* IMAGE ATTACHMENT */}
+                                                    {imageUrl && (
+                                                        <div className="mb-2 relative z-10 mt-2">
+                                                            <img
+                                                                src={resolveMediaUrl(imageUrl)}
+                                                                alt=""
+                                                                className="max-w-full max-h-[250px] rounded-[12px] object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10 shadow-lg"
+                                                                onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
+                                                                loading="lazy"
+                                                                onError={(e) => e.target.style.display = 'none'}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {/* AUDIO ATTACHMENT */}
+                                                    {realAudio ? (
+                                                        <div className="flex flex-col gap-2 relative z-10 mt-1">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                                                                <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{t('VOICE_NOTE')}</span>
+                                                            </div>
+                                                            <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
+                                                            {m.text && <p className="font-medium leading-relaxed mt-1 text-white/95">{m.text}</p>}
+                                                        </div>
+                                                    ) : (
+                                                        m.text && <p className={`leading-relaxed font-medium text-white/95 relative z-10 ${!m.isLocked ? 'mt-2' : ''}`}>{m.text}</p>
+                                                    )}
+                                                    
+                                                    <div className={`flex justify-end items-center gap-1.5 mt-2 relative z-10 ${m.isLocked ? 'opacity-50' : 'opacity-80'}`}>
+                                                        <div className="text-[9px] font-bold tracking-widest">
+                                                            <CyberDate date={m.createdAt} t={t} lang={lang} />
+                                                        </div>
+                                                        {isOwn && (
+                                                            m.isRead ? (
+                                                                <span className="text-[9px] font-black uppercase text-cyan-300 tracking-wider flex items-center gap-1">
+                                                                    <Icons.Eye className="w-3 h-3" /> Opened
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[9px] font-bold uppercase text-white/60 tracking-wider">
+                                                                    Delivered
+                                                                </span>
+                                                            )
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                </div>
+                                                {m.isLocked && (
+                                                    <div className="shrink-0 text-white/30" title={t('LOCKED_MESSAGE', 'Αποθηκεύτηκε στο Chat')}>
+                                                        <Icons.Lock className="w-3.5 h-3.5" />
+                                                    </div>
+                                                )}
                                             </div>
-                                        );
                                     })}
                                 </>
                                 <div ref={scrollRef} />
@@ -3490,13 +3514,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="p-3 pb-14 sm:pb-2 bg-[#050505] border-t border-white/10 flex flex-col gap-2 z-[100] relative">
+                            <div className="p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="flex-1 relative flex items-center bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-1 focus-within:border-[var(--gold-primary)]/50 focus-within: transition-all duration-300 group overflow-hidden">
+                                    <div className="flex-1 relative flex items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] px-4 py-1.5 focus-within:border-cyan-500/50 focus-within:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 group overflow-hidden">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -3514,49 +3538,54 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 setInputText(val);
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder={isRecording ? t('RECORDING') : t('ENTER_COMMAND')}
-                                        className={`w-full bg-transparent py-3 text-[14px] text-white outline-none placeholder-gray-500 font-bold ${isRecording ? ' text-red-500' : ''}`}
+                                        placeholder={isRecording ? t('RECORDING') : "Send a message..."}
+                                        className={`w-full bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
-                                        {isPhonetic && <span className="text-[10px] font-black text-[var(--gold-primary)]  border border-[var(--gold-primary)]/30 px-1.5 py-0.5 rounded-md bg-[var(--gold-primary)]/10">GREEK PH</span>}
-                                        <Icons.CommandLine className="w-5 h-5 text-gray-500 group-focus-within:text-[var(--gold-primary)] " />
+                                        {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
+                                        <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
                                     </div>
                                     </div>
                                 )}
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between gap-2 px-1">
                                     {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? null : (
                                         <>
-                                            <button
-                                                type="button"
-                                                onClick={() => { setIsPhonetic(!isPhonetic); }}
-                                                className={`w-12 h-12 flex items-center justify-center rounded-2xl border shrink-0 ${isPhonetic ? 'bg-[var(--gold-primary)]/20 border-[var(--gold-primary)] text-[var(--gold-primary)]' : 'bg-white/5 border-white/10 text-gray-400'}`}
-                                                title="Phonetic Greek Keyboard"
-                                            >
-                                                <Icons.Translate className="w-5 h-5" />
-                                            </button>
-                                            {/* IMAGE UPLOAD BUTTON */}
-                                            <button
-                                                type="button"
-                                                onClick={() => imageInputRef.current?.click()}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl  shrink-0 ${imageFile ? 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)] border border-[var(--gold-primary)]/40' : 'bg-white/5  text-gray-500  '}`}
-                                                title="Send Image"
-                                            >
-                                                <Icons.Image className="w-5 h-5" />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={(e) => { e.preventDefault(); toggleRecording(); }}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl shrink-0 ${isRecording ? 'bg-red-500 text-white ' : 'bg-white/5 text-gray-500'}`}
-                                            >
-                                                <Icons.Mic className="w-5 h-5" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleSend()}
-                                                disabled={!inputText.trim() && !imageFile}
-                                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--gold-primary)] text-black disabled:opacity-20 disabled:scale-100 shrink-0 font-black hover:opacity-90"
-                                            >
-                                                <Icons.Send className="w-5 h-5" />
-                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                {/* IMAGE UPLOAD BUTTON */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => imageInputRef.current?.click()}
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-full shrink-0 transition-all ${imageFile ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'}`}
+                                                    title="Send Image"
+                                                >
+                                                    <Icons.Image className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { setIsPhonetic(!isPhonetic); }}
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-full shrink-0 transition-all ${isPhonetic ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-400 border' : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'}`}
+                                                    title="Phonetic Greek Keyboard"
+                                                >
+                                                    <Icons.Translate className="w-4 h-4" />
+                                                </button>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); toggleRecording(); }}
+                                                    className={`w-11 h-11 flex items-center justify-center rounded-full shrink-0 transition-all shadow-lg ${isRecording ? 'bg-red-500 text-white animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                                >
+                                                    <Icons.Mic className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleSend()}
+                                                    disabled={!inputText.trim() && !imageFile}
+                                                    className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500 text-black disabled:opacity-20 disabled:scale-100 shrink-0 hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all disabled:hover:shadow-none"
+                                                >
+                                                    <Icons.Send className="w-5 h-5 ml-1" />
+                                                </button>
+                                            </div>
                                         </>
                                     )}
                                 </div>
