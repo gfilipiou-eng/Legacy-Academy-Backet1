@@ -3356,9 +3356,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     {(() => {
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
-                                            <div className={`text-[10px] flex items-center gap-1.5 ${isChatUserOnline ? 'text-green-500/90 font-bold uppercase tracking-widest' : 'text-gray-500 uppercase tracking-tighter'}`}>
-                                                <div className={`w-3.5 h-3.5 rounded-full border-[2.5px] border-black ${isChatUserOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-gray-600'}`} />
-                                                {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
+                                            <div className={`mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 ${isChatUserOnline ? 'bg-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-white/5'}`}>
+                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
+                                                <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${isChatUserOnline ? 'text-green-400' : 'text-gray-400'}`}>
+                                                    {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
+                                                </span>
                                             </div>
                                         );
                                     })()}
@@ -7074,10 +7076,10 @@ const ProfileModal = ({
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} showFootballText={true} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
-                                        <div className="mt-3 flex justify-center">
-                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
-                                                <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
-                                                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                        <div className="mt-4 flex justify-center w-full">
+                                            <div className={`profile-descriptor-badge inline-flex items-center justify-center gap-2.5 rounded-full border-2 px-6 py-2.5 backdrop-blur-2xl transition-all duration-300 drop-shadow-2xl hover:scale-105 shadow-[0_0_20px_currentColor] ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
+                                                <SelectedProfileDescriptorIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                                                <span className="text-xs sm:text-sm font-black uppercase tracking-[0.25em] drop-shadow-md">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                             </div>
                                         </div>
                                     )}
