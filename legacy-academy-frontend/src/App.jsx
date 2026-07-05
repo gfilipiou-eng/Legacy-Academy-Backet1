@@ -2350,32 +2350,59 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
 
 const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
     const { t } = useTranslation(user);
-    const storyCardClass = 'w-[100px] h-[150px] sm:w-[110px] sm:h-[165px]';
     return (
-        <div className="flex gap-3 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-transparent">
-            {/* CURRENT USER ADD STORY */}
-            <div onClick={onAddStory} className={`flex flex-col cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-white/20 shadow-lg transition-all`}>
-                <div className="h-[65%] w-full overflow-hidden">
-                    <ProfileAvatar user={user} className="object-cover w-full h-full transition-transform duration-300" key={imgKey} cacheKey={imgKey} />
-                </div>
-                <div className="h-[35%] w-full flex flex-col items-center justify-end pb-2.5 relative bg-[#181818]">
-                    <div className="absolute -top-[14px] w-[28px] h-[28px] bg-[#0095f6] text-white rounded-full border-[3px] border-[#181818] flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-md">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar py-4 px-4 border-b border-white/5 bg-transparent">
+
+            {/* CURRENT USER — Add Story */}
+            <div onClick={onAddStory} className="flex flex-col items-center gap-2 cursor-pointer shrink-0 group w-[72px]">
+                <div className="relative">
+                    {/* Dashed ring for "add" state */}
+                    <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
+                            <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
+                            {/* Plus overlay */}
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Blue + badge */}
+                    <div className="absolute bottom-0 right-0 w-[22px] h-[22px] bg-[#0095f6] rounded-full border-2 border-black flex items-center justify-center shadow-lg z-10">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-white">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                     </div>
-                    <span className="text-[11px] font-medium text-white px-1 text-center truncate w-full">{t('YOUR_STORY') || 'Create Story'}</span>
                 </div>
+                <span className="text-[10px] font-semibold text-white/70 text-center truncate w-full leading-tight">
+                    {t('YOUR_STORY') || 'Add Story'}
+                </span>
             </div>
 
+            {/* OTHER USERS' STORIES */}
             {stories && stories.map((s, i) => {
                 const isYT = isYouTubeUrl(s.videoUrl);
                 const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
                 const authorName = s.author?.username || 'Agent';
                 const hasStoryMedia = postHasMedia(s);
                 const storyMediaUrl = hasStoryMedia ? (s.thumbnailUrl || s.image || s.videoUrl) : null;
-                const textGradients = [
+
+                // Vibrant gradient rings per user
+                const rings = [
+                    'from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]',
+                    'from-[#4776E6] to-[#8E54E9]',
+                    'from-[#00B4DB] to-[#0083B0]',
+                    'from-[#11998e] to-[#38ef7d]',
+                    'from-[#f12711] to-[#f5af19]',
+                    'from-[#b224ef] to-[#7579ff]',
+                    'from-[#ff9966] to-[#ff5e62]',
+                ];
+                const ringClass = rings[i % rings.length];
+
+                const textBgs = [
                     'from-[#FF416C] to-[#FF4B2B]',
                     'from-[#4776E6] to-[#8E54E9]',
                     'from-[#00B4DB] to-[#0083B0]',
@@ -2383,48 +2410,58 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                     'from-[#f12711] to-[#f5af19]',
                     'from-[#8E2DE2] to-[#4A00E0]',
                     'from-[#b224ef] to-[#7579ff]',
-                    'from-[#ff9966] to-[#ff5e62]',
                 ];
-                const gradClass = textGradients[i % textGradients.length];
+                const gradClass = textBgs[i % textBgs.length];
 
                 return (
-                    <div key={s._id || i} onClick={() => onViewStory(s)} className={`cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg`}>
-                        {hasStoryMedia && storyMediaUrl ? (
-                            <img 
-                                src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
-                                className="w-full h-full object-cover object-center transition-transform duration-500" 
-                                alt="" 
-                                onError={(e) => { e.target.style.display = 'none'; }} 
-                            />
-                        ) : (
-                            <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center transition-transform duration-500`}>
-                                <span className="text-white text-[12px] sm:text-[13px] font-bold text-center break-words line-clamp-5 leading-snug drop-shadow-md">
-                                    {getPostTextPreview(s.desc, 100)}
-                                </span>
+                    <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-2 cursor-pointer shrink-0 group w-[72px]">
+                        <div className="relative">
+                            {/* Animated gradient ring */}
+                            <div className={`w-[68px] h-[68px] rounded-full p-[3px] bg-gradient-to-br ${ringClass} shadow-lg`}>
+                                <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 border-2 border-black relative">
+                                    {hasStoryMedia && storyMediaUrl ? (
+                                        <img
+                                            src={resolveMediaUrl(storyMediaUrl, null, false, true)}
+                                            className="w-full h-full object-cover object-center"
+                                            alt=""
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    ) : (
+                                        <div className={`w-full h-full bg-gradient-to-br ${gradClass} flex items-center justify-center`}>
+                                            <span className="text-white text-[11px] font-bold text-center break-words line-clamp-3 leading-snug drop-shadow-md px-1">
+                                                {getPostTextPreview(s.desc, 30)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {/* Hover overlay */}
+                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full" />
+                                </div>
                             </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
-                        
-                        {/* Profile Avatar overlay — bg-neutral-900 makes transparent PNGs look clean */}
-                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-neutral-900">
-                            <ProfileAvatar user={s.author} className="w-full h-full object-cover" />
+
+                            {/* Profile avatar badge (bottom-left) */}
+                            <div className="absolute bottom-0 left-0 w-[22px] h-[22px] rounded-full border-2 border-black overflow-hidden shadow-lg z-10 bg-neutral-900">
+                                <ProfileAvatar user={s.author} className="w-full h-full object-cover" />
+                            </div>
+
+                            {/* Video indicator */}
+                            {(isNativeVideo || isYT) && (
+                                <div className="absolute bottom-0 right-0 w-[22px] h-[22px] bg-black/70 backdrop-blur-sm text-white rounded-full flex items-center justify-center z-10 shadow-sm">
+                                    <Icons.Play className="w-2.5 h-2.5 fill-white pl-[1px]" />
+                                </div>
+                            )}
                         </div>
 
-                        {(isNativeVideo || isYT) && (
-                            <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center justify-center z-10 shadow-sm">
-                                <Icons.Play className="w-3 h-3 fill-white pl-[1px]" />
-                            </div>
-                        )}
-                        
-                        <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 pointer-events-none">
-                            <span className="text-[12px] font-medium text-white truncate block drop-shadow-md">{authorName}</span>
-                        </div>
+                        {/* Username chip */}
+                        <span className="text-[10px] font-semibold text-white/80 text-center truncate w-full leading-tight group-hover:text-white transition-colors duration-200">
+                            {authorName}
+                        </span>
                     </div>
                 );
             })}
         </div>
     );
 };
+
 
 const AudioPlayer = memo(({ audioUrl, trackName }) => {
     const [isPlaying, setIsPlaying] = useState(false);
