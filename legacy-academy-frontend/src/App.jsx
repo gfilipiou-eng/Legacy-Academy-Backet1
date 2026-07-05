@@ -3296,6 +3296,17 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none  flex overflow-hidden shadow-none">
+                {/* Ancient Greek Live Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
+                    {/* Marble / Statue Background Image */}
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse duration-[15s]"
+                        style={{ backgroundImage: 'url("/ancient_bg.png")' }}
+                    />
+                    {/* Gold/Bronze Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.15),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(184,134,11,0.1),transparent_70%)] mix-blend-screen" />
+                </div>
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
                         <div className="flex flex-col gap-3">
@@ -3331,7 +3342,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[#0a0a0a] ${online ? 'bg-green-500' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -3339,18 +3350,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 </div>
 
                 {/* CHAT WINDOW */}
-                <div className={`flex-1 min-w-0 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
-                    {/* Ancient Greek Live Background */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
-                        {/* Marble / Statue Background Image */}
-                        <div 
-                            className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse duration-[15s]"
-                            style={{ backgroundImage: 'url("/ancient_bg.png")' }}
-                        />
-                        {/* Gold/Bronze Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
-                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.15),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(184,134,11,0.1),transparent_70%)] mix-blend-screen" />
-                    </div>
+                <div className={`flex-1 min-w-0 flex-col bg-transparent chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
                     {activeChat ? (
                         <>
                             <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
@@ -3368,8 +3368,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {chatUser?.username}
-                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(chatUser)}</span>}
                                         <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={chatUser} />
+                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(chatUser)}</span>}
                                     </div>
                                     {(() => {
                                         const isChatUserOnline = isUserOnline(chatUser, user);
@@ -3508,7 +3508,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="w-full min-w-0 p-3 pb-[max(12px,env(safe-area-inset-bottom))] sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
+                            <div className="w-full min-w-0 p-3 pb-[90px] sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
