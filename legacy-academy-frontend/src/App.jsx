@@ -10002,7 +10002,7 @@ const App = () => {
                     const perm = await Notification.requestPermission();
                     if (perm !== 'granted') return;
                 } else if (Notification.permission === 'denied') {
-                    if (forcePrompt) addToast("Push notifications are blocked in your browser settings.", "error");
+                    if (forcePrompt) addToast(t('PUSH_BLOCKED', 'Push notifications are blocked in your browser settings.'), "error");
                     return;
                 }
 
@@ -11325,7 +11325,7 @@ const App = () => {
                                     <div className="flex items-center justify-between mb-6 px-2">
                                         <div className="flex flex-col">
                                             <h2 className="text-xl font-black text-white uppercase tracking-widest">{t('NOTIFICATIONS_TITLE')}</h2>
-                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Intelligence Alerts</div>
+                                            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">{t('INTELLIGENCE_ALERTS', 'Intelligence Alerts')}</div>
                                         </div>
                                         <div className="flex flex-col gap-2 items-end">
                                             {typeof Notification !== 'undefined' && Notification.permission !== 'granted' && Notification.permission !== 'denied' && (
@@ -11334,7 +11334,7 @@ const App = () => {
                                                     className="px-3 py-1.5 bg-[var(--gold-primary)]/10 text-[var(--gold-primary)] border border-[var(--gold-primary)]/30 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[var(--gold-primary)]/20 transition-all shadow-[0_0_15px_rgba(212,175,55,0.15)] flex items-center justify-center gap-1.5"
                                                 >
                                                     <Icons.Bell className="w-3 h-3" />
-                                                    Enable Push
+                                                    {t('ENABLE_PUSH', 'Enable Push')}
                                                 </button>
                                             )}
                                             <div className="flex gap-2">
