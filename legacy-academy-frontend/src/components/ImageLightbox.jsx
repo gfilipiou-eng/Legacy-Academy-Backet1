@@ -5,11 +5,16 @@ import { Icons } from './Icons';
 export const ImageLightbox = ({ src, onClose, alt = 'Image' }) => {
     const [loaded, setLoaded] = useState(false);
     const [failed, setFailed] = useState(false);
+    const imgRef = React.useRef(null);
 
     useEffect(() => {
         if (!src) return undefined;
         setLoaded(false);
         setFailed(false);
+
+        if (imgRef.current && imgRef.current.complete) {
+            setLoaded(true);
+        }
 
         const scrollY = window.scrollY;
         const prevOverflow = document.body.style.overflow;
@@ -82,6 +87,7 @@ export const ImageLightbox = ({ src, onClose, alt = 'Image' }) => {
                 </div>
             ) : (
                 <img
+                    ref={imgRef}
                     src={src}
                     alt={alt}
                     className={`max-w-full max-h-[100dvh] w-auto h-auto object-contain px-4 py-20 transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
