@@ -3325,73 +3325,15 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
                 {/* CHAT WINDOW */}
                 <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
-                    {/* Deep Space Parallax Background */}
+                    {/* Cinematic Space Background */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020205]">
-                        {/* Colorful Nebulas */}
-                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(107,33,168,0.15),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(30,58,138,0.2),transparent_50%),radial-gradient(circle_at_center,rgba(6,182,212,0.05),transparent_60%)] mix-blend-screen" />
-                        
-                        {/* Deep Distant Stars */}
-                        <div className="absolute inset-0">
-                            {Array.from({ length: 80 }).map((_, i) => (
-                                <div 
-                                    key={`star-1-${i}`}
-                                    className="absolute rounded-full bg-white"
-                                    style={{
-                                        left: `${Math.random() * 100}%`,
-                                        top: `${Math.random() * 100}%`,
-                                        width: '1px',
-                                        height: '1px',
-                                        opacity: Math.random() * 0.4 + 0.1,
-                                        animation: `twinkle ${Math.random() * 4 + 3}s ease-in-out infinite alternate`,
-                                        animationDelay: `${Math.random() * 5}s`
-                                    }}
-                                />
-                            ))}
-                        </div>
-
-                        {/* Mid-layer Stars */}
-                        <div className="absolute inset-0">
-                            {Array.from({ length: 40 }).map((_, i) => (
-                                <div 
-                                    key={`star-2-${i}`}
-                                    className="absolute rounded-full bg-blue-100"
-                                    style={{
-                                        left: `${Math.random() * 100}%`,
-                                        top: `${Math.random() * 100}%`,
-                                        width: '2px',
-                                        height: '2px',
-                                        opacity: Math.random() * 0.5 + 0.3,
-                                        boxShadow: '0 0 4px rgba(255,255,255,0.4)',
-                                        animation: `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite alternate`,
-                                        animationDelay: `${Math.random() * 3}s`
-                                    }}
-                                />
-                            ))}
-                        </div>
-
-                        {/* Large Bright Stars / Planets */}
-                        <div className="absolute inset-0">
-                            {Array.from({ length: 15 }).map((_, i) => {
-                                const colors = ['bg-cyan-200', 'bg-purple-200', 'bg-orange-200', 'bg-white'];
-                                const color = colors[Math.floor(Math.random() * colors.length)];
-                                return (
-                                    <div 
-                                        key={`star-3-${i}`}
-                                        className={`absolute rounded-full ${color}`}
-                                        style={{
-                                            left: `${Math.random() * 100}%`,
-                                            top: `${Math.random() * 100}%`,
-                                            width: `${Math.random() * 2 + 2}px`,
-                                            height: `${Math.random() * 2 + 2}px`,
-                                            opacity: Math.random() * 0.7 + 0.3,
-                                            boxShadow: '0 0 10px rgba(255,255,255,0.8)',
-                                            animation: `twinkle ${Math.random() * 2 + 1.5}s ease-in-out infinite alternate`,
-                                            animationDelay: `${Math.random() * 2}s`
-                                        }}
-                                    />
-                                );
-                            })}
-                        </div>
+                        <div 
+                            className="absolute inset-0 bg-cover bg-center opacity-40 animate-pulse duration-[15s]"
+                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2000&auto=format&fit=crop")' }}
+                        />
+                        {/* Purple/Blue Gradient Overlay for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-[#020205]/80 via-transparent to-[#020205]/90" />
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(107,33,168,0.2),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(30,58,138,0.2),transparent_50%)] mix-blend-screen" />
                     </div>
                     {activeChat ? (
                         <>
@@ -3450,6 +3392,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }
                                         };
 
+                                        return (
                                             <div 
                                                 key={m._id || i}
                                                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -3527,6 +3470,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     </div>
                                                 )}
                                             </div>
+                                        );
                                     })}
                                 </>
                                 <div ref={scrollRef} />
