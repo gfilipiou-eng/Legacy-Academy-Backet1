@@ -141,9 +141,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                     transform = `w_500,h_500,c_fill,so_0,eo_2,q_auto:best,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // Force JPEG + dark background: eliminates transparent PNG pixelation on desktop
-                    // b_rgb:111111 fills transparent pixels with near-black, f_jpg forces no transparency
-                    transform = `w_800,h_800,c_fill,g_face,q_auto:best,b_rgb:111111,f_jpg`;
+                    // f_auto = let Cloudinary pick best format; background handled via CSS
+                    transform = `w_800,h_800,c_fill,g_face,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
                     transform = `w_3000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;

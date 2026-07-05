@@ -62,6 +62,13 @@ img, video {
   }
 }
 
+/* ===== AVATAR TRANSPARENT PNG FIX ===== */
+/* background-color on <img> shows through transparent pixels — works on all browsers, no circle breaking */
+.post-card-avatar img,
+.rounded-full > img,
+[class*="rounded-full"] > img {
+  background-color: #111111;
+}
 
 body.bg-dark {
   --app-bg: #000000;
