@@ -44,7 +44,7 @@ const MasonicSymbol = ({ className }) => (
     </svg>
 );
 
-const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp, showFootballText = false }) => {
+const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp, showFootballText = false, hideFootball = false }) => {
     if (user?.settings?.showBadge === false) return null;
 
     const resolvedRole = user?.role || (isFounder && !isUser ? 'Founder' : 'User');
@@ -220,7 +220,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
 
     const team = user?.settings?.footballTeam;
 
-    if (!team) {
+    if (!team || hideFootball) {
         return renderMainBadge();
     }
 
@@ -232,7 +232,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                 title={`Supporter of ${team.strTeam}`}
                 onClick={(e) => { e.stopPropagation(); alert(`Fan of ${team.strTeam} ⚽`); }}
             >
-                <img src={team.strBadge} alt={team.strTeam} className="w-full h-full object-contain drop-shadow-md" />
+                <img src={team.strBadge} alt={team.strTeam} className="w-full h-full object-contain drop-shadow-md scale-150" />
             </span>
             {showFootballText && (
                 <span className="text-[11px] font-bold tracking-wide text-white/90 bg-white/10 px-1.5 py-0.5 rounded-md whitespace-nowrap">
