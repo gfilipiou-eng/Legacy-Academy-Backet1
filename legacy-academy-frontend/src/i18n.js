@@ -10,6 +10,7 @@ import cy from './locales/cy.json';
 import es from './locales/es.json';
 import tr from './locales/tr.json';
 import fr from './locales/fr.json';
+import ro from './locales/ro.json';
 
 i18n
     .use(LanguageDetector)
@@ -23,7 +24,8 @@ i18n
             cy: { translation: cy },
             es: { translation: es },
             tr: { translation: tr },
-            fr: { translation: fr }
+            fr: { translation: fr },
+            ro: { translation: ro }
         },
         fallbackLng: 'en',
         interpolation: {

@@ -3896,6 +3896,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         { id: 'es', flag: '🇪🇸', labelKey: 'LANG_ES' },
         { id: 'tr', flag: '🇹🇷', labelKey: 'LANG_TR' },
         { id: 'fr', flag: '🇫🇷', labelKey: 'LANG_FR' },
+        { id: 'ro', flag: '🇷🇴', labelKey: 'LANG_RO' },
     ];
     return (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-3 sm:p-4">
@@ -11316,8 +11317,8 @@ const App = () => {
                                                                 { id: 'newest', label: t('NEWEST', 'Newest'), Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
                                                                 { id: 'nsfw18plus', label: '18+ NSFW', Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
-                                                                { id: 'popular', label: 'Δημοφιλή', Icon: Icons.TrendingUp },
-                                                                { id: 'oldest', label: 'Παλαιότερα', Icon: Icons.Clock }
+                                                                { id: 'popular', label: t('POPULAR', 'Popular'), Icon: Icons.TrendingUp },
+                                                                { id: 'oldest', label: t('OLDEST', 'Oldest'), Icon: Icons.Clock }
                                                             ].map(opt => {
                                                                 const isActive = feedSortOrder === opt.id && opt.id !== 'bubbles';
                                                                 const baseActive = opt.activeClass || 'bg-[var(--gold-primary)] text-black';
