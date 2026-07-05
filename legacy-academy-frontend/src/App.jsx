@@ -4063,71 +4063,73 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </SettingRow>
                             {showBadge && (
                                 <div className="px-4 py-3.5 border-t border-white/5 text-left">
-                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('BADGE_STYLE')}</div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {user?.role === 'Founder' ? (
-                                            <>
-                                                {[
-                                                    { id: 'gold', label: t('BADGE_ROYAL_GOLD', 'Royal Gold'), color: '#FFD700' },
-                                                    { id: 'live-gold', label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold'), color: '#F6E27A', isLive: true },
-                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid Gold'), color: '#FFDF00' },
-                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon Purple'), color: '#B026FF' },
-                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holographic'), isHolo: true },
-                                                    { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Black & White'), color: '#000000', ring: '#ffffff' },
-                                                    { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'White & Black'), color: '#FFFFFF', ring: '#000000' },
-                                                    { id: 'x_gold', label: t('BADGE_X_GOLD', 'X Gold'), color: '#e6c34f' },
-                                                    { id: 'ig_gold', label: t('BADGE_IG_GOLD', 'IG Gold ✦'), isIgGold: true }
-                                                ].map(b => (
-                                                    <button
-                                                        key={b.id}
-                                                        type="button"
-                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className={`settings-tile-btn p-2 rounded-xl border flex items-center justify-center gap-2 transition-all ${
-                                                            badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
-                                                        }`}
-                                                    >
-                                                        {b.isLive ? (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0 animate-spin" style={{ animationDuration: '4s', background: 'conic-gradient(from 0deg, #F6E27A, #CB9B51, #FFF7B0, #CB9B51, #F6E27A)' }} />
-                                                        ) : b.isHolo ? (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ background: 'linear-gradient(45deg, #ff007f, #7f00ff, #00f0ff, #00ff7f, #ff007f)' }} />
-                                                        ) : b.isIgGold ? (
-                                                            <svg viewBox="0 0 40 40" className="w-4 h-4 shrink-0">
-                                                                <circle cx="20" cy="20" r="12" fill="#000" />
-                                                                <defs><linearGradient id="igGoldPreview" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FFF7D6" /><stop offset="50%" stopColor="#EAB308" /><stop offset="100%" stopColor="#854D0E" /></linearGradient></defs>
-                                                                <path fill="url(#igGoldPreview)" d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fillRule="evenodd" />
-                                                            </svg>
-                                                        ) : b.ring ? (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0 border-[1.5px]" style={{ backgroundColor: b.color, borderColor: b.ring }} />
-                                                        ) : (
-                                                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
-                                                        )}
-                                                        <span className="text-[11px] text-white font-bold uppercase tracking-wider">{b.label}</span>
-                                                    </button>
-                                                ))}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {[
-                                                    { id: 'blue', label: t('BADGE_BLUE', 'Blue'), color: '#1D9BF0' },
-                                                    { id: 'metal-blue', label: t('BADGE_METAL_BLUE', 'Metal Blue'), color: '#0083B0' },
-                                                    { id: 'x_blue', label: t('BADGE_X_BLUE', 'X Blue'), color: '#1D9BF0' },
-                                                    { id: 'ig_blue', label: t('BADGE_IG_BLUE', 'IG Blue'), color: '#0095f6' }
-                                                ].map(b => (
-                                                    <button
-                                                        key={b.id}
-                                                        type="button"
-                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className={`settings-tile-btn p-2 rounded-xl border flex items-center justify-center gap-2 transition-all ${
-                                                            badgeColor === b.id ? 'border-[#1D9BF0] bg-[#1D9BF0]/10' : 'border-white/10 bg-white/[0.02]'
-                                                        }`}
-                                                    >
-                                                        <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: b.color }} />
-                                                        <span className="text-[11px] text-white font-bold uppercase tracking-wider">{b.label}</span>
-                                                    </button>
-                                                ))}
-                                            </>
-                                        )}
-                                    </div>
+                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">{t('BADGE_STYLE')}</div>
+                                    {user?.role === 'Founder' ? (
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {[
+                                                { id: 'founder_gold',  label: t('BADGE_ROYAL_GOLD', 'Royal Gold') },
+                                                { id: 'live-gold',     label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold') },
+                                                { id: 'liquid-gold',   label: t('BADGE_LIQUID_GOLD', 'Liquid Gold') },
+                                                { id: 'neon-purple',   label: t('BADGE_PURPLE', 'Neon Purple') },
+                                                { id: 'holographic',   label: t('BADGE_HOLO', 'Holographic') },
+                                                { id: 'black_white',   label: t('BADGE_BLACK_WHITE', 'Black & White') },
+                                                { id: 'white_black',   label: t('BADGE_WHITE_BLACK', 'White & Black') },
+                                                { id: 'x_gold',        label: t('BADGE_X_GOLD', 'X Gold') },
+                                                { id: 'ig_gold',       label: t('BADGE_IG_GOLD', 'IG Gold') },
+                                            ].map(b => (
+                                                <button
+                                                    key={b.id}
+                                                    type="button"
+                                                    onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                    className={`settings-tile-btn p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${
+                                                        badgeColor === b.id
+                                                            ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_16px_rgba(212,175,55,0.25)]'
+                                                            : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                                                    }`}
+                                                >
+                                                    <VerifiedBadge
+                                                        isFounder={true}
+                                                        className="w-7 h-7"
+                                                        badgeColor={b.id}
+                                                        user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }}
+                                                    />
+                                                    <span className="text-[9px] text-white/70 font-bold uppercase tracking-wider text-center leading-tight">{b.label}</span>
+                                                    {badgeColor === b.id && (
+                                                        <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--gold-primary)] border border-black" />
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {[
+                                                { id: 'x_blue',    label: t('BADGE_X_BLUE', 'X Blue') },
+                                                { id: 'blue',      label: t('BADGE_BLUE', 'Blue') },
+                                                { id: 'metal-blue',label: t('BADGE_METAL_BLUE', 'Metal Blue') },
+                                                { id: 'ig_blue',   label: t('BADGE_IG_BLUE', 'IG Blue') },
+                                            ].map(b => (
+                                                <button
+                                                    key={b.id}
+                                                    type="button"
+                                                    onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                    className={`settings-tile-btn p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${
+                                                        badgeColor === b.id
+                                                            ? 'border-[#1D9BF0] bg-[#1D9BF0]/10 shadow-[0_0_16px_rgba(29,155,240,0.25)]'
+                                                            : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                                                    }`}
+                                                >
+                                                    <VerifiedBadge
+                                                        isFounder={false}
+                                                        isUser={true}
+                                                        className="w-7 h-7"
+                                                        badgeColor={b.id}
+                                                        user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }}
+                                                    />
+                                                    <span className="text-[9px] text-white/70 font-bold uppercase tracking-wider text-center leading-tight">{b.label}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                             <SettingRow label={t('BLUR_18_PLUS')} desc={t('BLUR_18_PLUS_DESC')}>
