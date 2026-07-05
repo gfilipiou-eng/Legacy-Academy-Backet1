@@ -3345,11 +3345,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
                         {/* Marble / Statue Background Image */}
                         <div 
-                            className="absolute inset-0 bg-cover bg-center opacity-[0.15] scale-105 transition-transform duration-[20s] ease-in-out"
-                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1601334651717-b08bc81734bc?q=80&w=2000&auto=format&fit=crop")', animation: 'pulse 15s infinite alternate' }}
+                            className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 animate-pulse duration-[15s]"
+                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1601334651717-b08bc81734bc?q=80&w=2000&auto=format&fit=crop")' }}
                         />
                         {/* Gold/Bronze Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/95" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.15),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(184,134,11,0.1),transparent_70%)] mix-blend-screen" />
                     </div>
                     {activeChat ? (
@@ -3532,7 +3532,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                             placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                            className={`w-full bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
+                                            className={`w-full bg-transparent py-2.5 text-[16px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
                                         />
                                         <div className="flex items-center gap-2 justify-end">
                                             {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
