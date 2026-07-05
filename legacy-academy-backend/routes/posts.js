@@ -2,6 +2,7 @@ import express from "express";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
+import { sendWebPushNotification } from "../utils/pushHelper.js";
 import upload from "../middleware/upload.js";
 import mongoose from "mongoose";
 import { deleteCloudinaryFile, deleteCloudinaryFiles } from "../utils/cloudinaryCleanup.js";
@@ -422,6 +423,12 @@ router.post("/:id/comment", verifyToken, upload.single("file"), async (req, res)
                     }
                 });
                 io.to(String(post.author)).emit('notification.received', { type: 'comment', fromUsername, fromProfilePic, fromRole, fromDescriptor, postId: post._id });
+
+                sendWebPushNotification(post.author, {
+                    title: "New Comment",
+                    body: `${fromUsername} commented on your post`,
+                    url: `/?post=${post._id}`
+                });
             }
         }
 

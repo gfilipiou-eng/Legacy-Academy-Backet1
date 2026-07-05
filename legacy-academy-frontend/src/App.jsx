@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo, useCallback, startTransition } from 'react';
 import { createPortal } from 'react-dom';
 import EnhancedButton from './components/EnhancedButton';
-// DEPLOYMENT_VERSION: V12_PORTAL_FIX
+import { urlBase64ToUint8Array } from './utils/urlBase64ToUint8Array';
 
 export const getActiveStreak = (u) => {
     if (!u || !u.missionsStreak || !u.lastMissionCompleted) return 0;
@@ -2239,11 +2239,17 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
         <div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`flex items-center gap-4 p-4 rounded-2xl cursor-pointer border transition-all duration-200 mb-2.5 group ${
-                note.read ? 'bg-white/[0.01] border-white/5 hover:bg-white/[0.03] hover:border-white/10' : 'bg-white/[0.03] border-[var(--gold-primary)]/15 hover:bg-white/[0.05] hover:border-[var(--gold-primary)]/30'
+            className={`relative flex items-center gap-4 p-4 rounded-[24px] cursor-pointer border transition-all duration-300 mb-3 group overflow-hidden ${
+                note.read 
+                    ? 'bg-black/40 border-white/5 hover:bg-white/[0.03] hover:border-white/10' 
+                    : 'bg-gradient-to-r from-[var(--gold-primary)]/10 to-transparent border-[var(--gold-primary)]/30 hover:border-[var(--gold-primary)]/50 shadow-[0_0_20px_rgba(212,175,55,0.1)]'
             }`}
             onClick={handleClick}
         >
+            {/* Ambient Background Glow for unread */}
+            {!note.read && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
+            )}
             <div className="relative shrink-0">
                 <div className="w-11 h-11 rounded-full overflow-hidden border border-white/10 relative">
                     <ProfileAvatar user={{ username: note.fromUsername, profilePic: note.fromProfilePic }} />
@@ -9268,6 +9274,9 @@ const App = () => {
             fetchPosts().then(() => fetchUsers());
             fetchNotifications();
 
+            // 🔥 WEB PUSH REGISTRATION
+            subscribeToWebPush();
+
             // 🔥 SOCKET JOIN ROOM
             socket.emit('join', user._id);
             console.log(`📡 [SOCKET] Joining personal room: ${user._id}`);
@@ -9840,6 +9849,36 @@ const App = () => {
         _notifInterval.current = setInterval(fetchNotifications, 90000); // 90s fallback
     };
     const stopNotificationPoll = () => { if (_notifInterval.current) { clearInterval(_notifInterval.current); _notifInterval.current = null; } };
+
+    const subscribeToWebPush = async () => {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            try {
+                if (Notification.permission === 'default') {
+                    const perm = await Notification.requestPermission();
+                    if (perm !== 'granted') return;
+                } else if (Notification.permission === 'denied') {
+                    return;
+                }
+
+                const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+                console.log('Service Worker registered with scope:', registration.scope);
+
+                const vapidRes = await axios.get('/users/push/vapidPublicKey');
+                const vapidPublicKey = vapidRes.data;
+                const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidKey
+                });
+
+                await axios.post('/users/push/subscribe', subscription);
+                console.log('Push subscription successful');
+            } catch (error) {
+                console.error('Error subscribing to web push:', error);
+            }
+        }
+    };
 
     const startHeartbeat = () => {
         if (!user || isPublicExperience) return;
@@ -11852,6 +11891,37 @@ const App = () => {
                     </div>
                 </div>
             )}
+
+            {/* 🔥 PREMIUM TOAST NOTIFICATIONS 🔥 */}
+            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-[400px] px-4">
+                {toasts.map((toast) => (
+                    <div 
+                        key={toast.id} 
+                        className={`pointer-events-auto overflow-hidden relative rounded-[20px] backdrop-blur-2xl border p-4 shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-5 duration-300 ${
+                            toast.type === 'error' 
+                                ? 'bg-red-950/40 border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.15)]' 
+                                : toast.type === 'success'
+                                    ? 'bg-green-950/40 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.15)]'
+                                    : 'bg-black/60 border-[var(--gold-primary)]/30 shadow-[0_0_30px_rgba(212,175,55,0.15)]'
+                        }`}
+                    >
+                        <div className={`absolute inset-0 opacity-20 pointer-events-none ${
+                            toast.type === 'error' ? 'bg-gradient-to-r from-red-500 to-transparent' :
+                            toast.type === 'success' ? 'bg-gradient-to-r from-green-500 to-transparent' :
+                            'bg-gradient-to-r from-[var(--gold-primary)] to-transparent'
+                        }`} />
+                        
+                        <div className="shrink-0 relative z-10">
+                            {toast.type === 'error' && <Icons.AlertCircle className="w-6 h-6 text-red-500" />}
+                            {toast.type === 'success' && <Icons.CheckCircle className="w-6 h-6 text-green-500" />}
+                            {toast.type === 'info' && <Icons.Bell className="w-6 h-6 text-[var(--gold-primary)]" />}
+                        </div>
+                        <div className="flex-1 text-sm font-semibold text-white tracking-wide relative z-10 break-words">
+                            {toast.text}
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

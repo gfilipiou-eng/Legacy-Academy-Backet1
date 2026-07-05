@@ -145,6 +145,16 @@ const UserSchema = new mongoose.Schema(
                 createdAt: { type: Date, default: Date.now },
                 post: { type: String }
             }
+        ],
+        pushSubscriptions: [
+            {
+                endpoint: { type: String, required: true },
+                expirationTime: { type: Date, default: null },
+                keys: {
+                    p256dh: { type: String, required: true },
+                    auth: { type: String, required: true }
+                }
+            }
         ]
     },
     { timestamps: true }

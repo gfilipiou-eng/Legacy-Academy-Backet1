@@ -5,6 +5,7 @@ import Post from "../models/Post.js";
 import { verifyToken } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 import { deleteCloudinaryFile } from "../utils/cloudinaryCleanup.js";
+import { sendWebPushNotification } from "../utils/pushHelper.js";
 
 const router = express.Router();
 
@@ -367,6 +368,12 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                         fromRole: currentUser.role,
                         fromDescriptor: currentUser.profileDescriptor
                     });
+                    
+                    sendWebPushNotification(targetId, {
+                        title: "Follow Request",
+                        body: `${currentUser.username} requested to follow you`,
+                        url: `/profile/${targetId}`
+                    });
                 }
             }
             return res.status(200).json({ message: "Request sent", requested: true, followers: targetUser.followers });
@@ -400,6 +407,12 @@ router.post("/:id/follow", verifyToken, async (req, res) => {
                 fromProfilePic: currentUser.profilePic,
                 fromRole: currentUser.role,
                 fromDescriptor: currentUser.profileDescriptor
+            });
+            
+            sendWebPushNotification(targetId, {
+                title: "New Follower",
+                body: `${currentUser.username} started following you`,
+                url: `/profile/${currentUser._id}`
             });
         }
         await currentUser.updateOne({ $addToSet: { following: String(targetId) } });
@@ -489,6 +502,13 @@ router.post("/requests/:requesterId/accept", verifyToken, async (req, res) => {
                 fromRole: user.role,
                 fromDescriptor: user.profileDescriptor
             });
+
+            sendWebPushNotification(requesterId, {
+                title: "Request Accepted",
+                body: `${user.username} accepted your follow request`,
+                url: `/profile/${user._id}`
+            });
+
             const updatedReq = await User.findById(requesterId).select('-password');
             const updatedMe = await User.findById(userId).select('-password');
             io.emit('user.updated', updatedReq);
@@ -1077,6 +1097,57 @@ router.post("/admin/cleanup-followers", verifyToken, async (req, res) => {
     } catch (err) {
         console.error("Cleanup error:", err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+// GET VAPID PUBLIC KEY
+router.get("/push/vapidPublicKey", (req, res) => {
+    import('../utils/pushHelper.js').then(({ vapidPublicKey }) => {
+        res.status(200).json(vapidPublicKey);
+    }).catch(err => res.status(500).json(err));
+});
+
+// SUBSCRIBE TO WEB PUSH
+router.post("/push/subscribe", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const subscription = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json("User not found");
+
+        // Initialize array if undefined
+        if (!user.pushSubscriptions) {
+            user.pushSubscriptions = [];
+        }
+
+        // Check if subscription already exists (by endpoint)
+        const exists = user.pushSubscriptions.some(sub => sub.endpoint === subscription.endpoint);
+        
+        if (!exists) {
+            user.pushSubscriptions.push(subscription);
+            await user.save();
+        }
+
+        res.status(201).json({ message: "Subscribed to push notifications" });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// UNSUBSCRIBE FROM WEB PUSH
+router.post("/push/unsubscribe", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id || req.user.userId;
+        const { endpoint } = req.body;
+
+        await User.findByIdAndUpdate(userId, {
+            $pull: { pushSubscriptions: { endpoint: endpoint } }
+        });
+
+        res.status(200).json({ message: "Unsubscribed from push notifications" });
+    } catch (err) {
+        res.status(500).json(err);
     }
 });
 

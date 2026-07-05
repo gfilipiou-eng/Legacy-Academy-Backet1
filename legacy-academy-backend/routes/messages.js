@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
+import { sendWebPushNotification } from "../utils/pushHelper.js";
 import upload from "../middleware/upload.js";
 import { handleBotMention } from "../utils/botHandlers.js";
 import { cleanupExpiredMessages, cleanupSnapchatMessages } from "../utils/messageRetention.js";
@@ -182,6 +183,13 @@ router.post("/", upload.single("file"), verifyToken, async (req, res) => {
                         type: 'message',
                         fromUsername: senderUser.username,
                         fromProfilePic: senderUser.profilePic
+                    });
+
+                    // Trigger Web Push notification
+                    sendWebPushNotification(recipientId, {
+                        title: "New Message",
+                        body: `New whisper from ${senderUser.username}`,
+                        url: `/whispers`
                     });
                 }
             } catch (notifErr) {
