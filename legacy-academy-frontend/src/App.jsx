@@ -3345,8 +3345,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
                         {/* Marble / Statue Background Image */}
                         <div 
-                            className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 animate-pulse duration-[15s]"
-                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1601334651717-b08bc81734bc?q=80&w=2000&auto=format&fit=crop")' }}
+                            className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse duration-[15s]"
+                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=2000&q=80")' }}
                         />
                         {/* Gold/Bronze Gradient Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
@@ -3513,7 +3513,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="w-full relative grid grid-cols-[1fr_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden gap-2">
+                                    <div className="w-full relative grid grid-cols-[minmax(0,1fr)_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden gap-2">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -3532,7 +3532,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                             placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                            className={`w-full bg-transparent py-2.5 text-[16px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
+                                            className={`w-full min-w-0 bg-transparent py-2.5 text-[16px] text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
                                         />
                                         <div className="flex items-center gap-2 justify-end">
                                             {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
