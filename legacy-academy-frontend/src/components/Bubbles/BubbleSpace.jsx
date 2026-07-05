@@ -115,7 +115,7 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
     // Simulate popping
     setTimeout(() => {
       setBubbles(prev => prev.filter(b => b._id !== bubble._id));
-    }, 200);
+    }, 400);
   };
 
   return (
