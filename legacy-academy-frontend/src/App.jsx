@@ -4074,8 +4074,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 { id: 'holographic',   label: t('BADGE_HOLO', 'Holographic') },
                                                 { id: 'black_white',   label: t('BADGE_BLACK_WHITE', 'Black & White') },
                                                 { id: 'white_black',   label: t('BADGE_WHITE_BLACK', 'White & Black') },
-                                                { id: 'x_gold',        label: t('BADGE_X_GOLD', 'X Gold') },
-                                                { id: 'ig_gold',       label: t('BADGE_IG_GOLD', 'IG Gold') },
+                                                { id: 'x_gold',        label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
+                                                { id: 'ig_gold',       label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
                                             ].map(b => {
                                                 const isSelected = badgeColor === b.id;
                                                 return (
@@ -4106,9 +4106,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     ) : (
                                         <div className="grid grid-cols-3 gap-2">
                                             {[
-                                                { id: 'x_blue',  label: t('BADGE_X_BLUE', 'X Blue') },
-                                                { id: 'blue',    label: t('BADGE_BLUE', 'Blue') },
-                                                { id: 'ig_blue', label: t('BADGE_IG_BLUE', 'IG Blue') },
+                                                { id: 'x_blue',  label: t('BADGE_COBALT', 'Cobalt') },
+                                                { id: 'blue',    label: t('BADGE_NOVA', 'Nova') },
+                                                { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
                                             ].map(b => {
                                                 const isSelected = badgeColor === b.id;
                                                 return (
