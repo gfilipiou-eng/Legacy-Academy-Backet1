@@ -5611,7 +5611,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
-                            { id: 'bubbles', icon: Icons.Plus, label: t('BUBBLES', 'Thought Bubbles'), action: onOpenBubbles, highlight: true },
+                            { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: onOpenBubbles, highlight: true },
                             { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: onOpenWebsiteBuilder, highlight: true },
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
                         ].map((item, index) => {

@@ -109,6 +109,18 @@ export const Icons = {
     Activity: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>,
     HardDrive: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><rect width="20" height="8" x="2" y="3" rx="2" /><rect width="20" height="8" x="2" y="13" rx="2" /><line x1="6" x2="6" y1="7" y2="7" /><line x1="6" x2="6" y1="17" y2="17" /></svg>,
     Fingerprint: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M2 12a10 10 0 0 1 13-9" /><path d="M6 12a6 6 0 0 1 7.3-5.7" /><path d="M10.2 12a2 2 0 1 1 3.5 1.5L11 17" /><path d="M15 12a4.9 4.9 0 0 1 2 4" /><path d="M8 12a8 8 0 0 1 10.3-7.6" /><path d="M12 17v4" /><path d="M8 21h8" /></svg>,
+    ThoughtBubble: p => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
+            <defs>
+                <linearGradient id="bubbleGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#0ea5e9" />
+                    <stop offset="100%" stopColor="#d946ef" />
+                </linearGradient>
+            </defs>
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="url(#bubbleGradient)" fill="url(#bubbleGradient)" fillOpacity="0.1" />
+            <path d="M12 8l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z" fill="url(#bubbleGradient)" stroke="url(#bubbleGradient)" />
+        </svg>
+    ),
     Cpu: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" /><path d="M15 2v2M9 2v2M20 15h2M20 9h2M15 20v2M9 20v2M2 15h2M2 9h2" /></svg>,
     Upload: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="16 9 12 5 8 9" /><line x1="12" y1="5" x2="12" y2="17" /></svg>,
     Star: p => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
