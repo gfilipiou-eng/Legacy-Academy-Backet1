@@ -50,10 +50,10 @@ body {
 }
 
 /* ===== GLOBAL IMAGE QUALITY — No pixelation on desktop ===== */
+/* smooth/high-quality is correct for photos; crisp-edges is only for pixel art */
 img, video {
-  image-rendering: -webkit-optimize-contrast; /* Safari / older Webkit */
-  image-rendering: crisp-edges;
-  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast; /* Safari */
+  image-rendering: auto;
 }
 
 @supports (image-rendering: smooth) {
