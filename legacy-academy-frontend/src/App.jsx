@@ -3496,13 +3496,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
+                            <div className="w-full p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="flex-1 relative flex items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] px-4 py-1.5 focus-within:border-cyan-500/50 focus-within:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 group overflow-hidden">
+                                    <div className="w-full min-w-0 relative flex items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] px-4 py-1.5 focus-within:border-[var(--gold-primary)]/50 focus-within:shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 group overflow-hidden">
                                         <input
                                             id="chat-input"
                                             name="chat-message"
@@ -3520,9 +3520,9 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 setInputText(val);
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                        className={`flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
-                                    />
+                                            placeholder={isRecording ? t('RECORDING') : "Send a message..."}
+                                            className={`w-full flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
+                                        />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
                                         <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
