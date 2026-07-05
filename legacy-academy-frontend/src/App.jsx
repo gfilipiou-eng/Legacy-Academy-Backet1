@@ -4062,82 +4062,77 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <Toggle active={showBadge} onToggle={() => { const v = !showBadge; setShowBadge(v); handleSave('showBadge', v); }} saving={saving} color="blue" />
                             </SettingRow>
                             {showBadge && (
-                                <div className="px-4 py-4 border-t border-white/5 text-left">
-                                    <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">{t('BADGE_STYLE')}</div>
-                                    {user?.role === 'Founder' ? (
+                                <>
+                                    <div className="px-4 py-4 border-t border-white/5 text-left">
+                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">{t('BADGE_STYLE')}</div>
+                                        {user?.role === 'Founder' ? (
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {[
+                                                    { id: 'live-gold',   label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold') },
+                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid Gold') },
+                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon Purple') },
+                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holographic') },
+                                                    { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Black & White') },
+                                                    { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'White & Black') },
+                                                    { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
+                                                    { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
+                                                    { id: 'masonic',     label: t('BADGE_MASONIC', 'Masonic') },
+                                                ].map(b => {
+                                                    const isSelected = badgeColor === b.id;
+                                                    return (
+                                                        <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                            className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
+                                                            {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
+                                                            <VerifiedBadge isFounder={true} className="w-8 h-8" badgeColor={b.id} user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                            <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {[
+                                                    { id: 'x_blue',  label: t('BADGE_COBALT', 'Cobalt') },
+                                                    { id: 'blue',    label: t('BADGE_NOVA', 'Nova') },
+                                                    { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
+                                                ].map(b => {
+                                                    const isSelected = badgeColor === b.id;
+                                                    return (
+                                                        <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                            className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
+                                                            {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
+                                                            <VerifiedBadge isFounder={false} isUser={true} className="w-8 h-8" badgeColor={b.id} user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                            <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {/* ⚽ Football Teams */}
+                                    <div className="px-4 py-4 border-t border-white/5 text-left">
+                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">⚽ {t('FOOTBALL_TEAMS', 'Football Teams')}</div>
                                         <div className="grid grid-cols-3 gap-2">
                                             {[
-                                                { id: 'live-gold',     label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold') },
-                                                { id: 'liquid-gold',   label: t('BADGE_LIQUID_GOLD', 'Liquid Gold') },
-                                                { id: 'neon-purple',   label: t('BADGE_PURPLE', 'Neon Purple') },
-                                                { id: 'holographic',   label: t('BADGE_HOLO', 'Holographic') },
-                                                { id: 'black_white',   label: t('BADGE_BLACK_WHITE', 'Black & White') },
-                                                { id: 'white_black',   label: t('BADGE_WHITE_BLACK', 'White & Black') },
-                                                { id: 'x_gold',        label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
-                                                { id: 'ig_gold',       label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
+                                                { id: 'paok',          label: 'PAOK FC' },
+                                                { id: 'olympiacos',    label: 'Olympiacos' },
+                                                { id: 'aek',           label: 'AEK' },
+                                                { id: 'panathinaikos', label: 'PAO' },
+                                                { id: 'aris',          label: 'Aris FC' },
                                             ].map(b => {
                                                 const isSelected = badgeColor === b.id;
                                                 return (
-                                                    <button
-                                                        key={b.id}
-                                                        type="button"
-                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70"
-                                                    >
-                                                        {isSelected && (
-                                                            <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center">
-                                                                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5">
-                                                                    <polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                                </svg>
-                                                            </div>
-                                                        )}
-                                                        <VerifiedBadge
-                                                            isFounder={true}
-                                                            className="w-8 h-8"
-                                                            badgeColor={b.id}
-                                                            user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }}
-                                                        />
+                                                    <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                        className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
+                                                        {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
+                                                        <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-8 h-8" badgeColor={b.id} user={{ role: user?.role || 'User', settings: { showBadge: true, badgeColor: b.id } }} />
                                                         <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
                                                     </button>
                                                 );
                                             })}
                                         </div>
-                                    ) : (
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {[
-                                                { id: 'x_blue',  label: t('BADGE_COBALT', 'Cobalt') },
-                                                { id: 'blue',    label: t('BADGE_NOVA', 'Nova') },
-                                                { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
-                                            ].map(b => {
-                                                const isSelected = badgeColor === b.id;
-                                                return (
-                                                    <button
-                                                        key={b.id}
-                                                        type="button"
-                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70"
-                                                    >
-                                                        {isSelected && (
-                                                            <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center">
-                                                                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5">
-                                                                    <polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                                </svg>
-                                                            </div>
-                                                        )}
-                                                        <VerifiedBadge
-                                                            isFounder={false}
-                                                            isUser={true}
-                                                            className="w-8 h-8"
-                                                            badgeColor={b.id}
-                                                            user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }}
-                                                        />
-                                                        <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
+                                    </div>
+                                </>
                             )}
                             <SettingRow label={t('BLUR_18_PLUS')} desc={t('BLUR_18_PLUS_DESC')}>
                                 <Toggle active={blur18Plus} onToggle={() => { const v = !blur18Plus; setBlur18Plus(v); handleSave('blur18Plus', v); }} saving={saving} color="blue" />
