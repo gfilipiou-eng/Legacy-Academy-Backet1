@@ -4062,8 +4062,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 <Toggle active={showBadge} onToggle={() => { const v = !showBadge; setShowBadge(v); handleSave('showBadge', v); }} saving={saving} color="blue" />
                             </SettingRow>
                             {showBadge && (
-                                <div className="px-4 py-3.5 border-t border-white/5 text-left">
-                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">{t('BADGE_STYLE')}</div>
+                                <div className="px-4 py-4 border-t border-white/5 text-left">
+                                    <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">{t('BADGE_STYLE')}</div>
                                     {user?.role === 'Founder' ? (
                                         <div className="grid grid-cols-3 gap-2">
                                             {[
@@ -4076,29 +4076,36 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 { id: 'white_black',   label: t('BADGE_WHITE_BLACK', 'White & Black') },
                                                 { id: 'x_gold',        label: t('BADGE_X_GOLD', 'X Gold') },
                                                 { id: 'ig_gold',       label: t('BADGE_IG_GOLD', 'IG Gold') },
-                                            ].map(b => (
-                                                <button
-                                                    key={b.id}
-                                                    type="button"
-                                                    onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                    className={`settings-tile-btn p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.03] active:scale-95 ${
-                                                        badgeColor === b.id
-                                                            ? 'border-[var(--gold-primary)] bg-[var(--gold-primary)]/10 shadow-[0_0_16px_rgba(212,175,55,0.25)]'
-                                                            : 'border-white/10 bg-white/[0.02] hover:border-white/20'
-                                                    }`}
-                                                >
-                                                    <VerifiedBadge
-                                                        isFounder={true}
-                                                        className="w-7 h-7"
-                                                        badgeColor={b.id}
-                                                        user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }}
-                                                    />
-                                                    <span className="text-[9px] text-white/70 font-bold uppercase tracking-wider text-center leading-tight">{b.label}</span>
-                                                    {badgeColor === b.id && (
-                                                        <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--gold-primary)] border border-black" />
-                                                    )}
-                                                </button>
-                                            ))}
+                                            ].map(b => {
+                                                const isSelected = badgeColor === b.id;
+                                                return (
+                                                    <button
+                                                        key={b.id}
+                                                        type="button"
+                                                        onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                        className={`relative p-3 pt-4 pb-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-150 active:scale-90 select-none ${
+                                                            isSelected
+                                                                ? 'border-white/40 bg-white/[0.06]'
+                                                                : 'border-white/8 bg-white/[0.02] hover:bg-white/[0.04]'
+                                                        }`}
+                                                    >
+                                                        {isSelected && (
+                                                            <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center">
+                                                                <svg viewBox="0 0 12 12" className="w-2.5 h-2.5">
+                                                                    <polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
+                                                        <VerifiedBadge
+                                                            isFounder={true}
+                                                            className="w-8 h-8"
+                                                            badgeColor={b.id}
+                                                            user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }}
+                                                        />
+                                                        <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${ isSelected ? 'text-white' : 'text-white/50' }`}>{b.label}</span>
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-2 gap-2">

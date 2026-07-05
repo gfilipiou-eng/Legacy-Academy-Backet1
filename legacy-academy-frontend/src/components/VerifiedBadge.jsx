@@ -6,11 +6,11 @@ const FounderPremiumBadge = ({ className }) => (
     <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
         <defs>
             <linearGradient id="founderPremiumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFF7D6" />
-                <stop offset="25%" stopColor="#FDE047" />
-                <stop offset="50%" stopColor="#EAB308" />
-                <stop offset="75%" stopColor="#CA8A04" />
-                <stop offset="100%" stopColor="#854D0E" />
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="20%" stopColor="#FFE566" />
+                <stop offset="50%" stopColor="#FFD700" />
+                <stop offset="80%" stopColor="#FFA500" />
+                <stop offset="100%" stopColor="#FF8C00" />
             </linearGradient>
         </defs>
         <path fill="url(#founderPremiumGrad)" d="M11 0 L14 3.5 L18.5 3.5 L18.5 8 L22 11 L18.5 14 L18.5 18.5 L14 18.5 L11 22 L8 18.5 L3.5 18.5 L3.5 14 L0 11 L3.5 8 L3.5 3.5 L8 3.5 Z" />
