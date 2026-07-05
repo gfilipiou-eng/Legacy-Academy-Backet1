@@ -27,11 +27,21 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         effectiveBadgeColor = isGold ? 'ig_gold' : 'x_blue';
     }
 
-    // ── USER BADGES — old X-style badge shape ──
+    // ── USER BADGES ──
     if (!isGold) {
+        // Prism Blue (ig_blue) — Instagram star shape in blue
+        if (effectiveBadgeColor === 'ig_blue') {
+            return (
+                <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+                    <circle cx="20" cy="20" r="11" fill="#000" />
+                    <path fill="rgb(0,149,246)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                </svg>
+            );
+        }
+
+        // Cobalt / Nova / others — old X-style badge shape
         let fillColor = '#1D9BF0';
-        if (effectiveBadgeColor === 'blue')   fillColor = '#2F80ED';
-        if (effectiveBadgeColor === 'ig_blue') fillColor = 'rgb(0,149,246)';
+        if (effectiveBadgeColor === 'blue') fillColor = '#2F80ED';
 
         return (
             <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
