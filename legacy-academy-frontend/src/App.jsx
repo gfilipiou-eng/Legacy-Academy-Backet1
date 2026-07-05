@@ -4083,7 +4083,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                         key={b.id}
                                                         type="button"
                                                         onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className={`relative p-3 pt-4 pb-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-150 active:scale-90 select-none ${
+                                                        className={`relative p-3 pt-4 pb-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-colors duration-100 select-none ${
                                                             isSelected
                                                                 ? 'border-white/40 bg-white/[0.06]'
                                                                 : 'border-white/8 bg-white/[0.02] hover:bg-white/[0.04]'

@@ -76,7 +76,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         return (
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
                 {/* Black background so the tick cutout shows as black */}
-                <circle cx="20" cy="20" r="20" fill="#000000" />
+                <circle cx="20" cy="20" r="11" fill="#000000" />
                 {isIgGold ? (
                     <>
                         <defs>
