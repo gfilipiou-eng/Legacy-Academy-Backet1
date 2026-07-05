@@ -2344,6 +2344,172 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
     );
 });
 
+const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
+    const { t } = useTranslation(user);
+    const storySizeClass = 'w-[74px] h-[74px] sm:w-[76px] sm:h-[76px]';
+    return (
+        <div className="flex gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar py-3.5 px-3 sm:px-4 border-b border-white/5 bg-transparent">
+            {/* CURRENT USER ADD STORY */}
+            <div onClick={onAddStory} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+                <div className={`${storySizeClass} rounded-full relative group border-2 border-dashed border-white/25 bg-white/[0.03]`}>
+                    <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
+                        <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
+                        <div className="absolute inset-0 bg-black/30" />
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                </div>
+                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t('ADD_STORY')}</span>
+            </div>
+
+            {stories && stories.map((s, i) => {
+                const isYT = isYouTubeUrl(s.videoUrl);
+                const isNativeVideo = (!isYT) && ((s.videoUrl && s.videoUrl.match(/\.(mp4|mov|webm|avi|m4v)$/i)) || (s.image && s.image.match(/\.(mp4|mov|webm|avi|m4v)$/i)));
+                const authorName = s.author?.username || 'Agent';
+                const hasStoryMedia = postHasMedia(s);
+                const storyMediaUrl = hasStoryMedia ? (s.thumbnailUrl || s.image || s.videoUrl) : null;
+
+                return (
+                    <div key={s._id || i} onClick={() => onViewStory(s)} className="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
+                        <div className={`${storySizeClass} rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transform-gpu`}>
+                            <div className="w-full h-full rounded-full overflow-hidden bg-black border border-black">
+                                {hasStoryMedia && storyMediaUrl ? (
+                                    <img 
+                                        src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
+                                        className="w-full h-full object-cover object-center" 
+                                        alt="" 
+                                        onError={(e) => { e.target.style.display = 'none'; }} 
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-[#111] p-1.5 flex items-center justify-center">
+                                        <span className="text-white text-[7px] font-bold text-center break-words line-clamp-4 leading-tight">
+                                            {getPostTextPreview(s.desc, 48)}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                            {(isNativeVideo || isYT) && (
+                                <div className="absolute bottom-0 right-0 w-5 h-5 bg-white text-black rounded-full flex items-center justify-center border border-black z-10">
+                                    <Icons.Play className="w-2.5 h-2.5 fill-black pl-[0.5px]" />
+                                </div>
+                            )}
+                        </div>
+                        <span className="text-[9px] font-bold text-white/70 uppercase tracking-wider group-hover:text-white transition-colors max-w-[68px] truncate text-center">{authorName}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+const AudioPlayer = memo(({ audioUrl, trackName }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const audioRef = useRef(null);
+
+    const togglePlay = () => {
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
+        }
+    };
+
+    const handleTimeUpdate = () => {
+        if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+        }
+    };
+
+    const handleLoadedMetadata = () => {
+        if (audioRef.current) {
+            setDuration(audioRef.current.duration);
+        }
+    };
+
+    const handleSeek = (e) => {
+        const time = parseFloat(e.target.value);
+        if (audioRef.current) {
+            audioRef.current.currentTime = time;
+            setCurrentTime(time);
+        }
+    };
+
+    const formatTime = (seconds) => {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+    return (
+        <div className="w-full p-4 sm:p-6 bg-gradient-to-br from-[#121212] to-[#181818] rounded-2xl border border-white/10 shadow-xl flex flex-col gap-4">
+            <audio 
+                ref={audioRef}
+                src={audioUrl} 
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={() => setIsPlaying(false)}
+            />
+            
+            <div className="flex items-center gap-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-[#1DB954] to-[#1ed760] flex items-center justify-center shrink-0 shadow-lg">
+                    <Icons.Music className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="text-white font-bold text-sm sm:text-base truncate">{trackName}</div>
+                    <div className="text-white/50 text-xs sm:text-sm mt-1">Audio</div>
+                </div>
+                <button 
+                    onClick={togglePlay}
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1DB954] flex items-center justify-center text-black hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-[#1DB954]/40"
+                >
+                    {isPlaying ? (
+                        <Icons.Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
+                    ) : (
+                        <Icons.Play className="w-6 h-6 sm:w-7 sm:h-7 fill-current ml-1" />
+                    )}
+                </button>
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <div className="relative w-full h-1.5 sm:h-2 bg-white/20 rounded-full cursor-pointer group">
+                    <div 
+                        className="absolute top-0 left-0 h-full bg-[#1DB954] rounded-full transition-all duration-100"
+                        style={{ width: `${progressPercent}%` }}
+                    />
+                    <input 
+                        type="range"
+                        min="0"
+                        max={duration || 100}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div 
+                        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ left: `calc(${progressPercent}% - 6px)` }}
+                    />
+                </div>
+                <div className="flex justify-between text-[10px] sm:text-xs text-white/50 font-bold">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                </div>
+            </div>
+        </div>
+    );
+});
+
 const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null, openCommentsInModal = false }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
