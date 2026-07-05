@@ -7359,22 +7359,21 @@ const ProfileModal = ({
                                     {activeTab !== 'MISSIONS' && (isMe || userStories.length > 0) && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 px-1">
+                                            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 px-1">
                                                 {isMe && (
-                                                    <div onClick={() => onOpenCreate?.()} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                        <div className="w-[68px] h-[68px] sm:w-[72px] sm:h-[72px] rounded-full relative group border-2 border-dashed border-white/25 bg-white/[0.03]">
-                                                            <div className="absolute inset-[3px] rounded-full overflow-hidden bg-[#050505]">
-                                                                <ProfileAvatar user={currentUser} className="object-cover w-full h-full" />
-                                                                <div className="absolute inset-0 bg-black/30" />
-                                                            </div>
-                                                            <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 group-active:scale-95 transition-all duration-300">
+                                                    <div onClick={() => onOpenCreate?.()} className="flex flex-col cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-white/20 shadow-lg transition-all">
+                                                        <div className="h-[65%] w-full overflow-hidden">
+                                                            <ProfileAvatar user={currentUser} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                                                        </div>
+                                                        <div className="h-[35%] w-full flex flex-col items-center justify-end pb-2.5 relative bg-[#181818]">
+                                                            <div className="absolute -top-[14px] w-[28px] h-[28px] bg-[#0095f6] text-white rounded-full border-[3px] border-[#181818] flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-md">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
                                                             </div>
+                                                            <span className="text-[9px] font-black text-white/70 uppercase tracking-widest mt-1 text-center truncate w-full px-1">{t('ADD_STORY')}</span>
                                                         </div>
-                                                        <span className="text-[9px] font-black text-white/50 uppercase tracking-widest mt-1">{t('ADD_STORY')}</span>
                                                     </div>
                                                 )}
                                                 {userStories.map(s => {
@@ -7387,45 +7386,45 @@ const ProfileModal = ({
                                                         if (yid) ytThumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                                                     }
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="shrink-0 flex flex-col items-center gap-2 group cursor-pointer">
-                                                            <div className="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2.5px] bg-gradient-to-tr from-[#1D9BF0]/90 via-[#1D9BF0]/40 to-white/30 relative transform-gpu cursor-pointer">
-                                                                <div className="w-full h-full rounded-full overflow-hidden border border-black bg-black relative">
-                                                                {hasMedia ? (
-                                                                    isNativeVideo ? (
-                                                                        <video
-                                                                            src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                            className="w-full h-full object-cover pointer-events-none"
-                                                                            autoPlay
-                                                                            muted
-                                                                            loop
-                                                                            playsInline
-                                                                            preload="auto"
-                                                                            onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                                                        />
-                                                                    ) : isYT ? (
-                                                                        <div className="w-full h-full relative">
-                                                                            <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
-                                                                            {/* Removed redundant play icon */}
-                                                                        </div>
-                                                                    ) : (
-                                                                        <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" />
-                                                                    )
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg">
+                                                            {hasMedia ? (
+                                                                isNativeVideo ? (
+                                                                    <video
+                                                                        src={resolveMediaUrl(s.videoUrl || s.image)}
+                                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+                                                                        autoPlay
+                                                                        muted
+                                                                        loop
+                                                                        playsInline
+                                                                        preload="auto"
+                                                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
+                                                                    />
+                                                                ) : isYT ? (
+                                                                    <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-500">
+                                                                        <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                                                    </div>
                                                                 ) : (
-                                                                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-1">
-                                                                        <span className="text-[6px] text-gray-300 font-medium text-center leading-tight line-clamp-3 break-words">
-                                                                            {getPostTextPreview(s.desc, 40)}
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                    <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                                )
+                                                            ) : (
+                                                                <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#111] p-2 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                                                    <span className="text-white/90 text-[8px] font-medium text-center break-words line-clamp-6 leading-tight">
+                                                                        {getPostTextPreview(s.desc, 60)}
+                                                                    </span>
                                                                 </div>
-                                                                {(isNativeVideo || isYT) && (
-                                                                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-white text-black rounded-none flex items-center justify-center border border-black shadow-md z-10">
-                                                                        <Icons.Play className="w-2 h-2 fill-black pl-[0.5px]" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className="flex items-center gap-1.5 mt-1 shrink-0">
-                                                                <CyberDate date={s.createdAt} t={t} lang={lang} />
+                                                            )}
+                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
+
+                                                            {(isNativeVideo || isYT) && (
+                                                                <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center justify-center z-10 shadow-sm">
+                                                                    <Icons.Play className="w-3 h-3 fill-white pl-[1px]" />
+                                                                </div>
+                                                            )}
+                                                            
+                                                            <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 pointer-events-none flex items-center justify-center">
+                                                                <div className="text-[10px] text-white/80 font-medium">
+                                                                    <CyberDate date={s.createdAt} t={t} lang={lang} />
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     );
