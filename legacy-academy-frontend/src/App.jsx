@@ -33,10 +33,11 @@ import BubbleSpace from './components/Bubbles/BubbleSpace';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const APP_ASSET_VERSION = '20260620a';
+const APP_ASSET_VERSION = '20260705a';
 const ASSET_PATHS = {
     favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
     applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
+    applogoIos: `/Applogo-ios.png?v=${APP_ASSET_VERSION}`,
     logo: `/logo.png?v=${APP_ASSET_VERSION}`,
     manifest: `/manifest.json?v=${APP_ASSET_VERSION}`,
 };
@@ -69,7 +70,7 @@ const applyHeadBranding = ({ title } = {}) => {
     upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.favicon });
     upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo });
     upsertHeadLink({ rel: 'icon', sizes: '512x512', href: ASSET_PATHS.applogo });
-    upsertHeadLink({ rel: 'apple-touch-icon', sizes: '180x180', href: ASSET_PATHS.applogo });
+    upsertHeadLink({ rel: 'apple-touch-icon', sizes: '180x180', href: ASSET_PATHS.applogoIos });
     upsertHeadLink({ rel: 'manifest', href: ASSET_PATHS.manifest, type: 'application/manifest+json' });
 };
 
