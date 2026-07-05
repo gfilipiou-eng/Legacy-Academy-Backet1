@@ -11295,7 +11295,11 @@ const App = () => {
                                                     {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> Hashtags</>}
                                                     {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">18+ NSFW</span></>}
                                                     {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Δημοφιλή</>}
-                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Παλαιότερα</>}
+                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Popular')}</>}
+                                                    {feedSortOrder === 'images' && <><Icons.Image className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('IMAGES', 'Images')}</>}
+                                                    {feedSortOrder === 'videos' && <><Icons.Video className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('VIDEOS', 'Videos')}</>}
+                                                    {feedSortOrder === 'text' && <><Icons.FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('TEXT', 'Text')}</>}
+                                                    {feedSortOrder === 'oldest' && <><Icons.Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('OLDEST', 'Oldest')}</>}
                                                     <Icons.ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isFeedSortMenuOpen ? 'rotate-180' : ''}`} />
                                                 </button>
 
@@ -11309,8 +11313,8 @@ const App = () => {
                                                             className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
-                                                                { id: 'bubbles', label: 'Φούσκες 🫧', Icon: Icons.MessageCircle, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
-                                                                { id: 'newest', label: 'Νεότερα', Icon: Icons.Sparkles },
+                                                                { id: 'bubbles', label: t('BUBBLES', 'Thought Bubbles'), Icon: Icons.ThoughtBubble, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
+                                                                { id: 'newest', label: t('NEWEST', 'Newest'), Icon: Icons.Sparkles },
                                                                 { id: 'hashtags', label: 'Hashtags', Icon: Icons.Hash },
                                                                 { id: 'nsfw18plus', label: '18+ NSFW', Icon: Icons.AlertCircle, colorClass: 'text-red-500', activeClass: 'bg-red-500/20 text-red-500' },
                                                                 { id: 'popular', label: 'Δημοφιλή', Icon: Icons.TrendingUp },
