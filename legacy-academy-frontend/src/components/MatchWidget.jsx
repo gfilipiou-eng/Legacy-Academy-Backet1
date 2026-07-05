@@ -91,12 +91,12 @@ const MatchWidget = ({ team, className = "" }) => {
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/20 blur-3xl rounded-full"></div>
             
             <div className="relative p-5">
-                <div className="flex justify-between items-center mb-4">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                <div className="flex justify-between items-center mb-4 gap-2">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-white/50 shrink-0">
                         {loading ? "Locating Match..." : "Next Match"}
                     </div>
                     {match && (
-                        <div className="text-[9px] font-bold uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full text-white/80">
+                        <div className="text-[9px] font-bold uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full text-white/80 truncate max-w-[60%] text-right shrink">
                             {match.league}
                         </div>
                     )}
@@ -108,17 +108,17 @@ const MatchWidget = ({ team, className = "" }) => {
                     </div>
                 ) : match ? (
                     <>
-                        <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center justify-between gap-2 sm:gap-4 w-full">
                             {/* Home Team */}
-                            <div className="flex flex-col items-center flex-1">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                            <div className="flex flex-col items-center flex-1 min-w-0">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
                                     {match.homeBadge ? (
                                         <img src={match.homeBadge} alt={match.homeTeam} className="w-full h-full object-contain drop-shadow-lg" />
                                     ) : (
                                         <span className="text-xl">⚽</span>
                                     )}
                                 </div>
-                                <span className="text-xs sm:text-sm font-bold text-center text-white truncate w-full px-1">{match.homeTeam}</span>
+                                <span className="text-[11px] sm:text-xs font-bold text-center text-white truncate w-full px-1">{match.homeTeam}</span>
                             </div>
 
                             {/* VS / Countdown */}
@@ -149,15 +149,15 @@ const MatchWidget = ({ team, className = "" }) => {
                             </div>
 
                             {/* Away Team */}
-                            <div className="flex flex-col items-center flex-1">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                            <div className="flex flex-col items-center flex-1 min-w-0">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
                                     {match.awayBadge ? (
                                         <img src={match.awayBadge} alt={match.awayTeam} className="w-full h-full object-contain drop-shadow-lg" />
                                     ) : (
                                         <span className="text-xl">⚽</span>
                                     )}
                                 </div>
-                                <span className="text-xs sm:text-sm font-bold text-center text-white truncate w-full px-1">{match.awayTeam}</span>
+                                <span className="text-[11px] sm:text-xs font-bold text-center text-white truncate w-full px-1">{match.awayTeam}</span>
                             </div>
                         </div>
                         
