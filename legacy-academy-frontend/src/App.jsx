@@ -11336,10 +11336,10 @@ const App = () => {
                                                                             }
                                                                             setIsFeedSortMenuOpen(false); 
                                                                         }}
-                                                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all ${isActive ? baseActive : `text-gray-400 ${baseHover}`} ${colorClass}`}
+                                                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all w-full text-left overflow-hidden ${isActive ? baseActive : `text-gray-400 ${baseHover}`} ${colorClass}`}
                                                                     >
-                                                                        <opt.Icon className="w-3.5 h-3.5" />
-                                                                        {opt.label}
+                                                                        <opt.Icon className="w-3.5 h-3.5 shrink-0" />
+                                                                        <span className="truncate flex-1">{opt.label}</span>
                                                                     </button>
                                                                 );
                                                             })}
