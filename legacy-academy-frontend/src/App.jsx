@@ -931,14 +931,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     }, [String(rawUrl || ''), cacheKey]);
 
     const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
-    // For PNG avatars with transparency: inject b_rgb:111111 so transparent pixels become dark instead of pixelated white
-    const flatMediaUrl = (() => {
-        if (!mediaUrl) return mediaUrl;
-        if (mediaUrl.includes('cloudinary.com') && mediaUrl.includes('/upload/') && !mediaUrl.includes('b_rgb')) {
-            return mediaUrl.replace('/upload/', '/upload/b_rgb:111111/');
-        }
-        return mediaUrl;
-    })();
+    const flatMediaUrl = mediaUrl;
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
@@ -2412,8 +2405,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
                         
-                        {/* Profile Avatar overlay */}
-                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-[#1a1a1a]">
+                        {/* Profile Avatar overlay — bg-neutral-900 makes transparent PNGs look clean */}
+                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-neutral-900">
                             <ProfileAvatar user={s.author} className="w-full h-full object-cover" />
                         </div>
 
@@ -2709,7 +2702,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                 <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
                     {/* LEFT COL: AVATAR */}
                     <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border border-white/20 overflow-hidden bg-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border border-white/20 overflow-hidden bg-neutral-900 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
