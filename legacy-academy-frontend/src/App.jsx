@@ -931,6 +931,14 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     }, [String(rawUrl || ''), cacheKey]);
 
     const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
+    // For PNG avatars with transparency: inject b_rgb:111111 so transparent pixels become dark instead of pixelated white
+    const flatMediaUrl = (() => {
+        if (!mediaUrl) return mediaUrl;
+        if (mediaUrl.includes('cloudinary.com') && mediaUrl.includes('/upload/') && !mediaUrl.includes('b_rgb')) {
+            return mediaUrl.replace('/upload/', '/upload/b_rgb:111111/');
+        }
+        return mediaUrl;
+    })();
     const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     const isFounder = user?.role === 'Founder';
@@ -965,9 +973,9 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         );
     }
 
-    return mediaUrl ? (
+    return flatMediaUrl ? (
         <img
-            src={mediaUrl}
+            src={flatMediaUrl}
             className={finalClassName}
             onClick={onClick}
             loading={priority ? 'eager' : 'lazy'}
@@ -2405,7 +2413,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
                         
                         {/* Profile Avatar overlay */}
-                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-black">
+                        <div className="absolute top-2.5 left-2.5 w-[32px] h-[32px] rounded-full border-2 border-[#0095f6] overflow-hidden shadow-lg z-10 bg-[#1a1a1a]">
                             <ProfileAvatar user={s.author} className="w-full h-full object-cover" />
                         </div>
 
