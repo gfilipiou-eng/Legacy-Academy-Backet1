@@ -27,7 +27,7 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
 
 // Elite Illuminati badge — Authentic Eye of Providence (Great Seal style)
 const IlluminatiBadge = ({ className }) => (
-    <svg viewBox="4 2 32 36" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
+    <svg viewBox="4 2 32 36" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))', transform: 'scale(1.5)' }}>
         <defs>
             <filter id="vb_illumGlowF" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="1.5" result="b" />
@@ -102,7 +102,7 @@ const IlluminatiBadge = ({ className }) => (
 
 // ── MASONIC SYMBOL (Standalone) ──
 const MasonicSymbol = ({ className }) => (
-    <svg viewBox="4 4 32 32" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="4 4 32 32" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, transform: 'scale(1.5)' }}>
         <defs>
             <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF2A8" />
