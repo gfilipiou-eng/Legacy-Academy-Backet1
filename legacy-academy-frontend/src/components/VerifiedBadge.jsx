@@ -75,7 +75,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         const isIgGold = effectiveBadgeColor === 'ig_gold';
         return (
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0 drop-shadow-sm`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
-                <circle cx="20" cy="20" r="12" fill="#ffffff" />
+                <circle cx="20" cy="20" r="12" fill={isIgGold ? "#000000" : "#000000"} />
                 {isIgGold ? (
                     <>
                         <defs>
