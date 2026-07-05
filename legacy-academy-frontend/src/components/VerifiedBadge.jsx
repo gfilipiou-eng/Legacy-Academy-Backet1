@@ -20,80 +20,7 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
     </svg>
 );
 
-// Elite Illuminati badge — Authentic Eye of Providence (Great Seal style)
-const IlluminatiBadge = ({ className }) => (
-    <svg viewBox="4 2 32 36" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))', transform: 'scale(1.5)' }}>
-        <defs>
-            <filter id="vb_illumGlowF" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="1.5" result="b" />
-                <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <linearGradient id="vb_stone" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#C9B685" />
-                <stop offset="100%" stopColor="#A89464" />
-            </linearGradient>
-            <linearGradient id="vb_stoneDark" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#8C7A4E" />
-                <stop offset="100%" stopColor="#6E5D38" />
-            </linearGradient>
-        </defs>
-        <g>
-            {/* Glowing rays from center of eye */}
-            <g filter="url(#vb_illumGlowF)">
-                {[...Array(16)].map((_, i) => {
-                    const angle = (i * 22.5 * Math.PI) / 180;
-                    const x1 = 20 + Math.cos(angle) * 7;
-                    const y1 = 11 + Math.sin(angle) * 7;
-                    const x2 = 20 + Math.cos(angle) * 16;
-                    const y2 = 11 + Math.sin(angle) * 16;
-                    return (
-                        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFE566" strokeWidth="0.8">
-                            <animate attributeName="stroke-opacity" values="0.1;0.8;0.1" dur="3s" begin={`${(i % 4) * 0.5}s`} repeatCount="indefinite" />
-                        </line>
-                    );
-                })}
-            </g>
 
-            {/* Pyramid Base (13 steps represented simply) */}
-            <path d="M 6 34 L 34 34 L 25 19 L 15 19 Z" fill="url(#vb_stone)" stroke="#6E5D38" strokeWidth="0.5" />
-            {/* Pyramid 3D depth side */}
-            <path d="M 34 34 L 38 31 L 27 17 L 25 19 Z" fill="url(#vb_stoneDark)" stroke="#4A3D22" strokeWidth="0.5" />
-            
-            {/* Horizontal lines to suggest stone courses */}
-            <line x1="8.5" y1="30" x2="31.5" y2="30" stroke="#6E5D38" strokeWidth="0.5" />
-            <line x1="11" y1="26" x2="29" y2="26" stroke="#6E5D38" strokeWidth="0.5" />
-            <line x1="13.5" y1="22" x2="26.5" y2="22" stroke="#6E5D38" strokeWidth="0.5" />
-            
-            {/* Top Capstone Triangle (detached & glowing) */}
-            <g transform="translate(0, -2)">
-                <polygon points="20,4 27,15 13,15" fill="#FFF8CC" stroke="#D4AF37" strokeWidth="1.2" filter="url(#vb_illumGlowF)" />
-                <polygon points="20,4 27,15 13,15" fill="#FFF8CC" stroke="#D4AF37" strokeWidth="0.5" />
-                
-                {/* 3D depth for capstone */}
-                <polygon points="27,15 29,12 22,2 20,4" fill="url(#vb_stoneDark)" />
-                
-                {/* The Eye itself */}
-                <path d="M 15 11.5 C 15 11.5, 20 8, 25 11.5 C 25 11.5, 20 15, 15 11.5 Z" fill="#FFFFFF" stroke="#000000" strokeWidth="0.5" />
-                
-                {/* Green Iris that changes colors subtly */}
-                <circle cx="20" cy="11.5" r="2.2" fill="#00CC44">
-                    <animate attributeName="fill" values="#00CC44;#00FF55;#00CC44" dur="2.5s" repeatCount="indefinite" />
-                </circle>
-                {/* Pupil */}
-                <circle cx="20" cy="11.5" r="1.1" fill="#000000" />
-                {/* Eye highlight */}
-                <circle cx="20.6" cy="10.8" r="0.5" fill="#FFFFFF">
-                    <animate attributeName="opacity" values="0.8;0;0.8" dur="4s" repeatCount="indefinite" />
-                </circle>
-                
-                {/* Eyelid blink effect */}
-                <path d="M 15 11.5 C 15 11.5, 20 8, 25 11.5 C 25 11.5, 20 15, 15 11.5 Z" fill="#FFE566" opacity="0">
-                    <animate attributeName="opacity" values="0;0;1;0;0" dur="5s" keyTimes="0;0.7;0.75;0.8;1" repeatCount="indefinite" />
-                </path>
-            </g>
-        </g>
-    </svg>
-);
 
 // ── MASONIC SYMBOL (Standalone) ──
 const MasonicSymbol = ({ className }) => (
@@ -117,38 +44,7 @@ const MasonicSymbol = ({ className }) => (
     </svg>
 );
 
-// ── FOOTBALL SYMBOLS (OFFICIAL LOGOS) ──
-const PaokSymbol = ({ className }) => (
-    <span className={`${className} shrink-0 flex-shrink-0 inline-flex items-center justify-center`} style={{ display: 'inline-flex' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e6/PAOK_FC_EMBLEM.png/250px-PAOK_FC_EMBLEM.png" alt="PAOK" className="w-full h-full object-contain drop-shadow-md" />
-    </span>
-);
-
-const OlympiacosSymbol = ({ className }) => (
-    <span className={`${className} shrink-0 flex-shrink-0 inline-flex items-center justify-center`} style={{ display: 'inline-flex' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Olympiacos_FC_crest.svg/250px-Olympiacos_FC_crest.svg.png" alt="Olympiacos" className="w-full h-full object-contain drop-shadow-md" />
-    </span>
-);
-
-const AekSymbol = ({ className }) => (
-    <span className={`${className} shrink-0 flex-shrink-0 inline-flex items-center justify-center`} style={{ display: 'inline-flex' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/04/AEK_Athens_FC_logo.svg/250px-AEK_Athens_FC_logo.svg.png" alt="AEK" className="w-full h-full object-contain drop-shadow-md" />
-    </span>
-);
-
-const PaoSymbol = ({ className }) => (
-    <span className={`${className} shrink-0 flex-shrink-0 inline-flex items-center justify-center`} style={{ display: 'inline-flex' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/84/Panathinaikos_F.C._logo.svg/250px-Panathinaikos_F.C._logo.svg.png" alt="Panathinaikos" className="w-full h-full object-contain drop-shadow-md" />
-    </span>
-);
-
-const ArisSymbol = ({ className }) => (
-    <span className={`${className} shrink-0 flex-shrink-0 inline-flex items-center justify-center`} style={{ display: 'inline-flex' }}>
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/Aris_Thessaloniki_F.C._logo.svg/250px-Aris_Thessaloniki_F.C._logo.svg.png" alt="Aris" className="w-full h-full object-contain drop-shadow-md" />
-    </span>
-);
-
-const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp }) => {
+const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, isUser = false, user, badgeColor: badgeColorProp, showFootballText = false }) => {
     if (user?.settings?.showBadge === false) return null;
 
     const resolvedRole = user?.role || (isFounder && !isUser ? 'Founder' : 'User');
@@ -159,27 +55,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         effectiveBadgeColor = isGold ? 'ig_gold' : 'x_blue';
     }
 
-    // ── ELITE ILLUMINATI (Founder only) ──
-    if (effectiveBadgeColor === 'illuminati') {
-        return <IlluminatiBadge className={className} />;
-    }
-
-    // ── FOOTBALL BADGES (available for ALL roles) ──
-    if (effectiveBadgeColor === 'paok') {
-        return <PaokSymbol className={className} />;
-    }
-    if (effectiveBadgeColor === 'olympiacos') {
-        return <OlympiacosSymbol className={className} />;
-    }
-    if (effectiveBadgeColor === 'aek') {
-        return <AekSymbol className={className} />;
-    }
-    if (effectiveBadgeColor === 'panathinaikos') {
-        return <PaoSymbol className={className} />;
-    }
-    if (effectiveBadgeColor === 'aris') {
-        return <ArisSymbol className={className} />;
-    }
+    const renderMainBadge = () => {
 
     // ── MASONIC BADGE (Founder only) ──
     if (effectiveBadgeColor === 'masonic') {
@@ -339,7 +215,32 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     }
 
     // ── Fallback: Ember Gold ──
-    return <SimpleInstaBadge className={className} fill="#EAB308" tickFill="#000" />;
+        return <SimpleInstaBadge className={className} fill="#EAB308" tickFill="#000" />;
+    };
+
+    const team = user?.settings?.footballTeam;
+
+    if (!team) {
+        return renderMainBadge();
+    }
+
+    return (
+        <span className="inline-flex items-center gap-1.5 shrink-0 align-middle">
+            {renderMainBadge()}
+            <span 
+                className={`${className} inline-flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95`} 
+                title={`Supporter of ${team.strTeam}`}
+                onClick={(e) => { e.stopPropagation(); alert(`Fan of ${team.strTeam} ⚽`); }}
+            >
+                <img src={team.strBadge} alt={team.strTeam} className="w-full h-full object-contain drop-shadow-md" />
+            </span>
+            {showFootballText && (
+                <span className="text-[11px] font-bold tracking-wide text-white/90 bg-white/10 px-1.5 py-0.5 rounded-md">
+                    {team.strTeam}
+                </span>
+            )}
+        </span>
+    );
 };
 
 export const AvatarFounderBadge = ({ className = "w-4 h-4 sm:w-5 sm:h-5" }) => (

@@ -24,6 +24,7 @@ import { playSound, explodeEffect, cyberDeleteEffect } from './utils/sounds';
 import CommentView from './CommentView';
 import ImageLightbox from './components/ImageLightbox';
 import VerifiedBadge, { AvatarFounderBadge } from './components/VerifiedBadge';
+import MatchWidget from './components/MatchWidget';
 import socket from './socket';
 import ScrollToTop from './components/ScrollToTop';
 import BottomNavbar from './components/BottomNavbar';
@@ -2694,7 +2695,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
                                         <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} />
+                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} showFootballText={true} />
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
                                             <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
                                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
@@ -3667,6 +3668,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
+    const [footballTeam, setFootballTeam] = useState(user?.settings?.footballTeam || null);
+    const [teamSearchQuery, setTeamSearchQuery] = useState('');
+    const [teamSearchResults, setTeamSearchResults] = useState([]);
+    const [isSearchingTeam, setIsSearchingTeam] = useState(false);
     const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
@@ -3720,6 +3725,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             );
             setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
+            setFootballTeam(user.settings?.footballTeam || null);
             setBlur18Plus(user.settings?.blur18Plus !== false);
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
             setProfileDescriptor(user.profileDescriptor || '');
@@ -3788,6 +3794,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
             if (key === 'showBadge') payload = { settings: { showBadge: Boolean(val) } };
             if (key === 'badgeColor') payload = { settings: { badgeColor: String(val) } };
+            if (key === 'footballTeam') payload = { settings: { footballTeam: val } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
             if (key === 'showProfileShareButton') {
@@ -3821,6 +3828,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
             if (key === 'showBadge') setShowBadge(Boolean(val));
             if (key === 'badgeColor') setBadgeColor(String(val));
+            if (key === 'footballTeam') setFootballTeam(val);
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
             if (key === 'matrixOverlay') setMatrixOverlay(Boolean(val));
@@ -4110,28 +4118,83 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             </div>
                                         )}
                                     </div>
-                                    {/* ⚽ Football Teams */}
+                                    {/* ⚽ Football Teams Search */}
                                     <div className="px-4 py-4 border-t border-white/5 text-left">
-                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">⚽ {t('FOOTBALL_TEAMS', 'Football Teams')}</div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {[
-                                                { id: 'paok',          label: 'PAOK FC' },
-                                                { id: 'olympiacos',    label: 'Olympiacos' },
-                                                { id: 'aek',           label: 'AEK' },
-                                                { id: 'panathinaikos', label: 'PAO' },
-                                                { id: 'aris',          label: 'Aris FC' },
-                                            ].map(b => {
-                                                const isSelected = badgeColor === b.id;
-                                                return (
-                                                    <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                        className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
-                                                        {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
-                                                        <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-8 h-8" badgeColor={b.id} user={{ role: user?.role || 'User', settings: { showBadge: true, badgeColor: b.id } }} />
-                                                        <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
-                                                    </button>
-                                                );
-                                            })}
+                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                                            <span>⚽ {t('FOOTBALL_TEAMS', 'Supporter Team')}</span>
+                                            {footballTeam && (
+                                                <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded">
+                                                    <Icons.X className="w-3 h-3" /> Remove
+                                                </button>
+                                            )}
                                         </div>
+                                        
+                                        {footballTeam ? (
+                                            <div className="relative p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] flex items-center gap-4">
+                                                <img src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-12 h-12 object-contain drop-shadow-md" />
+                                                <div>
+                                                    <div className="text-white font-bold tracking-wide">{footballTeam.strTeam}</div>
+                                                    <div className="text-gray-400 text-xs">Your designated supporter team</div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <div className="relative">
+                                                    <input 
+                                                        type="text" 
+                                                        placeholder="Search for any team (e.g. PAOK, Arsenal, Real Madrid)..."
+                                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                                                        value={teamSearchQuery}
+                                                        onChange={async (e) => {
+                                                            const query = e.target.value;
+                                                            setTeamSearchQuery(query);
+                                                            if (!query || query.length < 3) {
+                                                                setTeamSearchResults([]);
+                                                                return;
+                                                            }
+                                                            setIsSearchingTeam(true);
+                                                            try {
+                                                                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(query)}`);
+                                                                const data = await res.json();
+                                                                setTeamSearchResults(data.teams || []);
+                                                            } catch (err) {
+                                                                console.error("Team search failed", err);
+                                                            }
+                                                            setIsSearchingTeam(false);
+                                                        }}
+                                                    />
+                                                    {isSearchingTeam && <div className="absolute right-3 top-3.5 w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>}
+                                                </div>
+                                                
+                                                {teamSearchResults.length > 0 && (
+                                                    <div className="max-h-[200px] overflow-y-auto pr-1 space-y-1 mt-2">
+                                                        {teamSearchResults.map(t => (
+                                                            <button 
+                                                                key={t.idTeam}
+                                                                onClick={() => {
+                                                                    const selected = { id: t.idTeam, strTeam: t.strTeam, strBadge: t.strBadge || t.strTeamBadge };
+                                                                    setFootballTeam(selected);
+                                                                    handleSave('footballTeam', selected);
+                                                                    setTeamSearchQuery('');
+                                                                    setTeamSearchResults([]);
+                                                                }}
+                                                                className="w-full flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition-colors text-left"
+                                                            >
+                                                                {t.strBadge || t.strTeamBadge ? (
+                                                                    <img src={t.strBadge || t.strTeamBadge} alt={t.strTeam} className="w-8 h-8 object-contain" />
+                                                                ) : (
+                                                                    <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">⚽</div>
+                                                                )}
+                                                                <div>
+                                                                    <div className="text-sm font-bold text-white">{t.strTeam}</div>
+                                                                    <div className="text-[10px] text-gray-500">{t.strLeague} • {t.strCountry}</div>
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </>
                             )}
@@ -7008,7 +7071,7 @@ const ProfileModal = ({
                                     <div className="flex items-center justify-center gap-2 leading-none uppercase tracking-[0.1em] flex-wrap w-full max-w-full">
                                         <span className="profile-headline font-black text-white text-lg sm:text-xl break-words min-w-0">{displayUser?.username || "Unknown Agent"}</span>
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><span className="text-base sm:text-lg"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}
-                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} />
+                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={displayUser} showFootballText={true} />
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
                                         <div className="mt-3 flex justify-center">
@@ -7049,6 +7112,11 @@ const ProfileModal = ({
                                             </p>
                                         </div>
                                     </div>
+                                )}
+
+                                {/* FOOTBALL MATCH WIDGET */}
+                                {displayUser?.settings?.footballTeam && (
+                                    <MatchWidget team={displayUser.settings.footballTeam} className="w-full mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.6)]" />
                                 )}
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}
