@@ -11291,10 +11291,9 @@ const App = () => {
                                                     onClick={() => setIsFeedSortMenuOpen(!isFeedSortMenuOpen)}
                                                     className="flex items-center gap-2 pb-2.5 font-black text-[11px] sm:text-[12px] uppercase tracking-wider text-white hover:text-white/80 transition-colors"
                                                 >
-                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Νεότερα</>}
+                                                    {feedSortOrder === 'newest' && <><Icons.Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('NEWEST', 'Newest')}</>}
                                                     {feedSortOrder === 'hashtags' && <><Icons.Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} /> Hashtags</>}
                                                     {feedSortOrder === 'nsfw18plus' && <><Icons.AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" /> <span className="text-red-500">18+ NSFW</span></>}
-                                                    {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Δημοφιλή</>}
                                                     {feedSortOrder === 'popular' && <><Icons.TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('POPULAR', 'Popular')}</>}
                                                     {feedSortOrder === 'images' && <><Icons.Image className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('IMAGES', 'Images')}</>}
                                                     {feedSortOrder === 'videos' && <><Icons.Video className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> {t('VIDEOS', 'Videos')}</>}
