@@ -25,87 +25,84 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
     </svg>
 );
 
-// Elite Illuminati badge — Eye of Providence, animated blink + pulsing green glow
+// Elite Illuminati badge — Authentic Eye of Providence (Great Seal style)
 const IlluminatiBadge = ({ className }) => (
-    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="4 2 32 36" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' }}>
         <defs>
-            <clipPath id="vb_illumClip">
-                <path d={INSTA_STAR_PATH} />
-            </clipPath>
-            <linearGradient id="vb_illumTriGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFE566" />
-                <stop offset="100%" stopColor="#B8860B" />
-            </linearGradient>
-            <radialGradient id="vb_illumEyeGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#00FF00" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#004400" stopOpacity="0" />
-            </radialGradient>
             <filter id="vb_illumGlowF" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="1.2" result="b" />
+                <feGaussianBlur stdDeviation="1.5" result="b" />
                 <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
+            <linearGradient id="vb_stone" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#C9B685" />
+                <stop offset="100%" stopColor="#A89464" />
+            </linearGradient>
+            <linearGradient id="vb_stoneDark" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#8C7A4E" />
+                <stop offset="100%" stopColor="#6E5D38" />
+            </linearGradient>
         </defs>
-        <g clipPath="url(#vb_illumClip)">
-            {/* Dark background */}
-            <rect x="0" y="0" width="40" height="40" fill="#060810" />
-            {/* Subtle dark bg gradient */}
-            <circle cx="20" cy="22" r="18" fill="#0D1530" />
+        <g>
+            {/* Glowing rays from center of eye */}
+            <g filter="url(#vb_illumGlowF)">
+                {[...Array(16)].map((_, i) => {
+                    const angle = (i * 22.5 * Math.PI) / 180;
+                    const x1 = 20 + Math.cos(angle) * 7;
+                    const y1 = 11 + Math.sin(angle) * 7;
+                    const x2 = 20 + Math.cos(angle) * 16;
+                    const y2 = 11 + Math.sin(angle) * 16;
+                    return (
+                        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FFE566" strokeWidth="0.8">
+                            <animate attributeName="stroke-opacity" values="0.1;0.8;0.1" dur="3s" begin={`${(i % 4) * 0.5}s`} repeatCount="indefinite" />
+                        </line>
+                    );
+                })}
+            </g>
 
-            {/* Pulsing eye glow */}
-            <ellipse cx="20" cy="22" rx="8" ry="6" fill="url(#vb_illumEyeGlow)">
-                <animate attributeName="rx" values="6;10;6" dur="2.5s" repeatCount="indefinite" />
-                <animate attributeName="ry" values="5;8;5" dur="2.5s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" />
-            </ellipse>
-
-            {/* Pyramid / Triangle */}
-            <polygon points="20,9 33,31 7,31" fill="none" stroke="url(#vb_illumTriGold)" strokeWidth="1.6" filter="url(#vb_illumGlowF)">
-                <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" />
-            </polygon>
-            {/* Pyramid inner horizontal line (eye level) */}
-            <line x1="10.5" y1="22" x2="29.5" y2="22" stroke="url(#vb_illumTriGold)" strokeWidth="0.7" strokeOpacity="0.4" />
-
-            {/* Light rays from top of pyramid */}
-            {[[-18,3],[-10,1],[0,-2],[10,1],[18,3]].map(([dx, dy], i) => (
-                <line key={i}
-                    x1={20 + dx * 0.4} y1={9 + dy * 0.4}
-                    x2={20 + dx} y2={9 + dy - 3}
-                    stroke="#FFE566" strokeWidth="0.8" strokeOpacity="0.6"
-                    strokeLinecap="round">
-                    <animate attributeName="stroke-opacity" values="0.3;0.9;0.3" dur="2.5s" begin={`${i * 0.12}s`} repeatCount="indefinite" />
-                </line>
-            ))}
-
-            {/* Eye white — animates open/close */}
-            <ellipse cx="20" cy="22" rx="5.5" ry="3.8" fill="#F5FFE8" filter="url(#vb_illumGlowF)">
-                {/* Blink: open most of time, close briefly */}
-                <animate attributeName="ry" values="3.8;3.8;3.8;0.15;3.8;3.8" dur="5s" repeatCount="indefinite" keyTimes="0;0.5;0.7;0.75;0.8;1" />
-            </ellipse>
-
-            {/* Iris — green */}
-            <circle cx="20" cy="22" r="2.6" fill="#00CC44">
-                <animate attributeName="r" values="2.6;2.6;0.05;2.6;2.6" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
-                <animate attributeName="fill" values="#00CC44;#00FF55;#00CC44" dur="2.5s" repeatCount="indefinite" />
-            </circle>
-            {/* Pupil — black */}
-            <circle cx="20" cy="22" r="1.3" fill="#000000">
-                <animate attributeName="r" values="1.3;1.3;0.02;1.3;1.3" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
-            </circle>
-            {/* Eye highlight */}
-            <circle cx="21.5" cy="21" r="0.7" fill="white" opacity="0.85">
-                <animate attributeName="opacity" values="0.85;0.85;0;0.85;0.85" dur="5s" repeatCount="indefinite" keyTimes="0;0.7;0.75;0.8;1" />
-            </circle>
-
-            {/* Bottom base glow line */}
-            <line x1="7" y1="31" x2="33" y2="31" stroke="#FFE566" strokeWidth="1" strokeOpacity="0.5">
-                <animate attributeName="stroke-opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite" />
-            </line>
+            {/* Pyramid Base (13 steps represented simply) */}
+            <path d="M 6 34 L 34 34 L 25 19 L 15 19 Z" fill="url(#vb_stone)" stroke="#6E5D38" strokeWidth="0.5" />
+            {/* Pyramid 3D depth side */}
+            <path d="M 34 34 L 38 31 L 27 17 L 25 19 Z" fill="url(#vb_stoneDark)" stroke="#4A3D22" strokeWidth="0.5" />
+            
+            {/* Horizontal lines to suggest stone courses */}
+            <line x1="8.5" y1="30" x2="31.5" y2="30" stroke="#6E5D38" strokeWidth="0.5" />
+            <line x1="11" y1="26" x2="29" y2="26" stroke="#6E5D38" strokeWidth="0.5" />
+            <line x1="13.5" y1="22" x2="26.5" y2="22" stroke="#6E5D38" strokeWidth="0.5" />
+            
+            {/* Top Capstone Triangle (detached & glowing) */}
+            <g transform="translate(0, -2)">
+                <polygon points="20,4 27,15 13,15" fill="#FFF8CC" stroke="#D4AF37" strokeWidth="1.2" filter="url(#vb_illumGlowF)" />
+                <polygon points="20,4 27,15 13,15" fill="#FFF8CC" stroke="#D4AF37" strokeWidth="0.5" />
+                
+                {/* 3D depth for capstone */}
+                <polygon points="27,15 29,12 22,2 20,4" fill="url(#vb_stoneDark)" />
+                
+                {/* The Eye itself */}
+                <path d="M 15 11.5 C 15 11.5, 20 8, 25 11.5 C 25 11.5, 20 15, 15 11.5 Z" fill="#FFFFFF" stroke="#000000" strokeWidth="0.5" />
+                
+                {/* Green Iris that changes colors subtly */}
+                <circle cx="20" cy="11.5" r="2.2" fill="#00CC44">
+                    <animate attributeName="fill" values="#00CC44;#00FF55;#00CC44" dur="2.5s" repeatCount="indefinite" />
+                </circle>
+                {/* Pupil */}
+                <circle cx="20" cy="11.5" r="1.1" fill="#000000" />
+                {/* Eye highlight */}
+                <circle cx="20.6" cy="10.8" r="0.5" fill="#FFFFFF">
+                    <animate attributeName="opacity" values="0.8;0;0.8" dur="4s" repeatCount="indefinite" />
+                </circle>
+                
+                {/* Eyelid blink effect */}
+                <path d="M 15 11.5 C 15 11.5, 20 8, 25 11.5 C 25 11.5, 20 15, 15 11.5 Z" fill="#FFE566" opacity="0">
+                    <animate attributeName="opacity" values="0;0;1;0;0" dur="5s" keyTimes="0;0.7;0.75;0.8;1" repeatCount="indefinite" />
+                </path>
+            </g>
         </g>
     </svg>
 );
+
 // ── MASONIC SYMBOL (Standalone) ──
 const MasonicSymbol = ({ className }) => (
-    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="4 4 32 32" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
         <defs>
             <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF2A8" />
