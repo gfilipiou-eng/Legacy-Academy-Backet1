@@ -4150,7 +4150,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             <span>⚽ {t('FOOTBALL_TEAMS', 'Supporter Team')}</span>
                                             {footballTeam && (
                                                 <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded">
-                                                    <Icons.X className="w-3 h-3" /> Remove
+                                                    <Icons.X className="w-3 h-3" /> {t('REMOVE', 'Remove')}
                                                 </button>
                                             )}
                                         </div>
@@ -4160,7 +4160,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 <img src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl transition-transform hover:scale-110" />
                                                 <div>
                                                     <div className="text-white font-black text-base sm:text-lg tracking-wider drop-shadow-md">{footballTeam.strTeam}</div>
-                                                    <div className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Your designated supporter team</div>
+                                                    <div className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">{t('YOUR_DESIGNATED_TEAM', 'Your designated supporter team')}</div>
                                                 </div>
                                             </div>
                                         ) : (
@@ -4168,7 +4168,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 <div className="relative">
                                                     <input 
                                                         type="text" 
-                                                        placeholder="Search for any team (e.g. PAOK, Arsenal, Real Madrid)..."
+                                                        placeholder={t('SEARCH_TEAM_PLACEHOLDER', 'Search for any team (e.g. PAOK, Arsenal, Real Madrid)...')}
                                                         className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
                                                         value={teamSearchQuery}
                                                         onChange={async (e) => {

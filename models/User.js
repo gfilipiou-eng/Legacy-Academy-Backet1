@@ -49,7 +49,8 @@ const UserSchema = new mongoose.Schema({
     cyberSFX: { type: Boolean, default: true },
     neuralNarrator: { type: Boolean, default: false },
     businessWebsites: [{ type: Object }],
-    businessWebsite: { type: Object }
+    businessWebsite: { type: Object },
+    footballTeam: { type: Object }
   },
   missionsStreak: { type: Number, default: 0 },
   lastMissionCompleted: { type: Date },

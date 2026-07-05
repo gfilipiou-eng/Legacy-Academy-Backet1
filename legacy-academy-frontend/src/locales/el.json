@@ -622,5 +622,11 @@
   "BUBBLES_PLACEHOLDER": "Τι σκέφτεσαι;",
   "BUBBLES_BLOWING": "Δημιουργία...",
   "BUBBLES_BLOW_BTN": "Φύσα τη Φούσκα 🫧",
-  "YOUR_STORY": "Η ΙΣΤΟΡΙΑ ΣΟΥ"
+  "YOUR_STORY": "Η ΙΣΤΟΡΙΑ ΣΟΥ",
+  "ACTIVE_DEVICES": "Ενεργές Συσκευές",
+  "SESSION_MONITORING": "Παρακολούθηση συνεδρίας",
+  "REMOVE": "Αφαίρεση",
+  "SEARCH_TEAM_PLACEHOLDER": "Αναζήτηση ομάδας (π.χ. ΠΑΟΚ, Arsenal, Real Madrid)...",
+  "YOUR_DESIGNATED_TEAM": "Η αγαπημένη σου ομάδα",
+  "FOOTBALL_TEAMS": "Αγαπημενη Ομαδα"
 }
