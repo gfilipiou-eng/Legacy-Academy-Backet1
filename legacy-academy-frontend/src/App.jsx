@@ -3340,7 +3340,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 </div>
 
                 {/* CHAT WINDOW */}
-                <div className={`flex-1 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
+                <div className={`flex-1 min-w-0 flex-col bg-[#050505] chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
                     {/* Cinematic Space Background */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020205]">
                         <div 
@@ -3506,7 +3506,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="w-full p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
+                            <div className="w-full min-w-0 p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
@@ -3531,7 +3531,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                             placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                            className={`w-full flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
+                                            className={`w-full max-w-full flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
                                         />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
