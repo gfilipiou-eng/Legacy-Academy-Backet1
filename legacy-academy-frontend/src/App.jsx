@@ -3341,25 +3341,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             }}
                         />
 
-                        {/* Animated Tech Particles */}
-                        <div className="absolute inset-0">
-                            {Array.from({ length: 40 }).map((_, i) => (
-                                <div 
-                                    key={i}
-                                    className="absolute bg-cyan-400"
-                                    style={{
-                                        left: `${Math.random() * 100}%`,
-                                        top: `${Math.random() * 100}%`,
-                                        width: `${Math.random() > 0.5 ? 1 : 2}px`,
-                                        height: `${Math.random() * 15 + 5}px`,
-                                        opacity: `${Math.random() * 0.5 + 0.1}`,
-                                        filter: 'blur(1px)',
-                                        animation: `cyberRain ${Math.random() * 2 + 1}s linear infinite`,
-                                        animationDelay: `${Math.random() * 2}s`
-                                    }}
-                                />
-                            ))}
-                        </div>
+
                     </div>
                     {activeChat ? (
                         <>
