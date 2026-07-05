@@ -3346,7 +3346,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         {/* Marble / Statue Background Image */}
                         <div 
                             className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse duration-[15s]"
-                            style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=2000&q=80")' }}
+                            style={{ backgroundImage: 'url("/ancient_bg.png")' }}
                         />
                         {/* Gold/Bronze Gradient Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
@@ -3507,7 +3507,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="w-full min-w-0 p-3 pb-14 sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
+                            <div className="w-full min-w-0 p-3 pb-[max(12px,env(safe-area-inset-bottom))] sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
                                     <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
