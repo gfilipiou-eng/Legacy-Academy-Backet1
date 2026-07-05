@@ -2386,7 +2386,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                 const gradClass = textGradients[i % textGradients.length];
 
                 return (
-                    <div key={s._id || i} onClick={() => onViewStory(s)} className={`cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg`}>
+                    <div key={s._id || i} onClick={() => onViewStory(s)} className={`cursor-pointer shrink-0 group ${storyCardClass} relative rounded-[16px] overflow-hidden transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg`}>
                         {hasStoryMedia && storyMediaUrl ? (
                             <img 
                                 src={resolveMediaUrl(storyMediaUrl, null, false, true)} 
@@ -6764,7 +6764,7 @@ const ProfileModal = ({
                     }} className="p-2.5 -ml-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95 text-white transition-all duration-300 flex items-center justify-center">
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
-                    <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
+                    <div className="font-black text-white leading-none flex items-center gap-1 justify-center">{activeList ? <span className="uppercase tracking-[0.25em] text-[11px]">{activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')}</span> : (isEditing ? <span className="uppercase tracking-[0.25em] text-[11px]">{t('EDIT_PROFILE')}</span> : <><span className="text-[14px] sm:text-[16px] tracking-wide">{displayUser?.username}</span>
     {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1 text-[13px] flex items-center gap-0.5"><span className="text-[13px]"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /></span>{getActiveStreak(displayUser)}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
@@ -7094,15 +7094,15 @@ const ProfileModal = ({
 
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
-                                    <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none uppercase tracking-[0.1em] flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
+                                    <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wide flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
                                         <span className="profile-headline font-black text-white text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} />
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
-                                        <div className="mt-3.5 flex items-center justify-center gap-3 sm:gap-4 drop-shadow-2xl select-none">
-                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-2xl" />
-                                            <span className="text-[14px] sm:text-[16px] font-black tracking-widest text-white bg-white/10 px-4 py-2 rounded-xl whitespace-nowrap backdrop-blur-md border border-white/10 shadow-xl uppercase">
+                                        <div className="mt-5 flex items-center justify-center gap-4 sm:gap-5 drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] select-none bg-black/20 p-4 px-6 rounded-3xl border border-white/10 backdrop-blur-md">
+                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] hover:scale-105 transition-transform duration-300" />
+                                            <span className="text-[16px] sm:text-[20px] font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/50 drop-shadow-md uppercase">
                                                 {displayUser.settings.footballTeam.strTeam}
                                             </span>
                                         </div>
@@ -7409,7 +7409,7 @@ const ProfileModal = ({
                                                     const gradClass = textGradients[i % textGradients.length];
 
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden transform-gpu hover:scale-[1.02] active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg">
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg">
                                                             {hasMedia ? (
                                                                 isNativeVideo ? (
                                                                     <video
