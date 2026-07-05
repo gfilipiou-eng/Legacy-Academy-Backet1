@@ -8958,15 +8958,37 @@ const App = () => {
             }
         });
 
-        // Don't show toast on initial load (when previous size was 0)
+        // Only Founder should receive online notifications
+        if (user.role !== 'Founder') {
+            onlineUsersRef.current = currentOnline;
+            return;
+        }
+
+        // Don't show alert on initial load (when previous size was 0)
         if (onlineUsersRef.current.size > 0) {
             currentOnline.forEach(id => {
                 if (!onlineUsersRef.current.has(id)) {
                     const comingOnlineUser = users.find(u => String(u._id) === id);
                     if (comingOnlineUser) {
-                        // Ελέγχουμε αν υπάρχει ήδη ενεργό toast για αυτόν τον χρήστη για αποφυγή spam (debounce)
-                        const toastMsg = t('USER_IS_ONLINE', { user: comingOnlineUser.username, defaultValue: `${comingOnlineUser.username} is now online` });
-                        addToast(toastMsg, 'success');
+                        const msg = t('USER_IS_ONLINE', { user: comingOnlineUser.username, defaultValue: `${comingOnlineUser.username} is now online` });
+                        
+                        // Add as a local in-app notification instead of a pop-out toast
+                        const newNotif = {
+                            _id: `local_online_${Date.now()}_${id}`,
+                            type: 'system',
+                            text: msg,
+                            createdAt: new Date().toISOString(),
+                            read: false
+                        };
+                        
+                        setUser(prev => {
+                            if (!prev) return prev;
+                            // Prevent spamming the exact same notification within 1 minute
+                            if (prev.notifications?.some(n => n.text === msg && new Date(n.createdAt).getTime() > Date.now() - 60000)) {
+                                return prev;
+                            }
+                            return { ...prev, notifications: [newNotif, ...(prev.notifications || [])] };
+                        });
                     }
                 }
             });
