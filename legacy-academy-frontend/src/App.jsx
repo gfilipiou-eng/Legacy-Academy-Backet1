@@ -2285,7 +2285,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         </span>
                         <VerifiedBadge isFounder={isFounderSender} isUser={!isFounderSender} className="w-3.5 h-3.5" user={note.sender} />
                         {getActiveStreak(note?.sender) > 0 && (
-                            <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(note?.sender)}</span>
+                            <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(note?.sender)}</span>
                         )}
                     </div>
                     {!note.read && (
@@ -2532,7 +2532,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
         ? { ...baseAuthor, ...user }
         : ((allUsers?.find(u => isSameId(u._id, authorId))) ? { ...baseAuthor, ...(allUsers.find(u => isSameId(u._id, authorId))) } : baseAuthor);
 
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> ROBUST REPOSTER RESOLUTION
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> ROBUST REPOSTER RESOLUTION
     let resolvedReposter = reposter;
     if (!resolvedReposter && post.isRepost && post.repostedBy) {
         const rId = post.repostedBy?._id || post.repostedBy;
@@ -2957,7 +2957,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         return allUsers.find(au => isSameId(au._id, activeChat._id)) || activeChat;
     }, [activeChat, allUsers]);
 
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> INSTANT STATUS REFRESH: Fetch latest data for target user on mount/change
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> INSTANT STATUS REFRESH: Fetch latest data for target user on mount/change
     useEffect(() => {
         if (isOpen && activeChat?._id && fetchSpecificUser) {
             fetchSpecificUser(activeChat._id);
@@ -3026,7 +3026,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 return { ...prev, [otherUserId]: normalizedMessages };
             });
 
-            // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> WHISPERS: Auto-mark incoming messages as read (and trigger deletion on backend)
+            // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> WHISPERS: Auto-mark incoming messages as read (and trigger deletion on backend)
             const incomingUnread = normalizedMessages.filter(m => String(m.recipient) === String(user._id) && !m.isRead && !m.isLocked);
             if (incomingUnread.length > 0) {
                 // Trigger burn protocol
@@ -3081,7 +3081,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         // Removed aggressive 5s polling. Socket updates are enough, polling overrides optimistic UI.
         
-        // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> REAL-TIME MESSAGE LISTENER
+        // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> REAL-TIME MESSAGE LISTENER
         const handleMessageReceived = (msg) => {
             const normalizedMessage = normalizeWhisper(msg);
             // Check if message belongs to THIS conversation
@@ -3313,7 +3313,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[#0a0a0a] ${online ? 'bg-green-500' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -3350,7 +3350,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <div className="min-w-0 flex-1">
                                     <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
                                         {chatUser?.username}
-                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(chatUser)}</span>}
+                                        {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(chatUser)}</span>}
                                         <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={chatUser} />
                                     </div>
                                     {(() => {
@@ -5641,8 +5641,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
                                     <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
-                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(user)}</span>}
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
+                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-sm shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-4 h-4 shrink-0" />{getActiveStreak(user)}</span>}
                                 </div>
                                 <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
@@ -5874,7 +5874,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[1].username}</p>
-                                                    <p className="text-xs font-bold text-gray-400"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> {getActiveStreak(top3[1])}</p>
+                                                    <p className="text-xs font-bold text-gray-400"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> {getActiveStreak(top3[1])}</p>
                                                     <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-gray-400">SILVER</span>
                                                     </div>
@@ -5893,7 +5893,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-base sm:text-lg font-black text-yellow-400 mt-2 truncate w-full text-center">{top3[0].username}</p>
-                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> {getActiveStreak(top3[0])}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> {getActiveStreak(top3[0])}</p>
                                                     <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs sm:text-sm font-black text-yellow-200">GOLD</span>
                                                     </div>
@@ -5912,7 +5912,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[2].username}</p>
-                                                    <p className="text-xs font-bold text-amber-600"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> {getActiveStreak(top3[2])}</p>
+                                                    <p className="text-xs font-bold text-amber-600"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> {getActiveStreak(top3[2])}</p>
                                                     <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-amber-300">BRONZE</span>
                                                     </div>
@@ -6208,7 +6208,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
                     {getActiveStreak(user) > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className="bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm px-3 py-1.5 rounded-full font-black uppercase tracking-wider flex items-center gap-2 shrink-0">
-                                <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> {getActiveStreak(user)} {t('MISSION_STREAK')}
+                                <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> {getActiveStreak(user)} {t('MISSION_STREAK')}
                             </span>
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest shrink-0 border border-white/5 bg-white/5 rounded-full px-2 py-1">
                                 ⏳ {hasCompletedToday ? 'Next in' : 'Reset in'} {timeLeft}
@@ -6314,7 +6314,7 @@ const ProfileModal = ({
     isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher }) => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
     useEffect(() => {
         if (isOpen && profileUser?._id && fetchSpecificUser) {
             fetchSpecificUser(profileUser._id);
@@ -6327,7 +6327,7 @@ const ProfileModal = ({
     const optimisticProfileEditRef = useRef(null);
     const profileSaveInFlightRef = useRef(false);
 
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
     useEffect(() => {
         if (profileUser) {
             const latest = (allUsers || []).find(u => isSameId(u._id, profileUser._id)) || profileUser;
@@ -6599,7 +6599,7 @@ const ProfileModal = ({
         return () => socket.off('post.reposted', handleReposted);
     }, [isOpen, profileUser?._id]);
 
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> PERFORMANCE FIX: Efficiently sync and update local profile posts with any global changes
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> PERFORMANCE FIX: Efficiently sync and update local profile posts with any global changes
     useEffect(() => {
         if (!isOpen || !posts || !userSpecificPosts) return;
 
@@ -6747,7 +6747,7 @@ const ProfileModal = ({
                         <Icons.Back className="w-5 h-5 text-white" />
                     </button>
                     <div className="font-black text-white text-[11px] uppercase tracking-[0.25em] leading-none flex items-center gap-1 justify-center">{activeList ? (activeList === 'followers' ? t('FOLLOWERS') : t('FOLLOWING')) : (isEditing ? t('EDIT_PROFILE') : <>{displayUser?.username}
-    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1 text-[13px] flex items-center gap-0.5"><span className="text-[13px]"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>{getActiveStreak(displayUser)}</span>}</>)}</div>
+    {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold ml-1 text-[13px] flex items-center gap-0.5"><span className="text-[13px]"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /></span>{getActiveStreak(displayUser)}</span>}</>)}</div>
                     {!activeList && !isEditing && canShowProfileShareButton ? (
                         <button
                             onClick={async () => {
@@ -8491,7 +8491,7 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
 
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full">
-                                <span className="text-orange-500 text-sm leading-none"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /></span>
+                                <span className="text-orange-500 text-sm leading-none"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /></span>
                                 <span className="font-black text-orange-400 leading-none">{getActiveStreak(u)}</span>
                             </div>
                         </div>
@@ -9135,13 +9135,13 @@ const App = () => {
     const handleUpdateUser = (updatedUser) => {
         if (!updatedUser) return;
 
-        // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> SAFETY: Only proceed if updatedUser has _id
+        // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> SAFETY: Only proceed if updatedUser has _id
         if (!updatedUser._id) return;
         
         const uid = safeId(updatedUser);
         if (!uid) return;
 
-        // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> EXTRA PROTECTION: If payload is missing username (e.g. partial response), do not merge it as it would overwrite name with undefined!
+        // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> EXTRA PROTECTION: If payload is missing username (e.g. partial response), do not merge it as it would overwrite name with undefined!
         if (!updatedUser.username) {
             console.warn("⚠️ [SAFETY] Received user update without a username, fetching full user to prevent corruption:", uid);
             fetchUsers(uid);
@@ -9246,7 +9246,7 @@ const App = () => {
         const saved = localStorage.getItem('user');
         const token = getSafeToken();
         
-        // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> SAFETY: Validate user data
+        // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> SAFETY: Validate user data
         let userData = null;
         let isValidUser = false;
         
@@ -9386,18 +9386,18 @@ const App = () => {
         if (user && !isPublicExperience && user._id !== lastInitializedId.current) {
             lastInitializedId.current = user._id;
 
-            // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> INITIAL FETCH
+            // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> INITIAL FETCH
             fetchPosts().then(() => fetchUsers());
             fetchNotifications();
 
-            // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> WEB PUSH REGISTRATION
+            // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> WEB PUSH REGISTRATION
             subscribeToWebPush();
 
-            // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> SOCKET JOIN ROOM
+            // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> SOCKET JOIN ROOM
             socket.emit('join', user._id);
             console.log(`📡 [SOCKET] Joining personal room: ${user._id}`);
 
-            // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> START PERSISTENT PINGS
+            // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> START PERSISTENT PINGS
             startHeartbeat();
 
             // Polling fallback (reduced frequency since we have real-time now)
@@ -9425,7 +9425,7 @@ const App = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab, isPublicExperience]);
 
-    // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> GLOBAL REAL-TIME LISTENERS
+    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> GLOBAL REAL-TIME LISTENERS
     useEffect(() => {
         if (!user || isPublicExperience) return;
 
@@ -9732,7 +9732,7 @@ const App = () => {
             const next = prev.map(p => {
                 const resolved = resolveFullUser(p.author, latestUsers);
 
-                // <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> HIGH SAFETY GUARD: Only update if the resolved user actually has a valid, real username
+                // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> HIGH SAFETY GUARD: Only update if the resolved user actually has a valid, real username
                 if (resolved && resolved.username && resolved.username !== 'Unknown' && resolved.username !== 'Agent') {
                     const currentUsername = p.author?.username || '';
                     if (currentUsername !== resolved.username) {
@@ -11534,7 +11534,7 @@ const App = () => {
                                                                         {u.username}
                                                                     </div>
                                                                     <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={u} />
-                                                                    {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center"><Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" />{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
+                                                                    {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}{isTopStreak(u) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                                                 </div>
                                                                 <div className="text-[10px] text-gray-500 uppercase tracking-widest">{getUniqueCount(u.followers)} {t('FOLLOWERS_COUNT')}</div>
                                                             </div>
@@ -12040,7 +12040,7 @@ const App = () => {
                 </div>
             )}
 
-            {/* <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> PREMIUM TOAST NOTIFICATIONS <Icons.Streak className="inline-block w-[1.1em] h-[1.1em] -mt-1" /> */}
+            {/* <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> PREMIUM TOAST NOTIFICATIONS <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> */}
             <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-[400px] px-4">
                 {toasts.map((toast) => (
                     <div 
