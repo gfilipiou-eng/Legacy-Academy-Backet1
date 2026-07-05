@@ -3515,7 +3515,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                             }}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder={isRecording ? t('RECORDING') : "Send a message..."}
-                                        className={`w-full bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
+                                        className={`flex-1 min-w-0 bg-transparent py-2.5 text-[15px] text-white outline-none placeholder-white/30 font-medium ${isRecording ? 'text-red-400' : ''}`}
                                     />
                                     <div className="flex items-center gap-2 shrink-0">
                                         {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
