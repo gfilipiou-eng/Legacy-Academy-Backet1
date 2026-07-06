@@ -7093,14 +7093,13 @@ const ProfileModal = ({
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
                                         <div className="mt-4 flex flex-col items-center justify-center relative group select-none">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent blur-xl group-hover:via-white/10 transition-all duration-500 rounded-full"></div>
-                                            <div className="relative flex items-center gap-4 px-5 py-2.5 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300">
+                                            <div className="relative flex items-center gap-4 px-5 py-2.5 bg-white/[0.02] border border-white/10 rounded-full backdrop-blur-2xl shadow-sm transition-all duration-300">
                                                 <div className="w-8 h-8 sm:w-10 sm:h-10 relative flex items-center justify-center">
-                                                    <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-110 transition-transform duration-500" />
+                                                    <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                                                 </div>
                                                 <div className="flex flex-col text-left">
                                                     <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">SUPPORTER</span>
-                                                    <span className="text-[12px] sm:text-[14px] font-black tracking-widest text-white drop-shadow-md uppercase leading-tight">
+                                                    <span className="text-[12px] sm:text-[14px] font-black tracking-widest text-white uppercase leading-tight">
                                                         {displayUser.settings.footballTeam.strTeam}
                                                     </span>
                                                 </div>
@@ -7157,7 +7156,7 @@ const ProfileModal = ({
 
                                 {/* FOOTBALL MATCH WIDGET */}
                                 {displayUser?.settings?.footballTeam && (
-                                    <MatchWidget team={displayUser.settings.footballTeam} className="w-full mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.6)]" />
+                                    <MatchWidget team={displayUser.settings.footballTeam} className="w-full mb-6" />
                                 )}
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}

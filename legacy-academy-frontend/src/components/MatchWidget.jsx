@@ -91,10 +91,7 @@ const MatchWidget = ({ team, className = "" }) => {
     if (!team) return null;
 
     return (
-        <div className={`relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 backdrop-blur-xl ${className}`}>
-            {/* Ambient Background Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full pointer-events-none"></div>
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/20 blur-3xl rounded-full pointer-events-none"></div>
+        <div className={`relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02] backdrop-blur-2xl shadow-sm ${className}`}>
             
             <div className="relative p-5">
                 <div className="flex justify-between items-center mb-4 gap-2">
@@ -117,9 +114,9 @@ const MatchWidget = ({ team, className = "" }) => {
                         <div className="flex items-center justify-between gap-2 sm:gap-4 w-full">
                             {/* Home Team */}
                             <div className="flex flex-col items-center flex-1 min-w-0">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-sm shrink-0">
                                     {match.homeBadge ? (
-                                        <img src={match.homeBadge} alt={match.homeTeam} className="w-full h-full object-contain drop-shadow-lg" />
+                                        <img src={match.homeBadge} alt={match.homeTeam} className="w-full h-full object-contain" />
                                     ) : (
                                         <span className="text-xl">⚽</span>
                                     )}
@@ -142,7 +139,7 @@ const MatchWidget = ({ team, className = "" }) => {
                                     <>
                                         <div className="text-[10px] font-black text-white/40 italic mb-1">VS</div>
                                         {timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 ? (
-                                            <div className="bg-red-500/20 border border-red-500/30 text-red-400 font-bold text-[10px] uppercase px-3 py-1 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+                                            <div className="bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-[10px] uppercase px-3 py-1 rounded-full animate-pulse shadow-sm">
                                                 Live
                                             </div>
                                         ) : (
@@ -169,9 +166,9 @@ const MatchWidget = ({ team, className = "" }) => {
 
                             {/* Away Team */}
                             <div className="flex flex-col items-center flex-1 min-w-0">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-white/5 rounded-full p-2 border border-white/5 shadow-sm shrink-0">
                                     {match.awayBadge ? (
-                                        <img src={match.awayBadge} alt={match.awayTeam} className="w-full h-full object-contain drop-shadow-lg" />
+                                        <img src={match.awayBadge} alt={match.awayTeam} className="w-full h-full object-contain" />
                                     ) : (
                                         <span className="text-xl">⚽</span>
                                     )}
