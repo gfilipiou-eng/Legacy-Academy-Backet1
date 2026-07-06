@@ -1704,12 +1704,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                             </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onShare?.(post._id); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-white/10 hover:text-white"
-                            >
-                                <Icons.Share className="w-5 h-5" />
-                            </button>
+
                         </div>
                     </div>
 
@@ -3683,7 +3678,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
     const [founderAffiliation, setFounderAffiliation] = useState(user?.founderAffiliation || '');
-    const [batterySaver, setBatterySaver] = useState(user?.settings?.batterySaver === true || localStorage.getItem('batterySaver') === 'true');
+    const [batterySaver, setBatterySaver] = useState(user?.settings?.batterySaver ?? localStorage.getItem('batterySaver') !== 'false');
     const [cyberSFX, setCyberSFX] = useState(user?.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
     const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
@@ -3707,7 +3702,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
     );
     const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
-        Math.min(1, Math.max(0, user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '0.5')))
+        Math.min(1, Math.max(0, user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0')))
     );
 
     useEffect(() => {
@@ -3738,7 +3733,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
             setProfileDescriptor(user.profileDescriptor || '');
             setFounderAffiliation(user.founderAffiliation || '');
-            setBatterySaver(user.settings?.batterySaver === true || localStorage.getItem('batterySaver') === 'true');
+            setBatterySaver(user.settings?.batterySaver ?? localStorage.getItem('batterySaver') !== 'false');
             setCyberSFX(user.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
             setNeuralNarrator(user.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
             setEnableProfileZoom(user.settings?.enableProfileZoom === true);
@@ -8818,7 +8813,7 @@ const App = () => {
         } catch { return []; }
     });
     
-    const [batterySaver, setBatterySaver] = useState(() => localStorage.getItem('batterySaver') === 'true');
+    const [batterySaver, setBatterySaver] = useState(() => localStorage.getItem('batterySaver') !== 'false');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
 
@@ -9366,7 +9361,7 @@ const App = () => {
         applyZoom(savedZoom);
         const savedGlow = userSettings?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true';
         applyGlow(savedGlow);
-        const savedLiquidGlass = userSettings?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '0.5');
+        const savedLiquidGlass = userSettings?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0');
         applyLiquidGlass(savedLiquidGlass);
 
         // SYNC USER DATA & THEME LIVE ACROSS TABS
@@ -9466,7 +9461,7 @@ const App = () => {
 
     useEffect(() => {
         if (user?.settings) {
-            setBatterySaver(user.settings.batterySaver === true);
+            setBatterySaver(user.settings.batterySaver ?? true);
         }
     }, [user?.settings?.batterySaver]);
 
