@@ -6017,9 +6017,6 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                 <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${currentStreak > 0 ? 'text-orange-400' : 'text-gray-500'}`}>
                                                     <Icons.Streak className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> {currentStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
                                                 </div>
-                                                <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
-                                                    🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
-                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
