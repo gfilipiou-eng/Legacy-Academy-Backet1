@@ -3561,7 +3561,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     disabled={!inputText.trim() && !imageFile}
                                                     className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-400/40 text-cyan-300 shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:opacity-30 disabled:scale-100 shrink-0 hover:bg-cyan-500/40 hover:border-cyan-400/60 hover:shadow-[0_8px_32px_rgba(6,182,212,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 disabled:hover:shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:hover:-translate-y-0 disabled:hover:bg-cyan-500/20 disabled:hover:border-cyan-400/40"
                                                 >
-                                                    <Icons.Send className="w-5 h-5 ml-1" />
+                                                    <Icons.Send className="w-5 h-5" />
                                                 </button>
                                             </div>
                                         </>
@@ -5966,7 +5966,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             </div>
                                             <div className="flex items-center gap-3 mt-1">
                                                 <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${currentStreak > 0 ? 'text-orange-400' : 'text-gray-500'}`}>
-                                                    <Icons.Streak className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> {currentStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
+                                                    <Icons.Streak className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> {currentStreak}
                                                 </div>
                                             </div>
                                         </div>
@@ -11412,7 +11412,7 @@ const App = () => {
                                         <div className="flex items-center justify-between w-full px-3 sm:px-4 pt-3 pb-1.5 border-b border-white/5 bg-transparent relative z-[45]">
                                             
                                             {/* Dropdown Button */}
-                                            <div className="relative w-full flex items-center justify-between">
+                                            <div className="relative w-full flex items-center justify-center">
                                                 <button 
                                                     onClick={() => setIsFeedSortMenuOpen(!isFeedSortMenuOpen)}
                                                     className="flex items-center gap-2 pb-2.5 font-bold text-[13px] sm:text-[14px] text-white hover:text-white/80 transition-colors"
@@ -11435,7 +11435,7 @@ const App = () => {
                                                             initial={{ opacity: 0, y: -5 }}
                                                             animate={{ opacity: 1, y: 0 }}
                                                             exit={{ opacity: 0, y: -5 }}
-                                                            className="absolute top-10 left-0 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
+                                                            className="absolute top-10 left-1/2 -translate-x-1/2 w-48 bg-[#111113] border border-white/10 rounded-xl shadow-2xl flex flex-col p-1 z-[50]"
                                                         >
                                                             {[
                                                                 { id: 'bubbles', label: t('BUBBLES', 'Thought Bubbles'), Icon: Icons.ThoughtBubble, colorClass: 'text-[var(--gold-primary)]', activeClass: 'bg-[var(--gold-primary)]/20 text-[var(--gold-primary)]' },
