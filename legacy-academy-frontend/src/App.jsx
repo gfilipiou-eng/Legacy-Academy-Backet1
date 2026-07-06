@@ -3979,8 +3979,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     <div className="flex-1 text-center">
                         <h2 className="font-semibold text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
                     </div>
-                    <button type="button" onClick={onClose} className="w-16 text-right text-[17px] font-semibold text-[#0A84FF] active:opacity-70 transition-opacity relative z-30">
-                        {t('DONE', 'Done')}
+                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="w-16 flex items-center justify-end group active:scale-95 transition-all relative z-30">
+                        <div className="w-8 h-8 rounded-full bg-white/[0.08] group-hover:bg-white/[0.15] flex items-center justify-center transition-colors">
+                            <Icons.X className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" />
+                        </div>
                     </button>
                 </div>
 
