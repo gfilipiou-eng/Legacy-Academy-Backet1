@@ -1123,59 +1123,6 @@ const playCyberSFX = (type = 'click') => {
     } catch (e) {}
 };
 
-const MatrixBackground = () => {
-    const canvasRef = useRef(null);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let animationId;
-
-        const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-        resize();
-        window.addEventListener('resize', resize);
-
-        const columns = Math.floor(canvas.width / 20);
-        const yPositions = Array(columns).fill(0);
-        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZΛΞC';
-
-        const draw = () => {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#D4AF37'; // Gold
-            ctx.font = '12px monospace';
-
-            for (let i = 0; i < yPositions.length; i++) {
-                const char = chars[Math.floor(Math.random() * chars.length)];
-                const x = i * 20;
-                const y = yPositions[i];
-                ctx.fillText(char, x, y);
-
-                if (y > 100 + Math.random() * 10000) {
-                    yPositions[i] = 0;
-                } else {
-                    yPositions[i] += 20;
-                }
-            }
-            animationId = requestAnimationFrame(draw);
-        };
-
-        draw();
-
-        return () => {
-            window.removeEventListener('resize', resize);
-            cancelAnimationFrame(animationId);
-        };
-    }, []);
-
-    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none z-0" />;
-};
-
 const NeuralNarratorButton = ({ text }) => {
     const [speaking, setSpeaking] = useState(false);
 
@@ -3736,7 +3683,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
     const [founderAffiliation, setFounderAffiliation] = useState(user?.founderAffiliation || '');
-    const [matrixOverlay, setMatrixOverlay] = useState(user?.settings?.matrixOverlay === true || localStorage.getItem('matrixOverlay') === 'true');
+    const [batterySaver, setBatterySaver] = useState(user?.settings?.batterySaver === true || localStorage.getItem('batterySaver') === 'true');
     const [cyberSFX, setCyberSFX] = useState(user?.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
     const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
@@ -3791,7 +3738,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
             setProfileDescriptor(user.profileDescriptor || '');
             setFounderAffiliation(user.founderAffiliation || '');
-            setMatrixOverlay(user.settings?.matrixOverlay === true || localStorage.getItem('matrixOverlay') === 'true');
+            setBatterySaver(user.settings?.batterySaver === true || localStorage.getItem('batterySaver') === 'true');
             setCyberSFX(user.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
             setNeuralNarrator(user.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
             setEnableProfileZoom(user.settings?.enableProfileZoom === true);
@@ -3823,10 +3770,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 return;
             }
             let payload = { [key]: val };
-            if (key === 'matrixOverlay') {
-                localStorage.setItem('matrixOverlay', String(val));
-                setMatrixOverlay(val);
-                payload = { settings: { matrixOverlay: Boolean(val) } };
+            if (key === 'batterySaver') {
+                localStorage.setItem('batterySaver', String(val));
+                setBatterySaver(Boolean(val));
+                payload = { settings: { batterySaver: Boolean(val) } };
             }
             if (key === 'cyberSFX') {
                 localStorage.setItem('cyberSFX', String(val));
@@ -3904,7 +3851,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'footballTeam') setFootballTeam(val);
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
-            if (key === 'matrixOverlay') setMatrixOverlay(Boolean(val));
+            if (key === 'batterySaver') setBatterySaver(Boolean(val));
             if (key === 'cyberSFX') setCyberSFX(Boolean(val));
             if (key === 'neuralNarrator') setNeuralNarrator(Boolean(val));
 
@@ -3916,7 +3863,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') setShowBadge(!Boolean(val));
             if (key === 'blur18Plus') setBlur18Plus(!Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(!Boolean(val));
-            if (key === 'matrixOverlay') setMatrixOverlay(!Boolean(val));
+            if (key === 'batterySaver') setBatterySaver(!Boolean(val));
             if (key === 'cyberSFX') setCyberSFX(!Boolean(val));
             if (key === 'neuralNarrator') setNeuralNarrator(!Boolean(val));
         } finally {
@@ -4103,6 +4050,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     applyGlow(v);
                                     handleSave('enableGlow', v);
                                 }} saving={saving} color="blue" />
+                            </SettingRow>
+
+                            <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations and background effects to save battery')}>
+                                <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
                             </SettingRow>
 
                             <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom your profile picture on click')}>
@@ -8867,7 +8818,7 @@ const App = () => {
         } catch { return []; }
     });
     
-    const [matrixOverlay, setMatrixOverlay] = useState(() => localStorage.getItem('matrixOverlay') === 'true');
+    const [batterySaver, setBatterySaver] = useState(() => localStorage.getItem('batterySaver') === 'true');
     const [imgKey, setImgKey] = useState(Date.now());
     const { t, i18n, lang } = useTranslation();
 
@@ -9515,9 +9466,9 @@ const App = () => {
 
     useEffect(() => {
         if (user?.settings) {
-            setMatrixOverlay(user.settings.matrixOverlay === true);
+            setBatterySaver(user.settings.batterySaver === true);
         }
-    }, [user?.settings?.matrixOverlay]);
+    }, [user?.settings?.batterySaver]);
 
     // Fetch posts on tab change only (login/refresh handled by user init effect)
     useEffect(() => {
@@ -10865,7 +10816,7 @@ const App = () => {
     }
 
     return (
-        <div className="app-container">
+        <div className={`app-container ${batterySaver ? 'battery-saver-mode' : ''}`}>
             {!user ? (
                 <>
                     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">

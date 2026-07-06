@@ -104,7 +104,7 @@ const UserSchema = new mongoose.Schema(
             badgeColor: { type: String, default: 'blue' },
             blur18Plus: { type: Boolean, default: true },
             is18PlusProfile: { type: Boolean, default: false },
-            matrixOverlay: { type: Boolean, default: false },
+            batterySaver: { type: Boolean, default: false },
             cyberSFX: { type: Boolean, default: true },
             neuralNarrator: { type: Boolean, default: false },
             businessWebsites: { type: Array, default: [] },
