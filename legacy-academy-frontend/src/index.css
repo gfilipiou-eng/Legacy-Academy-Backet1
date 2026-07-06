@@ -2740,3 +2740,14 @@ textarea:focus {
 .battery-saver-mode .animated-background {
   display: none !important;
 }
+
+/* GLOBAL LIQUID GLASS OVERRIDE */
+.backdrop-blur-sm,
+.backdrop-blur-md,
+.backdrop-blur-lg,
+.backdrop-blur-xl,
+.backdrop-blur-2xl,
+.backdrop-blur-3xl {
+  backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(var(--dynamic-saturate, 150%)) !important;
+  -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(var(--dynamic-saturate, 150%)) !important;
+}
