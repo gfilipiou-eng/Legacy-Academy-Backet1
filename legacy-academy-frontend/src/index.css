@@ -2727,17 +2727,16 @@ textarea:focus {
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
- / *   B A T T E R Y   S A V E R   M O D E   * / 
- . b a t t e r y - s a v e r - m o d e   *   { 
-     a n i m a t i o n :   n o n e   ! i m p o r t a n t ; 
-     b a c k d r o p - f i l t e r :   n o n e   ! i m p o r t a n t ; 
-     - w e b k i t - b a c k d r o p - f i l t e r :   n o n e   ! i m p o r t a n t ; 
- } 
- 
- . b a t t e r y - s a v e r - m o d e   v i d e o , 
- . b a t t e r y - s a v e r - m o d e   . p a r t i c l e s - c o n t a i n e r , 
- . b a t t e r y - s a v e r - m o d e   . a n i m a t e d - b a c k g r o u n d   { 
-     d i s p l a y :   n o n e   ! i m p o r t a n t ; 
- } 
-  
- 
+
+/* BATTERY SAVER MODE */
+.battery-saver-mode * {
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.battery-saver-mode video,
+.battery-saver-mode .particles-container,
+.battery-saver-mode .animated-background {
+  display: none !important;
+}
