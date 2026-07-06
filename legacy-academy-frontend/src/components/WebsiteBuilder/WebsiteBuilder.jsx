@@ -110,6 +110,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 // Compress to WebP or JPEG
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 updateConfig(key, dataUrl);
+                if (e && e.target) e.target.value = '';
             };
             img.src = event.target.result;
         };
@@ -528,34 +529,58 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 flex items-center justify-between">
                                 Logo
-                                <label className="cursor-pointer text-[var(--builder-primary)] hover:underline flex items-center gap-1">
-                                    <Icons.Upload className="w-3 h-3" /> Upload
-                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', 300)} />
-                                </label>
+                                <div className="flex items-center gap-3">
+                                    {config.logo && (
+                                        <button onClick={() => updateConfig('logo', '')} className="text-red-400 hover:underline text-[10px] font-bold uppercase">Remove</button>
+                                    )}
+                                    <label className="cursor-pointer text-[var(--builder-primary)] hover:underline flex items-center gap-1">
+                                        <Icons.Upload className="w-3 h-3" /> Upload
+                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'logo', 300)} />
+                                    </label>
+                                </div>
                             </label>
-                            <input 
-                                type="text" 
-                                value={config.logo || ''}
-                                onChange={(e) => updateConfig('logo', e.target.value)}
-                                placeholder="https:// or Base64"
-                                className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
-                            />
+                            {config.logo && config.logo.startsWith('data:image') ? (
+                                <div className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl px-4 py-3 text-white/50 text-sm italic flex items-center justify-between">
+                                    <span>Uploaded Image</span>
+                                    <img src={config.logo} alt="Preview" className="h-6 w-auto object-contain rounded" />
+                                </div>
+                            ) : (
+                                <input 
+                                    type="text" 
+                                    value={config.logo || ''}
+                                    onChange={(e) => updateConfig('logo', e.target.value)}
+                                    placeholder="https:// or Base64"
+                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
+                                />
+                            )}
                         </div>
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 flex items-center justify-between">
                                 Cover / Hero Image
-                                <label className="cursor-pointer text-[var(--builder-primary)] hover:underline flex items-center gap-1">
-                                    <Icons.Upload className="w-3 h-3" /> Upload
-                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'coverImage', 1000)} />
-                                </label>
+                                <div className="flex items-center gap-3">
+                                    {config.coverImage && (
+                                        <button onClick={() => updateConfig('coverImage', '')} className="text-red-400 hover:underline text-[10px] font-bold uppercase">Remove</button>
+                                    )}
+                                    <label className="cursor-pointer text-[var(--builder-primary)] hover:underline flex items-center gap-1">
+                                        <Icons.Upload className="w-3 h-3" /> Upload
+                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'coverImage', 1000)} />
+                                    </label>
+                                </div>
                             </label>
-                            <input 
-                                type="text" 
-                                value={config.coverImage || ''}
-                                onChange={(e) => updateConfig('coverImage', e.target.value)}
-                                placeholder="https:// or Base64"
-                                className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
-                            />
+                            {config.coverImage && config.coverImage.startsWith('data:image') ? (
+                                <div className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl px-4 py-3 text-white/50 text-sm italic flex items-center justify-between">
+                                    <span>Uploaded Image</span>
+                                    <img src={config.coverImage} alt="Preview" className="h-6 w-auto object-cover rounded" />
+                                </div>
+                            ) : (
+                                <input 
+                                    type="text" 
+                                    value={config.coverImage || ''}
+                                    onChange={(e) => updateConfig('coverImage', e.target.value)}
+                                    placeholder="https:// or Base64"
+                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md"
+                                />
+                            )}
                         </div>
                     </div>
 

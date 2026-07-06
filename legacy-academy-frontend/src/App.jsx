@@ -3612,7 +3612,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 <button
                                                     onClick={() => handleSend()}
                                                     disabled={!inputText.trim() && !imageFile}
-                                                    className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500 text-black disabled:opacity-20 disabled:scale-100 shrink-0 hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all disabled:hover:shadow-none"
+                                                    className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-400/40 text-cyan-300 shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:opacity-30 disabled:scale-100 shrink-0 hover:bg-cyan-500/40 hover:border-cyan-400/60 hover:shadow-[0_8px_32px_rgba(6,182,212,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 disabled:hover:shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:hover:-translate-y-0 disabled:hover:bg-cyan-500/20 disabled:hover:border-cyan-400/40"
                                                 >
                                                     <Icons.Send className="w-5 h-5 ml-1" />
                                                 </button>
@@ -3695,22 +3695,22 @@ const ShareSettingLabel = ({ t }) => (
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="settings-section-label text-[13px] sm:text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">{label}</h3>
+    <h3 className="settings-section-label text-[12px] sm:text-[11px] font-bold text-gray-400/90 uppercase tracking-[0.08em] mb-2 px-2">{label}</h3>
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`settings-ios-group rounded-[14px] sm:rounded-2xl overflow-hidden bg-white/[0.06] border border-white/10 divide-y divide-white/10 ${className}`}>
+    <div className={`settings-ios-group rounded-[18px] sm:rounded-2xl overflow-hidden bg-white/[0.04] backdrop-blur-xl border border-white/10 divide-y divide-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.2)] ${className}`}>
         {children}
     </div>
 );
 
 const SettingRow = ({ label, desc, children }) => (
-    <div className="flex items-center justify-between gap-4 px-4 py-3.5 sm:py-3 min-h-[54px] sm:min-h-[48px]">
+    <div className="flex items-center justify-between gap-4 px-4.5 py-4 sm:py-3.5 min-h-[56px] sm:min-h-[52px] hover:bg-white/[0.02] transition-colors">
         <div className="flex-1 min-w-0 pr-2">
-            {typeof label === 'string' ? <div className="text-[16px] sm:text-[15px] font-normal text-white leading-snug">{label}</div> : label}
-            {desc && <div className="text-[13px] sm:text-[12px] text-gray-400 mt-1 leading-snug">{desc}</div>}
+            {typeof label === 'string' ? <div className="text-[15px] sm:text-[14px] font-medium text-white/95 leading-snug">{label}</div> : label}
+            {desc && <div className="text-[12.5px] sm:text-[11.5px] text-gray-400/90 mt-1 leading-snug">{desc}</div>}
         </div>
-        {children}
+        <div className="shrink-0">{children}</div>
     </div>
 );
 
@@ -8335,11 +8335,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
-                                className="w-full h-full object-cover cursor-pointer rounded-full" 
+                                className="w-full h-full object-cover rounded-full" 
                                 alt="" 
                                 loading="eager" 
                                 decoding="async" 
-                                onClick={() => setZoomImage(resolvedPublicProfilePic)}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-neutral-800 rounded-full text-4xl font-bold uppercase text-white/60">
