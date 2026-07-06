@@ -6,14 +6,18 @@ const MatchWidget = ({ team, className = "" }) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
 
     useEffect(() => {
-        if (!team?.id) return;
+        const teamId = team?.idTeam || team?.id;
+        if (!teamId) {
+            setLoading(false);
+            return;
+        }
 
         const fetchNextMatch = async () => {
             setLoading(true);
             try {
                 // Try to fetch next events. 
                 // Note: TheSportsDB often locks this behind Patreon tier for some leagues.
-                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${team.id}`);
+                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${teamId}`);
                 const data = await res.json();
 
                 if (data && data.events && data.events.length > 0) {
