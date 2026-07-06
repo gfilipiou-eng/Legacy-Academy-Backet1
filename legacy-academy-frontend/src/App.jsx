@@ -3734,6 +3734,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [cyberSFX, setCyberSFX] = useState(user?.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
     const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
+    const [enableProfileZoom, setEnableProfileZoom] = useState(user?.settings?.enableProfileZoom === true);
     const [themeCategory, setThemeCategory] = useState('primary');
     const pendingShareToggleRef = useRef(null);
     const latestUserRef = useRef(user);
@@ -3787,6 +3788,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setMatrixOverlay(user.settings?.matrixOverlay === true || localStorage.getItem('matrixOverlay') === 'true');
             setCyberSFX(user.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
             setNeuralNarrator(user.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
+            setEnableProfileZoom(user.settings?.enableProfileZoom === true);
         }
     }, [user, isOpen]);
 
@@ -3851,6 +3853,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'footballTeam') payload = { settings: { footballTeam: val } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
+            if (key === 'enableProfileZoom') {
+                payload = { settings: { enableProfileZoom: Boolean(val) } };
+                setEnableProfileZoom(Boolean(val));
+            }
             
             // OPTIMISTIC UPDATE FOR ALL SETTINGS
             if (payload && payload.settings) {
@@ -4092,6 +4098,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     applyGlow(v);
                                     handleSave('enableGlow', v);
                                 }} saving={saving} color="blue" />
+                            </SettingRow>
+
+                            <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom your profile picture on click')}>
+                                <Toggle active={enableProfileZoom} onToggle={() => handleSave('enableProfileZoom', !enableProfileZoom)} saving={saving} color="blue" />
                             </SettingRow>
 
                             {/* LIQUID GLASS INTENSITY */}
@@ -8335,10 +8345,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
-                                className="w-full h-full object-cover rounded-full" 
+                                className={`w-full h-full object-cover rounded-full ${publicUser?.settings?.enableProfileZoom ? 'cursor-pointer' : ''}`} 
                                 alt="" 
                                 loading="eager" 
                                 decoding="async" 
+                                onClick={() => publicUser?.settings?.enableProfileZoom && setZoomImage(resolvedPublicProfilePic)}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-neutral-800 rounded-full text-4xl font-bold uppercase text-white/60">

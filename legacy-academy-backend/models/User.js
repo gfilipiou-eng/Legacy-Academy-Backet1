@@ -108,7 +108,8 @@ const UserSchema = new mongoose.Schema(
             cyberSFX: { type: Boolean, default: true },
             neuralNarrator: { type: Boolean, default: false },
             businessWebsites: { type: Array, default: [] },
-            footballTeam: { type: Object, default: null }
+            footballTeam: { type: Object, default: null },
+            enableProfileZoom: { type: Boolean, default: false }
         },
         sharesBalance: {
             type: Number,
