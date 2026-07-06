@@ -3654,11 +3654,17 @@ const PlatformLoadingPanel = ({ label, compact = false }) => (
     </div>
 );
 
-const Toggle = ({ active, onToggle, color = 'gold' }) => {
-    const trackActive = color === 'blue'
-        ? 'bg-[#1D9BF0] border-[#1D9BF0]'
-        : 'bg-white border-white';
-    const knobActive = color === 'blue' ? 'bg-white' : 'bg-[#0a0a0a]';
+const Toggle = ({ active, onToggle, color = 'green' }) => {
+    let trackActive = 'bg-white border-white';
+    let knobActive = 'bg-[#0a0a0a]';
+
+    if (color === 'blue') {
+        trackActive = 'bg-[#0A84FF] border-[#0A84FF]'; // iOS blue
+        knobActive = 'bg-white';
+    } else if (color === 'green') {
+        trackActive = 'bg-[#34C759] border-[#34C759]'; // iOS green
+        knobActive = 'bg-white';
+    }
 
     return (
         <button
@@ -3695,20 +3701,20 @@ const ShareSettingLabel = ({ t }) => (
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="settings-section-label text-[12px] sm:text-[11px] font-bold text-gray-400/90 uppercase tracking-[0.08em] mb-2 px-2">{label}</h3>
+    <h3 className="text-[13px] sm:text-[13px] font-normal text-[#8E8E93] uppercase tracking-normal mb-1.5 px-4">{label}</h3>
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`settings-ios-group rounded-[18px] sm:rounded-2xl overflow-hidden bg-white/[0.04] backdrop-blur-xl border border-white/10 divide-y divide-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.2)] ${className}`}>
+    <div className={`rounded-[10px] overflow-hidden bg-[#1C1C1E] divide-y divide-white/[0.08] ${className}`}>
         {children}
     </div>
 );
 
 const SettingRow = ({ label, desc, children }) => (
-    <div className="flex items-center justify-between gap-4 px-4.5 py-4 sm:py-3.5 min-h-[56px] sm:min-h-[52px] hover:bg-white/[0.02] transition-colors">
+    <div className="flex items-center justify-between gap-4 px-4 py-3 sm:py-3 min-h-[44px] sm:min-h-[44px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C]">
         <div className="flex-1 min-w-0 pr-2">
-            {typeof label === 'string' ? <div className="text-[15px] sm:text-[14px] font-medium text-white/95 leading-snug">{label}</div> : label}
-            {desc && <div className="text-[12.5px] sm:text-[11.5px] text-gray-400/90 mt-1 leading-snug">{desc}</div>}
+            {typeof label === 'string' ? <div className="text-[17px] font-normal text-white leading-snug">{label}</div> : label}
+            {desc && <div className="text-[13px] text-[#8E8E93] mt-0.5 leading-snug">{desc}</div>}
         </div>
         <div className="shrink-0">{children}</div>
     </div>
@@ -3965,19 +3971,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[24px] sm:rounded-2xl overflow-hidden flex flex-col settings-modal-glass"
+                className="relative w-full sm:w-[500px] h-[100dvh] sm:h-[85vh] sm:rounded-[10px] overflow-hidden flex flex-col bg-[#000000] shadow-2xl"
             >
                 {/* HEADER */}
-                <div className="px-5 sm:px-5 py-4 sm:py-3.5 border-b border-white/10 flex items-center justify-between shrink-0 bg-black/20 backdrop-blur-xl">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <Icons.Settings className="w-5 h-5 text-[#1D9BF0] shrink-0" />
-                        <div className="min-w-0">
-                            <h2 className="font-bold text-[20px] sm:text-[17px] text-white leading-tight">{t('SETTINGS')}</h2>
-                            <div className="text-[13px] sm:text-[11px] text-gray-400 mt-0.5">{t('SETTINGS_SUBTITLE')}</div>
-                        </div>
+                <div className="px-4 py-3 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-[#1C1C1E] sm:bg-[#000000]">
+                    <div className="w-16"></div> {/* Left spacer */}
+                    <div className="flex-1 text-center">
+                        <h2 className="font-semibold text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
                     </div>
-                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-white/[0.08] active:scale-95 transition-all touch-manipulation shrink-0">
-                        <Icons.X className="w-5 h-5 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
+                    <button type="button" onClick={onClose} className="w-16 text-right text-[17px] font-semibold text-[#0A84FF] active:opacity-70 transition-opacity">
+                        {t('DONE', 'Done')}
                     </button>
                 </div>
 
@@ -8184,11 +8187,13 @@ const PublicProfileSkeleton = () => (
     </div>
 );
 
-const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, postsReady = false, onClose, onNavigateProfile, onOpenPost, t }) => {
+const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser, loadingPosts, postsReady = false, onClose, onNavigateProfile, onOpenPost, t, user }) => {
     const searchParams = new URLSearchParams(window.location.search);
     const urlLangParam = searchParams.get('lang');
     const urlThemeParam = searchParams.get('theme');
-    const themeColor = publicUser?.settings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#e80000';
+    const isOwner = user && publicUser && (user._id === publicUser._id || user.username === publicUser.username);
+    const effectiveSettings = isOwner ? { ...publicUser?.settings, ...user?.settings } : publicUser?.settings;
+    const themeColor = effectiveSettings?.theme || urlThemeParam || localStorage.getItem('themeColor') || '#e80000';
     const [zoomImage, setZoomImage] = useState(null);
     const [confirmed18Plus, setConfirmed18Plus] = useState(false);
     const profileScrollRef = useRef(null);
@@ -8345,11 +8350,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         {resolvedPublicProfilePic ? (
                             <img 
                                 src={resolvedPublicProfilePic} 
-                                className={`w-full h-full object-cover rounded-full ${publicUser?.settings?.enableProfileZoom ? 'cursor-pointer' : ''}`} 
+                                className={`w-full h-full object-cover rounded-full ${effectiveSettings?.enableProfileZoom ? 'cursor-pointer' : ''}`} 
                                 alt="" 
                                 loading="eager" 
                                 decoding="async" 
-                                onClick={() => publicUser?.settings?.enableProfileZoom && setZoomImage(resolvedPublicProfilePic)}
+                                onClick={() => effectiveSettings?.enableProfileZoom && setZoomImage(resolveMediaUrl(publicUser.profilePic, null, false, false))}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-neutral-800 rounded-full text-4xl font-bold uppercase text-white/60">
