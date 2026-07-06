@@ -7409,21 +7409,34 @@ const ProfileModal = ({
                                     {activeTab !== 'MISSIONS' && (isMe || userStories.length > 0) && (
                                         <div className="mb-6">
                                             <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 pl-1">{t('HIGHLIGHTS')}</h3>
-                                            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 px-1">
+                                            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-1">
                                                 {isMe && (
-                                                    <div onClick={() => onOpenCreate?.()} className="flex flex-col cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden bg-[#1a1a1a] border border-white/10 hover:border-white/20 shadow-lg transition-all">
-                                                        <div className="h-[65%] w-full overflow-hidden">
-                                                            <ProfileAvatar user={currentUser} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" />
-                                                        </div>
-                                                        <div className="h-[35%] w-full flex flex-col items-center justify-end pb-2.5 relative bg-[#181818]">
-                                                            <div className="absolute -top-[14px] w-[28px] h-[28px] bg-[#0095f6] text-white rounded-full border-[3px] border-[#181818] flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-md">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                                    <div onClick={() => onOpenCreate?.()} className="flex flex-col items-center gap-2 cursor-pointer shrink-0 group w-[72px]">
+                                                        <div className="relative">
+                                                            {/* Dashed ring for "add" state */}
+                                                            <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
+                                                                <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
+                                                                    <ProfileAvatar user={currentUser} className="object-cover w-full h-full" />
+                                                                    {/* Plus overlay */}
+                                                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg">
+                                                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {/* Blue + badge */}
+                                                            <div className="absolute bottom-0 right-0 w-[22px] h-[22px] bg-[#0095f6] rounded-full border-2 border-black flex items-center justify-center shadow-lg z-10">
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 text-white">
                                                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                                                 </svg>
                                                             </div>
-                                                            <span className="text-[10px] font-bold text-white/90 mt-1 text-center truncate w-full px-1">{t('ADD_STORY')}</span>
                                                         </div>
+                                                        <span className="text-[10px] font-semibold text-white/70 text-center truncate w-full leading-tight">
+                                                            {t('ADD_STORY')}
+                                                        </span>
                                                     </div>
                                                 )}
                                                 {userStories.map((s, i) => {
@@ -7435,7 +7448,19 @@ const ProfileModal = ({
                                                         const yid = getYouTubeId(s.videoUrl);
                                                         if (yid) ytThumb = `https://img.youtube.com/vi/${yid}/hqdefault.jpg`;
                                                     }
-                                                    const textGradients = [
+                                                    
+                                                    const rings = [
+                                                        'from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]',
+                                                        'from-[#4776E6] to-[#8E54E9]',
+                                                        'from-[#00B4DB] to-[#0083B0]',
+                                                        'from-[#11998e] to-[#38ef7d]',
+                                                        'from-[#f12711] to-[#f5af19]',
+                                                        'from-[#b224ef] to-[#7579ff]',
+                                                        'from-[#ff9966] to-[#ff5e62]',
+                                                    ];
+                                                    const ringClass = rings[i % rings.length];
+
+                                                    const textBgs = [
                                                         'from-[#FF416C] to-[#FF4B2B]',
                                                         'from-[#4776E6] to-[#8E54E9]',
                                                         'from-[#00B4DB] to-[#0083B0]',
@@ -7443,51 +7468,46 @@ const ProfileModal = ({
                                                         'from-[#f12711] to-[#f5af19]',
                                                         'from-[#8E2DE2] to-[#4A00E0]',
                                                         'from-[#b224ef] to-[#7579ff]',
-                                                        'from-[#ff9966] to-[#ff5e62]',
                                                     ];
-                                                    const gradClass = textGradients[i % textGradients.length];
+                                                    const gradClass = textBgs[i % textBgs.length];
 
                                                     return (
-                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="cursor-pointer shrink-0 group w-[90px] h-[140px] sm:w-[104px] sm:h-[160px] relative rounded-[16px] overflow-hidden transition-all duration-200 border border-white/10 hover:border-white/30 bg-[#1a1a1a] shadow-lg">
-                                                            {hasMedia ? (
-                                                                isNativeVideo ? (
-                                                                    <video
-                                                                        src={resolveMediaUrl(s.videoUrl || s.image)}
-                                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
-                                                                        autoPlay
-                                                                        muted
-                                                                        loop
-                                                                        playsInline
-                                                                        preload="auto"
-                                                                        onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
-                                                                    />
-                                                                ) : isYT ? (
-                                                                    <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-500">
-                                                                        <img src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover" alt="" />
+                                                        <div key={s._id} onClick={() => onOpenDetail(s)} className="flex flex-col items-center gap-2 cursor-pointer shrink-0 group w-[72px]">
+                                                            <div className="relative">
+                                                                {/* Animated gradient ring */}
+                                                                <div className={`w-[68px] h-[68px] rounded-full p-[3px] bg-gradient-to-br ${ringClass} shadow-lg`}>
+                                                                    <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 border-2 border-black relative">
+                                                                        {hasMedia ? (
+                                                                            <img
+                                                                                src={ytThumb || resolveMediaUrl(s.thumbnailUrl || s.image || s.videoUrl, null, false, true)}
+                                                                                className="w-full h-full object-cover object-center"
+                                                                                alt=""
+                                                                                onError={(e) => { e.target.style.display = 'none'; }}
+                                                                            />
+                                                                        ) : (
+                                                                            <div className={`w-full h-full bg-gradient-to-br ${gradClass} flex items-center justify-center`}>
+                                                                                <span className="text-white text-[11px] font-bold text-center break-words line-clamp-3 leading-snug drop-shadow-md px-1">
+                                                                                    {getPostTextPreview(s.desc, 30)}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                        {/* Hover overlay */}
+                                                                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full" />
                                                                     </div>
-                                                                ) : (
-                                                                    <img src={resolveMediaUrl(s.thumbnailUrl || s.image)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                                                )
-                                                            ) : (
-                                                                <div className={`w-full h-full bg-gradient-to-br ${gradClass} p-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
-                                                                    <span className="text-white text-[11px] sm:text-[12px] font-bold text-center break-words line-clamp-5 leading-snug drop-shadow-md">
-                                                                        {getPostTextPreview(s.desc, 80)}
-                                                                    </span>
                                                                 </div>
-                                                            )}
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none"></div>
 
-                                                            {(isNativeVideo || isYT) && (
-                                                                <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-black/60 backdrop-blur-md text-white rounded-full flex items-center justify-center z-10 shadow-sm">
-                                                                    <Icons.Play className="w-3 h-3 fill-white pl-[1px]" />
-                                                                </div>
-                                                            )}
-                                                            
-                                                            <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 pointer-events-none flex items-center justify-center">
-                                                                <div className="text-[10px] text-white/80 font-medium">
-                                                                    <CyberDate date={s.createdAt} t={t} lang={lang} />
-                                                                </div>
+                                                                {/* Video indicator */}
+                                                                {(isNativeVideo || isYT) && (
+                                                                    <div className="absolute bottom-0 right-0 w-[22px] h-[22px] bg-black/70 backdrop-blur-sm text-white rounded-full flex items-center justify-center z-10 shadow-sm">
+                                                                        <Icons.Play className="w-2.5 h-2.5 fill-white pl-[1px]" />
+                                                                    </div>
+                                                                )}
                                                             </div>
+
+                                                            {/* Date chip */}
+                                                            <span className="text-[10px] font-semibold text-white/80 text-center truncate w-full leading-tight group-hover:text-white transition-colors duration-200">
+                                                                <CyberDate date={s.createdAt} t={t} lang={lang} />
+                                                            </span>
                                                         </div>
                                                     );
                                                 })}
