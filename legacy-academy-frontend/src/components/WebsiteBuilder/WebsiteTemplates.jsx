@@ -31,7 +31,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full flex flex-col max-w-7xl mx-auto">
         <div className="flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-12 md:py-24 gap-12">
             <div className="flex-1 flex flex-col items-start z-10">
-                <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6 break-words hyphens-auto w-full">{config.slogan || 'Your Business Slogan'}</h1>
+                <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6 break-words hyphens-auto w-full">{config.slogan || ''}</h1>
                 <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-lg opacity-70 break-words hyphens-auto w-full">{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition-transform hover:scale-105" style={{ backgroundColor: activeTheme.primary, color: '#fff', boxShadow: `0 0 30px ${activeTheme.primary}40` }}>
@@ -57,7 +57,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const NewspaperTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-5xl mx-auto border-x border-current px-6 md:px-12 py-8" style={{ borderColor: `${activeTheme.primary}40` }}>
         <div className="border-b-4 border-current pb-8 mb-8 flex flex-col items-center text-center">
-            <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter w-full break-words hyphens-auto" style={{ fontFamily: 'Times New Roman, serif' }}>{config.slogan || 'THE DAILY POST'}</h1>
+            <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter w-full break-words hyphens-auto" style={{ fontFamily: 'Times New Roman, serif' }}>{config.slogan || ''}</h1>
             <p className="mt-4 text-xl font-bold uppercase tracking-widest opacity-80 border-y border-current py-2 w-full break-words hyphens-auto">{config.description}</p>
         </div>
         <div className="flex flex-col md:flex-row gap-8">
@@ -89,7 +89,7 @@ export const RestaurantTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="absolute inset-0 bg-black/60 z-10" />
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover z-0" alt="Restaurant Cover" />}
             <div className="relative z-20 flex flex-col items-center">
-                <h1 className="text-5xl md:text-7xl font-light tracking-widest uppercase mb-4 text-white w-full break-words hyphens-auto" style={{ fontFamily: 'Playfair Display, serif' }}>{config.slogan || 'Fine Dining'}</h1>
+                <h1 className="text-5xl md:text-7xl font-light tracking-widest uppercase mb-4 text-white w-full break-words hyphens-auto" style={{ fontFamily: 'Playfair Display, serif' }}>{config.slogan || ''}</h1>
                 <div className="w-24 h-1 mb-6" style={{ backgroundColor: activeTheme.primary }} />
                 <p className="text-xl text-white/80 max-w-2xl font-light italic w-full break-words hyphens-auto">{config.description}</p>
                 {config.ctaText && (
@@ -118,9 +118,10 @@ export const TechnologyTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-6xl mx-auto px-6 py-12 font-mono">
         <div className="flex flex-col items-center text-center mb-24 relative">
             <div className="absolute inset-0 opacity-10 blur-3xl rounded-full" style={{ background: `linear-gradient(to bottom, ${activeTheme.primary}, transparent)` }} />
-            <div className="inline-block border px-4 py-1 text-xs uppercase tracking-widest mb-6" style={{ borderColor: activeTheme.primary, color: activeTheme.primary, backgroundColor: `${activeTheme.primary}1a` }}>SYS_INIT_SUCCESS</div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 uppercase shadow-[var(--builder-primary)] text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 w-full break-words hyphens-auto">{config.slogan || 'NEXT_GEN_TECH'}</h1>
-            <p className="text-lg opacity-70 max-w-2xl border-l-2 pl-4 text-left w-full break-words hyphens-auto" style={{ borderColor: activeTheme.primary }}>{`> ${config.description || 'System online. Ready for input.'}`}</p>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 uppercase shadow-[var(--builder-primary)] text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 w-full break-words hyphens-auto">{config.slogan || ''}</h1>
+            {config.description && (
+                <p className="text-lg opacity-70 max-w-2xl border-l-2 pl-4 text-left w-full break-words hyphens-auto" style={{ borderColor: activeTheme.primary }}>{config.description}</p>
+            )}
             {config.ctaText && (
                 <a href={config.ctaLink || '#'} className="mt-8 px-8 py-3 text-black font-black uppercase text-sm hover:scale-105 transition-transform" style={{ backgroundColor: activeTheme.primary, boxShadow: `0 0 20px ${activeTheme.primary}80` }}>
                     [ {config.ctaText} ]
@@ -131,7 +132,6 @@ export const TechnologyTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="w-full h-64 md:h-96 border border-white/20 relative overflow-hidden mb-24 group">
                 <div className="absolute inset-0 opacity-20 mix-blend-overlay group-hover:opacity-0 transition-opacity z-10" style={{ backgroundColor: activeTheme.primary }} />
                 <img src={config.coverImage} className="w-full h-full object-cover" alt="Tech Base" />
-                <div className="absolute bottom-4 left-4 z-20 text-[10px]" style={{ color: activeTheme.primary }}>SYS_CORE_VISUALIZATION</div>
             </div>
         )}
         {config.features?.length > 0 && (
@@ -160,7 +160,7 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-80 z-0 scale-105" alt="Stadium" />}
             <div className="relative z-20 w-full flex flex-col items-start border-l-8 pl-6" style={{ borderColor: activeTheme.primary }}>
-                <h1 className="text-6xl md:text-8xl font-black uppercase italic tracking-tighter text-white drop-shadow-lg mb-2 w-full break-words hyphens-auto">{config.slogan || 'MATCH DAY'}</h1>
+                <h1 className="text-6xl md:text-8xl font-black uppercase italic tracking-tighter text-white drop-shadow-lg mb-2 w-full break-words hyphens-auto">{config.slogan || ''}</h1>
                 <p className="text-xl md:text-2xl font-bold text-white/90 uppercase tracking-wide w-full break-words hyphens-auto">{config.description}</p>
             </div>
         </div>
@@ -191,7 +191,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="p-4 border-b border-[#333] flex justify-between items-center bg-[#222]">
                 <h1 className="text-2xl font-black uppercase text-white flex items-center gap-2 w-full break-words hyphens-auto">
                     <div className="w-3 h-3 rounded-full animate-pulse" style={{ backgroundColor: activeTheme.primary }} />
-                    {config.slogan || 'LIVE ODDS'}
+                    {config.slogan || ''}
                 </h1>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="px-6 py-2 rounded font-bold uppercase text-xs shrink-0" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
@@ -233,7 +233,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const CorporateTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full bg-white text-gray-900">
         <div className="w-full bg-slate-900 text-white py-24 px-6 md:px-12 text-center flex flex-col items-center">
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">{config.slogan || 'Professional Corporate Solutions'}</h1>
+            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">{config.slogan || ''}</h1>
             <p className="text-xl opacity-80 max-w-2xl mb-10">{config.description}</p>
             {config.ctaText && (
                 <a href={config.ctaLink || '#'} className="px-8 py-3 rounded text-sm font-bold uppercase tracking-wider transition-colors" style={{ backgroundColor: activeTheme.primary, color: '#fff' }}>
@@ -268,7 +268,7 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage }) => (
         <div className="flex flex-col md:flex-row min-h-[80vh]">
             <div className="flex-1 flex flex-col justify-center p-12 md:p-24 z-10 relative">
                 <div className="absolute top-0 left-0 w-32 h-32 opacity-20 rounded-full blur-3xl" style={{ backgroundColor: activeTheme.primary }}></div>
-                <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter mix-blend-difference">{config.slogan || 'Think Different'}</h1>
+                <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter mix-blend-difference">{config.slogan || ''}</h1>
                 <p className="text-xl md:text-2xl font-light opacity-80 max-w-md mb-12">{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="w-max px-10 py-4 rounded-full text-sm font-black uppercase tracking-widest hover:scale-105 transition-transform" style={{ backgroundColor: activeTheme.text || '#fff', color: activeTheme.background || '#000' }}>
@@ -311,7 +311,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage }) => (
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Fitness Hero" />}
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
             <div className="relative z-10 max-w-5xl">
-                <h1 className="text-6xl md:text-9xl font-black italic tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{config.slogan || 'NO EXCUSES'}</h1>
+                <h1 className="text-6xl md:text-9xl font-black italic tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{config.slogan || ''}</h1>
                 <p className="text-xl md:text-2xl font-bold tracking-widest mb-10" style={{ color: activeTheme.primary }}>{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="inline-block px-12 py-5 font-black text-xl tracking-widest skew-x-[-10deg] hover:scale-110 transition-transform" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
@@ -342,7 +342,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const PortfolioTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-5xl mx-auto px-6 py-24 font-sans text-white">
         <div className="flex flex-col mb-32">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-3xl">{config.slogan || 'Hello, I am a creator.'}</h1>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 max-w-3xl">{config.slogan || ''}</h1>
             <p className="text-2xl font-light opacity-60 max-w-2xl mb-12">{config.description}</p>
             <div className="flex items-center gap-6">
                 {config.coverImage && <img src={config.coverImage} className="w-20 h-20 rounded-full object-cover shadow-lg" alt="Profile" />}
@@ -379,7 +379,7 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage }) => (
         <div className="relative h-[80vh] flex items-center justify-center">
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover brightness-50" alt="Property Hero" />}
             <div className="relative z-10 text-center px-6 max-w-4xl">
-                <h1 className="text-5xl md:text-7xl font-serif text-white mb-6 leading-tight drop-shadow-lg">{config.slogan || 'Find Your Dream Home'}</h1>
+                <h1 className="text-5xl md:text-7xl font-serif text-white mb-6 leading-tight drop-shadow-lg">{config.slogan || ''}</h1>
                 <p className="text-xl text-white/90 mb-10 font-light drop-shadow">{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="inline-block px-10 py-4 bg-white text-slate-900 font-bold uppercase tracking-widest text-sm hover:bg-gray-100 transition-colors shadow-xl">
@@ -427,7 +427,7 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage }) => (
             )}
             <div className="relative z-10 text-center px-6 flex flex-col items-center">
                 <div className="mb-6 px-4 py-1 border-2 text-xs font-black uppercase tracking-[0.3em] backdrop-blur-sm" style={{ borderColor: activeTheme.primary, color: activeTheme.primary }}>New Release</div>
-                <h1 className="text-6xl md:text-8xl font-black uppercase italic tracking-tighter mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{config.slogan || 'LEVEL UP'}</h1>
+                <h1 className="text-6xl md:text-8xl font-black uppercase italic tracking-tighter mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{config.slogan || ''}</h1>
                 <p className="text-xl text-gray-300 max-w-2xl mb-10">{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="relative group px-10 py-4 font-black uppercase tracking-widest overflow-hidden">

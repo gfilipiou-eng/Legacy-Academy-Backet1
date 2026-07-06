@@ -89,6 +89,10 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         const file = e.target.files[0];
         if (!file) return;
         
+        // Immediately show a local preview so the UI updates instantly
+        const objectUrl = URL.createObjectURL(file);
+        updateConfig(key, objectUrl);
+
         const reader = new FileReader();
         reader.onload = (event) => {
             const img = new Image();
@@ -111,6 +115,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 updateConfig(key, dataUrl);
                 if (e && e.target) e.target.value = '';
+                URL.revokeObjectURL(objectUrl); // Clean up the object URL
             };
             img.src = event.target.result;
         };
@@ -137,7 +142,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             const res = await axios.put('/users/settings', payload);
             
             // Update local config to remember the draft status so auto-save doesn't overwrite it
-            setConfig(updatedConfig);
+            setConfig(prev => ({ ...prev, lastUpdated: updatedConfig.lastUpdated, isDraft: finalIsDraft }));
             
             if (onUpdateUser) {
                 onUpdateUser({
@@ -539,7 +544,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     </label>
                                 </div>
                             </label>
-                            {config.logo && config.logo.startsWith('data:image') ? (
+                            {config.logo && (config.logo.startsWith('data:image') || config.logo.startsWith('blob:')) ? (
                                 <div className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl px-4 py-3 text-white/50 text-sm italic flex items-center justify-between">
                                     <span>Uploaded Image</span>
                                     <img src={config.logo} alt="Preview" className="h-6 w-auto object-contain rounded" />
@@ -567,7 +572,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     </label>
                                 </div>
                             </label>
-                            {config.coverImage && config.coverImage.startsWith('data:image') ? (
+                            {config.coverImage && (config.coverImage.startsWith('data:image') || config.coverImage.startsWith('blob:')) ? (
                                 <div className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl px-4 py-3 text-white/50 text-sm italic flex items-center justify-between">
                                     <span>Uploaded Image</span>
                                     <img src={config.coverImage} alt="Preview" className="h-6 w-auto object-cover rounded" />
