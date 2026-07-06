@@ -3971,15 +3971,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: 8 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-full sm:w-[500px] h-[100dvh] sm:h-[85vh] sm:rounded-[10px] overflow-hidden flex flex-col bg-[#000000] shadow-2xl"
+                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col bg-[#1C1C1E]/80 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10"
             >
                 {/* HEADER */}
-                <div className="px-4 py-3 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-[#1C1C1E] sm:bg-[#000000]">
+                <div className="px-4 py-3 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-black/20 relative z-20">
                     <div className="w-16"></div> {/* Left spacer */}
                     <div className="flex-1 text-center">
                         <h2 className="font-semibold text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
                     </div>
-                    <button type="button" onClick={onClose} className="w-16 text-right text-[17px] font-semibold text-[#0A84FF] active:opacity-70 transition-opacity">
+                    <button type="button" onClick={onClose} className="w-16 text-right text-[17px] font-semibold text-[#0A84FF] active:opacity-70 transition-opacity relative z-30">
                         {t('DONE', 'Done')}
                     </button>
                 </div>
