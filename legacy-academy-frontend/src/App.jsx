@@ -2360,13 +2360,8 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                     <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
                         <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
                             <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
-                            {/* Plus overlay */}
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </div>
+                            {/* Hover darken overlay */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                         </div>
                     </div>
                     {/* Blue + badge */}
@@ -7417,13 +7412,8 @@ const ProfileModal = ({
                                                             <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
                                                                 <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
                                                                     <ProfileAvatar user={currentUser} className="object-cover w-full h-full" />
-                                                                    {/* Plus overlay */}
-                                                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white drop-shadow-lg">
-                                                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                                        </svg>
-                                                                    </div>
+                                                                    {/* Hover darken overlay */}
+                                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                                                                 </div>
                                                             </div>
                                                             {/* Blue + badge */}
