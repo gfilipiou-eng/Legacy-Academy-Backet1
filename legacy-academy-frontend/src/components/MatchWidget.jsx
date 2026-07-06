@@ -114,7 +114,7 @@ const MatchWidget = ({ team, className = "" }) => {
                         <div className="flex items-center justify-between gap-2 sm:gap-4 w-full">
                             {/* Home Team */}
                             <div className="flex flex-col items-center flex-1 min-w-0">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-black rounded-full p-2 border border-white/10 shadow-sm shrink-0">
+                                <div className="w-14 h-14 sm:w-16 sm:h-16 mb-2 flex items-center justify-center shrink-0">
                                     {match.homeBadge ? (
                                         <img src={match.homeBadge} alt={match.homeTeam} className="w-full h-full object-contain" />
                                     ) : (
@@ -166,7 +166,7 @@ const MatchWidget = ({ team, className = "" }) => {
 
                             {/* Away Team */}
                             <div className="flex flex-col items-center flex-1 min-w-0">
-                                <div className="w-12 h-12 sm:w-14 sm:h-14 mb-2 flex items-center justify-center bg-black rounded-full p-2 border border-white/10 shadow-sm shrink-0">
+                                <div className="w-14 h-14 sm:w-16 sm:h-16 mb-2 flex items-center justify-center shrink-0">
                                     {match.awayBadge ? (
                                         <img src={match.awayBadge} alt={match.awayTeam} className="w-full h-full object-contain" />
                                     ) : (

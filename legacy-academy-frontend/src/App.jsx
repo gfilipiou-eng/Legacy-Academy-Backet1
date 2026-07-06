@@ -7094,7 +7094,7 @@ const ProfileModal = ({
                                     {displayUser?.settings?.footballTeam && (
                                         <div className="mt-4 flex flex-col items-center justify-center relative group select-none">
                                             <div className="relative flex items-center gap-4 px-5 py-2.5 bg-white/[0.02] border border-white/10 rounded-full backdrop-blur-2xl shadow-sm transition-all duration-300">
-                                                <div className="w-8 h-8 sm:w-10 sm:h-10 relative flex items-center justify-center bg-black rounded-full p-1.5 border border-white/10 shadow-sm shrink-0">
+                                                <div className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center shrink-0">
                                                     <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                                                 </div>
                                                 <div className="flex flex-col text-left">
