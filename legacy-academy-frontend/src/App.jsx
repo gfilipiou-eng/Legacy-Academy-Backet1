@@ -7134,11 +7134,19 @@ const ProfileModal = ({
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {displayUser?.settings?.footballTeam && (
-                                        <div className="mt-5 flex items-center justify-center gap-4 sm:gap-5 drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] select-none bg-black/20 p-4 px-6 rounded-3xl border border-white/10 backdrop-blur-md">
-                                            <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] hover:scale-105 transition-transform duration-300" />
-                                            <span className="text-[16px] sm:text-[20px] font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/50 drop-shadow-md uppercase">
-                                                {displayUser.settings.footballTeam.strTeam}
-                                            </span>
+                                        <div className="mt-4 flex flex-col items-center justify-center relative group select-none">
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent blur-xl group-hover:via-white/10 transition-all duration-500 rounded-full"></div>
+                                            <div className="relative flex items-center gap-4 px-5 py-2.5 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 rounded-full backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300">
+                                                <div className="w-8 h-8 sm:w-10 sm:h-10 relative flex items-center justify-center">
+                                                    <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-110 transition-transform duration-500" />
+                                                </div>
+                                                <div className="flex flex-col text-left">
+                                                    <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">SUPPORTER</span>
+                                                    <span className="text-[12px] sm:text-[14px] font-black tracking-widest text-white drop-shadow-md uppercase leading-tight">
+                                                        {displayUser.settings.footballTeam.strTeam}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
