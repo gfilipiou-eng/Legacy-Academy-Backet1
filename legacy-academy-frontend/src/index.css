@@ -1280,8 +1280,6 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   content-visibility: visible;
   overflow: visible !important;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @media (min-width: 641px) {
