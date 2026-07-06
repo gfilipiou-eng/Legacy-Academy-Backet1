@@ -5941,7 +5941,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[1].username}</p>
-                                                    <p className="text-xs font-bold text-gray-400 flex items-center justify-center gap-1"><Icons.Flame className="w-4 h-4 text-orange-500" /> {getActiveStreak(top3[1])}</p>
+                                                    <p className="text-xs font-bold text-gray-400 flex items-center justify-center gap-1"><Icons.Streak className="w-4 h-4 shrink-0" /> {getActiveStreak(top3[1])}</p>
                                                     <div className="w-full h-10 sm:h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-gray-400">SILVER</span>
                                                     </div>
@@ -5960,7 +5960,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-base sm:text-lg font-black text-yellow-400 mt-2 truncate w-full text-center">{top3[0].username}</p>
-                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500 flex items-center justify-center gap-1"><Icons.Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" /> {getActiveStreak(top3[0])}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-yellow-500 flex items-center justify-center gap-1"><Icons.Streak className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> {getActiveStreak(top3[0])}</p>
                                                     <div className="w-full h-12 sm:h-16 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs sm:text-sm font-black text-yellow-200">GOLD</span>
                                                     </div>
@@ -5979,7 +5979,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-black text-white mt-2 truncate w-full text-center">{top3[2].username}</p>
-                                                    <p className="text-xs font-bold text-amber-600 flex items-center justify-center gap-1"><Icons.Flame className="w-4 h-4 text-orange-500" /> {getActiveStreak(top3[2])}</p>
+                                                    <p className="text-xs font-bold text-amber-600 flex items-center justify-center gap-1"><Icons.Streak className="w-4 h-4 shrink-0" /> {getActiveStreak(top3[2])}</p>
                                                     <div className="w-full h-8 sm:h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-t-2xl mt-1 flex items-center justify-center border border-white/10">
                                                         <span className="text-xs font-black text-amber-300">BRONZE</span>
                                                     </div>
@@ -6015,7 +6015,7 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                             </div>
                                             <div className="flex items-center gap-3 mt-1">
                                                 <div className={`font-black text-xs sm:text-sm flex items-center gap-1.5 ${currentStreak > 0 ? 'text-orange-400' : 'text-gray-500'}`}>
-                                                    {currentStreak > 0 ? <Icons.Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" /> : '💨'} {currentStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
+                                                    <Icons.Streak className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" /> {currentStreak} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('STREAK', 'Streak')}</span>
                                                 </div>
                                                 <div className="font-black text-xs sm:text-sm flex items-center gap-1.5 text-blue-400">
                                                     🎯 {Math.max(u.missionsCompletedCount || 0, getActiveStreak(u))} <span className="text-[9px] sm:text-[10px] text-white/50 uppercase tracking-widest">{t('MISSIONS_COMPLETED', 'Missions')}</span>
