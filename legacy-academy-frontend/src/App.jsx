@@ -2235,10 +2235,10 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                         {getActiveStreak(note?.sender) > 0 && (
                             <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(note?.sender)}</span>
                         )}
+                        {!note.read && (
+                            <div className="w-2 h-2 ml-1 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-primary)] shrink-0" />
+                        )}
                     </div>
-                    {!note.read && (
-                        <div className="w-2 h-2 rounded-full bg-[var(--gold-primary)] animate-pulse shadow-[0_0_10px_var(--gold-primary)] shrink-0" />
-                    )}
                 </div>
 
                 <div className={`text-[11px] sm:text-xs mt-1 uppercase font-black tracking-wider leading-snug ${config.textClass}`}>
@@ -2280,16 +2280,18 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 </div>
             )}
 
-            <div className="absolute top-3 right-3 z-20">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (onToggleSelect) onToggleSelect(note._id);
-                    }}
-                    className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'border-white/30 bg-black/40'} flex items-center justify-center transition-colors`}
+            <div 
+                className="absolute top-2 right-2 z-20 p-2 cursor-pointer" 
+                onClick={(e) => {
+                    e.stopPropagation();
+                    if (onToggleSelect) onToggleSelect(note._id);
+                }}
+            >
+                <div
+                    className={`w-6 h-6 rounded-full border ${isSelected ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'border-white/30 bg-black/40'} flex items-center justify-center transition-colors`}
                 >
-                    {isSelected && <Icons.Check className="w-3 h-3 text-black" />}
-                </button>
+                    {isSelected && <Icons.Check className="w-4 h-4 text-black" />}
+                </div>
             </div>
         </div>
     );
@@ -3554,7 +3556,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 <button
                                                     onClick={() => handleSend()}
                                                     disabled={!inputText.trim() && !imageFile}
-                                                    className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-400/40 text-cyan-300 shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:opacity-30 disabled:scale-100 shrink-0 hover:bg-cyan-500/40 hover:border-cyan-400/60 hover:shadow-[0_8px_32px_rgba(6,182,212,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 disabled:hover:shadow-[0_8px_32px_rgba(6,182,212,0.2)] disabled:hover:-translate-y-0 disabled:hover:bg-cyan-500/20 disabled:hover:border-cyan-400/40"
+                                                    className="w-11 h-11 flex items-center justify-center rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-400/40 text-cyan-300 disabled:opacity-30 disabled:scale-100 shrink-0 hover:bg-cyan-500/40 hover:border-cyan-400/60 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 disabled:hover:-translate-y-0 disabled:hover:bg-cyan-500/20 disabled:hover:border-cyan-400/40"
                                                 >
                                                     <Icons.Send className="w-5 h-5" />
                                                 </button>
@@ -11378,10 +11380,10 @@ const App = () => {
                                                         {selectedNotifs.length > 0 && (
                                                             <button
                                                                 onClick={deleteSelectedNotifications}
-                                                                className="w-auto px-3 h-8 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95 transition-all"
+                                                                title={t('DELETE_SELECTED') || `DELETE (${selectedNotifs.length})`}
+                                                                className="w-8 h-8 sm:w-auto sm:px-3 bg-red-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full flex items-center justify-center gap-0 group hover:scale-105 active:scale-95 transition-all"
                                                             >
-                                                                <Icons.Trash className="w-3.5 h-3.5" />
-                                                                {t('DELETE_SELECTED') || `DELETE (${selectedNotifs.length})`}
+                                                                <Icons.Trash className="w-3.5 h-3.5 group-hover:scale-110" />
                                                             </button>
                                                         )}
                                                         <button
