@@ -2172,7 +2172,7 @@ const NeuralVideoPlayer = memo(({ src, poster, className, onExpand, forcePause }
 });
 
 // Notification item component for Alerts tab
-const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, onDelete, t, lang }) => {
+const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, onAcceptRequest, onRejectRequest, t, lang, isSelected, onToggleSelect }) => {
     const handleClick = () => {
         if (note.type === 'message') onOpenChat(note.sender);
         else if (note.type === 'follow_request') onViewProfile(note.sender);
@@ -2280,15 +2280,17 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
                 </div>
             )}
 
-            {onDelete && (
+            <div className="absolute top-3 right-3 z-20">
                 <button
-                    onClick={(e) => onDelete(note._id, e)}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-red-500/10 text-red-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
-                    title={t('DELETE_NOTIF') || 'Delete'}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (onToggleSelect) onToggleSelect(note._id);
+                    }}
+                    className={`w-5 h-5 rounded-full border ${isSelected ? 'bg-[var(--gold-primary)] border-[var(--gold-primary)]' : 'border-white/30 bg-black/40'} flex items-center justify-center transition-colors`}
                 >
-                    <Icons.X className="w-3.5 h-3.5" />
+                    {isSelected && <Icons.Check className="w-3 h-3 text-black" />}
                 </button>
-            )}
+            </div>
         </div>
     );
 });
@@ -3275,16 +3277,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
             <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none  flex overflow-hidden shadow-none">
-                {/* Ancient Greek Live Background */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-black">
-                    {/* Marble / Statue Background Image */}
-                    <div 
-                        className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse duration-[15s]"
-                        style={{ backgroundImage: 'url("/ancient_bg.png")' }}
-                    />
-                    {/* Gold/Bronze Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/95" />
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.15),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(184,134,11,0.1),transparent_70%)] mix-blend-screen" />
+                {/* Live Cyber Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020202]">
+                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--gold-primary)]/20 rounded-full blur-[120px] animate-pulse duration-[10000ms]" />
+                    <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[100px] animate-pulse duration-[7000ms]" />
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[50px]" />
                 </div>
                 <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
                     <div className="p-4 border-b border-white/10 space-y-4">
@@ -9007,6 +9004,7 @@ const App = () => {
     const [profileUser, setProfileUser] = useState(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [alerts, setAlerts] = useState([]);
+    const [selectedNotifs, setSelectedNotifs] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
     const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
     const [followLoading, setFollowLoading] = useState({}); // per-user follow loading state
@@ -10712,6 +10710,24 @@ const App = () => {
             console.error('Failed to delete notification', err);
         }
     };
+    const deleteSelectedNotifications = async () => {
+        if (selectedNotifs.length === 0) return;
+        try {
+            const notifsToDelete = [...selectedNotifs];
+            setAlerts(prev => prev.filter(n => !notifsToDelete.includes(n._id)));
+            setSelectedNotifs([]);
+            await Promise.all(notifsToDelete.map(id => axios.delete(`/users/notifications/${id}`)));
+            setUser(prev => {
+                if (!prev) return prev;
+                const u = { ...prev, notifications: (prev.notifications || []).filter(n => !notifsToDelete.includes(n._id)) };
+                localStorage.setItem('user', JSON.stringify(u));
+                return u;
+            });
+            cyberDeleteEffect();
+        } catch (err) {
+            console.error('Failed to delete selected notifications', err);
+        }
+    };
 
     // Optimization: memoize feed calculation to avoid flickering & re-running heavy filters
     const preloadedProfilePosts = useMemo(() => {
@@ -11359,6 +11375,15 @@ const App = () => {
                                             <div className="flex gap-2">
                                                 {alerts.length > 0 && (
                                                     <>
+                                                        {selectedNotifs.length > 0 && (
+                                                            <button
+                                                                onClick={deleteSelectedNotifications}
+                                                                className="w-auto px-3 h-8 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center gap-1.5 hover:scale-105 active:scale-95 transition-all"
+                                                            >
+                                                                <Icons.Trash className="w-3.5 h-3.5" />
+                                                                {t('DELETE_SELECTED') || `DELETE (${selectedNotifs.length})`}
+                                                            </button>
+                                                        )}
                                                         <button
                                                             onClick={markAllNotificationsRead}
                                                             title={t('MARK_ALL_READ', 'Mark all as read')}
@@ -11393,7 +11418,10 @@ const App = () => {
                                                     onAcceptRequest={handleAcceptRequest}
                                                     onRejectRequest={handleRejectRequest}
                                                     onOpenPost={(id) => { const p = posts.find(p => p._id === id); if (p) setSelectedPost(p); }}
-                                                    onDelete={deleteSingleNotification}
+                                                    isSelected={selectedNotifs.includes(n._id)}
+                                                    onToggleSelect={(id) => {
+                                                        setSelectedNotifs(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+                                                    }}
                                                     t={t}
                                                     lang={lang}
                                                 />
