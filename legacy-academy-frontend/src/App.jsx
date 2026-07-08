@@ -11393,13 +11393,15 @@ const App = () => {
                                                         >
                                                             <Icons.Check className="w-3.5 h-3.5 group-hover:scale-110" />
                                                         </button>
-                                                        <button
-                                                            onClick={deleteNotifications}
-                                                            title={t('CLEAR_ALL')}
-                                                            className="w-8 h-8 sm:w-auto sm:px-3 bg-red-500/10 rounded-full text-red-500 text-[9px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg"
-                                                        >
-                                                            <Icons.Trash className="w-3.5 h-3.5 group-hover:scale-110" />
-                                                        </button>
+                                                        {selectedNotifs.length === 0 && (
+                                                            <button
+                                                                onClick={deleteNotifications}
+                                                                title={t('CLEAR_ALL')}
+                                                                className="w-8 h-8 sm:w-auto sm:px-3 bg-red-500/10 rounded-full text-red-500 text-[9px] font-black uppercase tracking-widest border border-red-500/20 flex items-center justify-center gap-0 group shadow-lg"
+                                                            >
+                                                                <Icons.Trash className="w-3.5 h-3.5 group-hover:scale-110" />
+                                                            </button>
+                                                        )}
                                                     </>
                                                 )}
                                             </div>
