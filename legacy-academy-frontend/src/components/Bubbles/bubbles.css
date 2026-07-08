@@ -302,7 +302,6 @@
   font-size: 1rem;
   letter-spacing: 0.5px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(255, 0, 255, 0.4), inset 0 2px 0 rgba(255,255,255,0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   flex-shrink: 0;
@@ -318,7 +317,6 @@
 
 .bubble-blow-btn:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 242, 255, 0.6), inset 0 2px 0 rgba(255,255,255,0.4);
 }
 
 .bubble-blow-btn:active:not(:disabled) {

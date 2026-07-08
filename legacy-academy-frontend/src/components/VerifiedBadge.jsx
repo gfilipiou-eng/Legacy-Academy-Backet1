@@ -117,24 +117,28 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
             <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_dynGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#FFE066">
-                            <animate attributeName="stopColor" values="#FFE066;#FFFBE6;#FFD700;#FF8C00;#FFE066" dur="2s" repeatCount="indefinite" />
+                        <stop offset="0%" stopColor="#FFD700">
+                            <animate attributeName="stopColor" values="#FFD700;#FFFBE6;#FFD700;#FF8C00;#FFD700" dur="3s" repeatCount="indefinite" />
                         </stop>
-                        <stop offset="50%" stopColor="#FFD700">
-                            <animate attributeName="stopColor" values="#FFD700;#FF8C00;#FFE066;#FFFBE6;#FFD700" dur="2s" repeatCount="indefinite" />
+                        <stop offset="30%" stopColor="#FFFBE6">
+                            <animate attributeName="stopColor" values="#FFFBE6;#FFD700;#FF8C00;#FFD700;#FFFBE6" dur="3s" repeatCount="indefinite" />
                         </stop>
-                        <stop offset="100%" stopColor="#FF8C00">
-                            <animate attributeName="stopColor" values="#FF8C00;#D97706;#FFD700;#FFE066;#FF8C00" dur="2s" repeatCount="indefinite" />
+                        <stop offset="70%" stopColor="#FF8C00">
+                            <animate attributeName="stopColor" values="#FF8C00;#FFD700;#FFFBE6;#FF8C00;#FF8C00" dur="3s" repeatCount="indefinite" />
+                        </stop>
+                        <stop offset="100%" stopColor="#D97706">
+                            <animate attributeName="stopColor" values="#D97706;#FF8C00;#FFD700;#D97706;#D97706" dur="3s" repeatCount="indefinite" />
                         </stop>
                     </linearGradient>
-                    <filter id="vb_dynGlow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#FFD700" floodOpacity="0.8">
-                            <animate attributeName="floodOpacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite" />
-                        </feDropShadow>
-                    </filter>
                 </defs>
                 <circle cx="20" cy="20" r="11" fill="#000" />
-                <path fill="url(#vb_dynGold)" filter="url(#vb_dynGlow)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                <path fill="url(#vb_dynGold)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
+                <g fill="white">
+                    <circle cx="6" cy="8" r="1.2"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" /><animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" /></circle>
+                    <circle cx="33" cy="10" r="1"><animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.5s" repeatCount="indefinite" /><animate attributeName="r" values="0.3;1.2;0.3" dur="2s" begin="0.5s" repeatCount="indefinite" /></circle>
+                    <circle cx="8" cy="31" r="1.1"><animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="0.9s" repeatCount="indefinite" /><animate attributeName="r" values="0.4;1.3;0.4" dur="1.8s" begin="0.9s" repeatCount="indefinite" /></circle>
+                    <circle cx="34" cy="30" r="0.9"><animate attributeName="opacity" values="0;1;0" dur="2.2s" begin="0.3s" repeatCount="indefinite" /><animate attributeName="r" values="0.3;1.1;0.3" dur="2.2s" begin="0.3s" repeatCount="indefinite" /></circle>
+                </g>
             </svg>
         );
     }

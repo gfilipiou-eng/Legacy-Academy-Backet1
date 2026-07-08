@@ -16,48 +16,51 @@ const playCyberSFX = (type = 'click') => {
         const ctx = globalAudioCtx;
         
         if (type === 'click' || type === 'menu') {
-            // Cyber liquid glass sound
+            // Futuristic Tap
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            const filter = ctx.createBiquadFilter();
-            
-            // Watery / Liquid base
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
-            osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-            
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(2000, ctx.currentTime);
-            filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-            
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.02);
             gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-            
-            osc.connect(filter);
-            filter.connect(gain);
+            gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+            osc.connect(gain);
             gain.connect(ctx.destination);
-            
             osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.15);
+            osc.stop(ctx.currentTime + 0.05);
+        } else if (type === 'notification') {
+            // Futuristic Notification Double Chirp
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(1200, ctx.currentTime);
+            osc.frequency.setValueAtTime(1600, ctx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
             
-            // Glassy cyber ping overlay
+            gain.gain.setValueAtTime(0, ctx.currentTime + 0.1);
+            gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.3);
+            
+            // Add a sine pad under it
             const osc2 = ctx.createOscillator();
             const gain2 = ctx.createGain();
             osc2.type = 'sine';
-            osc2.frequency.setValueAtTime(2500, ctx.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(3500, ctx.currentTime + 0.03);
-            
+            osc2.frequency.setValueAtTime(600, ctx.currentTime);
             gain2.gain.setValueAtTime(0, ctx.currentTime);
-            gain2.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-            
+            gain2.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.1);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
             osc2.connect(gain2);
             gain2.connect(ctx.destination);
-            
             osc2.start(ctx.currentTime);
-            osc2.stop(ctx.currentTime + 0.1);
+            osc2.stop(ctx.currentTime + 0.4);
         } else if (type === 'success') {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
