@@ -2691,7 +2691,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                     {/* RIGHT COL: CONTENT */}
                     <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-visible">
                         {/* Header */}
-                        <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full bg-white/[0.04] backdrop-blur-2xl border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                        <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full dynamic-glass-panel border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
                                 <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
                                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
@@ -7161,13 +7161,13 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-2 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
                                         <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = safeId(displayUser);
@@ -7183,7 +7183,7 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.followers)}
                                         </span>
@@ -7195,7 +7195,7 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.following)}
                                         </span>
@@ -8344,7 +8344,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
@@ -8357,7 +8357,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* REPOSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
@@ -8370,7 +8370,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* FOLLOWERS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.followers)}
                         </span>
@@ -8380,7 +8380,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* FOLLOWING */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.following)}
                         </span>
