@@ -11124,7 +11124,7 @@ const App = () => {
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
                     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-2xl">
-                        <div className="relative bg-black/40 backdrop-blur-[80px] border border-white/10 shadow-[0_0_50px_rgba(212,175,55,0.15)] rounded-[32px] md:rounded-[36px] max-w-[420px] w-full max-h-[95dvh] overflow-y-auto no-scrollbar">
+                        <div className="relative bg-black/40 backdrop-blur-[80px] border border-white/10 rounded-[32px] md:rounded-[36px] max-w-[420px] w-full max-h-[95dvh] overflow-y-auto no-scrollbar">
                             {/* Inner Glass Glow */}
                             <div className="absolute inset-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] rounded-[32px] md:rounded-[36px] pointer-events-none"></div>
                             {/* Simple Liquid Glass Effects */}
@@ -11133,16 +11133,15 @@ const App = () => {
                             
                             <div className="relative p-4 sm:p-8 text-center flex flex-col items-center">
                                 {/* Icon */}
-                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-2.5 sm:mb-4 border border-[var(--gold-primary)]/30 shadow-[0_0_20px_rgba(212,175,55,0.2)] shrink-0">
-                                    <Icons.Lock className="w-5 h-5 sm:w-8 sm:h-8 text-[var(--gold-primary)] drop-shadow-md" />
+                                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-2.5 sm:mb-4 border border-[var(--gold-primary)]/30 shrink-0">
+                                    <Icons.Lock className="w-5 h-5 sm:w-8 sm:h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 
-                                <h2 className="text-base sm:text-[24px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2 drop-shadow-sm shrink-0">Exclusive Network</h2>
+                                <h2 className="text-base sm:text-[24px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2 shrink-0">Exclusive Network</h2>
                                 <div className="text-[8px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-3 sm:mb-6 shrink-0">Legacy Academy Membership</div>
                                 
                                 {/* Features List - Glass */}
                                 <div className="w-full bg-black/40 backdrop-blur-3xl border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-[24px] p-3.5 sm:p-6 mb-3 sm:mb-6 text-left space-y-2.5 sm:space-y-4 relative overflow-hidden shrink-0">
-                                    <div className="absolute -inset-10 bg-[var(--gold-primary)]/5 blur-3xl rounded-full pointer-events-none opacity-50"></div>
                                     {[
                                         { title: "Private Members Network", desc: "An elite social ecosystem designed strictly for verified individuals." },
                                         { title: "Strategic Insights", desc: "Curated knowledge and high-value strategies reserved for the inner circle." },
@@ -11151,7 +11150,7 @@ const App = () => {
                                         { title: "Encrypted P2P Comms", desc: "Secure chat, blue verified badge, and elite inner circle access." }
                                     ].map((feature, i) => (
                                         <div key={i} className="flex items-start gap-3 sm:gap-3.5 relative z-10">
-                                            <div className="mt-0.5 shrink-0"><Icons.Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" strokeWidth={3} /></div>
+                                            <div className="mt-0.5 shrink-0"><Icons.Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)]" strokeWidth={3} /></div>
                                             <div>
                                                 <div className="text-[11px] sm:text-[13px] text-white font-black tracking-widest uppercase">{feature.title}</div>
                                                 <div className="text-[9px] sm:text-[11px] text-white/50 leading-relaxed mt-0.5 sm:mt-1 font-medium">{feature.desc}</div>
@@ -11161,10 +11160,10 @@ const App = () => {
                                 </div>
                                 
                                 {/* Price Card - Glass */}
-                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[20px] mb-3 sm:mb-6 shadow-[0_0_20px_rgba(212,175,55,0.1)] shrink-0">
+                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[20px] mb-3 sm:mb-6 shrink-0">
                                     <div className="w-full h-full bg-black/40 backdrop-blur-3xl rounded-[19px] p-3 sm:p-5 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
-                                        <div className="relative text-xl sm:text-4xl font-black text-white flex items-center justify-center gap-2 drop-shadow-md">
+                                        <div className="relative text-xl sm:text-4xl font-black text-white flex items-center justify-center gap-2">
                                             49€ 
                                             <span className="text-[10px] sm:text-[12px] text-gray-400 uppercase tracking-widest mt-1.5 sm:mt-2">/ MONTH</span>
                                         </div>
@@ -11172,9 +11171,9 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] relative overflow-hidden group shrink-0">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    <span className="relative drop-shadow-md">Unlock Access</span>
+                                    <span className="relative">Unlock Access</span>
                                 </button>
                                 
                                 <button onClick={() => setShowPaywall(false)} className="text-[10px] sm:text-[12px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/90 transition-colors underline decoration-white/20 hover:decoration-white/50 underline-offset-4 pb-1 shrink-0">
