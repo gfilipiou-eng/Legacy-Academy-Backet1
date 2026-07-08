@@ -528,7 +528,7 @@ const fetchFounderAffiliationUser = async (username) => {
     }
 
     const request = axios
-        .get(`/users/username/${encodeURIComponent(normalizedUsername)}`, { timeout: 3000 })
+        .get(`/users/username/${encodeURIComponent(normalizedUsername)}?minimal=true`, { timeout: 3000 })
         .then((res) => {
             const user = res.data || null;
             founderAffiliationUserCache.set(normalizedUsername, user);
@@ -3875,7 +3875,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         setPendingLanguage(normalizedLanguage);
 
         try {
-            await handleSave('language', normalizedLanguage);
             if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
                 await i18n.changeLanguage(normalizedLanguage);
             }
@@ -4152,7 +4151,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         
                                         {footballTeam ? (
                                             <div className="relative p-5 rounded-2xl border border-white/[0.1] bg-white/[0.03] flex items-center gap-5 shadow-lg backdrop-blur-md">
-                                                <img src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl transition-transform hover:scale-110" />
+                                                <img key={footballTeam.id || footballTeam.strTeam} src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl transition-transform hover:scale-110" />
                                                 <div>
                                                     <div className="text-white font-black text-base sm:text-lg tracking-wider drop-shadow-md">{footballTeam.strTeam}</div>
                                                     <div className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">{t('YOUR_DESIGNATED_TEAM', 'Your designated supporter team')}</div>
@@ -6044,12 +6043,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
             localStorage.setItem('user', JSON.stringify(updatedUser));
             if (onUpdateUser) onUpdateUser(updatedUser);
             // Recalculate top streak immediately
-            setUsers(prev => {
-                const list = prev || [];
-                const mergedList = list.map(u => u._id === updatedUser._id ? {...u, ...updatedUser} : u);
-                window.topStreakValue = Math.max(0, ...mergedList.filter(u => !u.isPrivate).map(u => getActiveStreak(u)));
-                return mergedList;
-            });
+            window.topStreakValue = Math.max(window.topStreakValue || 0, !updatedUser.isPrivate ? getActiveStreak(updatedUser) : 0);
         } catch (err) {
             console.error(err);
             const msg = err.response?.data?.message || err.response?.data?.error || "Failed to submit completion";
@@ -7095,7 +7089,7 @@ const ProfileModal = ({
                                         <div className="mt-4 flex flex-col items-center justify-center relative group select-none">
                                             <div className="relative flex items-center gap-4 px-5 py-2.5 bg-white/[0.02] border border-white/10 rounded-full backdrop-blur-2xl shadow-sm transition-all duration-300">
                                                 <div className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center shrink-0">
-                                                    <img src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                                                    <img key={displayUser.settings.footballTeam.strTeam} src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                                                 </div>
                                                 <div className="flex flex-col text-left">
                                                     <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">SUPPORTER</span>
@@ -10867,12 +10861,12 @@ const App = () => {
                                     {authMode === 'login' && (
                                         <form onSubmit={(e) => { e.preventDefault(); /* login logic handled by button onClick */ }}>
                                             <div className="relative group mb-3">
-                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
-                                                <input type="email" placeholder="Email address" id="l-email" name="l-email" aria-label="Email address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <Icons.Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-[var(--gold-primary)] transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type="email" placeholder="Email address" id="l-email" name="l-email" aria-label="Email address" value={formData.email} onChange={handleAuthInputChange} className="relative w-full bg-black/40 hover:bg-black/50 focus:bg-black/60 backdrop-blur-3xl border border-white/10 focus:border-[var(--gold-primary)]/50 rounded-[24px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/50 transition-all duration-300 z-10" />
                                             </div>
                                             <div className="relative group mb-3">
-                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" name="l-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-[var(--gold-primary)] transition-colors duration-300 z-20 pointer-events-none" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="l-password" name="l-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-black/40 hover:bg-black/50 focus:bg-black/60 backdrop-blur-3xl border border-white/10 focus:border-[var(--gold-primary)]/50 rounded-[24px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/50 transition-all duration-300 z-10" />
                                                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">
                                                     {showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}
                                                 </button>
@@ -11129,23 +11123,26 @@ const App = () => {
 
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
-                    <div className="fixed inset-0 z-[5000] flex items-end md:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl">
-                        <div className="relative bg-black/35 backdrop-blur-[60px] border border-white/10 rounded-[24px] md:rounded-[28px] max-w-[420px] w-full">
+                    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-2xl">
+                        <div className="relative bg-black/40 backdrop-blur-[80px] border border-white/10 shadow-[0_0_50px_rgba(212,175,55,0.15)] rounded-[32px] md:rounded-[36px] max-w-[420px] w-full overflow-hidden">
+                            {/* Inner Glass Glow */}
+                            <div className="absolute inset-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] rounded-[32px] md:rounded-[36px] pointer-events-none"></div>
                             {/* Simple Liquid Glass Effects */}
-                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
-                            <div className="absolute top-0 left-0 right-0 h-[100px] bg-gradient-to-b from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--gold-primary)] via-[#ffb700] to-[var(--gold-primary)]" />
+                            <div className="absolute top-0 left-0 right-0 h-[120px] bg-gradient-to-b from-[var(--gold-primary)]/15 to-transparent pointer-events-none" />
                             
-                            <div className="relative p-3 sm:p-8 text-center flex flex-col items-center">
+                            <div className="relative p-5 sm:p-8 text-center flex flex-col items-center">
                                 {/* Icon */}
-                                <div className="w-10 h-10 sm:w-18 sm:h-18 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-3 sm:mb-5 border border-[var(--gold-primary)]/30">
-                                    <Icons.Lock className="w-5 h-5 sm:w-7 sm:h-7 text-[var(--gold-primary)]" />
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--gold-primary)]/10 rounded-full flex items-center justify-center mb-4 border border-[var(--gold-primary)]/30 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                                    <Icons.Lock className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--gold-primary)] drop-shadow-md" />
                                 </div>
                                 
-                                <h2 className="text-sm sm:text-[22px] font-black text-white uppercase tracking-[0.2em] mb-0.5 sm:mb-2">Exclusive Network</h2>
-                                <div className="text-[8px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-3 sm:mb-7">Legacy Academy Membership</div>
+                                <h2 className="text-lg sm:text-[24px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2 drop-shadow-sm">Exclusive Network</h2>
+                                <div className="text-[9px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-4 sm:mb-6">Legacy Academy Membership</div>
                                 
                                 {/* Features List - Glass */}
-                                <div className="w-full bg-black/30 backdrop-blur-xl border border-white/10 rounded-[20px] p-3 sm:p-6 mb-3 sm:mb-7 text-left space-y-2 sm:space-y-4">
+                                <div className="w-full bg-black/40 backdrop-blur-3xl border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-[24px] p-4 sm:p-6 mb-4 sm:mb-6 text-left space-y-3 sm:space-y-4 relative overflow-hidden">
+                                    <div className="absolute -inset-10 bg-[var(--gold-primary)]/5 blur-3xl rounded-full pointer-events-none opacity-50"></div>
                                     {[
                                         { title: "Private Members Network", desc: "An elite social ecosystem designed strictly for verified individuals." },
                                         { title: "Strategic Insights", desc: "Curated knowledge and high-value strategies reserved for the inner circle." },
@@ -11153,34 +11150,34 @@ const App = () => {
                                         { title: "Website Builder", desc: "Entrepreneurs can launch their own high-end custom websites." },
                                         { title: "Encrypted P2P Comms", desc: "Secure chat, blue verified badge, and elite inner circle access." }
                                     ].map((feature, i) => (
-                                        <div key={i} className="flex items-start gap-3.5">
-                                            <div className="mt-0.5 shrink-0"><Icons.Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)]" strokeWidth={3} /></div>
+                                        <div key={i} className="flex items-start gap-3.5 relative z-10">
+                                            <div className="mt-0.5 shrink-0"><Icons.Check className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--gold-primary)] drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]" strokeWidth={3} /></div>
                                             <div>
-                                                <div className="text-[11px] sm:text-xs text-white font-bold tracking-wide uppercase">{feature.title}</div>
-                                                <div className="text-[9px] sm:text-[11px] text-white/50 leading-tight mt-0.5">{feature.desc}</div>
+                                                <div className="text-[12px] sm:text-[13px] text-white font-black tracking-widest uppercase">{feature.title}</div>
+                                                <div className="text-[10px] sm:text-[11px] text-white/50 leading-relaxed mt-1 font-medium">{feature.desc}</div>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                                 
                                 {/* Price Card - Glass */}
-                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[20px] mb-3 sm:mb-6">
-                                    <div className="w-full h-full bg-black/25 backdrop-blur-xl border border-white/10 rounded-[18px] p-3 sm:p-5 relative overflow-hidden">
+                                <div className="w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[20px] mb-4 sm:mb-6 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                                    <div className="w-full h-full bg-black/40 backdrop-blur-3xl rounded-[19px] p-4 sm:p-5 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent pointer-events-none" />
-                                        <div className="relative text-xl sm:text-4xl font-black text-white flex items-center justify-center gap-1.5">
+                                        <div className="relative text-2xl sm:text-4xl font-black text-white flex items-center justify-center gap-2 drop-shadow-md">
                                             49€ 
-                                            <span className="text-[9px] sm:text-[11px] text-gray-500 uppercase tracking-widest mt-1.5">/ MONTH</span>
+                                            <span className="text-[10px] sm:text-[12px] text-gray-400 uppercase tracking-widest mt-1.5 sm:mt-2">/ MONTH</span>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[var(--gold-primary)] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-2xl active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[9px] sm:text-[12px] relative overflow-hidden group">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-4 sm:mb-6 text-[10px] sm:text-[12px] shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    <span className="relative">Unlock Access</span>
+                                    <span className="relative drop-shadow-md">Unlock Access</span>
                                 </button>
                                 
-                                <button onClick={() => setShowPaywall(false)} className="text-[9px] sm:text-[11px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/70 transition-colors underline decoration-white/20 underline-offset-4 pb-1">
+                                <button onClick={() => setShowPaywall(false)} className="text-[10px] sm:text-[12px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/90 transition-colors underline decoration-white/20 hover:decoration-white/50 underline-offset-4 pb-1">
                                     Return to Login
                                 </button>
                             </div>

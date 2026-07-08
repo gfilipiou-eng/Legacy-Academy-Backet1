@@ -191,6 +191,15 @@ router.get("/username/:username", async (req, res) => {
         
         const user = await User.findOne(query).select('-password').lean();
         if (!user) return res.status(404).json("User not found");
+
+        if (req.query.minimal === 'true') {
+            return res.status(200).json({
+                _id: user._id,
+                username: user.username,
+                profilePic: user.profilePic,
+                founderAffiliation: user.founderAffiliation
+            });
+        }
         
         // Filter out deleted users from followers and following lists
         const validFollowers = await User.find({ _id: { $in: user.followers || [] } }).select('_id').lean();
