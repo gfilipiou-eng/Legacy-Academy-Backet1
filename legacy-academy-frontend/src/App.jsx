@@ -11717,7 +11717,7 @@ const App = () => {
                             onClick={() => { setIsCreateOpen(true); }}
                             className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
                         >
-                            <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10 text-[#1D9BF0]" />
+                            <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10 text-red-500" />
                         </button>
                     )}
 
