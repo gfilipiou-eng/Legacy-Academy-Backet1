@@ -551,6 +551,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
 
     const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || founderAffiliationUserCache.get(normalizedUsername) || null);
     const [isLoading, setIsLoading] = useState(() => !resolvedLinkedUser);
+    const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -608,13 +609,14 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                         <div className="w-full h-full flex items-center justify-center bg-neutral-800">
                             <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
                         </div>
-                    ) : resolvedProfilePic ? (
+                    ) : resolvedProfilePic && !imgError ? (
                         <img 
                             src={resolvedProfilePic} 
                             alt="" 
                             className="w-full h-full object-cover transition-transform duration-500" 
                             loading="lazy" 
                             decoding="async" 
+                            onError={() => setImgError(true)}
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-neutral-800">
