@@ -2532,7 +2532,20 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const commentStreamRef = useRef(null);
     const discardRef = useRef(false);
     const [imgError, setImgError] = useState(false); // Handle broken images
+    const [imgRetryCount, setImgRetryCount] = useState(0);
+    const [imgRetryKey, setImgRetryKey] = useState(Date.now());
     const [revealed, setRevealed] = useState(false);
+
+    useEffect(() => {
+        if (imgError && imgRetryCount < 8) {
+            const t = setTimeout(() => {
+                setImgRetryKey(Date.now());
+                setImgError(false);
+                setImgRetryCount(c => c + 1);
+            }, 4000);
+            return () => clearTimeout(t);
+        }
+    }, [imgError, imgRetryCount]);
 
     const isCurrentUserFounder = user?.role === 'Founder';
 
@@ -2780,14 +2793,23 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             imgError ? (
                                                 <div 
                                                     className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2 cursor-pointer hover:bg-white/10 transition-colors duration-300"
-                                                    onClick={(e) => { e.stopPropagation(); setImgError(false); }}
+                                                    onClick={(e) => { e.stopPropagation(); setImgError(false); setImgRetryKey(Date.now()); }}
                                                 >
-                                                    <Icons.Image className="w-8 h-8 opacity-20" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Tap to Retry (Processing)</span>
+                                                    {imgRetryCount < 8 ? (
+                                                        <>
+                                                            <div className="w-8 h-8 border-2 border-[var(--gold-primary)]/50 border-t-[var(--gold-primary)] rounded-full animate-spin"></div>
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]/80">Processing Image... ({imgRetryCount}/8)</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Icons.Image className="w-8 h-8 opacity-20" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired (Tap to Retry)</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <img
-                                                    src={resolveMediaUrl(post.image)}
+                                                    src={`${resolveMediaUrl(post.image)}${resolveMediaUrl(post.image).includes('?') ? '&' : '?'}retry=${imgRetryKey}`}
                                                     alt="Media"
                                                     className={mediaClass}
                                                     loading="lazy"
