@@ -10972,7 +10972,7 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 bg-[var(--gold-primary)] hover:opacity-90 text-black transition-all duration-300">
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black">
@@ -11002,16 +11002,16 @@ const App = () => {
         ].map(f => (
                                                 <div key={f.id} className="relative group mb-2.5">
                                                     {f.icon}
-                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3.5 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                    <input type={f.type} placeholder={f.ph} id={f.id} name={f.id} aria-label={f.ph} value={f.val} maxLength={f.max} onChange={(e) => { if (!f.max || e.target.value.length <= f.max) handleAuthInputChange(e); }} className="relative w-full bg-black/40 hover:bg-black/50 focus:bg-black/60 backdrop-blur-3xl border border-white/10 focus:border-[var(--gold-primary)]/50 rounded-[24px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] py-4 pl-11 pr-4 text-white text-sm font-medium outline-none placeholder:text-white/50 transition-all duration-300 z-10" />
                                                 </div>
                                             ))}
                                             <div className="relative group mb-2.5">
                                                 <Icons.Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors duration-300 z-20 pointer-events-none" />
-                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3.5 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/30 transition-all duration-300 z-10" />
+                                                <input type={showPassword ? "text" : "password"} placeholder="Password" id="r-password" name="r-password" aria-label="Password" value={formData.password} onChange={handleAuthInputChange} className="relative w-full bg-black/40 hover:bg-black/50 focus:bg-black/60 backdrop-blur-3xl border border-white/10 focus:border-[var(--gold-primary)]/50 rounded-[24px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] py-4 pl-11 pr-11 text-white text-sm font-medium outline-none placeholder:text-white/50 transition-all duration-300 z-10" />
                                                 <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors z-20">{showPassword ? <Icons.EyeOff className="w-4 h-4" /> : <Icons.Eye className="w-4 h-4" />}</button>
                                             </div>
                                             <div className="relative group mb-2.5">
-                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-white/5 hover:bg-white/10 focus:bg-white/10 backdrop-blur-[24px] border border-white/10 focus:border-white/30 rounded-[24px] shadow-sm py-3 px-4 text-white text-sm font-medium outline-none placeholder:text-white/30 resize-none h-16 transition-all duration-300 z-10" />
+                                                <textarea placeholder="Bio (Optional)" id="r-bio" name="r-bio" aria-label="Bio" value={formData.bio || ''} onChange={handleAuthInputChange} maxLength={500} className="relative w-full bg-black/40 hover:bg-black/50 focus:bg-black/60 backdrop-blur-3xl border border-white/10 focus:border-[var(--gold-primary)]/50 rounded-[24px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] py-3 px-4 text-white text-sm font-medium outline-none placeholder:text-white/50 resize-none h-16 transition-all duration-300 z-10" />
                                                 <div className="absolute bottom-1.5 right-3 text-[8px] font-black text-white/40 z-20">{(formData.bio || '').length}/500</div>
                                             </div>
                                             <div className="flex flex-col gap-1.5">
@@ -11080,7 +11080,7 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-3.5 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40" style={{ background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,180,0,0.8))', color: '#000' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 bg-[var(--gold-primary)] hover:opacity-90 text-black transition-all duration-300">
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-black">
