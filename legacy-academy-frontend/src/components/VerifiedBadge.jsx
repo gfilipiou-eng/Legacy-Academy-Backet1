@@ -69,7 +69,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
 
     let effectiveBadgeColor = badgeColorProp || user?.settings?.badgeColor;
     if (!effectiveBadgeColor) {
-        effectiveBadgeColor = isGold ? 'ig_gold' : 'x_blue';
+        effectiveBadgeColor = 'ig_blue'; // Prism Blue default for EVERYONE
     }
 
     const renderMainBadge = () => {
@@ -79,11 +79,29 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         return <MasonicSymbol className={className} />;
     }
 
+    // ── PRISM BLUE (Live Water / Sea Style) ──
+    if (effectiveBadgeColor === 'ig_blue' || effectiveBadgeColor === 'prism_blue') {
+        return (
+            <SimpleInstaBadge className={`${className} drop-shadow-md`} gradientId="vb_prismWater" tickFill="#000"
+                gradientDef={
+                    <linearGradient id="vb_prismWater" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#00FFFF">
+                            <animate attributeName="stopColor" values="#00FFFF;#00E5FF;#00BFFF;#00FFFF" dur="3s" repeatCount="indefinite" />
+                        </stop>
+                        <stop offset="50%" stopColor="#0088FF">
+                            <animate attributeName="stopColor" values="#0088FF;#00AAFF;#0066FF;#0088FF" dur="3s" repeatCount="indefinite" />
+                        </stop>
+                        <stop offset="100%" stopColor="#0033FF">
+                            <animate attributeName="stopColor" values="#0033FF;#0055FF;#0011CC;#0033FF" dur="3s" repeatCount="indefinite" />
+                        </stop>
+                    </linearGradient>
+                }
+            />
+        );
+    }
+
     // ── USER BADGES ──
     if (!isGold) {
-        if (effectiveBadgeColor === 'ig_blue') {
-            return <SimpleInstaBadge className={className} fill="rgb(0,149,246)" tickFill="#000" />;
-        }
         let fillColor = '#1D9BF0';
         if (effectiveBadgeColor === 'blue') fillColor = '#2F80ED';
         return (

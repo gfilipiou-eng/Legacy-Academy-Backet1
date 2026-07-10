@@ -4147,6 +4147,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     { id: 'holographic', label: t('BADGE_HOLO', 'Holographic') },
                                                     { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Black & White') },
                                                     { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'White & Black') },
+                                                    { id: 'ig_blue',     label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
                                                     { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
                                                     { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
                                                     { id: 'masonic',     label: t('BADGE_MASONIC', 'Masonic') },
