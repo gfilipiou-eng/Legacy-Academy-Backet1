@@ -22,24 +22,41 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
 
 
 
-// ── MASONIC SYMBOL (Standalone) ──
+// ── MASONIC SYMBOL (Premium Seal) ──
 const MasonicSymbol = ({ className }) => (
-    <svg viewBox="4 4 32 32" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0, transform: 'scale(1.5)' }}>
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0 drop-shadow-md`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
         <defs>
             <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF2A8" />
-                <stop offset="50%" stopColor="#D4AF37" />
-                <stop offset="100%" stopColor="#A07820" />
+                <stop offset="40%" stopColor="#D4AF37" />
+                <stop offset="100%" stopColor="#8A6517" />
             </linearGradient>
-            <filter id="vb_shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="1" stdDeviation="1" floodColor="#000" floodOpacity="0.8" />
+            <linearGradient id="vb_masonicBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#0F172A" />
+                <stop offset="100%" stopColor="#000000" />
+            </linearGradient>
+            <filter id="vb_glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#D4AF37" floodOpacity="0.5" />
             </filter>
         </defs>
-        <g filter="url(#vb_shadow)">
+        
+        {/* Outer starburst / gear edge (like a premium badge) */}
+        <path fill="url(#vb_masonicGold)" d={INSTA_STAR_PATH} />
+        {/* Inner dark circle seal */}
+        <circle cx="20" cy="20" r="14" fill="url(#vb_masonicBg)" stroke="url(#vb_masonicGold)" strokeWidth="1.5" />
+        {/* Inner dotted circle */}
+        <circle cx="20" cy="20" r="12" fill="none" stroke="url(#vb_masonicGold)" strokeWidth="0.75" strokeDasharray="1.5 1.5" opacity="0.6" />
+        
+        {/* The Square and Compasses - Perfectly centered and scaled */}
+        <g transform="translate(10, 10) scale(0.5)" filter="url(#vb_glow)">
+            {/* Square (Bottom part) */}
             <path d="M20 34 L5 19 L8 16 L20 28 L32 16 L35 19 Z" fill="url(#vb_masonicGold)" />
+            {/* Compasses (Top part) */}
             <path d="M20 5 L6 31 L10 31 L20 12 L30 31 L34 31 Z" fill="url(#vb_masonicGold)" />
+            {/* Hinge */}
             <circle cx="20" cy="7" r="3.5" fill="url(#vb_masonicGold)" />
-            <text x="20" y="24" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="12" fontWeight="bold" fontFamily="Georgia, serif">G</text>
+            {/* The 'G' */}
+            <text x="20.5" y="24" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="13" fontWeight="bold" fontFamily="Georgia, serif">G</text>
         </g>
     </svg>
 );

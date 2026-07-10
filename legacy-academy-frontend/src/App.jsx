@@ -4185,10 +4185,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     {/* ⚽ Football Teams Search */}
                                     <div className="px-4 py-4 border-t border-white/5 text-left">
                                         <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
-                                            <span>🏆 {t('FAVORITE_TEAM', 'Favorite Team / Country')}</span>
+                                            <span className="truncate pr-2">🏆 {t('FAVORITE_TEAM', 'Favorite Team')}</span>
                                             {footballTeam && (
-                                                <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded">
-                                                    <Icons.X className="w-3 h-3" /> {t('REMOVE', 'Remove')}
+                                                <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 flex items-center justify-center transition-colors shrink-0 shadow-sm" aria-label="Remove Team">
+                                                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                                 </button>
                                             )}
                                         </div>
