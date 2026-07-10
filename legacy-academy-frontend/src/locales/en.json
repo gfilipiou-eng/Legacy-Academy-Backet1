@@ -14,8 +14,8 @@
   "PASSWORD": "PASSWORD",
   "FORGOT": "FORGOT PASSWORD?",
   "POSTS": "POSTS",
-  "FOLLOWERS": "FOLLOWERS",
-  "FOLLOWING": "FOLLOWING",
+  "FOLLOWERS": "Followers",
+  "FOLLOWING": "Following",
   "EDIT": "EDIT",
   "FOLLOW": "FOLLOW",
   "UNFOLLOW": "UNFOLLOW",
@@ -628,5 +628,14 @@
   "SEARCH_TEAM_PLACEHOLDER": "Search for any sports team or country...",
   "YOUR_DESIGNATED_TEAM": "Your designated supporter team",
   "FOOTBALL_TEAMS": "Supporter Team",
-  "FAVORITE_TEAM": "Favorite Team / Country"
+  "FAVORITE_TEAM": "Favorite Team / Country",
+  "SUPPORTER": "SUPPORTER",
+  "LOCATING_MATCH": "Locating Match...",
+  "LATEST_RESULT": "Latest Result",
+  "NEXT_MATCH": "Next Match",
+  "LIVE": "Live",
+  "DAYS": "Days",
+  "HOURS_SHORT": "Hrs",
+  "MINS_SHORT": "Min",
+  "NO_RECENT_MATCHES": "No recent matches"
 }

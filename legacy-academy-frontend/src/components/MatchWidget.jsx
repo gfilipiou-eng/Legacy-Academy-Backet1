@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MatchWidget = ({ team, className = "" }) => {
+    const { t } = useTranslation();
     const [match, setMatch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
@@ -96,7 +98,7 @@ const MatchWidget = ({ team, className = "" }) => {
             <div className="relative p-5">
                 <div className="flex justify-between items-center mb-4 gap-2">
                     <div className="text-[10px] font-black uppercase tracking-widest text-white/50 shrink-0">
-                        {loading ? "Locating Match..." : (match?.isPast ? "Latest Result" : "Next Match")}
+                        {loading ? t('LOCATING_MATCH', "Locating Match...") : (match?.isPast ? t('LATEST_RESULT', "Latest Result") : t('NEXT_MATCH', "Next Match"))}
                     </div>
                     {match && (
                         <div className="text-[9px] font-bold uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full text-white/80 truncate max-w-[60%] text-right shrink">
@@ -140,23 +142,23 @@ const MatchWidget = ({ team, className = "" }) => {
                                         <div className="text-[10px] font-black text-white/40 italic mb-1">VS</div>
                                         {timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 ? (
                                             <div className="bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-[10px] uppercase px-3 py-1 rounded-full animate-pulse shadow-sm">
-                                                Live
+                                                {t('LIVE', 'Live')}
                                             </div>
                                         ) : (
                                             <div className="flex gap-1.5 text-center">
                                                 <div className="bg-white/5 border border-white/10 rounded-lg w-9 py-1 flex flex-col items-center shadow-inner">
                                                     <span className="text-sm font-black text-white leading-none">{timeLeft.days}</span>
-                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">Days</span>
+                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">{t('DAYS', 'Days')}</span>
                                                 </div>
                                                 <div className="text-white/20 font-black mt-1">:</div>
                                                 <div className="bg-white/5 border border-white/10 rounded-lg w-9 py-1 flex flex-col items-center shadow-inner">
                                                     <span className="text-sm font-black text-white leading-none">{timeLeft.hours}</span>
-                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">Hrs</span>
+                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">{t('HOURS_SHORT', 'Hrs')}</span>
                                                 </div>
                                                 <div className="text-white/20 font-black mt-1">:</div>
                                                 <div className="bg-white/5 border border-white/10 rounded-lg w-9 py-1 flex flex-col items-center shadow-inner">
                                                     <span className="text-sm font-black text-white leading-none">{timeLeft.minutes}</span>
-                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">Min</span>
+                                                    <span className="text-[8px] uppercase text-white/40 font-bold mt-0.5">{t('MINS_SHORT', 'Min')}</span>
                                                 </div>
                                             </div>
                                         )}
@@ -179,7 +181,7 @@ const MatchWidget = ({ team, className = "" }) => {
                     </>
                 ) : (
                     <div className="text-center text-white/40 text-[11px] font-bold uppercase tracking-widest py-6">
-                        No recent matches
+                        {t('NO_RECENT_MATCHES', 'No recent matches')}
                     </div>
                 )}
             </div>

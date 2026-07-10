@@ -7137,7 +7137,7 @@ const ProfileModal = ({
                                                     <img key={displayUser.settings.footballTeam.strTeam} src={displayUser.settings.footballTeam.strBadge} alt={displayUser.settings.footballTeam.strTeam} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                                                 </div>
                                                 <div className="flex flex-col text-left">
-                                                    <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">SUPPORTER</span>
+                                                    <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">{t('SUPPORTER', 'SUPPORTER')}</span>
                                                     <span className="text-[12px] sm:text-[14px] font-black tracking-widest text-white uppercase leading-tight">
                                                         {displayUser.settings.footballTeam.strTeam}
                                                     </span>
@@ -12103,11 +12103,11 @@ const App = () => {
                             <div className="flex items-center justify-center gap-8 w-full border-t border-white/10 pt-6">
                                 <div className="flex flex-col items-center">
                                     <div className="font-black text-white text-xl">{getUniqueCount(shareModalProfile.followers)}</div>
-                                    <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Followers</div>
+                                    <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">{t('FOLLOWERS', 'Followers')}</div>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <div className="font-black text-white text-xl">{getUniqueCount(shareModalProfile.following)}</div>
-                                    <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Following</div>
+                                    <div className="text-gray-500 text-[10px] font-black uppercase tracking-widest">{t('FOLLOWING', 'Following')}</div>
                                 </div>
                             </div>
                         </div>

@@ -14,8 +14,8 @@
   "PASSWORD": "MOT DE PASSE",
   "FORGOT": "MOT DE PASSE OUBLIÉ ?",
   "POSTS": "PUBLICATIONS",
-  "FOLLOWERS": "ABONNÉS",
-  "FOLLOWING": "ABONNEMENTS",
+  "FOLLOWERS": "Abonnés",
+  "FOLLOWING": "Abonnements",
   "EDIT": "MODIFIER",
   "FOLLOW": "SUIVRE",
   "UNFOLLOW": "NE PLUS SUIVRE",
@@ -624,5 +624,14 @@
   "ACTIVE_DEVICES": "Appareils Actifs",
   "SESSION_MONITORING": "Surveillance de session",
   "FAVORITE_TEAM": "Équipe / Pays Favori",
-  "SEARCH_TEAM_PLACEHOLDER": "Recherchez n'importe quelle équipe ou pays..."
+  "SEARCH_TEAM_PLACEHOLDER": "Recherchez n'importe quelle équipe ou pays...",
+  "SUPPORTER": "SUPPORTER",
+  "LOCATING_MATCH": "Localisation du match...",
+  "LATEST_RESULT": "Dernier résultat",
+  "NEXT_MATCH": "Prochain Match",
+  "LIVE": "En direct",
+  "DAYS": "Jours",
+  "HOURS_SHORT": "Hrs",
+  "MINS_SHORT": "Min",
+  "NO_RECENT_MATCHES": "Aucun match récent"
 }

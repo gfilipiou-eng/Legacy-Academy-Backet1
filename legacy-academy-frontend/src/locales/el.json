@@ -14,8 +14,8 @@
   "PASSWORD": "ΚΩΔΙΚΟΣ",
   "FORGOT": "ΞΕΧΑΣΑΤΕ ΤΟΝ ΚΩΔΙΚΟ;",
   "POSTS": "ΔΗΜΟΣΙΕΥΣΕΙΣ",
-  "FOLLOWERS": "ΑΚΟΛΟΥΘΟΙ",
-  "FOLLOWING": "ΑΚΟΛΟΥΘΕΙ",
+  "FOLLOWERS": "Ακόλουθοι",
+  "FOLLOWING": "Ακολουθεί",
   "EDIT": "ΕΠΕΞΕΡΓΑΣΙΑ",
   "FOLLOW": "ΑΚΟΛΟΥΘΗΣΤΕ",
   "UNFOLLOW": "ΔΙΑΓΡΑΦΗ",
@@ -629,5 +629,14 @@
   "SEARCH_TEAM_PLACEHOLDER": "Αναζήτηση για οποιαδήποτε ομάδα ή χώρα...",
   "YOUR_DESIGNATED_TEAM": "Η αγαπημένη σου ομάδα",
   "FOOTBALL_TEAMS": "Αγαπημενη Ομαδα",
-  "FAVORITE_TEAM": "Αγαπημένη Ομάδα / Χώρα"
+  "FAVORITE_TEAM": "Αγαπημένη Ομάδα / Χώρα",
+  "SUPPORTER": "ΟΠΑΔΟΣ",
+  "LOCATING_MATCH": "Εντοπισμός Αγώνα...",
+  "LATEST_RESULT": "Τελευταίο Αποτέλεσμα",
+  "NEXT_MATCH": "Επόμενος Αγώνας",
+  "LIVE": "Zωντανά",
+  "DAYS": "Ημέρες",
+  "HOURS_SHORT": "Ώρες",
+  "MINS_SHORT": "Λεπτά",
+  "NO_RECENT_MATCHES": "Κανένας πρόσφατος αγώνας"
 }

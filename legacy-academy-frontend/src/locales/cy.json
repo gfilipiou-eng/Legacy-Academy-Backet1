@@ -14,8 +14,8 @@
   "PASSWORD": "ΚΩΔΙΚΟΣ",
   "FORGOT": "ΞΕΧΑΣΑΤΕ ΤΟΝ ΚΩΔΙΚΟ;",
   "POSTS": "ΔΗΜΟΣΙΕΥΣΕΙΣ",
-  "FOLLOWERS": "ΑΚΟΛΟΥΘΟΙ",
-  "FOLLOWING": "ΑΚΟΛΟΥΘΕΙ",
+  "FOLLOWERS": "Dilynwyr",
+  "FOLLOWING": "Yn dilyn",
   "EDIT": "ΕΠΕΞΕΡΓΑΣΙΑ",
   "FOLLOW": "ΑΚΟΛΟΥΘΗΣΤΕ",
   "UNFOLLOW": "ΔΙΑΓΡΑΦΗ",
@@ -624,5 +624,14 @@
   "ACTIVE_DEVICES": "Dyfeisiau Gweithredol",
   "SESSION_MONITORING": "Monitro sesiwn",
   "FAVORITE_TEAM": "Hoff Dîm / Gwlad",
-  "SEARCH_TEAM_PLACEHOLDER": "Chwilio am unrhyw dîm chwaraeon neu wlad..."
+  "SEARCH_TEAM_PLACEHOLDER": "Chwilio am unrhyw dîm chwaraeon neu wlad...",
+  "SUPPORTER": "CEFNOGWR",
+  "LOCATING_MATCH": "Dod o hyd i Gêm...",
+  "LATEST_RESULT": "Canlyniad Diweddaraf",
+  "NEXT_MATCH": "Gêm Nesaf",
+  "LIVE": "Yn Fyw",
+  "DAYS": "Diwrnodau",
+  "HOURS_SHORT": "Awr",
+  "MINS_SHORT": "Mun",
+  "NO_RECENT_MATCHES": "Dim gemau diweddar"
 }

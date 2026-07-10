@@ -14,8 +14,8 @@
   "PASSWORD": "PASSWORT",
   "FORGOT": "PASSWORT VERGESSEN?",
   "POSTS": "BEITRÄGE",
-  "FOLLOWERS": "FOLLOWER",
-  "FOLLOWING": "GEFOLGT",
+  "FOLLOWERS": "Follower",
+  "FOLLOWING": "Folge ich",
   "EDIT": "BEARBEITEN",
   "FOLLOW": "FOLGEN",
   "UNFOLLOW": "ENTFOLGEN",
@@ -624,5 +624,14 @@
   "ACTIVE_DEVICES": "Aktive Geräte",
   "SESSION_MONITORING": "Sitzungsüberwachung",
   "FAVORITE_TEAM": "Lieblingsteam / Land",
-  "SEARCH_TEAM_PLACEHOLDER": "Suche nach einem Sportteam oder Land..."
+  "SEARCH_TEAM_PLACEHOLDER": "Suche nach einem Sportteam oder Land...",
+  "SUPPORTER": "UNTERSTÜTZER",
+  "LOCATING_MATCH": "Spiel wird gesucht...",
+  "LATEST_RESULT": "Letztes Ergebnis",
+  "NEXT_MATCH": "Nächstes Spiel",
+  "LIVE": "Live",
+  "DAYS": "Tage",
+  "HOURS_SHORT": "Std",
+  "MINS_SHORT": "Min",
+  "NO_RECENT_MATCHES": "Keine aktuellen Spiele"
 }
