@@ -8384,7 +8384,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
@@ -8397,7 +8397,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* REPOSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
@@ -8410,7 +8410,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* FOLLOWERS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.followers)}
                         </span>
@@ -8420,7 +8420,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
  
                     {/* FOLLOWING */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
                         <span className="font-black text-white text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.following)}
                         </span>
