@@ -10975,13 +10975,13 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 bg-[var(--gold-primary)] hover:opacity-90 text-black transition-all duration-300">
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300" style={{ backgroundColor: 'var(--gold-primary)' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black">
+                                                    <div className="w-5 h-5 text-white">
                                                         <Icons.Loader />
                                                     </div>
-                                                ) : <span className="relative">SIGN IN</span>}
+                                                ) : <span className="relative text-white">SIGN IN</span>}
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
                                                  <button type="button" onClick={() => setShowPaywall(true)} className="cursor-pointer hover:text-[var(--gold-primary)] transition-colors bg-transparent border-none outline-none p-0 font-bold text-[var(--gold-primary)]/80 uppercase tracking-widest text-[9px]">Create Account</button>
@@ -11083,13 +11083,13 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 bg-[var(--gold-primary)] hover:opacity-90 text-black transition-all duration-300">
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300" style={{ backgroundColor: 'var(--gold-primary)' }}>
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
-                                                    <div className="w-5 h-5 text-black">
+                                                    <div className="w-5 h-5 text-white">
                                                         <Icons.Loader />
                                                     </div>
-                                                ) : <span className="relative">CREATE ACCOUNT</span>}
+                                                ) : <span className="relative text-white">CREATE ACCOUNT</span>}
                                             </button>
                                             <button type="button" className="mt-3 w-full text-xs text-white/25 cursor-pointer text-center pt-0.5 font-bold hover:text-white/50 transition-colors bg-transparent border-none outline-none" onClick={() => handleAuthModeChange('login')}>BACK TO LOGIN</button>
                                         </>
