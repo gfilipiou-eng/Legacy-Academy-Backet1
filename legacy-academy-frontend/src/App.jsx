@@ -4,9 +4,19 @@ import EnhancedButton from './components/EnhancedButton';
 import { urlBase64ToUint8Array } from './utils/urlBase64ToUint8Array';
 
 export const getActiveStreak = (u) => {
-    if (!u || !u.missionsStreak || !u.lastMissionCompleted) return 0;
-    const diffHours = Math.abs(new Date() - new Date(u.lastMissionCompleted)) / 3600000;
-    return diffHours <= 48 ? u.missionsStreak : 0;
+    if (!u) return 0;
+    const streak = Number(u.missionsStreak) || 0;
+    if (streak <= 0) return 0;
+    if (!u.lastMissionCompleted) return 0;
+    
+    try {
+        const lastDate = new Date(u.lastMissionCompleted);
+        const now = new Date();
+        const diffHours = Math.abs(now - lastDate) / 3600000;
+        return diffHours <= 48 ? streak : 0;
+    } catch(e) {
+        return 0;
+    }
 };
 
 export const isTopStreak = (u) => {
@@ -2768,9 +2778,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh] liquid-glass-video-panel rounded-2xl' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
                                         ) : post.image && (
                                             imgError ? (
-                                                <div className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2">
+                                                <div 
+                                                    className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2 cursor-pointer hover:bg-white/10 transition-colors duration-300"
+                                                    onClick={(e) => { e.stopPropagation(); setImgError(false); }}
+                                                >
                                                     <Icons.Image className="w-8 h-8 opacity-20" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Tap to Retry (Processing)</span>
                                                 </div>
                                             ) : (
                                                 <img
