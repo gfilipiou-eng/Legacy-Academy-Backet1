@@ -52,9 +52,10 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
   }, []);
 
   const handleDeleteBubble = async (id) => {
+    // Optimistically remove the bubble from UI immediately
+    setBubbles(prev => prev.filter(b => b._id !== id));
     try {
       await deleteBubble(id);
-      setBubbles(prev => prev.filter(b => b._id !== id));
     } catch (err) {
       console.error("Error deleting bubble:", err);
     }
