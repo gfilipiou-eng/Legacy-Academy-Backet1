@@ -3844,6 +3844,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 payload = { settings: { enableProfileZoom: Boolean(val) } };
                 setEnableProfileZoom(Boolean(val));
             }
+            if (key === 'liquidGlassIntensity') {
+                payload = { settings: { liquidGlassIntensity: Number(val) } };
+            }
             
             // OPTIMISTIC UPDATE FOR ALL SETTINGS
             if (payload && payload.settings) {
@@ -4113,8 +4116,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             setLiquidGlassIntensity(val);
                                             applyLiquidGlass(val);
                                         }}
-                                        onPointerUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
-                                        onKeyUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
+                                        onPointerUp={(e) => handleSave('liquidGlassIntensity', parseFloat(e.target.value))}
+                                        onKeyUp={(e) => handleSave('liquidGlassIntensity', parseFloat(e.target.value))}
                                         className="settings-range w-full h-2 accent-[#1D9BF0]"
                                         style={{ '--progress-width': `${liquidGlassIntensity * 100}%` }}
                                     />
