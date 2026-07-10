@@ -626,7 +626,8 @@
   "ACTIVE_DEVICES": "Ενεργές Συσκευές",
   "SESSION_MONITORING": "Παρακολούθηση συνεδρίας",
   "REMOVE": "Αφαίρεση",
-  "SEARCH_TEAM_PLACEHOLDER": "Αναζήτηση ομάδας (π.χ. ΠΑΟΚ, Arsenal, Real Madrid)...",
+  "SEARCH_TEAM_PLACEHOLDER": "Αναζήτηση για οποιαδήποτε ομάδα ή χώρα...",
   "YOUR_DESIGNATED_TEAM": "Η αγαπημένη σου ομάδα",
-  "FOOTBALL_TEAMS": "Αγαπημενη Ομαδα"
+  "FOOTBALL_TEAMS": "Αγαπημενη Ομαδα",
+  "FAVORITE_TEAM": "Αγαπημένη Ομάδα / Χώρα"
 }

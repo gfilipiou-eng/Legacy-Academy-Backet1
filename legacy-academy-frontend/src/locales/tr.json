@@ -622,5 +622,7 @@
   "BUBBLES_BLOW_BTN": "Baloncuk Üfle 🫧",
   "YOUR_STORY": "Storyline'a Ekle",
   "ACTIVE_DEVICES": "Aktif Cihazlar",
-  "SESSION_MONITORING": "Oturum izleme"
+  "SESSION_MONITORING": "Oturum izleme",
+  "FAVORITE_TEAM": "Favori Takım / Ülke",
+  "SEARCH_TEAM_PLACEHOLDER": "Herhangi bir spor takımı veya ülkeyi arayın..."
 }

@@ -625,7 +625,8 @@
   "ACTIVE_DEVICES": "Active Devices",
   "SESSION_MONITORING": "Session monitoring",
   "REMOVE": "Remove",
-  "SEARCH_TEAM_PLACEHOLDER": "Search for any team (e.g. PAOK, Arsenal, Real Madrid)...",
+  "SEARCH_TEAM_PLACEHOLDER": "Search for any sports team or country...",
   "YOUR_DESIGNATED_TEAM": "Your designated supporter team",
-  "FOOTBALL_TEAMS": "Supporter Team"
+  "FOOTBALL_TEAMS": "Supporter Team",
+  "FAVORITE_TEAM": "Favorite Team / Country"
 }

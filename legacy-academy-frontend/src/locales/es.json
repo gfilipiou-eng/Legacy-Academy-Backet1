@@ -622,5 +622,7 @@
   "BUBBLES_BLOW_BTN": "Soplar Burbuja 🫧",
   "YOUR_STORY": "Al Storyline",
   "ACTIVE_DEVICES": "Dispositivos Activos",
-  "SESSION_MONITORING": "Monitoreo de sesión"
+  "SESSION_MONITORING": "Monitoreo de sesión",
+  "FAVORITE_TEAM": "Equipo Favorito / País",
+  "SEARCH_TEAM_PLACEHOLDER": "Busca cualquier equipo deportivo o país..."
 }

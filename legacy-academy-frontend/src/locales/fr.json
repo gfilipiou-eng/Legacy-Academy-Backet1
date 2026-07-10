@@ -622,5 +622,7 @@
   "BUBBLES_BLOW_BTN": "Souffler la Bulle 🫧",
   "YOUR_STORY": "Au Storyline",
   "ACTIVE_DEVICES": "Appareils Actifs",
-  "SESSION_MONITORING": "Surveillance de session"
+  "SESSION_MONITORING": "Surveillance de session",
+  "FAVORITE_TEAM": "Équipe / Pays Favori",
+  "SEARCH_TEAM_PLACEHOLDER": "Recherchez n'importe quelle équipe ou pays..."
 }
