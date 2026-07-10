@@ -7250,7 +7250,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-4 w-full">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3 rounded-[1.25rem] bg-white/5 border border-white/10 text-white font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-white/10 hover:border-white/20 active:scale-[0.97] transition-all duration-300 cursor-pointer shadow-lg backdrop-blur-md">
+                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3 rounded-[1.25rem] bg-white/5 border border-white/10 text-white font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 cursor-pointer shadow-lg backdrop-blur-md">
                                             <Icons.Settings className="w-4 h-4" />
                                             {t('EDIT_PROFILE')}
                                         </button>
