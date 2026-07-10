@@ -9907,7 +9907,10 @@ const App = () => {
                             prev.bio !== me.bio ||
                             prev.profileDescriptor !== me.profileDescriptor ||
                             sanitizeAffiliation(prev.founderAffiliation) !== sanitizeAffiliation(me.founderAffiliation) ||
-                            prev.settings?.showProfileShareButton !== me.settings?.showProfileShareButton;
+                            prev.settings?.showProfileShareButton !== me.settings?.showProfileShareButton ||
+                            prev.missionsStreak !== me.missionsStreak ||
+                            prev.lastMissionCompleted !== me.lastMissionCompleted ||
+                            prev.missionsCompletedCount !== me.missionsCompletedCount;
 
                         if (isDiff) {
                             console.log("🔄 [SYNC] Self-profile updated from network poll");
