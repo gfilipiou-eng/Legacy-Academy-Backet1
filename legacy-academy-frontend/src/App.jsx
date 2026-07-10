@@ -7202,13 +7202,13 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-2 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
                                         <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 hover:bg-white/[0.04] hover:border-white/10 hover:scale-[1.03]">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = safeId(displayUser);
@@ -7224,7 +7224,7 @@ const ProfileModal = ({
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.followers)}
                                         </span>
@@ -7236,7 +7236,7 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl cursor-pointer hover:bg-white/5 hover:border-white/10 hover:scale-[1.03] active:scale-[0.97] transition-all duration-300 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 touch-manipulation select-none">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 select-none">
                                         <span className="font-black text-white text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.following)}
                                         </span>
