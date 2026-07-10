@@ -8,12 +8,12 @@
     "theme_color": "#000000",
     "icons": [
         {
-            "src": "/Applogo.png?v=20260710b",
+            "src": "/Applogo.png?v=20260710c",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/Applogo.png?v=20260710b",
+            "src": "/Applogo.png?v=20260710c",
             "sizes": "512x512",
             "type": "image/png"
         }
