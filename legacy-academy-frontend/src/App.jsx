@@ -1218,6 +1218,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const currentCommentAuthorId = comment.authorId || comment.user?._id || comment.userId;
     const isCommentAuthor = isSameId(currentCommentAuthorId, user?._id);
@@ -1334,10 +1335,15 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                         {/* Comment text */}
                         {comment.text && (
                             <p className="x-comment__text">
-                                {parseText(translatedText || comment.text, null, (username) => {
+                                {parseText((translatedText || comment.text) && (translatedText || comment.text).length > 250 && !isExpanded ? (translatedText || comment.text).slice(0, 250) + '...' : (translatedText || comment.text), null, (username) => {
                                     const u = allUsers?.find(u => String(u.username).toLowerCase() === String(username).toLowerCase());
                                     if (u && onViewProfile) onViewProfile(u);
                                 })}
+                                {(translatedText || comment.text) && (translatedText || comment.text).length > 250 && (
+                                    <button onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }} className="text-[#1D9BF0] text-[13px] font-bold ml-2 hover:underline">
+                                        {isExpanded ? t('READ_LESS', 'Show less') : t('READ_MORE', 'Show more')}
+                                    </button>
+                                )}
                             </p>
                         )}
 
