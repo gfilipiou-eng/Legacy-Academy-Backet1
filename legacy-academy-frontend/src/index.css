@@ -87,43 +87,59 @@ body.bg-razer-green { --app-bg: #041a08; }
 
 body.bg-f1-ferrari {
   --app-bg: #150000;
+}
+body.bg-f1-ferrari::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top right, rgba(220, 0, 0, 0.15) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(255, 40, 0, 0.08) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 body.bg-f1-mercedes {
   --app-bg: #001214;
+}
+body.bg-f1-mercedes::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top left, rgba(0, 210, 190, 0.15) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(200, 204, 206, 0.08) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 body.bg-f1-mclaren {
   --app-bg: #1a0800;
+}
+body.bg-f1-mclaren::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top right, rgba(255, 128, 0, 0.18) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(255, 135, 0, 0.1) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 body.bg-f1-redbull {
   --app-bg: #00061a;
+}
+body.bg-f1-redbull::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top left, rgba(6, 25, 60, 0.5) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(204, 30, 74, 0.15) 0%, transparent 50%), radial-gradient(ellipse at center, rgba(255, 190, 0, 0.05) 0%, transparent 70%);
-  background-attachment: fixed;
 }
 body.bg-f1-aston {
   --app-bg: #001408;
+}
+body.bg-f1-aston::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top right, rgba(0, 102, 60, 0.25) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(206, 223, 0, 0.1) 0%, transparent 50%);
-  background-attachment: fixed;
 }
 body.bg-royal-gold {
   --app-bg: #141005;
+}
+body.bg-royal-gold::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top left, rgba(212, 175, 55, 0.2) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(138, 101, 23, 0.1) 0%, transparent 60%);
-  background-attachment: fixed;
 }
 body.bg-void-black {
   --app-bg: #020202;
+}
+body.bg-void-black::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.3) 0%, transparent 80%);
-  background-attachment: fixed;
 }
 body.bg-blood-red {
   --app-bg: #1a0505;
+}
+body.bg-blood-red::before {
+  content: ""; position: fixed; inset: 0; z-index: -999; pointer-events: none;
   background-image: radial-gradient(ellipse at top, rgba(139, 0, 0, 0.25) 0%, transparent 70%), radial-gradient(ellipse at bottom, rgba(50, 0, 0, 0.4) 0%, transparent 70%);
-  background-attachment: fixed;
 }
 
 .profile-shell-bg,
