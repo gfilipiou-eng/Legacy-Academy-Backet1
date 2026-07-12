@@ -637,5 +637,9 @@
   "DAYS": "Days",
   "HOURS_SHORT": "Hrs",
   "MINS_SHORT": "Min",
-  "NO_RECENT_MATCHES": "No recent matches"
+  "NO_RECENT_MATCHES": "No recent matches",
+  "COLOR_DARK_GOLD": "Dark Gold",
+  "FAVORITE_PLAYER": "Favorite Player",
+  "FAVORITE_PLAYER_PLACEHOLDER": "e.g. Max Verstappen, Messi, LeBron James...",
+  "FAVORITE_PLAYER_HINT": "Formula 1, Football, Basketball, etc."
 }

@@ -426,6 +426,7 @@ const formatUserHandle = (username) =>
 const THEME_PALETTE = [
     { value: '#cc0000', labelKey: 'COLOR_RED' },
     { value: '#ffd700', labelKey: 'COLOR_GOLD' },
+    { value: '#b8860b', labelKey: 'COLOR_DARK_GOLD' },
     { value: '#39ff14', labelKey: 'COLOR_NEON_GREEN' },
     { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
     { value: '#0ea5e9', labelKey: 'COLOR_WATER' },
@@ -924,6 +925,7 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
 
 const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false, cacheKey = null }) => {
     const [imgError, setImgError] = useState(false);
+    const [imgLoaded, setImgLoaded] = useState(false);
 
     if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
 
@@ -932,7 +934,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
 
     // Reset error state if url or cache key changes, or when app becomes visible again
     useEffect(() => { 
-        setImgError(false); 
+        setImgError(false);
+        setImgLoaded(false); 
         const handleVisibility = () => { if (document.visibilityState === 'visible') setImgError(false); };
         window.addEventListener('visibilitychange', handleVisibility);
         window.addEventListener('online', handleVisibility);
@@ -979,16 +982,24 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     }
 
     return flatMediaUrl ? (
-        <img
-            src={flatMediaUrl}
-            className={finalClassName}
-            onClick={onClick}
-            loading={priority ? 'eager' : 'lazy'}
-            fetchPriority={priority ? 'high' : undefined}
-            decoding={priority ? 'sync' : 'async'}
-            alt=""
-            onError={() => setImgError(true)}
-        />
+        <div className={`relative w-full h-full overflow-hidden ${finalClassName}`}>
+            {!imgLoaded && (
+                <div className="absolute inset-0 z-10 animate-pulse">
+                    <DefaultAvatar name={name} size={size} />
+                </div>
+            )}
+            <img
+                src={flatMediaUrl}
+                className={`${finalClassName} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onClick={onClick}
+                loading={priority ? 'eager' : 'lazy'}
+                fetchPriority={priority ? 'high' : undefined}
+                decoding={priority ? 'sync' : 'async'}
+                alt=""
+                onLoad={() => setImgLoaded(true)}
+                onError={() => setImgError(true)}
+            />
+        </div>
     ) : (
         <div className={`w-full h-full overflow-hidden ${finalClassName}`}>
             <DefaultAvatar name={name} size={size} />
@@ -3710,6 +3721,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
     const [footballTeam, setFootballTeam] = useState(user?.settings?.footballTeam || null);
+    const [favoritePlayer, setFavoritePlayer] = useState(user?.settings?.favoritePlayer || '');
     const [teamSearchQuery, setTeamSearchQuery] = useState('');
     const [teamSearchResults, setTeamSearchResults] = useState([]);
     const [isSearchingTeam, setIsSearchingTeam] = useState(false);
@@ -3768,6 +3780,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
             setFootballTeam(user.settings?.footballTeam || null);
+            setFavoritePlayer(user.settings?.favoritePlayer || '');
             setBlur18Plus(user.settings?.blur18Plus !== false);
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
             setProfileDescriptor(user.profileDescriptor || '');
@@ -3838,6 +3851,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') payload = { settings: { showBadge: Boolean(val) } };
             if (key === 'badgeColor') payload = { settings: { badgeColor: String(val) } };
             if (key === 'footballTeam') payload = { settings: { footballTeam: val } };
+            if (key === 'favoritePlayer') payload = { settings: { favoritePlayer: val } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
             if (key === 'enableProfileZoom') {
@@ -3886,6 +3900,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'showBadge') setShowBadge(Boolean(val));
             if (key === 'badgeColor') setBadgeColor(String(val));
             if (key === 'footballTeam') setFootballTeam(val);
+            if (key === 'favoritePlayer') setFavoritePlayer(val);
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
             if (key === 'batterySaver') setBatterySaver(Boolean(val));
@@ -4260,6 +4275,26 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 )}
                                             </div>
                                         )}
+                                    </div>
+                                    
+                                    {/* Favorite Player Input */}
+                                    <div className="px-4 py-4 border-t border-white/5 text-left">
+                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                                            <span className="truncate pr-2">🏅 {t('FAVORITE_PLAYER', 'Favorite Player')}</span>
+                                        </div>
+                                        <div className="relative">
+                                            <input 
+                                                type="text" 
+                                                placeholder={t('FAVORITE_PLAYER_PLACEHOLDER', 'e.g. Max Verstappen, Messi, LeBron James...')}
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                                                value={favoritePlayer}
+                                                onChange={(e) => setFavoritePlayer(e.target.value)}
+                                                onBlur={() => handleSave('favoritePlayer', favoritePlayer)}
+                                            />
+                                            <div className="text-[9px] text-gray-500 mt-2 font-bold uppercase tracking-widest">
+                                                {t('FAVORITE_PLAYER_HINT', 'Formula 1, Football, Basketball, etc.')}
+                                            </div>
+                                        </div>
                                     </div>
                                 </>
                             )}
@@ -7196,6 +7231,22 @@ const ProfileModal = ({
                                 {/* FOOTBALL MATCH WIDGET */}
                                 {displayUser?.settings?.footballTeam && (
                                     <MatchWidget team={displayUser.settings.footballTeam} className="w-full mb-6" />
+                                )}
+
+                                {/* FAVORITE PLAYER BADGE */}
+                                {displayUser?.settings?.favoritePlayer && (
+                                    <div className="w-full mb-6 relative overflow-hidden rounded-[24px] border border-[var(--gold-primary)]/20 bg-gradient-to-br from-[var(--gold-primary)]/5 to-transparent backdrop-blur-md shadow-lg flex items-center justify-between p-4 px-5">
+                                        <div className="absolute top-0 right-0 p-3 opacity-10">
+                                            <Icons.User className="w-16 h-16 text-[var(--gold-primary)]" />
+                                        </div>
+                                        <div className="relative z-10 flex flex-col justify-center text-left">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('FAVORITE_PLAYER', 'Favorite Player')}</span>
+                                            <span className="text-sm font-black tracking-wider text-white drop-shadow-md">{displayUser.settings.favoritePlayer}</span>
+                                        </div>
+                                        <div className="relative z-10 w-10 h-10 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 flex items-center justify-center shrink-0">
+                                            <span className="text-lg">🏅</span>
+                                        </div>
+                                    </div>
                                 )}
 
                                 {/* STATS GRID — 4 equal columns, no scroll */}
@@ -11770,6 +11821,7 @@ const App = () => {
                     )}
 
                     <BottomNavbar
+                        key={user?._id || 'guest'}
                         activeTab={activeTab}
                         onTabChange={(tab) => {
                             if (tab === 'exchange' && !is18PlusVerified) {

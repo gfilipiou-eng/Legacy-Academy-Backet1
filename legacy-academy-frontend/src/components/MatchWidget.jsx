@@ -21,8 +21,19 @@ const MatchWidget = ({ team, className = "" }) => {
                 const resNext = await fetch(`https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=${teamId}`);
                 const dataNext = await resNext.json();
 
+                let nextEvent = null;
                 if (dataNext && dataNext.events && dataNext.events.length > 0) {
-                    const nextEvent = dataNext.events[0];
+                    nextEvent = dataNext.events.find(e => {
+                        if (e.strStatus === 'Match Finished' || e.strStatus === 'FT') return false;
+                        const eventDate = new Date(`${e.dateEvent}T${e.strTime}`);
+                        const timeSinceStart = new Date() - eventDate;
+                        // If it started more than 2.5 hours (150 mins) ago, consider it finished
+                        if (timeSinceStart > 150 * 60 * 1000) return false;
+                        return true;
+                    });
+                }
+
+                if (nextEvent) {
                     setMatch({
                         isReal: true,
                         isPast: false,

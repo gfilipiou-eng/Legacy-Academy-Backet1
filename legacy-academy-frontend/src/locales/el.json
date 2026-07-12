@@ -638,5 +638,9 @@
   "DAYS": "Ημέρες",
   "HOURS_SHORT": "Ώρες",
   "MINS_SHORT": "Λεπτά",
-  "NO_RECENT_MATCHES": "Κανένας πρόσφατος αγώνας"
+  "NO_RECENT_MATCHES": "Κανένας πρόσφατος αγώνας",
+  "COLOR_DARK_GOLD": "Σκούρο Χρυσό",
+  "FAVORITE_PLAYER": "Αγαπημένος Παίκτης",
+  "FAVORITE_PLAYER_PLACEHOLDER": "π.χ. Max Verstappen, Messi, LeBron James...",
+  "FAVORITE_PLAYER_HINT": "Formula 1, Ποδόσφαιρο, Μπάσκετ, κτλ."
 }
