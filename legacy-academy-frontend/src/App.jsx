@@ -1465,8 +1465,13 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     // Audio Comment State
     const [commentText, setCommentText] = useState('');
     const [isWritingComment, setIsWritingComment] = useState(false);
+    const [commentAudio, setCommentAudio] = useState(null);
+    const [isRecordingComment, setIsRecordingComment] = useState(false);
     const audioRef = useRef(null);
     const commentInputRef = useRef(null);
+    const commentStreamRef = useRef(null);
+    const commentRecorderRef = useRef(null);
+    const discardRef = useRef(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [imgError, setImgError] = useState(false); // Handle detail image error
