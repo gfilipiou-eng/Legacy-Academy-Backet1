@@ -633,5 +633,7 @@
   "DAYS": "Gün",
   "HOURS_SHORT": "Saat",
   "MINS_SHORT": "Dk",
-  "NO_RECENT_MATCHES": "Yakın zamanda maç yok"
+  "NO_RECENT_MATCHES": "Yakın zamanda maç yok",
+  "SHOW_MORE": "Daha Fazla Göster",
+  "SHOW_LESS": "Daha Az Göster"
 }

@@ -633,5 +633,7 @@
   "DAYS": "Zile",
   "HOURS_SHORT": "Ore",
   "MINS_SHORT": "Min",
-  "NO_RECENT_MATCHES": "Niciun meci recent"
+  "NO_RECENT_MATCHES": "Niciun meci recent",
+  "SHOW_MORE": "Afișează mai mult",
+  "SHOW_LESS": "Afișează mai puțin"
 }

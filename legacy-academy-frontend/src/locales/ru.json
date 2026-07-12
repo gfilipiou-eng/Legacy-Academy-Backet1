@@ -633,5 +633,7 @@
   "DAYS": "Дни",
   "HOURS_SHORT": "Час",
   "MINS_SHORT": "Мин",
-  "NO_RECENT_MATCHES": "Нет недавних матчей"
+  "NO_RECENT_MATCHES": "Нет недавних матчей",
+  "SHOW_MORE": "Показать больше",
+  "SHOW_LESS": "Показать меньше"
 }

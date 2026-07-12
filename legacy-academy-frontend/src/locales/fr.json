@@ -633,5 +633,7 @@
   "DAYS": "Jours",
   "HOURS_SHORT": "Hrs",
   "MINS_SHORT": "Min",
-  "NO_RECENT_MATCHES": "Aucun match récent"
+  "NO_RECENT_MATCHES": "Aucun match récent",
+  "SHOW_MORE": "Afficher plus",
+  "SHOW_LESS": "Afficher moins"
 }
