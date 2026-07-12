@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema({
     businessWebsites: [{ type: Object }],
     businessWebsite: { type: Object },
     footballTeam: { type: Object },
-    favoritePlayer: { type: mongoose.Schema.Types.Mixed }
+    favoritePlayer: { type: Object }
   },
   missionsStreak: { type: Number, default: 0 },
   lastMissionCompleted: { type: Date },
