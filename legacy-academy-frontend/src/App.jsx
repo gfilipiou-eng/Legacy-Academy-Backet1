@@ -3776,6 +3776,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [teamSearchQuery, setTeamSearchQuery] = useState('');
     const [teamSearchResults, setTeamSearchResults] = useState([]);
     const [isSearchingTeam, setIsSearchingTeam] = useState(false);
+    const [playerSearchQuery, setPlayerSearchQuery] = useState('');
+    const [playerSearchResults, setPlayerSearchResults] = useState([]);
+    const [isSearchingPlayer, setIsSearchingPlayer] = useState(false);
     const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
@@ -3789,6 +3792,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showAllThemes, setShowAllThemes] = useState(false);
     const [showAllBackgrounds, setShowAllBackgrounds] = useState(false);
     const pendingShareToggleRef = useRef(null);
+    const playerSearchTimeoutRef = useRef(null);
     const latestUserRef = useRef(user);
     const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
     const activeLanguage = normalizeLanguageCode(lang || i18n.resolvedLanguage || i18n.language || user?.settings?.language || localStorage.getItem('language') || 'en');
@@ -4367,19 +4371,127 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
                                             <span className="truncate pr-2">🏅 {t('FAVORITE_PLAYER', 'Favorite Player')}</span>
                                         </div>
-                                        <div className="relative">
-                                            <input 
-                                                type="text" 
-                                                placeholder={t('FAVORITE_PLAYER_PLACEHOLDER', 'e.g. Max Verstappen, Messi, LeBron James...')}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
-                                                value={favoritePlayer}
-                                                onChange={(e) => setFavoritePlayer(e.target.value)}
-                                                onBlur={() => handleSave('favoritePlayer', favoritePlayer)}
-                                            />
-                                            <div className="text-[9px] text-gray-500 mt-2 font-bold uppercase tracking-widest">
-                                                {t('FAVORITE_PLAYER_HINT', 'Formula 1, Football, Basketball, etc.')}
+                                        {favoritePlayer ? (
+                                            <div className="relative group rounded-[16px] overflow-hidden bg-gradient-to-br from-white/10 to-transparent border border-white/20 p-4">
+                                                <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleSave('favoritePlayer', null)}
+                                                    className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-red-500/80 transition-all shadow-lg backdrop-blur-md"
+                                                >
+                                                    <Icons.X className="w-4 h-4" />
+                                                </button>
+                                                <div className="relative z-10 flex items-center gap-4">
+                                                    {(favoritePlayer?.strCutout || favoritePlayer?.strThumb) ? (
+                                                        <img 
+                                                            src={favoritePlayer.strCutout || favoritePlayer.strThumb} 
+                                                            alt={favoritePlayer.strPlayer} 
+                                                            className="w-16 h-16 rounded-full object-cover object-top border-2 border-white/20 shadow-xl bg-white/5"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/20 shadow-xl flex items-center justify-center">
+                                                            <Icons.User className="w-8 h-8 text-white/50" />
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <div className="text-white font-black text-lg tracking-wider drop-shadow-md">{favoritePlayer?.strPlayer || favoritePlayer}</div>
+                                                        <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
+                                                            {favoritePlayer?.strTeam || t('YOUR_DESIGNATED_PLAYER', 'Your designated favorite player')}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <div className="relative">
+                                                    <input 
+                                                        type="text" 
+                                                        placeholder={t('FAVORITE_PLAYER_PLACEHOLDER', 'e.g. Max Verstappen, Messi, LeBron James...')}
+                                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                                                        value={playerSearchQuery}
+                                                        onChange={(e) => {
+                                                            const query = e.target.value;
+                                                            setPlayerSearchQuery(query);
+                                                            
+                                                            if (playerSearchTimeoutRef.current) clearTimeout(playerSearchTimeoutRef.current);
+                                                            
+                                                            if (!query || query.length < 3) {
+                                                                setPlayerSearchResults([]);
+                                                                return;
+                                                            }
+                                                            setIsSearchingPlayer(true);
+                                                            
+                                                            // Translaterate Greek to Latin for the API
+                                                            const greekMap = {
+                                                                'α': 'a', 'β': 'v', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i', 'θ': 'th',
+                                                                'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x', 'ο': 'o', 'π': 'p',
+                                                                'ρ': 'r', 'σ': 's', 'ς': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'ch', 'ψ': 'ps', 'ω': 'o',
+                                                                'ά': 'a', 'έ': 'e', 'ή': 'i', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ώ': 'o',
+                                                                'Α': 'A', 'Β': 'V', 'Γ': 'G', 'Δ': 'D', 'Ε': 'E', 'Ζ': 'Z', 'Η': 'I', 'Θ': 'Th',
+                                                                'Ι': 'I', 'Κ': 'K', 'Λ': 'L', 'Μ': 'M', 'Ν': 'N', 'Ξ': 'X', 'Ο': 'O', 'Π': 'P',
+                                                                'Ρ': 'R', 'Σ': 'S', 'Τ': 'T', 'Υ': 'Y', 'Φ': 'F', 'Χ': 'Ch', 'Ψ': 'Ps', 'Ω': 'O',
+                                                                'Ά': 'A', 'Έ': 'E', 'Ή': 'I', 'Ί': 'I', 'Ό': 'O', 'Ύ': 'Y', 'Ώ': 'O'
+                                                            };
+                                                            let latinQuery = query.split('').map(c => greekMap[c] || c).join('');
+                                                            
+                                                            playerSearchTimeoutRef.current = setTimeout(async () => {
+                                                                try {
+                                                                    const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(latinQuery)}`);
+                                                                    const data = await res.json();
+                                                                    setPlayerSearchResults(data.player || []);
+                                                                } catch (err) {
+                                                                    console.error(err);
+                                                                    setPlayerSearchResults([]);
+                                                                } finally {
+                                                                    setIsSearchingPlayer(false);
+                                                                }
+                                                            }, 300); // Debounce to prevent lag
+                                                        }}
+                                                    />
+                                                    {isSearchingPlayer && (
+                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                
+                                                {playerSearchResults.length > 0 && (
+                                                    <div className="bg-[#1C1C1E] rounded-xl border border-white/10 overflow-hidden max-h-[220px] overflow-y-auto mt-2 shadow-xl">
+                                                        {playerSearchResults.map(player => (
+                                                            <button
+                                                                key={player.idPlayer}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const selectedPlayer = {
+                                                                        id: player.idPlayer,
+                                                                        strPlayer: player.strPlayer,
+                                                                        strCutout: player.strCutout,
+                                                                        strThumb: player.strThumb,
+                                                                        strTeam: player.strTeam
+                                                                    };
+                                                                    handleSave('favoritePlayer', selectedPlayer);
+                                                                    setPlayerSearchQuery('');
+                                                                    setPlayerSearchResults([]);
+                                                                }}
+                                                                className="w-full flex items-center gap-3 p-3 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors text-left"
+                                                            >
+                                                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-white/5 flex items-center justify-center border border-white/10">
+                                                                    {(player.strCutout || player.strThumb) ? (
+                                                                        <img src={player.strCutout || player.strThumb} alt={player.strPlayer} className="w-full h-full object-cover object-top" loading="lazy" />
+                                                                    ) : (
+                                                                        <Icons.User className="w-5 h-5 text-white/30" />
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="text-[13px] font-bold text-white truncate">{player.strPlayer}</div>
+                                                                    <div className="text-[11px] text-gray-500 truncate mt-0.5">{player.strTeam || player.strSport || ''}</div>
+                                                                </div>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </>
                             )}
@@ -7320,16 +7432,40 @@ const ProfileModal = ({
 
                                 {/* FAVORITE PLAYER BADGE */}
                                 {displayUser?.settings?.favoritePlayer && (
-                                    <div className="w-full mb-6 relative overflow-hidden rounded-[24px] border border-[var(--gold-primary)]/20 bg-gradient-to-br from-[var(--gold-primary)]/5 to-transparent backdrop-blur-md shadow-lg flex items-center justify-between p-4 px-5">
-                                        <div className="absolute top-0 right-0 p-3 opacity-10">
+                                    <div className="w-full mb-6 relative overflow-hidden rounded-[24px] border border-[var(--gold-primary)]/20 bg-gradient-to-br from-[var(--gold-primary)]/5 to-transparent backdrop-blur-md shadow-lg p-4 px-5">
+                                        <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
                                             <Icons.User className="w-16 h-16 text-[var(--gold-primary)]" />
                                         </div>
-                                        <div className="relative z-10 flex flex-col justify-center text-left">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('FAVORITE_PLAYER', 'Favorite Player')}</span>
-                                            <span className="text-sm font-black tracking-wider text-white drop-shadow-md">{displayUser.settings.favoritePlayer}</span>
-                                        </div>
-                                        <div className="relative z-10 w-10 h-10 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 flex items-center justify-center shrink-0">
-                                            <span className="text-lg">🏅</span>
+                                        <div className="relative z-10 flex items-center justify-between gap-4">
+                                            <div className="flex flex-col justify-center text-left">
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('FAVORITE_PLAYER', 'Favorite Player')}</span>
+                                                <span className="text-sm font-black tracking-wider text-white drop-shadow-md">
+                                                    {typeof displayUser.settings.favoritePlayer === 'object' 
+                                                        ? displayUser.settings.favoritePlayer.strPlayer 
+                                                        : displayUser.settings.favoritePlayer}
+                                                </span>
+                                                {typeof displayUser.settings.favoritePlayer === 'object' && displayUser.settings.favoritePlayer.strTeam && (
+                                                    <span className="text-[10px] font-bold text-gray-400 mt-0.5 truncate max-w-[150px]">
+                                                        {displayUser.settings.favoritePlayer.strTeam}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="relative z-10 shrink-0">
+                                                {typeof displayUser.settings.favoritePlayer === 'object' && (displayUser.settings.favoritePlayer.strCutout || displayUser.settings.favoritePlayer.strThumb) ? (
+                                                    <div className="w-12 h-12 rounded-full border-2 border-[var(--gold-primary)]/40 overflow-hidden shadow-xl bg-white/5 relative">
+                                                        <img 
+                                                            src={displayUser.settings.favoritePlayer.strCutout || displayUser.settings.favoritePlayer.strThumb} 
+                                                            alt="Player" 
+                                                            className="w-full h-full object-cover object-top"
+                                                            loading="lazy"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-10 h-10 rounded-full bg-[var(--gold-primary)]/10 border border-[var(--gold-primary)]/30 flex items-center justify-center">
+                                                        <span className="text-lg">🏅</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )}
