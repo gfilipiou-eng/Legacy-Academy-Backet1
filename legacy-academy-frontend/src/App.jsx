@@ -1751,8 +1751,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 {(Array.isArray(post.comments) ? post.comments.slice() : []).reverse().slice(0, 50).reverse().map((c, idx) => (
                                     <CommentItem key={c._id || idx} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`}
     onReply={(username) => {
-        setCommentText((prev) => prev ? prev + ' @' + username + ' ' : '@' + username + ' ');
-        setIsWritingComment(true);
+        // Optimize mobile performance by delaying the state update slightly 
+        // to let the ripple/touch animation finish first
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                const handle = formatUserHandle(username);
+                setCommentText((prev) => prev ? prev + ' ' + handle + ' ' : handle + ' ');
+                setIsWritingComment(true);
+            }, 50);
+        });
     }} />
                                 ))}
                             </div>
@@ -3779,6 +3786,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [showDanger, setShowDanger] = useState(false);
     const [enableProfileZoom, setEnableProfileZoom] = useState(user?.settings?.enableProfileZoom === true);
     const [themeCategory, setThemeCategory] = useState('primary');
+    const [showAllThemes, setShowAllThemes] = useState(false);
+    const [showAllBackgrounds, setShowAllBackgrounds] = useState(false);
     const pendingShareToggleRef = useRef(null);
     const latestUserRef = useRef(user);
     const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
@@ -4091,7 +4100,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <div>
                                 <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('THEME')}</div>
                                 <div className="theme-swatch-grid settings-theme-grid">
-                                    {THEME_PALETTE.map(({ value, labelKey }) => {
+                                    {(showAllThemes ? THEME_PALETTE : THEME_PALETTE.slice(0, 5)).map(({ value, labelKey }) => {
                                         const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
                                         return (
                                             <button
@@ -4114,11 +4123,20 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         );
                                     })}
                                 </div>
+                                {THEME_PALETTE.length > 5 && (
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowAllThemes(!showAllThemes)}
+                                        className="w-full mt-3 py-2 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-xl transition-all"
+                                    >
+                                        {showAllThemes ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
+                                    </button>
+                                )}
                             </div>
                             <div>
                                 <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('BACKGROUND')}</div>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2">
-                                    {BACKGROUND_MODES.map(({ value, labelKey, color, className }) => {
+                                    {(showAllBackgrounds ? BACKGROUND_MODES : BACKGROUND_MODES.slice(0, 8)).map(({ value, labelKey, color, className }) => {
                                         const active = getBackgroundMode(user) === value;
                                         return (
                                             <button
@@ -4137,6 +4155,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         );
                                     })}
                                 </div>
+                                {BACKGROUND_MODES.length > 8 && (
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowAllBackgrounds(!showAllBackgrounds)}
+                                        className="w-full mt-3 py-2 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-xl transition-all"
+                                    >
+                                        {showAllBackgrounds ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
+                                    </button>
+                                )}
                             </div>
                             
                             {/* GLOW EFFECT */}

@@ -645,5 +645,7 @@
   "FAVORITE_PLAYER_HINT": "Formula 1, Ποδόσφαιρο, Μπάσκετ, κτλ.",
   "ROYAL_GOLD_MODE": "Βασιλικό Χρυσό",
   "VOID_BLACK_MODE": "Απόλυτο Μαύρο",
-  "BLOOD_RED_MODE": "Βαθύ Κόκκινο"
+  "BLOOD_RED_MODE": "Βαθύ Κόκκινο",
+  "SHOW_MORE": "Περισσότερα",
+  "SHOW_LESS": "Λιγότερα"
 }

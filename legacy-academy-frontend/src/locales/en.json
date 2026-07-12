@@ -644,5 +644,7 @@
   "FAVORITE_PLAYER_HINT": "Formula 1, Football, Basketball, etc.",
   "ROYAL_GOLD_MODE": "Royal Gold",
   "VOID_BLACK_MODE": "Void Black",
-  "BLOOD_RED_MODE": "Blood Red"
+  "BLOOD_RED_MODE": "Blood Red",
+  "SHOW_MORE": "Show More",
+  "SHOW_LESS": "Show Less"
 }
