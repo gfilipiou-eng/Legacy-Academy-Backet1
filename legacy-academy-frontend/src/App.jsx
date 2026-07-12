@@ -986,6 +986,13 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         );
     }
 
+    const imgRef = useRef(null);
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setImgLoaded(true);
+        }
+    }, [flatMediaUrl]);
+
     return flatMediaUrl ? (
         <div className={`relative w-full h-full overflow-hidden ${finalClassName}`}>
             {!imgLoaded && (
@@ -994,6 +1001,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
                 </div>
             )}
             <img
+                ref={imgRef}
                 src={flatMediaUrl}
                 className={`${finalClassName} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onClick={onClick}
