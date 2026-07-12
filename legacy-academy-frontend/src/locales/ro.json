@@ -636,5 +636,6 @@
   "NO_RECENT_MATCHES": "Niciun meci recent",
   "SHOW_MORE": "Afișează mai mult",
   "SHOW_LESS": "Afișează mai puțin",
-  "RETIRED_PLAYER": "JUCĂTOR RETRAS"
+  "RETIRED_PLAYER": "JUCĂTOR RETRAS",
+  "DECEASED_PLAYER": "JUCĂTOR DECEDAT"
 }

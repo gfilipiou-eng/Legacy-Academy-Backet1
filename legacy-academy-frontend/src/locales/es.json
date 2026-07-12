@@ -636,5 +636,6 @@
   "NO_RECENT_MATCHES": "No hay partidos recientes",
   "SHOW_MORE": "Mostrar más",
   "SHOW_LESS": "Mostrar menos",
-  "RETIRED_PLAYER": "JUGADOR RETIRADO"
+  "RETIRED_PLAYER": "JUGADOR RETIRADO",
+  "DECEASED_PLAYER": "JUGADOR FALLECIDO"
 }
