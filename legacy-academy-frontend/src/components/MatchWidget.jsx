@@ -25,7 +25,16 @@ const MatchWidget = ({ team, className = "" }) => {
                 if (dataNext && dataNext.events && dataNext.events.length > 0) {
                     nextEvent = dataNext.events.find(e => {
                         if (e.strStatus === 'Match Finished' || e.strStatus === 'FT') return false;
-                        const eventDate = new Date(`${e.dateEvent}T${e.strTime}`);
+                        
+                        let eventDate;
+                        try {
+                            const timeStr = (e.strTime && e.strTime !== 'null') ? e.strTime : '00:00:00';
+                            eventDate = new Date(`${e.dateEvent}T${timeStr}Z`);
+                            if (isNaN(eventDate.getTime())) eventDate = new Date(e.dateEvent);
+                        } catch(err) {
+                            eventDate = new Date(e.dateEvent);
+                        }
+
                         const timeSinceStart = new Date() - eventDate;
                         // If it started more than 2.5 hours (150 mins) ago, consider it finished
                         if (timeSinceStart > 150 * 60 * 1000) return false;
@@ -34,6 +43,10 @@ const MatchWidget = ({ team, className = "" }) => {
                 }
 
                 if (nextEvent) {
+                    const timeStr = (nextEvent.strTime && nextEvent.strTime !== 'null') ? nextEvent.strTime : '00:00:00';
+                    let finalDate = new Date(`${nextEvent.dateEvent}T${timeStr}Z`);
+                    if (isNaN(finalDate.getTime())) finalDate = new Date(nextEvent.dateEvent);
+
                     setMatch({
                         isReal: true,
                         isPast: false,
@@ -41,7 +54,7 @@ const MatchWidget = ({ team, className = "" }) => {
                         awayTeam: nextEvent.strAwayTeam,
                         homeBadge: nextEvent.strHomeTeamBadge || (nextEvent.idHomeTeam === teamId ? team.strBadge : null),
                         awayBadge: nextEvent.strAwayTeamBadge || (nextEvent.idAwayTeam === teamId ? team.strBadge : null),
-                        date: new Date(`${nextEvent.dateEvent}T${nextEvent.strTime}`),
+                        date: finalDate,
                         league: nextEvent.strLeague,
                         status: nextEvent.strStatus
                     });
