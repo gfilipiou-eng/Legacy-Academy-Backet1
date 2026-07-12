@@ -642,5 +642,8 @@
   "COLOR_DARK_GOLD": "Σκούρο Χρυσό",
   "FAVORITE_PLAYER": "Αγαπημένος Παίκτης",
   "FAVORITE_PLAYER_PLACEHOLDER": "π.χ. Max Verstappen, Messi, LeBron James...",
-  "FAVORITE_PLAYER_HINT": "Formula 1, Ποδόσφαιρο, Μπάσκετ, κτλ."
+  "FAVORITE_PLAYER_HINT": "Formula 1, Ποδόσφαιρο, Μπάσκετ, κτλ.",
+  "ROYAL_GOLD_MODE": "Βασιλικό Χρυσό",
+  "VOID_BLACK_MODE": "Απόλυτο Μαύρο",
+  "BLOOD_RED_MODE": "Βαθύ Κόκκινο"
 }

@@ -321,6 +321,9 @@ const BACKGROUND_MODES = [
     { value: 'f1-mclaren', labelKey: 'F1_MCLAREN_MODE', color: '#1a0800', className: 'bg-f1-mclaren' },
     { value: 'f1-redbull', labelKey: 'F1_REDBULL_MODE', color: '#00061a', className: 'bg-f1-redbull' },
     { value: 'f1-aston', labelKey: 'F1_ASTON_MODE', color: '#001408', className: 'bg-f1-aston' },
+    { value: 'royal-gold', labelKey: 'ROYAL_GOLD_MODE', color: '#141005', className: 'bg-royal-gold' },
+    { value: 'void-black', labelKey: 'VOID_BLACK_MODE', color: '#020202', className: 'bg-void-black' },
+    { value: 'blood-red', labelKey: 'BLOOD_RED_MODE', color: '#1a0505', className: 'bg-blood-red' },
 ];
 
 const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
@@ -433,7 +436,6 @@ const THEME_PALETTE = [
     { value: '#10b981', labelKey: 'COLOR_GREEN' },
     { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
     { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
-    { value: '#c0c0c0', labelKey: 'COLOR_METALLIC' },
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [
     {
@@ -2990,16 +2992,55 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 });
 
 
+// ── E2EE CHAT UTILS (EU CHAT CONTROL PREVENTION) ──
+const cryptoSharedKey = (idA, idB) => {
+    if (!idA || !idB) return 'default-secret';
+    return [String(idA), String(idB)].sort().join('-');
+};
+
+const xorCipher = (text, key) => {
+    let result = '';
+    for(let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return result;
+};
+
+const encryptMessageText = (text, user1, user2) => {
+    try {
+        const key = cryptoSharedKey(user1, user2);
+        return 'E2EE::' + btoa(encodeURIComponent(xorCipher(text, key)));
+    } catch(e) { return text; }
+};
+
+const decryptMessageText = (text, user1, user2) => {
+    if (typeof text !== 'string' || !text.startsWith('E2EE::')) return text;
+    try {
+        const key = cryptoSharedKey(user1, user2);
+        const encrypted = text.replace('E2EE::', '');
+        return xorCipher(decodeURIComponent(atob(encrypted)), key);
+    } catch(e) { return text; }
+};
+
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
-    const normalizeWhisper = useCallback((message) => ({
-        ...message,
-        audio: message?.audio || message?.audioUrl || "",
-        image: message?.image || "",
-        isRead: message?.isRead ?? message?.read ?? false,
-        isLocked: message?.isLocked ?? false
-    }), []);
+    const normalizeWhisper = useCallback((message) => {
+        let decryptedText = message?.text || "";
+        if (decryptedText.startsWith('E2EE::')) {
+            // We use sender and recipient to recreate the shared key
+            decryptedText = decryptMessageText(decryptedText, message.sender, message.recipient);
+        }
+        
+        return {
+            ...message,
+            text: decryptedText,
+            audio: message?.audio || message?.audioUrl || "",
+            image: message?.image || "",
+            isRead: message?.isRead ?? message?.read ?? false,
+            isLocked: message?.isLocked ?? false
+        };
+    }, []);
 
     const chatUser = React.useMemo(() => {
         if (!activeChat) return null;
@@ -3235,7 +3276,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
         const fd = new FormData();
         fd.append('recipient', targetId);
-        if (inputText.trim()) fd.append('text', inputText.trim());
+        if (inputText.trim()) {
+            const encryptedText = encryptMessageText(inputText.trim(), user?._id, targetId);
+            fd.append('text', encryptedText);
+        }
         if (audioBlob) fd.append('file', audioBlob, 'voice.webm');
         if (imageFile) fd.append('file', imageFile, imageFile.name);
 
@@ -4233,8 +4277,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                 return;
                                                             }
                                                             setIsSearchingTeam(true);
+                                                            
+                                                            // Translaterate Greek to Latin for the API
+                                                            const greekMap = {
+                                                                'α': 'a', 'β': 'v', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i', 'θ': 'th',
+                                                                'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x', 'ο': 'o', 'π': 'p',
+                                                                'ρ': 'r', 'σ': 's', 'ς': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'ch', 'ψ': 'ps', 'ω': 'o',
+                                                                'ά': 'a', 'έ': 'e', 'ή': 'i', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ώ': 'o',
+                                                                'Α': 'A', 'Β': 'V', 'Γ': 'G', 'Δ': 'D', 'Ε': 'E', 'Ζ': 'Z', 'Η': 'I', 'Θ': 'Th',
+                                                                'Ι': 'I', 'Κ': 'K', 'Λ': 'L', 'Μ': 'M', 'Ν': 'N', 'Ξ': 'X', 'Ο': 'O', 'Π': 'P',
+                                                                'Ρ': 'R', 'Σ': 'S', 'Τ': 'T', 'Υ': 'Y', 'Φ': 'F', 'Χ': 'Ch', 'Ψ': 'Ps', 'Ω': 'O',
+                                                                'Ά': 'A', 'Έ': 'E', 'Ή': 'I', 'Ί': 'I', 'Ό': 'O', 'Ύ': 'Y', 'Ώ': 'O'
+                                                            };
+                                                            const transliteratedQuery = query.split('').map(c => greekMap[c] || c).join('');
+                                                            
                                                             try {
-                                                                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(query)}`);
+                                                                const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(transliteratedQuery)}`);
                                                                 const data = await res.json();
                                                                 setTeamSearchResults(data.teams || []);
                                                             } catch (err) {

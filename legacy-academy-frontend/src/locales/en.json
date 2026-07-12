@@ -641,5 +641,8 @@
   "COLOR_DARK_GOLD": "Dark Gold",
   "FAVORITE_PLAYER": "Favorite Player",
   "FAVORITE_PLAYER_PLACEHOLDER": "e.g. Max Verstappen, Messi, LeBron James...",
-  "FAVORITE_PLAYER_HINT": "Formula 1, Football, Basketball, etc."
+  "FAVORITE_PLAYER_HINT": "Formula 1, Football, Basketball, etc.",
+  "ROYAL_GOLD_MODE": "Royal Gold",
+  "VOID_BLACK_MODE": "Void Black",
+  "BLOOD_RED_MODE": "Blood Red"
 }

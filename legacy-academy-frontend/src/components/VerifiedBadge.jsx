@@ -47,16 +47,14 @@ const MasonicSymbol = ({ className }) => (
         {/* Inner dotted circle */}
         <circle cx="20" cy="20" r="12" fill="none" stroke="url(#vb_masonicGold)" strokeWidth="0.75" strokeDasharray="1.5 1.5" opacity="0.6" />
         
-        {/* The Square and Compasses - Perfectly centered and scaled */}
-        <g transform="translate(10, 10) scale(0.5)" filter="url(#vb_glow)">
-            {/* Square (Bottom part) */}
-            <path d="M20 34 L5 19 L8 16 L20 28 L32 16 L35 19 Z" fill="url(#vb_masonicGold)" />
-            {/* Compasses (Top part) */}
-            <path d="M20 5 L6 31 L10 31 L20 12 L30 31 L34 31 Z" fill="url(#vb_masonicGold)" />
-            {/* Hinge */}
-            <circle cx="20" cy="7" r="3.5" fill="url(#vb_masonicGold)" />
+        {/* The Square and Compasses - 100% Accurate Representation */}
+        <g transform="translate(10, 9) scale(0.65)" filter="url(#vb_glow)">
+            {/* The Compasses */}
+            <path d="M15.4 1.5 C15.4 0.7 16 0.1 16.8 0.1 C17.6 0.1 18.2 0.7 18.2 1.5 C18.2 1.8 18.1 2.1 17.9 2.3 L25.5 22.5 L23.5 24 L16.8 6 L10.1 24 L8.1 22.5 L15.7 2.3 C15.5 2.1 15.4 1.8 15.4 1.5 Z" fill="url(#vb_masonicGold)" />
+            {/* The Square */}
+            <path d="M2.5 16 L5 14 L16.8 28.5 L28.6 14 L31.1 16 L16.8 33.5 Z" fill="url(#vb_masonicGold)" />
             {/* The 'G' */}
-            <text x="20.5" y="24" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="13" fontWeight="bold" fontFamily="Georgia, serif">G</text>
+            <text x="17" y="20.5" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="11" fontWeight="900" fontFamily="Times New Roman, serif">G</text>
         </g>
     </svg>
 );

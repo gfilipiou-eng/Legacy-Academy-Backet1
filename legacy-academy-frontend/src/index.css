@@ -110,6 +110,21 @@ body.bg-f1-aston {
   background-image: radial-gradient(ellipse at top right, rgba(0, 102, 60, 0.25) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(206, 223, 0, 0.1) 0%, transparent 50%);
   background-attachment: fixed;
 }
+body.bg-royal-gold {
+  --app-bg: #141005;
+  background-image: radial-gradient(ellipse at top left, rgba(212, 175, 55, 0.2) 0%, transparent 60%), radial-gradient(ellipse at bottom right, rgba(138, 101, 23, 0.1) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+body.bg-void-black {
+  --app-bg: #020202;
+  background-image: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.3) 0%, transparent 80%);
+  background-attachment: fixed;
+}
+body.bg-blood-red {
+  --app-bg: #1a0505;
+  background-image: radial-gradient(ellipse at top, rgba(139, 0, 0, 0.25) 0%, transparent 70%), radial-gradient(ellipse at bottom, rgba(50, 0, 0, 0.4) 0%, transparent 70%);
+  background-attachment: fixed;
+}
 
 .profile-shell-bg,
 .profile-page-bg {
