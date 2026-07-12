@@ -4427,7 +4427,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     <div>
                                                         <div className="text-white font-black text-lg tracking-wider drop-shadow-md">{favoritePlayer?.strPlayer || favoritePlayer}</div>
                                                         <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
-                                                            {favoritePlayer?.strTeam || t('YOUR_DESIGNATED_PLAYER', 'Your designated favorite player')}
+                                                            {(favoritePlayer?.strTeam && favoritePlayer.strTeam.startsWith('_Retired')) 
+                                                                ? t('RETIRED_PLAYER', 'Retired Player') 
+                                                                : (favoritePlayer?.strTeam || t('YOUR_DESIGNATED_PLAYER', 'Your designated favorite player'))}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4515,7 +4517,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
                                                                     <div className="text-[13px] font-bold text-white truncate">{player.strPlayer}</div>
-                                                                    <div className="text-[11px] text-gray-500 truncate mt-0.5">{player.strTeam || player.strSport || ''}</div>
+                                                                    <div className="text-[11px] text-gray-500 truncate mt-0.5">
+                                                                        {(player.strTeam && player.strTeam.startsWith('_Retired')) 
+                                                                            ? t('RETIRED_PLAYER', 'Retired Player') 
+                                                                            : (player.strTeam || player.strSport || '')}
+                                                                    </div>
                                                                 </div>
                                                             </button>
                                                         ))}
@@ -7471,7 +7477,9 @@ const ProfileModal = ({
                                                 </span>
                                                 {typeof displayUser.settings.favoritePlayer === 'object' && displayUser.settings.favoritePlayer.strTeam && (
                                                     <span className="text-[10px] font-bold text-gray-400 mt-0.5 truncate max-w-[150px]">
-                                                        {displayUser.settings.favoritePlayer.strTeam}
+                                                        {displayUser.settings.favoritePlayer.strTeam.startsWith('_Retired') 
+                                                            ? t('RETIRED_PLAYER', 'Retired Player') 
+                                                            : displayUser.settings.favoritePlayer.strTeam}
                                                     </span>
                                                 )}
                                             </div>
