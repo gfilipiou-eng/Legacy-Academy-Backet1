@@ -9543,7 +9543,7 @@ const App = () => {
                 storageMerged.coverPic = user?.coverPic && !user.coverPic.startsWith('blob:') ? user.coverPic : "";
             }
             safeSetItem('user', JSON.stringify(storageMerged));
-            setImgKey(Date.now());
+
             try { window.sessionStorage.removeItem(`public-profile-cache-v3:${updatedUser.username}`); } catch (e) {}
         }
 
