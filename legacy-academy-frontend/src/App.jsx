@@ -4394,7 +4394,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     {/* Favorite Player Input */}
                                     <div className="px-4 py-4 border-t border-white/5 text-left">
                                         <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
-                                            <span className="truncate pr-2 flex items-center gap-1.5"><Icons.Medal className="w-4 h-4 text-[var(--gold-primary)]" /> {t('FAVORITE_PLAYER', 'Favorite Player')}</span>
+                                            <span className="truncate pr-2 flex items-center gap-1.5"><Icons.Star className="w-4 h-4 text-[var(--gold-primary)]" /> {t('FAVORITE_PLAYER', 'Favorite Player')}</span>
                                         </div>
                                         {favoritePlayer ? (
                                             <div className="relative group rounded-[16px] overflow-hidden bg-gradient-to-br from-white/10 to-transparent border border-white/20 p-4">
