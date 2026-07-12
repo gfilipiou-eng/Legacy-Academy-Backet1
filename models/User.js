@@ -50,7 +50,8 @@ const UserSchema = new mongoose.Schema({
     neuralNarrator: { type: Boolean, default: false },
     businessWebsites: [{ type: Object }],
     businessWebsite: { type: Object },
-    footballTeam: { type: Object }
+    footballTeam: { type: Object },
+    favoritePlayer: { type: mongoose.Schema.Types.Mixed }
   },
   missionsStreak: { type: Number, default: 0 },
   lastMissionCompleted: { type: Date },
