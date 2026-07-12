@@ -110,7 +110,8 @@ const UserSchema = new mongoose.Schema(
             neuralNarrator: { type: Boolean, default: false },
             businessWebsites: { type: Array, default: [] },
             footballTeam: { type: Object, default: null },
-            enableProfileZoom: { type: Boolean, default: false }
+            enableProfileZoom: { type: Boolean, default: false },
+            favoritePlayer: { type: Object }
         },
         sharesBalance: {
             type: Number,
