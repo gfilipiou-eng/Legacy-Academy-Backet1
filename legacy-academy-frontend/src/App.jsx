@@ -9474,12 +9474,13 @@ const App = () => {
                 try { current = JSON.parse(localStorage.getItem('user') || '{ }'); } catch(e) { current = {}; }
             }
             // Cache-break the new image if it's identical base path
-            let nextPic = newData.profilePic;
-            if (current.profilePic && nextPic && !nextPic.startsWith('blob:') && current.profilePic.split('?')[0] === nextPic.split('?')[0]) {
-                const sep = nextPic.includes('?') ? '&' : '?';
-                nextPic = `${nextPic.split('?')[0]}${sep}t=${Date.now()}`;
-            }
-            const merged = { ...current, ...newData, profilePic: nextPic || current.profilePic };
+            let nextPic = newData.profilePic !== undefined ? newData.profilePic : current.profilePic;
+            
+            // If the backend explicitly returned a new URL that is identical to the old one, it might be a refresh.
+            // But doing this on EVERY update breaks the image. We should only do this if it's a blob->url transition,
+            // or we'll rely on the upload function to append the timestamp initially.
+            
+            const merged = { ...current, ...newData, profilePic: nextPic };
             const storageMerged = { ...merged };
             if (storageMerged.profilePic && storageMerged.profilePic.startsWith('blob:')) {
                 storageMerged.profilePic = current.profilePic && !current.profilePic.startsWith('blob:') ? current.profilePic : "";
@@ -9505,15 +9506,6 @@ const App = () => {
             return;
         }
 
-        // Cache-break ONLY for real URLs (not blob)
-        if (updatedUser.profilePic && !updatedUser.profilePic.startsWith('blob:') && !updatedUser.profilePic.includes('t=')) {
-            const sep = updatedUser.profilePic.includes('?') ? '&' : '?';
-            updatedUser.profilePic += `${sep}t=${Date.now()}`;
-        }
-        if (updatedUser.coverPic && !updatedUser.coverPic.startsWith('blob:') && !updatedUser.coverPic.includes('t=')) {
-            const sep = updatedUser.coverPic.includes('?') ? '&' : '?';
-            updatedUser.coverPic += `${sep}t=${Date.now()}`;
-        }
 
         // Update users list - ONLY with full real users
         setUsers(prev => {
