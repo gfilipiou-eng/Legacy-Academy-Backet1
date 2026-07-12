@@ -32,23 +32,22 @@ const MasonicSymbol = ({ className }) => (
                 <stop offset="100%" stopColor="#8A6517" />
             </linearGradient>
             <linearGradient id="vb_masonicBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#0F172A" />
-                <stop offset="100%" stopColor="#000000" />
+                <stop offset="0%" stopColor="#1A1A1A" />
+                <stop offset="100%" stopColor="#050505" />
             </linearGradient>
             <filter id="vb_glow" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#D4AF37" floodOpacity="0.5" />
             </filter>
         </defs>
         
-        {/* Outer starburst / gear edge (like a premium badge) */}
-        <path fill="url(#vb_masonicGold)" d={INSTA_STAR_PATH} />
-        {/* Inner dark circle seal */}
-        <circle cx="20" cy="20" r="14" fill="url(#vb_masonicBg)" stroke="url(#vb_masonicGold)" strokeWidth="1.5" />
+        {/* Outer Coin Edge */}
+        <circle cx="20" cy="20" r="18" fill="url(#vb_masonicBg)" stroke="url(#vb_masonicGold)" strokeWidth="2.5" />
+        
         {/* Inner dotted circle */}
-        <circle cx="20" cy="20" r="12" fill="none" stroke="url(#vb_masonicGold)" strokeWidth="0.75" strokeDasharray="1.5 1.5" opacity="0.6" />
+        <circle cx="20" cy="20" r="15" fill="none" stroke="url(#vb_masonicGold)" strokeWidth="0.75" strokeDasharray="2 2" opacity="0.8" />
         
         {/* The Square and Compasses - 100% Accurate Representation */}
-        <g transform="translate(10, 9) scale(0.65)" filter="url(#vb_glow)">
+        <g transform="translate(8, 7) scale(0.75)" filter="url(#vb_glow)">
             {/* The Compasses */}
             <path d="M15.4 1.5 C15.4 0.7 16 0.1 16.8 0.1 C17.6 0.1 18.2 0.7 18.2 1.5 C18.2 1.8 18.1 2.1 17.9 2.3 L25.5 22.5 L23.5 24 L16.8 6 L10.1 24 L8.1 22.5 L15.7 2.3 C15.5 2.1 15.4 1.8 15.4 1.5 Z" fill="url(#vb_masonicGold)" />
             {/* The Square */}
