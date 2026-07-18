@@ -2825,3 +2825,25 @@ textarea:focus {
   backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(var(--dynamic-saturate, 150%)) !important;
   -webkit-backdrop-filter: blur(var(--dynamic-blur, 24px)) saturate(var(--dynamic-saturate, 150%)) !important;
 }
+
+
+.live-gold-button {
+  background: linear-gradient(
+    -45deg,
+    #BF953F 0%,
+    #FCF6BA 25%,
+    #B38728 50%,
+    #FBF5B7 75%,
+    #AA771C 100%
+  ) !important;
+  background-size: 200% auto !important;
+  color: #0a0a0a !important;
+  border: 1px solid rgba(212, 175, 55, 0.5) !important;
+  box-shadow: none !important;
+  animation: shineLiveGold 3s linear infinite !important;
+  transition: transform 0.2s ease !important;
+}
+
+.live-gold-button:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+}
