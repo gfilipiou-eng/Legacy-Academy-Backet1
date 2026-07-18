@@ -9348,12 +9348,14 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
     const [activeTab, setActiveTab] = useState('home');
+    const [selectedCartel, setSelectedCartel] = useState(null);
     const [showMissionsScrollTop, setShowMissionsScrollTop] = useState(false);
     const [feedSortOrder, setFeedSortOrder] = useState('newest');
     const [isFeedSortMenuOpen, setIsFeedSortMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [createCartelId, setCreateCartelId] = useState(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [createModeStory, setCreateModeStory] = useState(false);
     const [postToEdit, setPostToEdit] = useState(null);
@@ -10704,7 +10706,7 @@ const App = () => {
     };
 
     const handleCreatePost = async (formData, previewUrl, isStory) => {
-        setIsCreateOpen(false); // Close immediately for zero-latency feel
+        { setIsCreateOpen(false); setCreateCartelId(null); }; // Close immediately for zero-latency feel
 
 
         // 1. OPTIMISTIC UPDATE: Create a temporary "Uploading..." post/story

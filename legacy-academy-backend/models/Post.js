@@ -15,6 +15,7 @@ const PostSchema = new mongoose.Schema({
   thumbnailUrl: String,    // Video thumbnail/poster
   videoDuration: Number,   // Duration in seconds (max 15 for highlights)
 
+  cartelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cartel', default: null },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to User for populate
   username: String, // Denormalized for quick access (backup)
   profilePic: String, // Denormalized user profile pic

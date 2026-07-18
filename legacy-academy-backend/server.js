@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoute from "./routes/users.js";
 import authRoute from "./routes/auth.js";
 import postRoute from "./routes/posts.js";
+import cartelRoute from "./routes/cartels.js";
 import messageRoute from "./routes/messages.js";
 import bubbleRoute from "./routes/bubbles.js";
 import Message from "./models/Message.js";
@@ -176,6 +177,7 @@ app.get("/api/users/me/active-connections", verifyToken, (req, res) => {
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/cartels", cartelRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/bubbles", bubbleRoute);
 

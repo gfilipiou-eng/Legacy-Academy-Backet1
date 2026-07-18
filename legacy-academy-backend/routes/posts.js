@@ -49,7 +49,7 @@ router.get("/:id/translate", verifyToken, async (req, res) => {
 router.get("/", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
-        const posts = await Post.find()
+        const posts = await Post.find({ cartelId: null })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
             .populate("repostedBy", "username profilePic role isPrivate isFollowersOnly followers settings")
             .populate("comments.user", "username profilePic role settings")
@@ -250,6 +250,7 @@ router.post("/", verifyToken, upload.fields([{ name: 'image', maxCount: 1 }, { n
 
         const newPost = new Post({
             author: req.user.id,
+            cartelId: req.body.cartelId || null,
             desc: req.body.desc,
             image: imageUrl,
             audioUrl: audioUrl,
