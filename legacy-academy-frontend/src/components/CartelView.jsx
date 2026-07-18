@@ -116,5 +116,6 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                 </div>
             )}
         </div>
+        </div>
     );
 };
