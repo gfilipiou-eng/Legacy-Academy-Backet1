@@ -40,6 +40,8 @@ import ScrollToTop from './components/ScrollToTop';
 import BottomNavbar from './components/BottomNavbar';
 import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder';
 import BubbleSpace from './components/Bubbles/BubbleSpace';
+import { CartelsExplore } from './components/Cartels';
+import { CartelView } from './components/CartelView';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
