@@ -1,6 +1,17 @@
 import React from 'react';
 
 export const Icons = {
+
+    Gun: (props) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 8H20C21.1 8 22 8.9 22 10V12C22 13.1 21.1 14 20 14H18V18C18 19.1 17.1 20 16 20H12C10.9 20 10 19.1 10 18V14H4C2.9 14 2 13.1 2 12V10C2 8.9 2.9 8 4 8H8Z" strokeWidth="1.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14 14V18" strokeWidth="1.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 14V18" strokeWidth="1.5" />
+            <circle cx="18" cy="11" r="1" fill="currentColor" />
+            <line x1="2" y1="11" x2="6" y2="11" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+    ),
+
     Verified: p => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M22.5 12.5c0-.44-.36-.8-.8-.8h-2.1c-.2 0-.41-.12-.52-.3-.11-.18-.11-.42 0-.6l1.2-1.72c.26-.35.18-.84-.17-1.1l-1.37-1c-.35-.26-.84-.18-1.1.17l-1.2 1.72c-.11.18-.34.3-.55.3s-.44-.12-.55-.3l-1.2-1.72c-.26-.35-.75-.43-1.1-.17l-1.37 1c-.35.26-.43.75-.17 1.1l1.2 1.72c.11.18.11.42 0 .6-.11.18-.32.3-.52.3H4.3c-.44 0-.8.36-.8.8v1.6c0 .44.36.8.8.8h2.1c.2 0 .41.12.52.3.11.18.11.42 0 .6l-1.2 1.72c-.26.35-.18.84.17 1.1l1.37 1c.35.26.84.18 1.1-.17l1.2-1.72c.11-.18.34-.3.55-.3s.44.12.55.3l1.2 1.72c.26.35.75.43 1.1.17l1.37-1c.35-.26.43-.75.17-1.1l-1.2-1.72c-.11-.18-.11-.42 0-.6.11-.18.32-.3.52-.3h2.1c.44 0 .8-.36.8-.8v-1.6zm-10.5 4l-4-4 1.41-1.41L12 13.67l6.09-6.08L19.5 9l-7.5 7.5z"/></svg>,
     AlertCircle: p => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>,
     Menu: p => <svg xmlns="http://www.w3.org/2000/svg" {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="4" x2="20" y1="7" y2="7" /><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="17" y2="17" /></svg>,
