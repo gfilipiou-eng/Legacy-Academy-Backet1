@@ -11984,6 +11984,25 @@ const App = () => {
                                             )}
                                             <div className="space-y-4">
 
+                                                
+                                    {/* Cartels UI */}
+                                    {activeTab === 'cartels' && !selectedCartel && (
+                                        <CartelsExplore user={user} t={t} onViewCartel={setSelectedCartel} />
+                                    )}
+                                    {activeTab === 'cartels' && selectedCartel && (
+                                        <CartelView 
+                                            cartel={selectedCartel} 
+                                            user={user} 
+                                            t={t} 
+                                            onBack={() => setSelectedCartel(null)} 
+                                            onCreatePost={(cartelId) => {
+                                                setCreateCartelId(cartelId);
+                                                setIsCreateOpen(true);
+                                            }}
+                                            PostCard={PostCard}
+                                        />
+                                    )}
+                                    
                                                 {(activeTab === 'home' || (activeTab === 'search' && searchQuery)) && groupedPosts.map(group => {
                                                     const dateKey = group.key;
                                                     return (
