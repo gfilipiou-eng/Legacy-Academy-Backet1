@@ -83,8 +83,6 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                 )}
             </div>
 
-            <AnimatePresence>
-                
             {/* MAFIA STYLE FLOATING ADD GROUP BUTTON */}
             <button 
                 onClick={() => setIsCreateOpen(true)} 
