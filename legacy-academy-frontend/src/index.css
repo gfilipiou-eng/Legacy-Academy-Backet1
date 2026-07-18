@@ -2383,10 +2383,11 @@ button:active,
 /* Premium Glassmorphic Identity Descriptors */
 
 
+
 .descriptor-founder-entrepreneur {
-  color: #fbbf24 !important;
+  color: #FFD700 !important;
   background-color: transparent !important;
-  border: 1px solid #fbbf24 !important;
+  border: 1px solid #FFD700 !important;
   box-shadow: none !important;
   text-shadow: none !important;
   font-weight: 800 !important;
@@ -2395,8 +2396,9 @@ button:active,
 
 @media (hover: hover) {
   .descriptor-founder-entrepreneur:hover {
-    background-color: rgba(251, 191, 36, 0.1) !important;
-    border-color: #f59e0b !important;
+    background-color: transparent !important;
+    border-color: #F1C40F !important;
+    box-shadow: none !important;
     transform: translateY(-1px) scale(1.02);
   }
 }

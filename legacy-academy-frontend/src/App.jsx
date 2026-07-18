@@ -486,7 +486,7 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
 const getDescriptorAccentClass = (descriptor, role) => {
-    if (descriptor === 'entrepreneur' && role === 'Founder') {
+    if (descriptor === 'entrepreneur' && role && role.toLowerCase() === 'founder') {
         return 'descriptor-founder-entrepreneur';
     }
     return PROFILE_DESCRIPTOR_MAP[descriptor]?.accentClass || '';
