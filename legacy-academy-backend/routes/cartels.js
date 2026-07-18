@@ -81,6 +81,13 @@ router.post("/:id/join", verifyToken, async (req, res) => {
 router.get("/:id/posts", verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 20;
+        // Check if user is a member
+        const cartel = await Cartel.findById(req.params.id);
+        if (!cartel) return res.status(404).json("Cartel not found");
+        if (!cartel.members.includes(req.user.id) && req.user.role !== 'Founder') {
+            return res.status(403).json("Intel is encrypted. You must be a member of this cartel to view its posts.");
+        }
+
         const posts = await Post.find({ cartelId: req.params.id })
             .populate("author", "username profilePic role isPrivate isFollowersOnly followers settings")
             .populate("repostedBy", "username profilePic role isPrivate isFollowersOnly followers settings")
