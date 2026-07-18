@@ -2384,21 +2384,45 @@ button:active,
 
 
 
+
 .descriptor-founder-entrepreneur {
-  color: #FFD700 !important;
-  background-color: transparent !important;
-  border: 1px solid #FFD700 !important;
+  border: 1px solid rgba(212, 175, 55, 0.6) !important;
+  background: rgba(0, 0, 0, 0.2) !important;
   box-shadow: none !important;
-  text-shadow: none !important;
-  font-weight: 800 !important;
-  transition: all 0.2s ease-in-out !important;
+  transition: all 0.3s ease !important;
+}
+
+.descriptor-founder-entrepreneur svg {
+  color: #FCF6BA !important;
+}
+
+.descriptor-founder-entrepreneur span {
+  background: linear-gradient(
+    -45deg,
+    #BF953F 0%,
+    #FCF6BA 25%,
+    #B38728 50%,
+    #FBF5B7 75%,
+    #AA771C 100%
+  ) !important;
+  background-size: 200% auto !important;
+  color: transparent !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  animation: shineLiveGold 3s linear infinite !important;
+  font-weight: 900 !important;
+}
+
+@keyframes shineLiveGold {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 @media (hover: hover) {
   .descriptor-founder-entrepreneur:hover {
-    background-color: transparent !important;
-    border-color: #F1C40F !important;
-    box-shadow: none !important;
+    border-color: #FCF6BA !important;
+    background: rgba(212, 175, 55, 0.1) !important;
     transform: translateY(-1px) scale(1.02);
   }
 }
