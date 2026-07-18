@@ -485,6 +485,13 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
     }
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
+const getDescriptorAccentClass = (descriptor, role) => {
+    if (descriptor === 'entrepreneur' && role === 'Founder') {
+        return 'descriptor-founder-entrepreneur';
+    }
+    return PROFILE_DESCRIPTOR_MAP[descriptor]?.accentClass || '';
+};
+
 
 const sanitizeAffiliation = (value) => String(value || '').trim().replace(/^@+/, '');
 const normalizeProfileDescriptor = (value) => {
@@ -2812,7 +2819,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
                                         {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(author)}</span>}
                                         {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
-                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
+                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(author.profileDescriptor, author.profileDescriptor === author?.profileDescriptor ? author?.role : (author.profileDescriptor === publicUser?.profileDescriptor ? publicUser?.role : (author.profileDescriptor === shareModalPost?.author?.profileDescriptor ? shareModalPost?.author?.role : undefined))).replace(/rounded-none/g, "")}`}>
                                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                             </div>
@@ -4427,11 +4434,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     <div>
                                                         <div className="text-white font-black text-lg tracking-wider drop-shadow-md">{favoritePlayer?.strPlayer || favoritePlayer}</div>
                                                         <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
-                                                            {(favoritePlayer?.strTeam && favoritePlayer.strTeam.startsWith('_Retired')) 
-                                                                ? t('RETIRED_PLAYER', 'Retired Player') 
-                                                                : (favoritePlayer?.strTeam && favoritePlayer.strTeam.startsWith('_Deceased'))
-                                                                    ? t('DECEASED_PLAYER', 'Deceased Player')
-                                                                    : (favoritePlayer?.strTeam || t('YOUR_DESIGNATED_PLAYER', 'Your designated favorite player'))}
+                                                            {(favoritePlayer?.strTeam || favoritePlayer?.strSport) ? formatPlayerTeam(favoritePlayer.strTeam, favoritePlayer.strSport, t) : t("YOUR_DESIGNATED_PLAYER", "Your designated favorite player")}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4520,11 +4523,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                 <div className="flex-1 min-w-0">
                                                                     <div className="text-[13px] font-bold text-white truncate">{player.strPlayer}</div>
                                                                     <div className="text-[11px] text-gray-500 truncate mt-0.5">
-                                                                        {(player.strTeam && player.strTeam.startsWith('_Retired')) 
-                                                                            ? t('RETIRED_PLAYER', 'Retired Player') 
-                                                                            : (player.strTeam && player.strTeam.startsWith('_Deceased'))
-                                                                                ? t('DECEASED_PLAYER', 'Deceased Player')
-                                                                                : (player.strTeam || player.strSport || '')}
+                                                                        {formatPlayerTeam(player.strTeam, player.strSport, t)}
                                                                     </div>
                                                                 </div>
                                                             </button>
@@ -8664,7 +8663,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(publicUser)}</span>}
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
-                            <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
+                            <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${getDescriptorAccentClass(publicUser.profileDescriptor, publicUser.profileDescriptor === author?.profileDescriptor ? author?.role : (publicUser.profileDescriptor === publicUser?.profileDescriptor ? publicUser?.role : (publicUser.profileDescriptor === shareModalPost?.author?.profileDescriptor ? shareModalPost?.author?.role : undefined))).replace(/rounded-none/g, "")}`}>
                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
                                 <span className="text-[10px] font-black uppercase tracking-[0.18em]">{t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}</span>
                             </div>
@@ -8898,6 +8897,16 @@ const StreakLeaderboardModal = ({ users, onClose, currentUser }) => {
 };
 
 const safeSetItem = (key, value) => { try { localStorage.setItem(key, value); } catch(e) { console.warn('safeSetItem caught error for ' + key); } };
+
+const formatPlayerTeam = (team, sport, t) => {
+    if (!team) return sport || '';
+    if (team.startsWith('_Retired')) return t('RETIRED_PLAYER', 'Retired Player');
+    if (team.startsWith('_Deceased')) return t('DECEASED_PLAYER', 'Deceased Player');
+    if (team.startsWith('_Free Agent')) return t('FREE_AGENT', 'Free Agent');
+    if (sport && (sport.toLowerCase().includes('motorsport') || sport.toLowerCase().includes('formula'))) return team + ' (Formula 1)';
+    return team;
+};
+
 const App = () => {
     const [isBubbleSpaceOpen, setIsBubbleSpaceOpen] = useState(false);
     const searchParams = new URLSearchParams(window.location.search);
@@ -11279,7 +11288,7 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300" style={{ backgroundColor: 'var(--gold-primary)' }}>
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] shadow-[0_0_20px_rgba(229,179,42,0.4)] cursor-pointer border border-[#e5b32a]/30">
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
@@ -11288,8 +11297,8 @@ const App = () => {
                                                 ) : <span className="relative text-white">SIGN IN</span>}
                                             </button>
                                             <div className="flex justify-between text-xs text-white/30 px-1 pt-2 font-bold tracking-wide">
-                                                 <button type="button" onClick={() => setShowPaywall(true)} className="cursor-pointer hover:text-[var(--gold-primary)] transition-colors bg-transparent border-none outline-none p-0 font-bold text-[var(--gold-primary)]/80 uppercase tracking-widest text-[9px]">Create Account</button>
-                                                 <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white/60 transition-colors bg-transparent border-none outline-none p-0 font-bold uppercase tracking-widest text-[9px]">Forgot Password?</button>
+                                                 <button type="button" onClick={() => setShowPaywall(true)} className="cursor-pointer hover:text-white transition-colors bg-transparent border-none outline-none p-0 font-bold text-white/90 uppercase tracking-widest text-[9px]">Create Account</button>
+                                                 <button type="button" onClick={() => { handleAuthModeChange('forgot'); setFormData({ email: '', password: '', username: '' }); }} className="cursor-pointer hover:text-white transition-colors bg-transparent border-none outline-none p-0 font-bold text-white/90 uppercase tracking-widest text-[9px]">Forgot Password?</button>
                                             </div>
                                         </form>
                                     )}
@@ -11543,12 +11552,12 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0 cursor-pointer shadow-[0_0_20px_rgba(229,179,42,0.4)] border border-[#e5b32a]/30">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <span className="relative">Unlock Access</span>
                                 </button>
                                 
-                                <button onClick={() => setShowPaywall(false)} className="text-[10px] sm:text-[12px] text-white/40 uppercase tracking-[0.25em] font-bold hover:text-white/90 transition-colors underline decoration-white/20 hover:decoration-white/50 underline-offset-4 pb-1 shrink-0">
+                                <button onClick={() => setShowPaywall(false)} className="text-[10px] sm:text-[12px] text-white/90 uppercase tracking-[0.25em] font-bold hover:text-white transition-colors underline decoration-white/50 hover:decoration-white underline-offset-4 pb-1 shrink-0 cursor-pointer">
                                     Return to Login
                                 </button>
                             </div>
@@ -12287,7 +12296,7 @@ const App = () => {
                                         <VerifiedBadge isFounder={shareModalPost.author?.role === 'Founder'} isUser={shareModalPost.author?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={shareModalPost.author} />
                                         {getActiveStreak(shareModalPost?.author) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(shareModalPost?.author)}{isTopStreak(shareModalPost?.author) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                         {shareModalPost.author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor] && (
-                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].accentClass.replace(/rounded-none/g, '')}`}>
+                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(shareModalPost.author.profileDescriptor, shareModalPost.author.profileDescriptor === author?.profileDescriptor ? author?.role : (shareModalPost.author.profileDescriptor === publicUser?.profileDescriptor ? publicUser?.role : (shareModalPost.author.profileDescriptor === shareModalPost?.author?.profileDescriptor ? shareModalPost?.author?.role : undefined))).replace(/rounded-none/g, "")}`}>
                                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
                                                 <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${shareModalPost.author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalPost.author.profileDescriptor].label)}</span>
                                             </div>
@@ -12387,7 +12396,7 @@ const App = () => {
                                     {getActiveStreak(shareModalProfile) > 0 && <span className="text-orange-500 font-bold text-lg shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(shareModalProfile)}{isTopStreak(shareModalProfile) && <span className="ml-1.5 px-1.5 py-0.5 bg-gradient-to-r from-orange-400 to-red-500 text-black text-[9px] font-black uppercase rounded-sm shadow-md tracking-widest leading-none align-middle inline-flex items-center gap-0.5"><Icons.TrendingUp className="w-2.5 h-2.5" /> TOP</span>}</span>}
                                 </div>
                                 {shareModalProfile.profileDescriptor && PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor] && (
-                                    <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].accentClass}`}>
+                                    <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${getDescriptorAccentClass(shareModalProfile.profileDescriptor, shareModalProfile.role)}`}>
                                         {React.createElement(PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].Icon, { className: "w-3.5 h-3.5 shrink-0" })}
                                         <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${shareModalProfile.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[shareModalProfile.profileDescriptor].label)}</span>
                                     </div>

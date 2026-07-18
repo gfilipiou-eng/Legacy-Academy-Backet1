@@ -2381,6 +2381,24 @@ button:active,
 }
 
 /* Premium Glassmorphic Identity Descriptors */
+
+.descriptor-founder-entrepreneur {
+  color: #fbbf24 !important;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(217, 119, 6, 0.1) 100%) !important;
+  border: 1px solid rgba(251, 191, 36, 0.5) !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.2) !important;
+  font-weight: 900 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@media (hover: hover) {
+  .descriptor-founder-entrepreneur:hover {
+    border-color: rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4) !important;
+    transform: translateY(-2px) scale(1.03);
+  }
+}
+
 .descriptor-entrepreneur {
   color: #ef4444 !important;
   background-color: rgba(239, 68, 68, 0.1) !important;
