@@ -7413,7 +7413,7 @@ const ProfileModal = ({
                                     )}
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
                                         <div className="mt-3 flex justify-center">
-                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${selectedProfileDescriptor.accentClass.replace(/rounded-none/g, '')}`}>
+                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}>
                                                 <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
                                                 <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                             </div>
