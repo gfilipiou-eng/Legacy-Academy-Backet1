@@ -129,7 +129,7 @@ const BottomNavbar = memo(({
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
 
-        const tabs = ['home', 'cartels', 'search', 'alerts', 'profile'];
+        const tabs = ['home', 'search', 'alerts', 'profile'];
         const currentIndex = tabs.indexOf(activeTab);
 
         if (currentIndex !== -1) {
@@ -181,20 +181,7 @@ const BottomNavbar = memo(({
                 </button>
 
                 
-                {/* Tab: Cartels */}
-                <button
-                    type="button"
-                    onClick={() => { playCyberSFX('menu'); onTabChange('cartels'); }}
-                    aria-label="Cartels"
-                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
-                >
-                    <div className={navItemClass(activeTab === 'cartels')}>
-                        {activeTab === 'cartels' && (
-                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
-                        )}
-                        <Icons.Users className={iconClass(activeTab === 'cartels')} fill={activeTab === 'cartels' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'cartels' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
-                    </div>
-                </button>
+                
 
                 {/* Tab: Search */}
                 <button
