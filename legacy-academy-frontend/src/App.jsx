@@ -11288,7 +11288,7 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] shadow-[0_0_20px_rgba(229,179,42,0.4)] cursor-pointer border border-[#e5b32a]/30">
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] shadow-md shadow-black/20 cursor-pointer border border-[#e5b32a]/30">
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
@@ -11552,7 +11552,7 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0 cursor-pointer shadow-[0_0_20px_rgba(229,179,42,0.4)] border border-[#e5b32a]/30">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-gradient-to-r from-[#b8860b] via-[#e5b32a] to-[#b8860b] text-white font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0 cursor-pointer shadow-md shadow-black/20 border border-[#e5b32a]/30">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <span className="relative">Unlock Access</span>
                                 </button>
