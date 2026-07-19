@@ -139,14 +139,14 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 exit={{ scale: 0.95, y: 100 }}
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
             >
                 {/* Header matching CreateModal */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -163,7 +163,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-28 sm:pb-4 flex flex-col gap-4">
                     <form onSubmit={handleSubmit} id="cartelForm" className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
@@ -204,7 +204,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                             <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Enter PIN..." />
                         </div>
                         
-                        <div className="hidden sm:block mt-4">
+                        <div className="mt-4">
                             <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">
                                 {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
                             </button>

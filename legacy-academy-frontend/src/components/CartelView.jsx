@@ -45,14 +45,14 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
     };
 
     return (
-        <div className="fixed inset-0 z-[25000] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div
                 initial={{ scale: 0.95, y: 100 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -75,7 +75,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-28 sm:pb-4 flex flex-col gap-4">
                     {/* User row */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 relative shrink-0 rounded-full overflow-hidden bg-white/5">
@@ -189,14 +189,14 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     const previewSrc = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
 
     return (
-        <div className="fixed inset-0 z-[25000] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+        <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div
                 initial={{ scale: 0.95, y: 100 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
             >
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
                     <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors">
@@ -211,7 +211,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-28 sm:pb-4 flex flex-col gap-4">
                     <form onSubmit={handleSubmit} id="editCartelForm" className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
@@ -263,7 +263,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                                 <p className="text-[10px] text-amber-400/70 font-bold pl-1">⚠ Leave blank to keep existing PIN</p>
                             )}
                         </div>
-                        <div className="hidden sm:block mt-4">
+                        <div className="mt-4">
                             <button disabled={loading} type="submit" form="editCartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">
                                 {loading ? '...' : t('CARTELS_SAVE', 'Save Changes')}
                             </button>
@@ -275,76 +275,124 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     );
 };
 
-/* ─── Individual Cartel Post Card with Edit/Delete ─────────────────────────── */
+/* ─── GTA-Style Mission Board Post Card ─────────────────────────────────── */
 const CartelPostCard = ({ post, user, onEdit, onDelete }) => {
     const author = post.author || {};
     const isMe = String(author._id || author) === String(user?._id);
-    const timeFmt = new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const [showMenu, setShowMenu] = useState(false);
 
+    // Military-style timestamp
+    const d = new Date(post.createdAt);
+    const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase();
+
     return (
-        <div className={`flex w-full mb-4 px-4 ${isMe ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[90%] sm:max-w-[75%] flex flex-col gap-1 ${isMe ? 'items-end' : 'items-start'}`}>
-                {!isMe && (
-                    <div className="flex items-center gap-2 px-2 mb-1">
-                        <div className="w-7 h-7 rounded-full overflow-hidden bg-white/10 shrink-0">
-                            {author.profilePic
-                                ? <img src={author.profilePic} className="w-full h-full object-cover" alt="" />
-                                : <Icons.User className="w-4 h-4 m-1.5 text-gray-500" />}
-                        </div>
-                        <span className="text-[11px] text-white/50 font-black tracking-widest uppercase">{author.username || 'Agent'}</span>
-                    </div>
-                )}
-                <div className="relative group">
-                    <div className={`rounded-3xl shadow-xl overflow-hidden ${isMe
-                        ? 'bg-gradient-to-br from-[var(--gold-primary)] to-amber-600 text-black rounded-tr-none'
-                        : 'bg-[#151515] border border-white/8 text-white rounded-tl-none'}`}
-                    >
-                        {(post.image || post.videoUrl) && (
-                            <div className="w-full bg-black">
-                                {post.videoUrl
-                                    ? <video src={post.videoUrl} className="w-full max-h-64 object-contain" controls />
-                                    : <img src={post.image} className="w-full max-h-64 object-contain" alt="" />}
+        <div className="w-full px-3 sm:px-4 mb-4">
+            {/* GTA Mission Board Card */}
+            <div className={`relative rounded-2xl overflow-hidden border ${
+                isMe
+                    ? 'border-[var(--gold-primary)]/40 shadow-[0_0_20px_rgba(212,175,55,0.1)]'
+                    : 'border-white/8'
+            } bg-[#0d0d0d]`}>
+
+                {/* Top accent stripe */}
+                <div className={`h-[3px] w-full ${
+                    isMe
+                        ? 'bg-gradient-to-r from-[var(--gold-primary)] to-amber-500'
+                        : 'bg-gradient-to-r from-red-700 to-red-900'
+                }`} />
+
+                {/* Card body */}
+                <div className="p-4">
+                    {/* Header row: avatar + name + timestamp + menu */}
+                    <div className="flex items-start gap-3 mb-3">
+                        <div className="relative shrink-0">
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/10">
+                                {author.profilePic
+                                    ? <img src={author.profilePic} className="w-full h-full object-cover" alt="" />
+                                    : <Icons.User className="w-5 h-5 m-2.5 text-gray-500" />}
                             </div>
-                        )}
-                        {post.desc && (
-                            <div className="px-4 py-3">
-                                <p className="text-[15px] font-semibold whitespace-pre-wrap leading-relaxed break-words">{post.desc}</p>
+                            {/* Online indicator dot */}
+                            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0d0d0d]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`text-[11px] font-black tracking-widest uppercase ${
+                                    isMe ? 'text-[var(--gold-primary)]' : 'text-white'
+                                }`}>
+                                    {author.username || 'AGENT'}
+                                </span>
+                                {isMe && (
+                                    <span className="px-1.5 py-0.5 bg-[var(--gold-primary)]/15 border border-[var(--gold-primary)]/30 rounded text-[8px] font-black text-[var(--gold-primary)] tracking-widest">YOU</span>
+                                )}
+                                {author.role && author.role !== 'user' && (
+                                    <span className="px-1.5 py-0.5 bg-red-500/10 border border-red-500/20 rounded text-[8px] font-black text-red-400 tracking-widest uppercase">{author.role}</span>
+                                )}
+                            </div>
+                            <div className="text-[9px] text-white/25 font-bold tracking-widest mt-0.5">
+                                {timeStr} · {dateStr}
+                            </div>
+                        </div>
+                        {/* Edit/Delete menu */}
+                        {isMe && (
+                            <div className="relative shrink-0">
+                                <button
+                                    onClick={() => setShowMenu(v => !v)}
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition"
+                                >
+                                    <Icons.MoreHorizontal className="w-3.5 h-3.5" />
+                                </button>
+                                {showMenu && (
+                                    <div className="absolute top-8 right-0 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-[130px] z-20">
+                                        <button
+                                            onClick={() => { setShowMenu(false); onEdit(post); }}
+                                            className="flex items-center gap-2 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition font-bold"
+                                        >
+                                            <Icons.Edit className="w-4 h-4 text-[var(--gold-primary)]" />
+                                            Edit Intel
+                                        </button>
+                                        <button
+                                            onClick={() => { setShowMenu(false); onDelete(post._id); }}
+                                            className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition font-bold"
+                                        >
+                                            <Icons.Trash className="w-4 h-4" />
+                                            Burn
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
 
-                    {/* Edit/Delete menu — only for own posts */}
-                    {isMe && (
-                        <div className="absolute -top-2 -left-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                            <button
-                                onClick={() => setShowMenu(v => !v)}
-                                className="w-8 h-8 bg-black/80 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition"
-                            >
-                                <Icons.MoreHorizontal className="w-4 h-4" />
-                            </button>
-                            {showMenu && (
-                                <div className="absolute top-9 left-0 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-[130px] z-20">
-                                    <button
-                                        onClick={() => { setShowMenu(false); onEdit(post); }}
-                                        className="flex items-center gap-2 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition font-bold"
-                                    >
-                                        <Icons.Edit className="w-4 h-4 text-[var(--gold-primary)]" />
-                                        Edit
-                                    </button>
-                                    <button
-                                        onClick={() => { setShowMenu(false); onDelete(post._id); }}
-                                        className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition font-bold"
-                                    >
-                                        <Icons.Trash className="w-4 h-4" />
-                                        Delete
-                                    </button>
-                                </div>
-                            )}
+                    {/* Media */}
+                    {(post.image || post.videoUrl) && (
+                        <div className="relative w-full rounded-xl overflow-hidden bg-black mb-3 border border-white/5">
+                            <img className="absolute inset-0 w-full h-full object-cover opacity-10 blur-sm scale-110" src={post.image} alt="" aria-hidden />
+                            {post.videoUrl
+                                ? <video src={post.videoUrl} className="relative z-10 w-full max-h-72 object-contain" controls />
+                                : <img src={post.image} className="relative z-10 w-full max-h-72 object-contain" alt="" />}
                         </div>
                     )}
+
+                    {/* Text content */}
+                    {post.desc && (
+                        <p className="text-[14px] text-white/90 font-medium whitespace-pre-wrap leading-relaxed break-words">{post.desc}</p>
+                    )}
+
+                    {/* Bottom classified bar */}
+                    <div className={`mt-3 pt-2.5 border-t flex items-center justify-between ${
+                        isMe ? 'border-[var(--gold-primary)]/15' : 'border-white/5'
+                    }`}>
+                        <span className={`text-[8px] font-black tracking-[0.2em] uppercase opacity-40 ${
+                            isMe ? 'text-[var(--gold-primary)]' : 'text-red-500'
+                        }`}>
+                            {isMe ? '◆ INTEL TRANSMITTED' : '◆ CLASSIFIED INTEL'}
+                        </span>
+                        <div className="flex gap-1">
+                            {[1,2,3].map(i => <div key={i} className={`w-1 h-1 rounded-full opacity-30 ${ isMe ? 'bg-[var(--gold-primary)]' : 'bg-red-500'}`} />)}
+                        </div>
+                    </div>
                 </div>
-                <div className="text-[10px] text-white/30 font-bold px-2">{timeFmt}</div>
             </div>
         </div>
     );
