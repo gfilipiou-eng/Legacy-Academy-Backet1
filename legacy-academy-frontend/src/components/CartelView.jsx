@@ -58,7 +58,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
     };
 
     return (
-        <div className="w-full h-full flex flex-col bg-[#050505] z-30 absolute inset-0 overflow-y-auto pb-24">
+        <div className="w-full h-full flex flex-col bg-[#050505] z-[9999] fixed inset-0 overflow-y-auto pb-8">
             {/* Mafia / Weapons Background Overlay */}
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
