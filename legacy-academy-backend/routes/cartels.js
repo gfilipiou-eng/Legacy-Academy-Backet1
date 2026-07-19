@@ -144,16 +144,6 @@ router.post("/:id/join", verifyToken, async (req, res) => {
         res.status(500).json(err);
     }
 });
-            res.status(200).json("Left cartel");
-        } else {
-            // Join
-            await cartel.updateOne({ $push: { members: req.user.id } });
-            res.status(200).json("Joined cartel");
-        }
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
 
 // GET POSTS IN A CARTEL
 router.get("/:id/posts", verifyToken, async (req, res) => {
