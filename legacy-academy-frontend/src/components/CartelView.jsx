@@ -217,9 +217,9 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center p-4 pt-[100px] pb-[100px]">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-[#111] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+        <div className="fixed inset-0 z-[20000] overflow-y-auto bg-black/80 backdrop-blur-md pb-[120px] pt-[80px] sm:py-10">
+            <div className="min-h-full flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-[#111] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl mt-4 mb-auto sm:my-auto">
                 <button onClick={onClose} className="absolute top-4 right-4 text-white/50 hover:text-white"><Icons.X className="w-6 h-6" /></button>
                 <h2 className="text-xl font-black text-white tracking-widest mb-6">{t('CARTELS_EDIT', 'Edit Cartel')}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
