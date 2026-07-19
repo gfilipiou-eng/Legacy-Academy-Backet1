@@ -11993,19 +11993,7 @@ const App = () => {
                                     {activeTab === 'cartels' && !selectedCartel && (
                                         <CartelsExplore user={user} t={t} onViewCartel={setSelectedCartel} />
                                     )}
-                                    {activeTab === 'cartels' && selectedCartel && (
-                                        <CartelView 
-                                            cartel={selectedCartel} 
-                                            user={user} 
-                                            t={t} 
-                                            onBack={() => setSelectedCartel(null)} 
-                                            onCreatePost={(cartelId) => {
-                                                setCreateCartelId(cartelId);
-                                                setIsCreateOpen(true);
-                                            }}
-                                            PostCard={PostCard}
-                                        />
-                                    )}
+
                                     
                                                 {(activeTab === 'home' || (activeTab === 'search' && searchQuery)) && groupedPosts.map(group => {
                                                     const dateKey = group.key;
@@ -12262,6 +12250,19 @@ const App = () => {
                         t={t}
                     />
 
+                    {selectedCartel && (
+                        <CartelView 
+                            cartel={selectedCartel} 
+                            user={user} 
+                            t={t} 
+                            onBack={() => setSelectedCartel(null)} 
+                            onCreatePost={(cartelId) => {
+                                setCreateCartelId(cartelId);
+                                setIsCreateOpen(true);
+                            }}
+                            PostCard={PostCard}
+                        />
+                    )}
                     <CreateModal isOpen={isCreateOpen} onClose={() => { setIsCreateOpen(false); setCreateModeStory(false); }} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
                     {selectedPost && (

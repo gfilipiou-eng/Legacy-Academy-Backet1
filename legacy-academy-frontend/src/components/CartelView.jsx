@@ -82,7 +82,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="relative z-10 flex-1 flex flex-col">
-            <div className="relative w-full h-32 sm:h-64 bg-black shrink-0">
+            <div className="relative w-full h-48 sm:h-64 bg-black shrink-0">
                 {cartel.coverImage ? (
                     <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
                 ) : (
@@ -109,7 +109,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
 
 
                 <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
-                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
                         {cartel.image ? (
                             <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover object-center bg-black" />
                         ) : (
