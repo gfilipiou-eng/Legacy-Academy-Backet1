@@ -90,14 +90,14 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--app-bg)] to-transparent" />
                 
-                <button onClick={onBack} className="absolute top-[calc(env(safe-area-inset-top)+1rem)] left-4 z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition border border-white/20 shadow-xl">
+                <button onClick={onBack} className="absolute top-4 sm:top-6 left-4 sm:left-6 mt-[env(safe-area-inset-top)] z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition border border-white/20 shadow-xl">
                     <Icons.ArrowLeft className="w-5 h-5" />
                 </button>
                 
                 
 
                         {isCreator && (
-                            <div className="absolute top-[calc(env(safe-area-inset-top)+1rem)] right-4 z-50 flex gap-2">
+                            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 mt-[env(safe-area-inset-top)] z-50 flex gap-2">
                                 <button onClick={() => setIsEditOpen(true)} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-white/20 transition">
                                     {t('CARTELS_EDIT', 'Edit')}
                                 </button>
@@ -142,6 +142,21 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                 </div>
             )}
 
+                        {isMember && (
+                <div className="px-4 py-3 mb-4 flex items-center gap-3 bg-[#111] border border-white/5 rounded-2xl mx-4 mt-6 cursor-pointer hover:bg-white/5 transition"
+                    onClick={() => onCreatePost(cartel._id)}
+                >
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                        {user?.profilePic ? <img src={user.profilePic} className="w-full h-full object-cover" /> : <Icons.User className="w-5 h-5 text-gray-500" />}
+                    </div>
+                    <div className="text-gray-500 font-bold uppercase tracking-widest text-xs flex-1 text-left">
+                        {t('DECRYPT_PH', 'Decrypt your thoughts...')}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500">
+                        <Icons.Image className="w-5 h-5" />
+                    </div>
+                </div>
+            )}
             {isMember && (
                 <div className="flex-1">
                     {loading ? (
@@ -161,14 +176,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             )}
         </div>
 
-            {isMember && (
-                <button 
-                    onClick={() => onCreatePost(cartel._id)} 
-                    className="fixed bottom-[calc(env(safe-area-inset-bottom)+20px)] right-4 sm:right-10 z-[100] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600/90 backdrop-blur-xl border border-white/20 shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all duration-300"
-                >
-                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8 text-white drop-shadow-md" />
-                </button>
-            )}
+            
             
             {isEditOpen && <EditCartelModal t={t} cartel={cartel} onClose={() => setIsEditOpen(false)} onUpdated={(c) => { 
                 // A quick reload is easiest, or we could pass an onUpdate callback
@@ -217,13 +225,13 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center sm:p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md hidden sm:block" onClick={onClose} />
+        <div className="fixed inset-0 z-[20000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm sm:backdrop-blur-md">
+            <div className="absolute inset-0" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, y: 50 }} 
+                initial={{ opacity: 0, y: 100 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: 50 }} 
-                className="relative w-full h-[100dvh] sm:h-auto sm:max-w-[420px] sm:max-h-[88dvh] rounded-none sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl"
+                exit={{ opacity: 0, y: 100 }} 
+                className="relative w-full max-w-[420px] max-h-[90vh] sm:max-h-[88dvh] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-t sm:border border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] sm:shadow-2xl"
             >
                 <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-center shrink-0 border-b border-white/5">
                     <h2 className="text-xl font-black text-white tracking-widest">{t('CARTELS_EDIT', 'Edit Cartel')}</h2>

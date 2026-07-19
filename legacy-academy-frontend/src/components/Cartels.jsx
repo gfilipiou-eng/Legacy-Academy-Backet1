@@ -139,13 +139,13 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center sm:p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md hidden sm:block" onClick={onClose} />
+        <div className="fixed inset-0 z-[20000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm sm:backdrop-blur-md">
+            <div className="absolute inset-0" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, y: 50 }} 
+                initial={{ opacity: 0, y: 100 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: 50 }} 
-                className="relative w-full h-[100dvh] sm:h-auto sm:max-w-[420px] sm:max-h-[88dvh] rounded-none sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl"
+                exit={{ opacity: 0, y: 100 }} 
+                className="relative w-full max-w-[420px] max-h-[90vh] sm:max-h-[88dvh] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-t sm:border border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] sm:shadow-2xl"
             >
                 <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-center shrink-0 border-b border-white/5">
                     <h2 className="text-xl font-black text-white tracking-widest">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
