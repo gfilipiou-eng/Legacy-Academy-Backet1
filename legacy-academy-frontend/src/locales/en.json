@@ -656,5 +656,6 @@
   "CARTELS_DELETE": "Delete",
   "CARTELS_WELCOME_DESC": "Welcome to the cartel.",
   "CARTELS_PIN": "Secret PIN (Optional)",
-  "CARTELS_ENTER_PIN": "This cartel is private. Please enter the PIN to join:"
+  "CARTELS_ENTER_PIN": "This cartel is private. Please enter the PIN to join:",
+  "CARTELS_EDIT": "Edit"
 }

@@ -652,13 +652,13 @@
   "DECEASED_PLAYER": "ΕΚΛΙΠΩΝ ΠΑΙΚΤΗΣ",
   "FREE_AGENT": "Ελεύθερος Παίκτης",
   "FORMULA_1": "Φόρμουλα 1",
-  "CARTELS": "Cartels",
-  "CARTELS_EXPLORE_TITLE": "Όλα τα Cartel",
-  "CARTELS_SEARCH_PH": "Αναζήτηση Cartel...",
-  "CARTELS_NO_FOUND": "Δεν βρέθηκαν Cartel",
+  "CARTELS": "Καρτέλ",
+  "CARTELS_EXPLORE_TITLE": "Όλα τα Καρτέλ",
+  "CARTELS_SEARCH_PH": "Αναζήτηση Καρτέλ...",
+  "CARTELS_NO_FOUND": "Δεν βρέθηκαν Καρτέλ",
   "CARTELS_MEMBERS": "Μέλη",
-  "CARTELS_ESTABLISH": "Ίδρυση Cartel",
-  "CARTELS_NAME": "Όνομα Cartel",
+  "CARTELS_ESTABLISH": "Ίδρυση Καρτέλ",
+  "CARTELS_NAME": "Όνομα Καρτέλ",
   "CARTELS_DESC": "Περιγραφή",
   "CARTELS_IMAGE": "Εικόνα URL (Προαιρετικό)",
   "CARTELS_JOIN": "Είσοδος",
@@ -672,5 +672,6 @@
   "CARTELS_DELETE": "Διαγραφή",
   "CARTELS_WELCOME_DESC": "Καλώς ήρθατε στο Cartel.",
   "CARTELS_PIN": "Μυστικό PIN (Προαιρετικό)",
-  "CARTELS_ENTER_PIN": "Αυτό το Cartel είναι ιδιωτικό. Εισάγετε το PIN για να μπείτε:"
+  "CARTELS_ENTER_PIN": "Αυτό το Cartel είναι ιδιωτικό. Εισάγετε το PIN για να μπείτε:",
+  "CARTELS_EDIT": "Επεξεργασία"
 }
