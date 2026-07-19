@@ -1,7 +1,7 @@
 {
-    "buildCommand": "npm --prefix legacy-academy-frontend run build",
-    "outputDirectory": "legacy-academy-frontend/dist",
-    "installCommand": "npm --prefix legacy-academy-frontend install",
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "installCommand": "npm install",
     "headers": [
         {
             "source": "/(.*)",
