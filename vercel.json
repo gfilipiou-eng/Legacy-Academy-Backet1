@@ -1,8 +1,7 @@
 {
-    "buildCommand": "cd legacy-academy-frontend && npm install && npm run build",
+    "buildCommand": "npm --prefix legacy-academy-frontend run build",
     "outputDirectory": "legacy-academy-frontend/dist",
-    "installCommand": "cd legacy-academy-frontend && npm install",
-    "framework": "vite",
+    "installCommand": "npm --prefix legacy-academy-frontend install",
     "headers": [
         {
             "source": "/(.*)",
@@ -19,10 +18,6 @@
         }
     ],
     "rewrites": [
-        {
-            "source": "/assets/(.*)",
-            "destination": "/assets/$1"
-        },
         {
             "source": "/(.*)",
             "destination": "/index.html"
