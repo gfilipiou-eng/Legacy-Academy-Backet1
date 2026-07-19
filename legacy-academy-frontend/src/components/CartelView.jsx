@@ -43,12 +43,17 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
     };
 
     const handleJoin = async () => {
+        const previousIsMember = isMember;
+        setIsMember(!isMember);
+        setMemberCount(prev => !isMember ? prev + 1 : prev - 1);
+        
         try {
             await axios.post(`/cartels/${cartel._id}/join`);
-            setIsMember(!isMember);
-            setMemberCount(prev => isMember ? prev - 1 : prev + 1);
         } catch (err) {
             console.error(err);
+            setIsMember(previousIsMember);
+            setMemberCount(prev => previousIsMember ? prev + 1 : prev - 1);
+            alert("Error joining/leaving cartel");
         }
     };
 
@@ -66,13 +71,13 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--app-bg)] to-transparent" />
                 
-                <button onClick={onBack} className="absolute top-safe-4 left-4 z-10 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition">
+                <button onClick={onBack} className="absolute top-[calc(env(safe-area-inset-top)+1rem)] left-4 z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/10 transition border border-white/20 shadow-xl">
                     <Icons.ArrowLeft className="w-5 h-5" />
                 </button>
                 
                 
                         {isCreator && (
-                            <button onClick={handleDeleteCartel} className="absolute top-safe-4 right-4 z-10 bg-red-600/80 backdrop-blur-md rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-red-500 transition">
+                            <button onClick={handleDeleteCartel} className="absolute top-[calc(env(safe-area-inset-top)+1rem)] right-4 z-50 bg-red-600/80 backdrop-blur-md rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-red-500 transition">
                                 {t('CARTELS_DELETE', 'Delete')}
                             </button>
                         )}
@@ -100,7 +105,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             </div>
 
             <div className="px-4 py-4">
-                <p className="text-white/70 text-sm font-medium leading-relaxed">{cartel.description || 'Welcome to the cartel.'}</p>
+                <p className="text-white/70 text-sm font-medium leading-relaxed">{cartel.description || t('CARTELS_WELCOME_DESC', 'Welcome to the cartel.')}</p>
             </div>
 
             {isMember ? (

@@ -669,5 +669,6 @@
   "CARTELS_NO_INTEL": "Δεν υπάρχει ακόμη υλικό.",
   "CARTELS_FOUNDING": "Ίδρυση...",
   "CARTELS_UPLOAD_IMG": "Ανέβασμα Εικόνας",
-  "CARTELS_DELETE": "Διαγραφή"
+  "CARTELS_DELETE": "Διαγραφή",
+  "CARTELS_WELCOME_DESC": "Καλώς ήρθατε στο Cartel."
 }

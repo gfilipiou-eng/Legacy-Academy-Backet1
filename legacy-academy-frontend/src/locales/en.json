@@ -653,5 +653,6 @@
   "FORMULA_1": "Formula 1",
   "CARTELS": "Cartels",
   "CARTELS_UPLOAD_IMG": "Upload Image",
-  "CARTELS_DELETE": "Delete"
+  "CARTELS_DELETE": "Delete",
+  "CARTELS_WELCOME_DESC": "Welcome to the cartel."
 }
