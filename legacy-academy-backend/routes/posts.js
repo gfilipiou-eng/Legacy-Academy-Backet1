@@ -181,6 +181,7 @@ router.get("/user/:userId", verifyToken, async (req, res) => {
             return res.status(403).json("Intel is encrypted. Clearance restricted to followers.");
         }
         const posts = await Post.find({
+            cartelId: null,
             $or: [
                 { author: targetUserId },
                 { repostedBy: targetUserId }
