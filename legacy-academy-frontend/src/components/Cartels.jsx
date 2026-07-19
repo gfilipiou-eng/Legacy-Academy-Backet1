@@ -12,7 +12,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
     const fetchCartels = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('/api/cartels');
+            const res = await axios.get('/cartels');
             setCartels(res.data);
         } catch (err) {
             console.error(err);
@@ -116,7 +116,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
         if (!name.trim()) return;
         try {
             setLoading(true);
-            const res = await axios.post('/api/cartels', { name, description: desc, image });
+            const res = await axios.post('/cartels', { name, description: desc, image });
             onCreated(res.data);
         } catch (err) {
             console.error(err);

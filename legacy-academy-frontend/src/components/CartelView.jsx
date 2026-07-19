@@ -18,7 +18,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`/api/cartels/${cartel._id}/posts`);
+            const res = await axios.get(`/cartels/${cartel._id}/posts`);
             setPosts(res.data);
         } catch (err) {
             console.error(err);
@@ -29,7 +29,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
 
     const handleJoin = async () => {
         try {
-            await axios.post(`/api/cartels/${cartel._id}/join`);
+            await axios.post(`/cartels/${cartel._id}/join`);
             setIsMember(!isMember);
             setMemberCount(prev => isMember ? prev - 1 : prev + 1);
         } catch (err) {
