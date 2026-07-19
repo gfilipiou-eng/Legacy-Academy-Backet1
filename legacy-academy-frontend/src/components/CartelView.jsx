@@ -3,11 +3,12 @@ import axios from '../api';
 import { Icons } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/* ─── Standalone Post Creator for inside a Cartel ─────────────────────────── */
-const CartelCreatePostModal = ({ cartel, user, t, onClose, onPosted }) => {
-    const [desc, setDesc] = useState('');
+/* ─── Shared Cartel Post Modal (used for both Create and Edit) ─────────────── */
+const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }) => {
+    const isEdit = !!editPost;
+    const [desc, setDesc] = useState(editPost?.desc || '');
     const [imageFile, setImageFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreview, setImagePreview] = useState(editPost?.image || null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileRef = useRef(null);
 
@@ -19,15 +20,21 @@ const CartelCreatePostModal = ({ cartel, user, t, onClose, onPosted }) => {
     };
 
     const handleSubmit = async () => {
-        if (isSubmitting || (!desc.trim() && !imageFile)) return;
+        if (isSubmitting || (!desc.trim() && !imageFile && !imagePreview)) return;
         setIsSubmitting(true);
         try {
             const fd = new FormData();
             fd.append('desc', desc);
-            fd.append('cartelId', cartel._id);
+            if (!isEdit) fd.append('cartelId', cartel._id);
             if (imageFile) fd.append('image', imageFile);
-            const res = await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-            onPosted(res.data);
+
+            let res;
+            if (isEdit) {
+                res = await axios.put(`/posts/${editPost._id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            } else {
+                res = await axios.post('/posts', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+            }
+            onPosted(res.data, isEdit);
             onClose();
         } catch (e) {
             console.error(e);
@@ -39,12 +46,12 @@ const CartelCreatePostModal = ({ cartel, user, t, onClose, onPosted }) => {
 
     return (
         <div className="fixed inset-0 z-[25000] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/75 backdrop-blur-xl" onClick={onClose} />
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div
                 initial={{ scale: 0.95, y: 100 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -52,14 +59,14 @@ const CartelCreatePostModal = ({ cartel, user, t, onClose, onPosted }) => {
                         {t('CANCEL', 'Cancel')}
                     </button>
                     <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">
-                        Post Intel
+                        {isEdit ? t('EDIT_POST', 'Edit Intel') : t('UPLOAD_TITLE', 'Post Intel')}
                     </h2>
                     <button
                         disabled={isSubmitting}
                         onClick={handleSubmit}
                         className="sm:hidden px-2.5 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-[10px] uppercase tracking-normal rounded-full shadow-md transition-all whitespace-nowrap shrink-0"
                     >
-                        {isSubmitting ? '...' : t('POST', 'Post')}
+                        {isSubmitting ? '...' : (isEdit ? t('SAVE', 'Save') : t('POST', 'Post'))}
                     </button>
                     <button onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors">
                         <Icons.X className="w-5 h-5" />
@@ -132,11 +139,11 @@ const CartelCreatePostModal = ({ cartel, user, t, onClose, onPosted }) => {
                 {/* Desktop submit */}
                 <div className="hidden sm:block flex-none pt-4 border-t border-white/5 mt-2">
                     <button
-                        disabled={isSubmitting || (!desc.trim() && !imageFile)}
+                        disabled={isSubmitting || (!desc.trim() && !imageFile && !imagePreview)}
                         onClick={handleSubmit}
                         className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-40"
                     >
-                        {isSubmitting ? '...' : 'Post Intel'}
+                        {isSubmitting ? '...' : (isEdit ? t('SAVE', 'Save Changes') : t('POST', 'Post Intel'))}
                     </button>
                 </div>
             </motion.div>
@@ -168,7 +175,6 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                 formData.append('image', imageUrl);
             }
             if (pin.trim()) formData.append('pin', pin);
-
             const res = await axios.put(`/cartels/${cartel._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             onUpdated(res.data);
         } catch (err) {
@@ -251,11 +257,12 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     );
 };
 
-/* ─── Individual Cartel Post Card ─────────────────────────────────────────── */
-const CartelPostCard = ({ post, user }) => {
+/* ─── Individual Cartel Post Card with Edit/Delete ─────────────────────────── */
+const CartelPostCard = ({ post, user, onEdit, onDelete }) => {
     const author = post.author || {};
     const isMe = String(author._id || author) === String(user?._id);
     const timeFmt = new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const [showMenu, setShowMenu] = useState(false);
 
     return (
         <div className={`flex w-full mb-4 px-4 ${isMe ? 'justify-end' : 'justify-start'}`}>
@@ -270,22 +277,52 @@ const CartelPostCard = ({ post, user }) => {
                         <span className="text-[11px] text-white/50 font-black tracking-widest uppercase">{author.username || 'Agent'}</span>
                     </div>
                 )}
-                <div className={`rounded-3xl shadow-xl overflow-hidden ${isMe
-                    ? 'bg-gradient-to-br from-[var(--gold-primary)] to-amber-600 text-black rounded-tr-none'
-                    : 'bg-[#151515] border border-white/8 text-white rounded-tl-none'}`}
-                >
-                    {(post.image || post.videoUrl) && (
-                        <div className="w-full bg-black">
-                            {post.videoUrl ? (
-                                <video src={post.videoUrl} className="w-full max-h-64 object-contain" controls />
-                            ) : (
-                                <img src={post.image} className="w-full max-h-64 object-contain" alt="" />
+                <div className="relative group">
+                    <div className={`rounded-3xl shadow-xl overflow-hidden ${isMe
+                        ? 'bg-gradient-to-br from-[var(--gold-primary)] to-amber-600 text-black rounded-tr-none'
+                        : 'bg-[#151515] border border-white/8 text-white rounded-tl-none'}`}
+                    >
+                        {(post.image || post.videoUrl) && (
+                            <div className="w-full bg-black">
+                                {post.videoUrl
+                                    ? <video src={post.videoUrl} className="w-full max-h-64 object-contain" controls />
+                                    : <img src={post.image} className="w-full max-h-64 object-contain" alt="" />}
+                            </div>
+                        )}
+                        {post.desc && (
+                            <div className="px-4 py-3">
+                                <p className="text-[15px] font-semibold whitespace-pre-wrap leading-relaxed break-words">{post.desc}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Edit/Delete menu — only for own posts */}
+                    {isMe && (
+                        <div className="absolute -top-2 -left-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                            <button
+                                onClick={() => setShowMenu(v => !v)}
+                                className="w-8 h-8 bg-black/80 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition"
+                            >
+                                <Icons.MoreHorizontal className="w-4 h-4" />
+                            </button>
+                            {showMenu && (
+                                <div className="absolute top-9 left-0 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-[130px] z-20">
+                                    <button
+                                        onClick={() => { setShowMenu(false); onEdit(post); }}
+                                        className="flex items-center gap-2 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition font-bold"
+                                    >
+                                        <Icons.Edit className="w-4 h-4 text-[var(--gold-primary)]" />
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => { setShowMenu(false); onDelete(post._id); }}
+                                        className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition font-bold"
+                                    >
+                                        <Icons.Trash className="w-4 h-4" />
+                                        Delete
+                                    </button>
+                                </div>
                             )}
-                        </div>
-                    )}
-                    {post.desc && (
-                        <div className="px-4 py-3">
-                            <p className="text-[15px] font-semibold whitespace-pre-wrap leading-relaxed break-words">{post.desc}</p>
                         </div>
                     )}
                 </div>
@@ -301,8 +338,9 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
     const [loading, setLoading] = useState(true);
     const [isMember, setIsMember] = useState(false);
     const [memberCount, setMemberCount] = useState(0);
-    const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isEditCartelOpen, setIsEditCartelOpen] = useState(false);
+    const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+    const [editingPost, setEditingPost] = useState(null);
     const isCreator = user && cartel.creator && (user._id === cartel.creator._id || user._id === cartel.creator);
 
     useEffect(() => {
@@ -321,6 +359,26 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePostSaved = (savedPost, isEdit) => {
+        if (isEdit) {
+            setPosts(prev => prev.map(p => p._id === savedPost._id ? savedPost : p));
+        } else {
+            setPosts(prev => [savedPost, ...prev]);
+        }
+        setEditingPost(null);
+    };
+
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm('Delete this intel permanently?')) return;
+        try {
+            await axios.delete(`/posts/${postId}`);
+            setPosts(prev => prev.filter(p => p._id !== postId));
+        } catch (err) {
+            console.error(err);
+            alert('Error deleting post');
         }
     };
 
@@ -372,11 +430,9 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
             <div className="relative z-10 flex-1 flex flex-col">
                 {/* Cover Banner */}
                 <div className="relative w-full h-48 sm:h-64 bg-black shrink-0">
-                    {cartel.coverImage ? (
-                        <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
-                    ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#111] to-[#222]" />
-                    )}
+                    {cartel.coverImage
+                        ? <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
+                        : <div className="w-full h-full bg-gradient-to-br from-[#111] to-[#222]" />}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
 
                     {/* Back button */}
@@ -387,16 +443,16 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                     {/* Creator controls */}
                     {isCreator && (
                         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 mt-[env(safe-area-inset-top)] z-50 flex gap-2">
-                            <button onClick={() => setIsEditOpen(true)} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-white/20 transition">
+                            <button onClick={() => setIsEditCartelOpen(true)} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 text-white text-xs font-bold tracking-widest hover:bg-white/20 transition">
                                 {t('CARTELS_EDIT', 'Edit')}
                             </button>
-                            <button onClick={handleDeleteCartel} className="bg-red-600/80 backdrop-blur-md rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-red-500 transition">
+                            <button onClick={handleDeleteCartel} className="bg-red-600/80 backdrop-blur-md rounded-xl px-3 py-2 text-white text-xs font-bold tracking-widest hover:bg-red-500 transition">
                                 {t('CARTELS_DELETE', 'Delete')}
                             </button>
                         </div>
                     )}
 
-                    {/* Avatar + info row */}
+                    {/* Avatar + info */}
                     <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
                             {cartel.image
@@ -426,7 +482,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                     <p className="text-white/70 text-sm font-medium leading-relaxed">{cartel.description || t('CARTELS_WELCOME_DESC', 'Welcome to the cartel.')}</p>
                 </div>
 
-                {/* Non-member lock message */}
+                {/* Non-member lock */}
                 {!isMember && (
                     <div className="px-4 py-6 text-center border-t border-white/5 mt-4">
                         <Icons.Lock className="w-8 h-8 text-white/20 mx-auto mb-3" />
@@ -434,11 +490,11 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                     </div>
                 )}
 
-                {/* "Decrypt" compose bar - opens its own modal */}
+                {/* Compose bar */}
                 {isMember && (
                     <div
                         className="mx-4 mt-4 mb-2 px-4 py-3 flex items-center gap-3 bg-[#111] border border-white/8 rounded-2xl cursor-pointer hover:bg-white/5 transition active:scale-[0.98]"
-                        onClick={() => setIsCreateOpen(true)}
+                        onClick={() => setIsCreatePostOpen(true)}
                     >
                         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
                             {user?.profilePic
@@ -448,13 +504,11 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                         <div className="text-gray-500 font-bold uppercase tracking-widest text-xs flex-1 text-left">
                             {t('DECRYPT_PH', 'Decrypt your thoughts...')}
                         </div>
-                        <div className="flex items-center gap-2 text-[var(--gold-primary)]">
-                            <Icons.Image className="w-5 h-5" />
-                        </div>
+                        <Icons.Image className="w-5 h-5 text-[var(--gold-primary)]" />
                     </div>
                 )}
 
-                {/* Posts feed */}
+                {/* Posts */}
                 {isMember && (
                     <div className="flex-1 pt-4">
                         {loading ? (
@@ -468,7 +522,13 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                         ) : (
                             <div className="flex flex-col py-2">
                                 {posts.map(post => (
-                                    <CartelPostCard key={post._id} post={post} user={user} />
+                                    <CartelPostCard
+                                        key={post._id}
+                                        post={post}
+                                        user={user}
+                                        onEdit={(p) => setEditingPost(p)}
+                                        onDelete={handleDeletePost}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -478,20 +538,33 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
 
             {/* Modals */}
             <AnimatePresence>
-                {isCreateOpen && (
-                    <CartelCreatePostModal
+                {isCreatePostOpen && (
+                    <CartelPostModal
+                        key="create"
                         cartel={cartel}
                         user={user}
                         t={t}
-                        onClose={() => setIsCreateOpen(false)}
-                        onPosted={(newPost) => setPosts(prev => [newPost, ...prev])}
+                        onClose={() => setIsCreatePostOpen(false)}
+                        onPosted={(p) => handlePostSaved(p, false)}
                     />
                 )}
-                {isEditOpen && (
+                {editingPost && (
+                    <CartelPostModal
+                        key="edit"
+                        cartel={cartel}
+                        user={user}
+                        t={t}
+                        editPost={editingPost}
+                        onClose={() => setEditingPost(null)}
+                        onPosted={(p) => handlePostSaved(p, true)}
+                    />
+                )}
+                {isEditCartelOpen && (
                     <EditCartelModal
+                        key="editCartel"
                         t={t}
                         cartel={cartel}
-                        onClose={() => setIsEditOpen(false)}
+                        onClose={() => setIsEditCartelOpen(false)}
                         onUpdated={() => { window.location.reload(); }}
                     />
                 )}
