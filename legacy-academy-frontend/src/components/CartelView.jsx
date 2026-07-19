@@ -290,15 +290,24 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                         </div>
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>
+                            {/* PREVIEW AREA */}
+                            {(imageFile || imageUrl) && (
+                                <div className="relative w-full h-40 sm:h-48 rounded-2xl overflow-hidden bg-black/50 border border-white/10 mb-2">
+                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="w-full h-full object-cover" />
+                                    <button type="button" onClick={() => { setImageFile(null); setImageUrl(''); }} className="absolute top-2 right-2 p-2 bg-black/80 rounded-full hover:bg-red-500 transition-colors">
+                                        <Icons.X className="w-4 h-4 text-white" />
+                                    </button>
+                                </div>
+                            )}
                             <div className="flex gap-2">
                                 <input type="file" accept="image/*" ref={fileInputRef} onChange={e => { if(e.target.files[0]) { setImageFile(e.target.files[0]); setImageUrl(''); } }} className="hidden" />
                                 <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-black/50 border border-white/10 rounded-2xl p-4 text-white hover:bg-white/5 text-sm flex justify-center items-center gap-2">
                                     <Icons.Image className="w-5 h-5" />
                                     {imageFile ? imageFile.name : t('CARTELS_UPLOAD_IMG', 'Upload Image')}
                                 </button>
-                                {imageFile && <button type="button" onClick={() => setImageFile(null)} className="p-4 bg-red-500/20 text-red-500 rounded-2xl hover:bg-red-500/40"><Icons.X className="w-5 h-5"/></button>}
+                                
                             </div>
-                            {!imageFile && (
+                            {!imageFile && !imageUrl && (
                                 <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-2" placeholder="Or paste image URL..." />
                             )}
                         </div>
