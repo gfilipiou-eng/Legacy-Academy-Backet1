@@ -10711,8 +10711,18 @@ const App = () => {
     const handleCreatePost = async (formData, previewUrl, isStory) => {
         const currentCartelId = createCartelId;
         if (currentCartelId) formData.append('cartelId', currentCartelId);
-        { setIsCreateOpen(false); setCreateCartelId(null); }; // Close immediately for zero-latency feel
+        setIsCreateOpen(false); setCreateCartelId(null); // Close immediately for zero-latency feel
 
+        // If this is a cartel post, do NOT add it to the main feed
+        if (currentCartelId) {
+            try {
+                await axios.post('/posts', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+            } catch (e) {
+                console.error('Cartel post upload failed', e);
+                alert(t('POST_FAILED') || 'Transmission Failed');
+            }
+            return;
+        }
 
         // 1. OPTIMISTIC UPDATE: Create a temporary "Uploading..." post/story
         const tempId = 'temp-' + Date.now();
@@ -10720,7 +10730,7 @@ const App = () => {
             _id: tempId,
             desc: formData.get('desc'),
             image: previewUrl, // Use local blob
-            videoUrl: formData.get('videoUrl') || "", // Explicitly add youtube URL tracking
+            videoUrl: formData.get('videoUrl') || '', // Explicitly add youtube URL tracking
             user: user,
             author: user,
             createdAt: new Date().toISOString(),
@@ -10733,7 +10743,7 @@ const App = () => {
             is18Plus: formData.get('is18Plus') === 'true'
         };
 
-        // Add to feed immediately
+        // Add to feed immediately (only for normal posts)
         setPosts(prev => [tempPost, ...prev]);
 
         // FORCE RENDER: Scroll to top if needed or trigger layout
@@ -12256,11 +12266,6 @@ const App = () => {
                             user={user} 
                             t={t} 
                             onBack={() => setSelectedCartel(null)} 
-                            onCreatePost={(cartelId) => {
-                                setCreateCartelId(cartelId);
-                                setIsCreateOpen(true);
-                            }}
-                            PostCard={PostCard}
                         />
                     )}
                     <CreateModal isOpen={isCreateOpen} onClose={() => { setIsCreateOpen(false); setCreateModeStory(false); }} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
