@@ -190,6 +190,36 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
 
 import { motion, AnimatePresence } from 'framer-motion';
 
+
+const CartelMessage = ({ post, user, allUsers, onViewProfile }) => {
+    const author = allUsers.find(u => u._id === post.userId) || post.userId || {};
+    const isMe = author._id === user._id;
+
+    return (
+        <div className={`flex w-full mb-6 ${isMe ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] sm:max-w-[70%] flex flex-col gap-1.5 ${isMe ? 'items-end' : 'items-start'}`}>
+                {!isMe && (
+                    <div className="flex items-center gap-2 px-2 cursor-pointer" onClick={() => onViewProfile(author)}>
+                        <img src={author.profilePic || 'https://via.placeholder.com/150'} className="w-7 h-7 rounded-full object-cover border border-white/20" />
+                        <span className="text-[11px] text-white/50 font-black tracking-widest uppercase">{author.username || 'Unknown'}</span>
+                    </div>
+                )}
+                <div className={`p-4 rounded-3xl shadow-xl ${isMe ? 'bg-[var(--gold-primary)] text-black rounded-tr-sm' : 'bg-[#1a1a1a] border border-white/5 text-white rounded-tl-sm'}`}>
+                    {post.imageUrl && (
+                        <img src={post.imageUrl} className="w-full max-h-72 object-cover rounded-2xl mb-3 border border-black/10" />
+                    )}
+                    {post.desc && (
+                        <p className="text-[15px] font-bold whitespace-pre-wrap leading-relaxed break-words">{post.desc}</p>
+                    )}
+                </div>
+                <div className="text-[10px] text-white/30 font-bold px-2">
+                    {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     const [name, setName] = useState(cartel.name || '');
     const [desc, setDesc] = useState(cartel.description || '');
