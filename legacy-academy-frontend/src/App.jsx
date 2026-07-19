@@ -6000,7 +6000,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
 
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
-                            { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels / Mafia') },
+                            { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
                             { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: onOpenBubbles, highlight: true },
@@ -10709,6 +10709,8 @@ const App = () => {
     };
 
     const handleCreatePost = async (formData, previewUrl, isStory) => {
+        const currentCartelId = createCartelId;
+        if (currentCartelId) formData.append('cartelId', currentCartelId);
         { setIsCreateOpen(false); setCreateCartelId(null); }; // Close immediately for zero-latency feel
 
 

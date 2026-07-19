@@ -32,7 +32,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
             <div className="px-4 py-4 flex justify-between items-center sticky top-0 bg-[var(--app-bg)] z-20 border-b border-white/5">
                 <h1 className="text-xl sm:text-2xl font-black text-white  tracking-widest">
                     <Icons.Users className="inline-block w-6 h-6 mr-2 text-[var(--gold-primary)]" />
-                    Mafia Cartels
+                    Cartels
                 </h1>
                 <button onClick={() => setIsCreateOpen(true)} className="bg-[var(--gold-primary)] text-black px-4 py-2 rounded-xl font-bold  tracking-wider text-xs shadow-lg hover:opacity-90 active:scale-95 transition-all">
                     Create
