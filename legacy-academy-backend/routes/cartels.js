@@ -3,13 +3,16 @@ import Cartel from "../models/Cartel.js";
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import { verifyToken } from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 // CREATE CARTEL
-router.post("/", verifyToken, async (req, res) => {
+router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
-        const { name, description, image, coverImage } = req.body;
+        const { name, description, coverImage } = req.body;
+        let image = req.body.image || "";
+        if (req.file) { image = req.file.path; }
         
         // Ensure name is unique
         const existing = await Cartel.findOne({ name });
@@ -52,6 +55,25 @@ router.get("/:id", verifyToken, async (req, res) => {
             .populate("creator", "username profilePic")
             .populate("members", "username profilePic role");
         res.status(200).json(cartel);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+
+// DELETE CARTEL
+router.delete("/:id", verifyToken, async (req, res) => {
+    try {
+        const cartel = await Cartel.findById(req.params.id);
+        if (!cartel) return res.status(404).json("Cartel not found");
+
+        if (cartel.creator.toString() !== req.user.id && req.user.role !== 'Founder') {
+            return res.status(403).json("You can only delete your own cartel");
+        }
+
+        await Post.deleteMany({ cartelId: cartel._id });
+        await cartel.deleteOne();
+        res.status(200).json("Cartel deleted successfully");
     } catch (err) {
         res.status(500).json(err);
     }

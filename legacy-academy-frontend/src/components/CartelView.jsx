@@ -7,6 +7,8 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
     const [loading, setLoading] = useState(true);
     const [isMember, setIsMember] = useState(false);
     const [memberCount, setMemberCount] = useState(0);
+    const isCreator = user && cartel.creator && (user._id === cartel.creator._id || user._id === cartel.creator);
+
 
     useEffect(() => {
         if (!cartel) return;
@@ -24,6 +26,19 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    
+    const handleDeleteCartel = async () => {
+        if (!window.confirm("Are you sure you want to completely delete this Cartel? All posts will be lost forever.")) return;
+        try {
+            await axios.delete(`/cartels/${cartel._id}`);
+            onBack(); // Go back to cartels list
+            window.location.reload(); // Quick refresh to clear it from list
+        } catch (err) {
+            console.error(err);
+            alert("Error deleting cartel");
         }
     };
 
@@ -55,6 +70,13 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                     <Icons.ArrowLeft className="w-5 h-5" />
                 </button>
                 
+                
+                        {isCreator && (
+                            <button onClick={handleDeleteCartel} className="absolute top-safe-4 right-4 z-10 bg-red-600/80 backdrop-blur-md rounded-xl px-3 py-2 flex items-center justify-center text-white text-xs font-bold tracking-widest hover:bg-red-500 transition">
+                                {t('CARTELS_DELETE', 'Delete')}
+                            </button>
+                        )}
+
                 <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
                         {cartel.image ? (

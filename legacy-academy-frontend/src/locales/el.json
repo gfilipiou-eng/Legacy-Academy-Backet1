@@ -667,5 +667,7 @@
   "CARTELS_SECURE_CHANNEL": "Κρυπτογραφημένο Κανάλι",
   "CARTELS_JOIN_TO_VIEW": "Μπες στο Cartel για να δεις υλικό",
   "CARTELS_NO_INTEL": "Δεν υπάρχει ακόμη υλικό.",
-  "CARTELS_FOUNDING": "Ίδρυση..."
+  "CARTELS_FOUNDING": "Ίδρυση...",
+  "CARTELS_UPLOAD_IMG": "Ανέβασμα Εικόνας",
+  "CARTELS_DELETE": "Διαγραφή"
 }
