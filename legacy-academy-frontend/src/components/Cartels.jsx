@@ -139,51 +139,61 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm sm:backdrop-blur-md">
-            <div className="absolute inset-0" onClick={onClose} />
+        <div className="fixed inset-0 z-[20000] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, y: 100 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: 100 }} 
-                className="relative w-full max-w-[420px] max-h-[90vh] sm:max-h-[88dvh] rounded-t-3xl sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-t sm:border border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] sm:shadow-2xl"
+                initial={{ scale: 0.95, y: 100 }} 
+                animate={{ scale: 1, y: 0 }} 
+                exit={{ scale: 0.95, y: 100 }}
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
             >
-                <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-center shrink-0 border-b border-white/5">
-                    <h2 className="text-xl font-black text-white tracking-widest">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
-                    <button onClick={onClose} className="p-2 -mr-2 text-white/50 hover:text-white rounded-full bg-white/5"><Icons.X className="w-5 h-5" /></button>
+                {/* Header matching CreateModal */}
+                <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                    <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
+                        {t('CANCEL', 'Cancel')}
+                    </button>
+                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
+                    <button type="button" disabled={loading} onClick={handleSubmit} className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-normal rounded-full shadow-md transition-all duration-200 whitespace-nowrap shrink-0">
+                        {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
+                    </button>
+                    <button type="button" onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
+                        <Icons.X className="w-5 h-5" />
+                    </button>
                 </div>
-                
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6 overscroll-y-contain custom-scrollbar">
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_NAME', 'Cartel Name')}</label>
-                            <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. The Syndicate" />
+
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 flex flex-col gap-4">
+                    <form onSubmit={handleSubmit} id="cartelForm" className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
+                            <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. The Syndicate" />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_DESC', 'Description')}</label>
-                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none resize-none min-h-[80px]" placeholder="What is this cartel about?" />
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_DESC', 'Description')}</label>
+                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none min-h-[100px] resize-none custom-scrollbar" placeholder="What is this cartel about?" />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>
-                            <div className="flex gap-2 mb-2">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>
+                            <div className="flex gap-2">
                                 <input type="file" accept="image/*" ref={fileInputRef} onChange={e => { if(e.target.files[0]) { setImageFile(e.target.files[0]); setImageUrl(''); } }} className="hidden" />
-                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 text-white hover:bg-white/10 text-sm flex justify-center items-center gap-2">
+                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-black/50 border border-white/10 rounded-2xl p-4 text-white hover:bg-white/5 text-sm flex justify-center items-center gap-2">
                                     <Icons.Image className="w-5 h-5" />
                                     {imageFile ? imageFile.name : t('CARTELS_UPLOAD_IMG', 'Upload Image')}
                                 </button>
-                                {imageFile && <button type="button" onClick={() => setImageFile(null)} className="p-3 bg-red-500/20 text-red-500 rounded-xl hover:bg-red-500/40"><Icons.X className="w-5 h-5"/></button>}
+                                {imageFile && <button type="button" onClick={() => setImageFile(null)} className="p-4 bg-red-500/20 text-red-500 rounded-2xl hover:bg-red-500/40"><Icons.X className="w-5 h-5"/></button>}
                             </div>
                             {!imageFile && (
-                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none text-sm" placeholder="Or paste image URL..." />
+                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-2" placeholder="Or paste image URL..." />
                             )}
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_PIN', 'Secret PIN (Optional)')}</label>
-                            <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Leave empty for public cartel..." />
-                            <p className="text-[10px] text-white/30 mt-1 uppercase tracking-widest">If set, users must enter this PIN to join.</p>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_PIN', 'Secret PIN (Optional)')}</label>
+                            <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Enter PIN..." />
                         </div>
-                        <div className="pt-2">
-                            <button disabled={loading} type="submit" className="w-full bg-[var(--gold-primary)] text-black font-black tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">
-                                {loading ? t('CARTELS_FOUNDING', 'Founding...') : t('CARTELS_ESTABLISH', 'Establish Cartel')}
+                        
+                        <div className="hidden sm:block mt-4">
+                            <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">
+                                {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
                             </button>
                         </div>
                     </form>
