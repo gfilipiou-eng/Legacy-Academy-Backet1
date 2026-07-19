@@ -52,6 +52,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -195,6 +196,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
             >
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
                     <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors">
@@ -242,8 +244,24 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_PIN', 'New Secret PIN (leave blank to keep current)')}</label>
-                            <input type="text" value={pin} onChange={e => setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Enter new PIN..." />
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
+                                {t('CARTELS_PIN', 'Secret PIN')}
+                                {cartel.isPrivate && (
+                                    <span className="px-2 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded-full text-amber-400 text-[9px] font-black tracking-widest">
+                                        ● PIN SET
+                                    </span>
+                                )}
+                            </label>
+                            <input
+                                type="text"
+                                value={pin}
+                                onChange={e => setPin(e.target.value)}
+                                className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none"
+                                placeholder={cartel.isPrivate ? 'Enter new PIN to change, or leave blank to keep' : 'Set a secret PIN...'}
+                            />
+                            {cartel.isPrivate && pin === '' && (
+                                <p className="text-[10px] text-amber-400/70 font-bold pl-1">⚠ Leave blank to keep existing PIN</p>
+                            )}
                         </div>
                         <div className="hidden sm:block mt-4">
                             <button disabled={loading} type="submit" form="editCartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">

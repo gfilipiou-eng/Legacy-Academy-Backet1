@@ -146,6 +146,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 animate={{ scale: 1, y: 0 }} 
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))' }}
             >
                 {/* Header matching CreateModal */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
