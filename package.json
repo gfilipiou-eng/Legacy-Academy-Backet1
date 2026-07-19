@@ -8,6 +8,8 @@
     "seed": "node scripts/seedPosts.js"
   },
   "dependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-react": "^7.29.7",
     "axios": "^1.13.4",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^1.41.3",

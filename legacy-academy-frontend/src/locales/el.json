@@ -651,5 +651,21 @@
   "RETIRED_PLAYER": "ΠΑΛΑΙΜΑΧΟΣ ΠΑΙΚΤΗΣ",
   "DECEASED_PLAYER": "ΕΚΛΙΠΩΝ ΠΑΙΚΤΗΣ",
   "FREE_AGENT": "Ελεύθερος Παίκτης",
-  "FORMULA_1": "Φόρμουλα 1"
+  "FORMULA_1": "Φόρμουλα 1",
+  "CARTELS": "ΚΑΡΤΕΛ / MAFIA",
+  "CARTELS_EXPLORE_TITLE": "ΟΛΑ ΤΑ ΚΑΡΤΕΛ",
+  "CARTELS_SEARCH_PH": "Αναζήτηση Καρτέλ...",
+  "CARTELS_NO_FOUND": "Δεν βρέθηκαν Καρτέλ",
+  "CARTELS_MEMBERS": "Μέλη",
+  "CARTELS_ESTABLISH": "ΙΔΡΥΣΗ ΚΑΡΤΕΛ",
+  "CARTELS_NAME": "Ονομα Καρτελ",
+  "CARTELS_DESC": "Περιγραφη",
+  "CARTELS_IMAGE": "Εικονα URL (Προαιρετικο)",
+  "CARTELS_JOIN": "ΕΙΣΟΔΟΣ",
+  "CARTELS_LEAVE": "ΕΞΟΔΟΣ",
+  "CARTELS_UPLOAD_INTEL": "ΑΝΕΒΑΣΕ ΥΛΙΚΟ",
+  "CARTELS_SECURE_CHANNEL": "Κρυπτογραφημενο Καναλι",
+  "CARTELS_JOIN_TO_VIEW": "Μπες στο Καρτελ για να δεις υλικο",
+  "CARTELS_NO_INTEL": "Δεν υπαρχει ακομη υλικο.",
+  "CARTELS_FOUNDING": "Ιδρυση..."
 }

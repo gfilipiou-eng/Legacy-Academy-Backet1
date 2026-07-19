@@ -68,11 +68,11 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                             {cartel.name}
                         </h1>
                         <p className="text-[var(--gold-primary)] font-bold text-sm tracking-wider uppercase drop-shadow-md">
-                            {memberCount} Members
+                            {memberCount} {t('CARTELS_MEMBERS', 'Members')}
                         </p>
                     </div>
                     <button onClick={handleJoin} className={`px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all ${isMember ? 'bg-white/10 text-white border border-white/20' : 'bg-[var(--gold-primary)] text-black shadow-lg hover:scale-105'}`}>
-                        {isMember ? 'Leave' : 'Join'}
+                        {isMember ? t('CARTELS_LEAVE', 'Leave') : t('CARTELS_JOIN', 'Join')}
                     </button>
                 </div>
             </div>
@@ -87,14 +87,14 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
                         <Icons.Upload className="w-10 h-10 text-red-600 mb-2 drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
-                        <span className="font-black uppercase tracking-[0.3em] text-white text-sm drop-shadow-md z-10">UPLOAD INTEL</span>
-                        <span className="text-red-500/70 text-[10px] uppercase tracking-widest font-bold z-10">Secure Encrypted Channel</span>
+                        <span className="font-black uppercase tracking-[0.3em] text-white text-sm drop-shadow-md z-10">{t('CARTELS_UPLOAD_INTEL', 'UPLOAD INTEL')}</span>
+                        <span className="text-red-500/70 text-[10px] uppercase tracking-widest font-bold z-10">{t('CARTELS_SECURE_CHANNEL', 'Secure Encrypted Channel')}</span>
                     </button>
                 </div>
             ) : (
                 <div className="px-4 py-6 text-center border-t border-white/5 mt-4">
                     <Icons.Lock className="w-8 h-8 text-white/20 mx-auto mb-3" />
-                    <p className="text-white/50 font-bold uppercase tracking-widest text-xs">Join cartel to view and post intel</p>
+                    <p className="text-white/50 font-bold uppercase tracking-widest text-xs">{t('CARTELS_JOIN_TO_VIEW', 'Join cartel to view and post intel')}</p>
                 </div>
             )}
 
@@ -104,7 +104,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                         <div className="flex justify-center py-10"><Icons.Loader className="w-8 h-8 text-[var(--gold-primary)] animate-spin" /></div>
                     ) : posts.length === 0 ? (
                         <div className="text-center py-10">
-                            <p className="text-white/40 font-bold uppercase tracking-widest text-xs">No intel posted yet.</p>
+                            <p className="text-white/40 font-bold uppercase tracking-widest text-xs">{t('CARTELS_NO_INTEL', 'No intel posted yet.')}</p>
                         </div>
                     ) : (
                         <div className="flex flex-col">
