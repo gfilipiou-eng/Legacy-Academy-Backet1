@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Αρκική",
   "SEARCH": "Γύρεμαν",
   "ALERTS": "Χαπάρκα",
@@ -651,5 +651,18 @@
   "RETIRED_PLAYER": "ΠΑΛΑΙΜΑΧΟΣ ΠΑΙΚΤΗΣ",
   "DECEASED_PLAYER": "ΕΚΛΙΠΩΝ ΠΑΙΚΤΗΣ",
   "FREE_AGENT": "Ελεύθερος Παίχτης",
-  "FORMULA_1": "Φόρμουλα 1"
+  "FORMULA_1": "Φόρμουλα 1",
+  "CARTELS_TITLE": "Y Cartels",
+  "CARTELS_SEARCH": "Chwilio am gartels...",
+  "CARTELS_ESTABLISH": "Sefydlu Cartel",
+  "CARTELS_SAVE": "Cadw",
+  "CARTELS_MEMBERS": "Aelodau",
+  "CARTELS_NO_FOUND": "Dim cartels wedi'u canfod",
+  "CARTELS_NAME": "Enw'r Cartel",
+  "CARTELS_DESC": "Disgrifiad",
+  "CARTELS_IMAGE": "Delwedd Clawr",
+  "EDIT_POST": "Golygu",
+  "DELETE": "Dileu",
+  "CREATE": "Creu",
+  "UPLOAD_TITLE": "Postio Intel"
 }

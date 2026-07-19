@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Αρχική",
   "SEARCH": "Αναζήτηση",
   "ALERTS": "Ειδοποιήσεις",
@@ -673,5 +673,19 @@
   "CARTELS_WELCOME_DESC": "Καλώς ήρθατε στο Cartel.",
   "CARTELS_PIN": "Μυστικό PIN (Προαιρετικό)",
   "CARTELS_ENTER_PIN": "Αυτό το Cartel είναι ιδιωτικό. Εισάγετε το PIN για να μπείτε:",
-  "CARTELS_EDIT": "Επεξεργασία"
+  "CARTELS_EDIT": "Επεξεργασία",
+  "CARTELS_TITLE": "Τα Καρτέλ",
+  "CARTELS_SEARCH": "Αναζήτηση καρτέλ...",
+  "CARTELS_ESTABLISH": "Ίδρυση Καρτέλ",
+  "CARTELS_SAVE": "Αποθήκευση",
+  "CARTELS_MEMBERS": "Μέλη",
+  "CARTELS_NO_FOUND": "Δεν βρέθηκαν καρτέλ",
+  "CARTELS_NAME": "Όνομα Καρτέλ",
+  "CARTELS_DESC": "Περιγραφή",
+  "CARTELS_IMAGE": "Εξώφυλλο",
+  "EDIT_POST": "Επεξεργασία",
+  "DELETE": "Διαγραφή",
+  "CREATE": "Δημιουργία",
+  "UPLOAD_TITLE": "Ανάρτηση Intel",
+  "CARTELS_SEARCH": "Αναζήτηση καρτέλ..."
 }

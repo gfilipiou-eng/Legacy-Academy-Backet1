@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Главная",
   "SEARCH": "Поиск",
   "ALERTS": "Оповещения",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "БЫВШИЙ ИГРОК",
   "DECEASED_PLAYER": "УМЕРШИЙ ИГРОК",
   "FREE_AGENT": "Свободный Агент",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Картели",
+  "CARTELS_SEARCH": "Поиск картелей...",
+  "CARTELS_ESTABLISH": "Основать Картель",
+  "CARTELS_SAVE": "Сохранить",
+  "CARTELS_MEMBERS": "Участники",
+  "CARTELS_NO_FOUND": "Картели не найдены",
+  "CARTELS_NAME": "Название Картеля",
+  "CARTELS_DESC": "Описание",
+  "CARTELS_IMAGE": "Обложка",
+  "EDIT_POST": "Редактировать",
+  "DELETE": "Удалить",
+  "CREATE": "Создать",
+  "UPLOAD_TITLE": "Опубликовать Интел"
 }

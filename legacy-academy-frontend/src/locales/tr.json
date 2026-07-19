@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Ana Sayfa",
   "SEARCH": "Ara",
   "ALERTS": "Uyarılar",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "EMEKLİ OYUNCU",
   "DECEASED_PLAYER": "VEFAT EDEN OYUNCU",
   "FREE_AGENT": "Serbest Oyuncu",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Karteller",
+  "CARTELS_SEARCH": "Kartel ara...",
+  "CARTELS_ESTABLISH": "Kartel Kur",
+  "CARTELS_SAVE": "Kaydet",
+  "CARTELS_MEMBERS": "Üyeler",
+  "CARTELS_NO_FOUND": "Kartel bulunamadı",
+  "CARTELS_NAME": "Kartel Adı",
+  "CARTELS_DESC": "Açıklama",
+  "CARTELS_IMAGE": "Kapak Resmi",
+  "EDIT_POST": "Düzenle",
+  "DELETE": "Sil",
+  "CREATE": "Oluştur",
+  "UPLOAD_TITLE": "Intel Paylaş"
 }

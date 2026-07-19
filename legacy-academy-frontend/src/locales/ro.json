@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Acasă",
   "SEARCH": "Căutare",
   "ALERTS": "Alerte",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "JUCĂTOR RETRAS",
   "DECEASED_PLAYER": "JUCĂTOR DECEDAT",
   "FREE_AGENT": "Agent Liber",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Cartelele",
+  "CARTELS_SEARCH": "Caută carteluri...",
+  "CARTELS_ESTABLISH": "Înfiinţează Cartelul",
+  "CARTELS_SAVE": "Salvează",
+  "CARTELS_MEMBERS": "Membri",
+  "CARTELS_NO_FOUND": "Nu s-au găsit carteluri",
+  "CARTELS_NAME": "Numele Cartelului",
+  "CARTELS_DESC": "Descriere",
+  "CARTELS_IMAGE": "Imagine copertă",
+  "EDIT_POST": "Editează",
+  "DELETE": "Șterge",
+  "CREATE": "Creează",
+  "UPLOAD_TITLE": "Postează Intel"
 }

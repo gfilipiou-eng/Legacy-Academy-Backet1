@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Accueil",
   "SEARCH": "Rechercher",
   "ALERTS": "Alertes",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "JOUEUR RETRAITÉ",
   "DECEASED_PLAYER": "JOUEUR DÉCÉDÉ",
   "FREE_AGENT": "Agent Libre",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Les Cartels",
+  "CARTELS_SEARCH": "Rechercher des cartels...",
+  "CARTELS_ESTABLISH": "Fonder le Cartel",
+  "CARTELS_SAVE": "Enregistrer",
+  "CARTELS_MEMBERS": "Membres",
+  "CARTELS_NO_FOUND": "Aucun cartel trouvé",
+  "CARTELS_NAME": "Nom du Cartel",
+  "CARTELS_DESC": "Description",
+  "CARTELS_IMAGE": "Image de couverture",
+  "EDIT_POST": "Modifier",
+  "DELETE": "Supprimer",
+  "CREATE": "Créer",
+  "UPLOAD_TITLE": "Publier Intel"
 }

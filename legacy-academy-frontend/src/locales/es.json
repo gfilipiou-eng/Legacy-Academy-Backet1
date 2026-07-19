@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Inicio",
   "SEARCH": "Buscar",
   "ALERTS": "Alertas",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "JUGADOR RETIRADO",
   "DECEASED_PLAYER": "JUGADOR FALLECIDO",
   "FREE_AGENT": "Agente Libre",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Los Cárteles",
+  "CARTELS_SEARCH": "Buscar cárteles...",
+  "CARTELS_ESTABLISH": "Fundar Cártel",
+  "CARTELS_SAVE": "Guardar",
+  "CARTELS_MEMBERS": "Miembros",
+  "CARTELS_NO_FOUND": "No se encontraron cárteles",
+  "CARTELS_NAME": "Nombre del Cártel",
+  "CARTELS_DESC": "Descripción",
+  "CARTELS_IMAGE": "Imagen de portada",
+  "EDIT_POST": "Editar",
+  "DELETE": "Eliminar",
+  "CREATE": "Crear",
+  "UPLOAD_TITLE": "Publicar Intel"
 }

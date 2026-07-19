@@ -60,7 +60,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                         {t('CANCEL', 'Cancel')}
                     </button>
                     <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">
-                        {isEdit ? t('EDIT_POST', 'Edit Intel') : t('UPLOAD_TITLE', 'Post Intel')}
+                        {isEdit ? t('EDIT_POST', 'Edit') : t('UPLOAD_TITLE', 'Post Intel')}
                     </h2>
                     <button
                         disabled={isSubmitting}
@@ -349,14 +349,14 @@ const CartelPostCard = ({ post, user, onEdit, onDelete }) => {
                                             className="flex items-center gap-2 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition font-bold"
                                         >
                                             <Icons.Edit className="w-4 h-4 text-[var(--gold-primary)]" />
-                                            Edit Intel
+                                            {t('EDIT_POST', 'Edit')}
                                         </button>
                                         <button
                                             onClick={() => { setShowMenu(false); onDelete(post._id); }}
                                             className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition font-bold"
                                         >
                                             <Icons.Trash className="w-4 h-4" />
-                                            Burn
+                                            {t('DELETE', 'Delete')}
                                         </button>
                                     </div>
                                 )}

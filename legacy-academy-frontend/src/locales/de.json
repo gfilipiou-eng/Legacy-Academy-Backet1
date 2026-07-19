@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Start",
   "SEARCH": "Suche",
   "ALERTS": "Alarme",
@@ -639,5 +639,18 @@
   "RETIRED_PLAYER": "EHEMALIGER SPIELER",
   "DECEASED_PLAYER": "VERSTORBENER SPIELER",
   "FREE_AGENT": "Freier Agent",
-  "FORMULA_1": "Formula 1"
+  "FORMULA_1": "Formula 1",
+  "CARTELS_TITLE": "Die Kartelle",
+  "CARTELS_SEARCH": "Kartelle suchen...",
+  "CARTELS_ESTABLISH": "Kartell gründen",
+  "CARTELS_SAVE": "Speichern",
+  "CARTELS_MEMBERS": "Mitglieder",
+  "CARTELS_NO_FOUND": "Keine Kartelle gefunden",
+  "CARTELS_NAME": "Kartellname",
+  "CARTELS_DESC": "Beschreibung",
+  "CARTELS_IMAGE": "Titelbild",
+  "EDIT_POST": "Bearbeiten",
+  "DELETE": "Löschen",
+  "CREATE": "Erstellen",
+  "UPLOAD_TITLE": "Intel posten"
 }

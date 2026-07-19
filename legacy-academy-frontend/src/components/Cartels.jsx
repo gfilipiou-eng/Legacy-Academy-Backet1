@@ -33,12 +33,12 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="w-full h-full flex flex-col relative z-10 pt-safe mt-[80px] sm:mt-0">
             <div className="px-4 py-4 flex justify-between items-center sticky top-0 bg-[var(--app-bg)] z-20 border-b border-white/5">
-                <h1 className="text-xl sm:text-2xl font-black text-white  tracking-widest">
-                    <Icons.Users className="inline-block w-6 h-6 mr-2 text-[var(--gold-primary)]" />
-                    Cartels
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-widest flex items-center gap-2">
+                    <span className="text-[var(--gold-primary)] text-2xl">◆</span>
+                    {t('CARTELS_TITLE', 'The Cartels')}
                 </h1>
-                <button onClick={() => setIsCreateOpen(true)} className="bg-[var(--gold-primary)] text-black px-4 py-2 rounded-xl font-bold  tracking-wider text-xs shadow-lg hover:opacity-90 active:scale-95 transition-all">
-                    Create
+                <button onClick={() => setIsCreateOpen(true)} className="bg-[var(--gold-primary)] text-black px-4 py-2 rounded-xl font-bold tracking-wider text-xs shadow-lg hover:opacity-90 active:scale-95 transition-all">
+                    {t('CREATE', 'Create')}
                 </button>
             </div>
 
@@ -47,7 +47,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                     <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
                     <input
                         type="text"
-                        placeholder="Search cartels..."
+                        placeholder={t('CARTELS_SEARCH', 'Search cartels...')}
                         className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-white/40 focus:outline-none focus:border-[var(--gold-primary)] transition-colors"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -86,13 +86,15 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                 )}
             </div>
 
-            {/* MAFIA STYLE FLOATING ADD GROUP BUTTON */}
             <button 
                 onClick={() => setIsCreateOpen(true)} 
-                className="fixed bottom-[calc(90px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 shadow-2xl flex items-center justify-center text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300 ease-out group"
+                className="fixed bottom-[calc(90px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 ease-out"
+                style={{ background: 'linear-gradient(135deg, var(--gold-primary), #b8860b)', boxShadow: '0 0 30px rgba(212,175,55,0.4)' }}
             >
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 rounded-full pointer-events-none"></div>
-                <Icons.Gun className="w-7 h-7 sm:w-8 sm:h-8 text-white z-10" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 text-black">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
             </button>
 
             <AnimatePresence>
