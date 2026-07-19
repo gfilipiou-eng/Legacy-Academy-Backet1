@@ -82,7 +82,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="relative z-10 flex-1 flex flex-col">
-            <div className="relative w-full h-32 sm:h-64 bg-black shrink-0">
+            <div className="relative w-full h-48 sm:h-64 bg-black shrink-0">
                 {cartel.coverImage ? (
                     <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
                 ) : (
@@ -109,7 +109,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
 
 
                 <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
-                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
                         {cartel.image ? (
                             <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover object-center bg-black" />
                         ) : (
@@ -217,13 +217,13 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center p-3 sm:p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+        <div className="fixed inset-0 z-[20000] flex items-center justify-center sm:p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-md hidden sm:block" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                exit={{ opacity: 0, scale: 0.95 }} 
-                className="relative w-full max-w-[420px] max-h-[88dvh] rounded-[24px] sm:rounded-3xl overflow-hidden flex flex-col bg-[#111] border border-white/10 shadow-2xl"
+                initial={{ opacity: 0, y: 50 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: 50 }} 
+                className="relative w-full h-[100dvh] sm:h-auto sm:max-w-[420px] sm:max-h-[88dvh] rounded-none sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl"
             >
                 <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-center shrink-0 border-b border-white/5">
                     <h2 className="text-xl font-black text-white tracking-widest">{t('CARTELS_EDIT', 'Edit Cartel')}</h2>
@@ -238,7 +238,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_DESC', 'Description')}</label>
-                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none resize-none h-24" />
+                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none resize-none min-h-[80px]" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>

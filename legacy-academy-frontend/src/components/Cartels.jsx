@@ -139,13 +139,13 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[20000] flex items-center justify-center p-3 sm:p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
+        <div className="fixed inset-0 z-[20000] flex items-center justify-center sm:p-4">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-md hidden sm:block" onClick={onClose} />
             <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                exit={{ opacity: 0, scale: 0.95 }} 
-                className="relative w-full max-w-[420px] max-h-[88dvh] rounded-[24px] sm:rounded-3xl overflow-hidden flex flex-col bg-[#111] border border-white/10 shadow-2xl"
+                initial={{ opacity: 0, y: 50 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: 50 }} 
+                className="relative w-full h-[100dvh] sm:h-auto sm:max-w-[420px] sm:max-h-[88dvh] rounded-none sm:rounded-3xl overflow-hidden flex flex-col bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl"
             >
                 <div className="p-4 sm:p-6 pb-2 sm:pb-4 flex justify-between items-center shrink-0 border-b border-white/5">
                     <h2 className="text-xl font-black text-white tracking-widest">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
@@ -160,7 +160,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_DESC', 'Description')}</label>
-                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none resize-none h-24" placeholder="What is this cartel about?" />
+                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none resize-none min-h-[80px]" placeholder="What is this cartel about?" />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>
