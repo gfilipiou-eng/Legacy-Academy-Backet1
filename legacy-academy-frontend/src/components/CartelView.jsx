@@ -254,6 +254,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                     </button>
                 </form>
             </motion.div>
+            </div>
         </div>
     );
 };

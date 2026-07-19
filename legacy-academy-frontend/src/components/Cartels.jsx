@@ -178,6 +178,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                     </button>
                 </form>
             </motion.div>
+            </div>
         </div>
     );
 };
