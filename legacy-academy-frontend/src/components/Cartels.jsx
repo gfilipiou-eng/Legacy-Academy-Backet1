@@ -139,79 +139,82 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
+        <div className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
-                initial={{ scale: 0.95, y: 100 }} 
-                animate={{ scale: 1, y: 0 }} 
-                exit={{ scale: 0.95, y: 100 }}
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
+                initial={{ y: '100%' }} 
+                animate={{ y: 0 }} 
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                className="relative w-full sm:max-w-md bg-[#0f0f0f] border-t border-white/10 sm:border sm:rounded-3xl rounded-t-3xl flex flex-col overflow-hidden shadow-2xl"
+                style={{
+                    maxHeight: 'min(85dvh, 700px)',
+                    paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))',
+                    paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom, 0px))'
+                }}
             >
-                {/* Header matching CreateModal */}
-                <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
-                    <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
+                {/* Drag handle indicator */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-white/20 sm:hidden" />
+
+                {/* Header */}
+                <div className="flex-none flex items-center justify-between px-5 pb-3 border-b border-white/5 mb-2">
+                    <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors">
                         {t('CANCEL', 'Cancel')}
                     </button>
-                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
-                    <button type="button" disabled={loading} onClick={handleSubmit} className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-normal rounded-full shadow-md transition-all duration-200 whitespace-nowrap shrink-0">
-                        {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
+                    <h2 className="text-base sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
+                    <button type="button" disabled={loading} onClick={handleSubmit} className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-normal rounded-full shadow-md transition-all whitespace-nowrap shrink-0">
+                        {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish')}
                     </button>
-                    <button type="button" onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors duration-200">
+                    <button type="button" onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors">
                         <Icons.X className="w-5 h-5" />
                     </button>
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-28 sm:pb-4 flex flex-col gap-4">
-                    <form onSubmit={handleSubmit} id="cartelForm" className="flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto px-5 pb-4 flex flex-col gap-4 min-h-0">
+                    <form onSubmit={handleSubmit} id="cartelForm" className="flex flex-col gap-4 pt-2">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
                             <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. The Syndicate" />
                         </div>
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_DESC', 'Description')}</label>
-                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none min-h-[100px] resize-none custom-scrollbar" placeholder="What is this cartel about?" />
+                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none min-h-[80px] resize-none custom-scrollbar" placeholder="What is this cartel about?" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Image (Upload or URL)')}</label>
-                            {/* PREVIEW AREA */}
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Cover Image')}</label>
                             {(imageFile || imageUrl) && (
-                                <div className="relative w-full h-40 sm:h-48 rounded-2xl overflow-hidden bg-black/50 border border-white/10 mb-2">
-                                    
+                                <div className="relative w-full rounded-2xl overflow-hidden bg-black border border-white/10 mb-1">
                                     <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-md" />
-                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="relative z-10 w-full h-full object-contain" />
-    
-                                    <button type="button" onClick={() => { setImageFile(null); setImageUrl(''); }} className="absolute top-2 right-2 p-2 bg-black/80 rounded-full hover:bg-red-500 transition-colors">
+                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="relative z-10 w-full max-h-40 object-contain" />
+                                    <button type="button" onClick={() => { setImageFile(null); setImageUrl(''); }} className="absolute top-2 right-2 z-20 p-2 bg-black/80 rounded-full hover:bg-red-500 transition-colors">
                                         <Icons.X className="w-4 h-4 text-white" />
                                     </button>
                                 </div>
                             )}
                             <div className="flex gap-2">
                                 <input type="file" accept="image/*" ref={fileInputRef} onChange={e => { if(e.target.files[0]) { setImageFile(e.target.files[0]); setImageUrl(''); } }} className="hidden" />
-                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-black/50 border border-white/10 rounded-2xl p-4 text-white hover:bg-white/5 text-sm flex justify-center items-center gap-2">
-                                    <Icons.Image className="w-5 h-5" />
+                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-black/50 border border-dashed border-white/20 rounded-2xl p-3.5 text-white hover:border-[var(--gold-primary)] transition-all text-sm flex justify-center items-center gap-2 font-bold">
+                                    <Icons.Image className="w-5 h-5 text-[var(--gold-primary)]" />
                                     {imageFile ? imageFile.name : t('CARTELS_UPLOAD_IMG', 'Upload Image')}
                                 </button>
-                                
                             </div>
                             {!imageFile && !imageUrl && (
-                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-2" placeholder="Or paste image URL..." />
+                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Or paste image URL..." />
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_PIN', 'Secret PIN (Optional)')}</label>
-                            <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Enter PIN..." />
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_PIN', 'Secret Access Code (Optional)')}</label>
+                            <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. 1234" />
+                            <p className="text-[10px] text-white/25 font-bold pl-1">Leave blank for open access.</p>
                         </div>
-                        
-                        <div className="mt-4">
-                            <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50">
-                                {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
-                            </button>
-                        </div>
+                        <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50 mt-2">
+                            {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}
+                        </button>
                     </form>
                 </div>
             </motion.div>
         </div>
     );
 };
+
