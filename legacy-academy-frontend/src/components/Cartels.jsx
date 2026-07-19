@@ -28,7 +28,8 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
     const filtered = cartels.filter(c => (c.name || '').toLowerCase().includes(search.toLowerCase()));
 
     return (
-        <div className="fixed inset-0 pointer-events-none opacity-20 z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+        <>
+            <div className="fixed inset-0 pointer-events-none opacity-20 z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="w-full h-full flex flex-col relative z-10 pt-safe mt-[80px] sm:mt-0">
             <div className="px-4 py-4 flex justify-between items-center sticky top-0 bg-[var(--app-bg)] z-20 border-b border-white/5">
@@ -100,6 +101,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                 )}
             </AnimatePresence>
         </div>
+        </>
     );
 };
 
