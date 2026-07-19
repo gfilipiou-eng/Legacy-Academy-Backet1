@@ -293,7 +293,10 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                             {/* PREVIEW AREA */}
                             {(imageFile || imageUrl) && (
                                 <div className="relative w-full h-40 sm:h-48 rounded-2xl overflow-hidden bg-black/50 border border-white/10 mb-2">
-                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="w-full h-full object-cover" />
+                                    
+                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-md" />
+                                    <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="relative z-10 w-full h-full object-contain" />
+    
                                     <button type="button" onClick={() => { setImageFile(null); setImageUrl(''); }} className="absolute top-2 right-2 p-2 bg-black/80 rounded-full hover:bg-red-500 transition-colors">
                                         <Icons.X className="w-4 h-4 text-white" />
                                     </button>
