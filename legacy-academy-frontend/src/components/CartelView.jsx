@@ -82,7 +82,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
             <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="relative z-10 flex-1 flex flex-col">
-            <div className="relative w-full h-48 sm:h-64 bg-black">
+            <div className="relative w-full h-32 sm:h-64 bg-black shrink-0">
                 {cartel.coverImage ? (
                     <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
                 ) : (
@@ -109,15 +109,15 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
 
 
                 <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
                         {cartel.image ? (
-                            <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover" />
+                            <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover object-center bg-black" />
                         ) : (
                             <Icons.Users className="w-10 h-10 m-5 text-[var(--gold-primary)]" />
                         )}
                     </div>
                     <div className="flex-1 min-w-0 pb-1">
-                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-widest truncate shadow-black drop-shadow-md flex items-center gap-2">
+                        <h1 className="text-xl sm:text-3xl font-black text-white tracking-widest truncate shadow-black drop-shadow-md flex items-center gap-2">
                             {cartel.name}
                             {cartel.isPrivate && <Icons.Lock className="w-5 h-5 text-red-500" />}
                         </h1>
@@ -125,7 +125,7 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                             {memberCount} {t('CARTELS_MEMBERS', 'Members')}
                         </p>
                     </div>
-                    <button onClick={handleJoin} className={`px-6 py-2.5 rounded-xl font-black  tracking-widest text-xs transition-all ${isMember ? 'bg-white/10 text-white border border-white/20' : 'bg-[var(--gold-primary)] text-black shadow-lg hover:scale-105'}`}>
+                    <button onClick={handleJoin} className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-black tracking-widest text-xs transition-all ${isMember ? 'bg-white/10 text-white border border-white/20' : 'bg-[var(--gold-primary)] text-black shadow-lg hover:scale-105'}`}>
                         {isMember ? t('CARTELS_LEAVE', 'Leave') : t('CARTELS_JOIN', 'Join')}
                     </button>
                 </div>

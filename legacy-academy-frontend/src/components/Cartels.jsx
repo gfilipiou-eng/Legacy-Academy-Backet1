@@ -67,7 +67,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-xl bg-black/50 overflow-hidden shrink-0 border border-white/10 group-hover:border-[var(--gold-primary)] transition-colors">
                                         {cartel.image ? (
-                                            <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover" />
+                                            <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover object-center bg-black" />
                                         ) : (
                                             <Icons.Users className="w-8 h-8 m-4 text-white/20" />
                                         )}
