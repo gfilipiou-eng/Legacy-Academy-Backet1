@@ -670,5 +670,7 @@
   "CARTELS_FOUNDING": "Ίδρυση...",
   "CARTELS_UPLOAD_IMG": "Ανέβασμα Εικόνας",
   "CARTELS_DELETE": "Διαγραφή",
-  "CARTELS_WELCOME_DESC": "Καλώς ήρθατε στο Cartel."
+  "CARTELS_WELCOME_DESC": "Καλώς ήρθατε στο Cartel.",
+  "CARTELS_PIN": "Μυστικό PIN (Προαιρετικό)",
+  "CARTELS_ENTER_PIN": "Αυτό το Cartel είναι ιδιωτικό. Εισάγετε το PIN για να μπείτε:"
 }

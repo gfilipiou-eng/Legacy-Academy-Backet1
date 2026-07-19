@@ -7,7 +7,8 @@ const CartelSchema = new mongoose.Schema({
   coverImage: { type: String, default: "" },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  isPrivate: { type: Boolean, default: false } // Allows for private vs public cartels in the future
+  isPrivate: { type: Boolean, default: false },
+  pin: { type: String, default: "" } // Allows for private vs public cartels in the future
 }, { timestamps: true });
 
 export default mongoose.model("Cartel", CartelSchema);

@@ -43,17 +43,35 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
     };
 
     const handleJoin = async () => {
+        let enteredPin = "";
+        // If joining and cartel is private, ask for PIN
+        if (!isMember && cartel.isPrivate) {
+            enteredPin = prompt(t('CARTELS_ENTER_PIN', 'This cartel is private. Please enter the PIN to join:'));
+            if (enteredPin === null) return; // User cancelled
+        }
+
         const previousIsMember = isMember;
-        setIsMember(!isMember);
-        setMemberCount(prev => !isMember ? prev + 1 : prev - 1);
-        
+        // Only optimistic update if LEAVING or if PUBLIC joining.
+        // For private joining, wait for server response to verify PIN.
+        if (isMember || !cartel.isPrivate) {
+            setIsMember(!isMember);
+            setMemberCount(prev => !isMember ? prev + 1 : prev - 1);
+        }
+
         try {
-            await axios.post(`/cartels/${cartel._id}/join`);
+            await axios.post(`/cartels/${cartel._id}/join`, { pin: enteredPin });
+            if (!isMember && cartel.isPrivate) {
+                // If it was private, update state after success
+                setIsMember(true);
+                setMemberCount(prev => prev + 1);
+            }
         } catch (err) {
             console.error(err);
-            setIsMember(previousIsMember);
-            setMemberCount(prev => previousIsMember ? prev + 1 : prev - 1);
-            alert("Error joining/leaving cartel");
+            if (isMember || !cartel.isPrivate) {
+                setIsMember(previousIsMember);
+                setMemberCount(prev => previousIsMember ? prev + 1 : prev - 1);
+            }
+            alert(err.response?.data || "Error joining/leaving cartel");
         }
     };
 
@@ -91,8 +109,9 @@ export const CartelView = ({ cartel, user, onBack, t, onCreatePost, PostCard }) 
                         )}
                     </div>
                     <div className="flex-1 min-w-0 pb-1">
-                        <h1 className="text-2xl sm:text-3xl font-black text-white  tracking-widest truncate shadow-black drop-shadow-md">
+                        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-widest truncate shadow-black drop-shadow-md flex items-center gap-2">
                             {cartel.name}
+                            {cartel.isPrivate && <Icons.Lock className="w-5 h-5 text-red-500" />}
                         </h1>
                         <p className="text-[var(--gold-primary)] font-bold text-sm tracking-wider  drop-shadow-md">
                             {memberCount} {t('CARTELS_MEMBERS', 'Members')}

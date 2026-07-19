@@ -110,6 +110,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     const [desc, setDesc] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
+    const [pin, setPin] = useState('');
     const [loading, setLoading] = useState(false);
     const fileInputRef = React.useRef(null);
 
@@ -121,6 +122,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
             const formData = new FormData();
             formData.append('name', name);
             formData.append('description', desc);
+            if (pin.trim()) formData.append('pin', pin);
             if (imageFile) {
                 formData.append('image', imageFile);
             } else if (imageUrl) {
@@ -164,6 +166,12 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                         {!imageFile && (
                             <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none text-sm" placeholder="Or paste image URL..." />
                         )}
+                    </div>
+                    
+                    <div>
+                        <label className="block text-xs font-bold text-white/50 tracking-widest mb-2">{t('CARTELS_PIN', 'Secret PIN (Optional)')}</label>
+                        <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Leave empty for public cartel..." />
+                        <p className="text-[10px] text-white/30 mt-1 uppercase tracking-widest">If set, users must enter this PIN to join.</p>
                     </div>
                     <button disabled={loading} type="submit" className="w-full bg-[var(--gold-primary)] text-black font-black tracking-widest py-4 rounded-xl mt-4 active:scale-95 transition-transform disabled:opacity-50">
                         {loading ? t('CARTELS_FOUNDING', 'Founding...') : t('CARTELS_ESTABLISH', 'Establish Cartel')}

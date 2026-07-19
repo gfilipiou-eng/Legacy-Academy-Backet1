@@ -10,7 +10,7 @@ const router = express.Router();
 // CREATE CARTEL
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     try {
-        const { name, description, coverImage } = req.body;
+        const { name, description, coverImage, pin } = req.body;
         let image = req.body.image || "";
         if (req.file) { image = req.file.path; }
         
@@ -25,6 +25,8 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
             description,
             image,
             coverImage,
+            pin: pin || "",
+            isPrivate: !!pin,
             creator: req.user.id,
             members: [req.user.id] // Creator joins automatically
         });
@@ -39,7 +41,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 // GET ALL CARTELS (EXPLORE)
 router.get("/", verifyToken, async (req, res) => {
     try {
-        const cartels = await Cartel.find()
+        const cartels = await Cartel.find().select("-pin")
             .populate("creator", "username profilePic")
             .sort({ createdAt: -1 });
         res.status(200).json(cartels);
@@ -51,7 +53,7 @@ router.get("/", verifyToken, async (req, res) => {
 // GET A CARTEL
 router.get("/:id", verifyToken, async (req, res) => {
     try {
-        const cartel = await Cartel.findById(req.params.id)
+        const cartel = await Cartel.findById(req.params.id).select("-pin")
             .populate("creator", "username profilePic")
             .populate("members", "username profilePic role");
         res.status(200).json(cartel);
@@ -88,6 +90,22 @@ router.post("/:id/join", verifyToken, async (req, res) => {
         if (cartel.members.includes(req.user.id)) {
             // Leave
             await cartel.updateOne({ $pull: { members: req.user.id } });
+            res.status(200).json("Left cartel");
+        } else {
+            // Join
+            const { pin } = req.body;
+            if (cartel.isPrivate && cartel.pin) {
+                if (cartel.pin !== pin) {
+                    return res.status(403).json("Invalid PIN. Access denied.");
+                }
+            }
+            await cartel.updateOne({ $push: { members: req.user.id } });
+            res.status(200).json("Joined cartel");
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
             res.status(200).json("Left cartel");
         } else {
             // Join
