@@ -11287,15 +11287,15 @@ const App = () => {
                                                 try {
                                                     const res = await axios.post('/auth/login', { email: formData.email.trim().toLowerCase(), password: formData.password });
                                                     try {
-        setSafeToken(res.data.token);
-    } catch(e) {
-        if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
-              try {
-                  clearLargeCaches();
-                  setSafeToken(res.data.token);
-              } catch(err) {}
-          }
-    }
+                                                        setSafeToken(res.data.token);
+                                                    } catch(e) {
+                                                        if (e.name === 'QuotaExceededError' || e.message?.toLowerCase()?.includes('quota')) {
+                                                              try {
+                                                                  clearLargeCaches();
+                                                                  setSafeToken(res.data.token);
+                                                              } catch(err) {}
+                                                          }
+                                                    }
                                                     commitAuthenticatedUser(res.data.user);
                                                 } catch (e) {
                                                     if (e.response) {
@@ -11305,8 +11305,8 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-[#D4AF37] via-[#C5A017] to-[#AA771C] text-black shadow-[0_4px_20px_rgba(212,175,55,0.3)] border border-[#FBF5B7]/30 cursor-pointer">
-                                                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-[var(--gold-primary)] text-black border-none cursor-pointer">
+
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
                                                         <Icons.Loader />
