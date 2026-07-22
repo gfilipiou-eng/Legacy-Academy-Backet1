@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import axios from '../api';
 import { Icons } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -140,7 +141,8 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
         }
     };
 
-    return (
+    return ReactDOM.createPortal(
+      (
         <div className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-xl" onClick={onClose} />
             <motion.div 
@@ -217,6 +219,8 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 </div>
             </motion.div>
         </div>
+      ), document.body
     );
 };
+
 

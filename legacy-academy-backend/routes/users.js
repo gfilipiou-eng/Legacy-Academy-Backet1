@@ -232,6 +232,7 @@ router.get("/public/posts/:username", async (req, res) => {
 
         const posts = await Post.find({
             isStory: { $ne: true },
+            cartelId: null,
             $or: [
                 { author: user._id },
                 { repostedBy: user._id }

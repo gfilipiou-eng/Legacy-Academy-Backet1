@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import axios from '../api';
 import { Icons } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,7 +45,8 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
         }
     };
 
-    return (
+    return ReactDOM.createPortal(
+      (
         <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div
@@ -149,6 +151,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                 </div>
             </motion.div>
         </div>
+      ), document.body
     );
 };
 
@@ -188,7 +191,8 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
 
     const previewSrc = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
 
-    return (
+    return ReactDOM.createPortal(
+      (
         <div className="fixed inset-0 z-[99999] flex items-stretch sm:items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose} />
             <motion.div
@@ -253,11 +257,11 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                                 )}
                             </label>
                             <input
-                                type="text"
+                                type={cartel.isPrivate && pin === '' ? "password" : "text"}
                                 value={pin}
                                 onChange={e => setPin(e.target.value)}
                                 className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none"
-                                placeholder={cartel.isPrivate ? 'Enter new PIN to change, or leave blank to keep' : 'Set a secret PIN...'}
+                                placeholder={cartel.isPrivate ? '•••••••• (Type to change PIN)' : 'Set a secret PIN...'}
                             />
                             {cartel.isPrivate && pin === '' && (
                                 <p className="text-[10px] text-amber-400/70 font-bold pl-1">⚠ Leave blank to keep existing PIN</p>
@@ -272,6 +276,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                 </div>
             </motion.div>
         </div>
+      ), document.body
     );
 };
 
