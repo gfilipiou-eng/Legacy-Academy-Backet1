@@ -941,10 +941,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const [imgError, setImgError] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
 
-    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
-
-    const rawUrl = user.profilePic || user.fromProfilePic;
-    const name = user.username || user.fromUsername;
+    const rawUrl = user && typeof user === 'object' ? (user.profilePic || user.fromProfilePic) : null;
+    const name = user && typeof user === 'object' ? (user.username || user.fromUsername) : null;
 
     // Reset error state if url or cache key changes, or when app becomes visible again
     useEffect(() => { 
@@ -958,6 +956,8 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             window.removeEventListener('online', handleVisibility);
         };
     }, [String(rawUrl || ''), cacheKey]);
+
+    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
 
     const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
     const flatMediaUrl = mediaUrl;
