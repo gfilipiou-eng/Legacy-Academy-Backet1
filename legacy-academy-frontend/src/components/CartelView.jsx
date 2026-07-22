@@ -443,7 +443,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
     };
 
     const handleDeletePost = async (postId) => {
-        if (!window.confirm('Delete this intel permanently?')) return;
+        // removed confirmation prompt
         try {
             await axios.delete(`/posts/${postId}`);
             setPosts(prev => prev.filter(p => p._id !== postId));
