@@ -11305,7 +11305,7 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 live-gold-button hover:bg-[#F1C40F] text-[#0a0a0a] shadow-none cursor-pointer border-none">
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-[#D4AF37] via-[#C5A017] to-[#AA771C] text-black shadow-[0_4px_20px_rgba(212,175,55,0.3)] border border-[#FBF5B7]/30 cursor-pointer">
                                                 <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
@@ -11569,7 +11569,7 @@ const App = () => {
                                 </div>
                                 
                                 {/* CTA Button - Gold Gradient */}
-                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 live-gold-button font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0 cursor-pointer">
+                                <button onClick={() => window.location.href = "https://buy.stripe.com/aFaaEX81B2Fs1gI36Y6Na07"} className="w-full py-3 sm:py-4 bg-[var(--gold-primary)] text-black shadow-none border-none font-black uppercase tracking-[0.3em] rounded-[18px] active:scale-95 transition-all duration-300 mb-3 sm:mb-6 text-[10px] sm:text-[12px] relative overflow-hidden group shrink-0 cursor-pointer">
                                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                     <span className="relative">Unlock Access</span>
                                 </button>
