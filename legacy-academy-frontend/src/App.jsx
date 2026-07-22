@@ -11305,7 +11305,7 @@ const App = () => {
                                                     }
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-[var(--gold-primary)] text-black border-none cursor-pointer">
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#AA771C] text-black border border-white/20 shadow-none cursor-pointer">
 
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
