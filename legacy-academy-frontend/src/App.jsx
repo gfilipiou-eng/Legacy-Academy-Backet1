@@ -11240,7 +11240,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-24 sm:h-28 md:h-32 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
+                                            className={`h-32 sm:h-36 md:h-40 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
@@ -11607,7 +11607,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-24 sm:h-28 md:h-32 w-auto object-contain"
+                                            className="h-32 sm:h-36 md:h-40 w-auto object-contain"
                                             decoding="sync"
                                             loading="eager"
                                             fetchPriority="high"
