@@ -45,7 +45,7 @@ import { CartelView } from './components/CartelView';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const APP_ASSET_VERSION = '20260719a_cartels';
+const APP_ASSET_VERSION = '20260722a';
 const ASSET_PATHS = {
     favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
     applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
