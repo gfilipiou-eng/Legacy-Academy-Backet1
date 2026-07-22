@@ -281,7 +281,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
 };
 
 /* ─── GTA-Style Mission Board Post Card ─────────────────────────────────── */
-const CartelPostCard = ({ post, user, onEdit, onDelete }) => {
+const CartelPostCard = ({ post, user, onEdit, onDelete, t }) => {
     const author = post.author || {};
     const isMe = String(author._id || author) === String(user?._id);
     const [showMenu, setShowMenu] = useState(false);
@@ -599,6 +599,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                                         user={user}
                                         onEdit={(p) => setEditingPost(p)}
                                         onDelete={handleDeletePost}
+                                        t={t}
                                     />
                                 ))}
                             </div>
