@@ -572,14 +572,14 @@ const fetchFounderAffiliationUser = async (username) => {
 
 const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth, iconOnly = false }) => {
     const normalizedUsername = sanitizeAffiliation(username);
-    if (!normalizedUsername) return null;
 
-    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || founderAffiliationUserCache.get(normalizedUsername) || null);
-    const [isLoading, setIsLoading] = useState(() => !resolvedLinkedUser);
+    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || (normalizedUsername ? founderAffiliationUserCache.get(normalizedUsername) : null) || null);
+    const [isLoading, setIsLoading] = useState(() => !resolvedLinkedUser && !!normalizedUsername);
     const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
+        if (!normalizedUsername) return;
         if (linkedUser?._id || linkedUser?.profilePic || linkedUser?.username) {
             founderAffiliationUserCache.set(normalizedUsername, linkedUser);
             setResolvedLinkedUser(linkedUser);
@@ -613,6 +613,8 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             cancelled = true;
         };
     }, [normalizedUsername, linkedUser]);
+
+    if (!normalizedUsername) return null;
 
     // Request a 200px image: at 28px rendered size this is 7x oversampled = crystal clear on all screens
     const resolvedProfilePic = resolveMediaUrl(resolvedLinkedUser?.profilePic, 200, true);
@@ -940,9 +942,13 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
 const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false, cacheKey = null }) => {
     const [imgError, setImgError] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
+    const imgRef = useRef(null);
 
     const rawUrl = user && typeof user === 'object' ? (user.profilePic || user.fromProfilePic) : null;
     const name = user && typeof user === 'object' ? (user.username || user.fromUsername) : null;
+    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
+    const flatMediaUrl = mediaUrl;
+    const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
 
     // Reset error state if url or cache key changes, or when app becomes visible again
     useEffect(() => { 
@@ -957,11 +963,13 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         };
     }, [String(rawUrl || ''), cacheKey]);
 
-    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setImgLoaded(true);
+        }
+    }, [flatMediaUrl]);
 
-    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
-    const flatMediaUrl = mediaUrl;
-    const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
+    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
 
     const isFounder = user?.role === 'Founder';
     let baseClass = 'w-full h-full object-cover rounded-full';
@@ -994,13 +1002,6 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             </div>
         );
     }
-
-    const imgRef = useRef(null);
-    useEffect(() => {
-        if (imgRef.current && imgRef.current.complete) {
-            setImgLoaded(true);
-        }
-    }, [flatMediaUrl]);
 
     return flatMediaUrl ? (
         <div className={`relative w-full h-full overflow-hidden ${finalClassName}`}>
