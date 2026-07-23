@@ -635,7 +635,10 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                         t={t}
                         cartel={cartel}
                         onClose={() => setIsEditCartelOpen(false)}
-                        onUpdated={() => { window.location.reload(); }}
+                        onUpdated={(updatedCartel) => { 
+                            setCartel(updatedCartel); 
+                            setIsEditCartelOpen(false); 
+                        }}
                     />
                 )}
             </AnimatePresence>
