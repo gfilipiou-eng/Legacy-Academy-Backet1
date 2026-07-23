@@ -92,7 +92,7 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                 className="fixed bottom-[calc(120px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[5000] w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 ease-out"
                 style={{ background: 'linear-gradient(135deg, var(--gold-primary), #b8860b)' }}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 text-black">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
