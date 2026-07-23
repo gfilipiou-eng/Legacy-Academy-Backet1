@@ -454,11 +454,9 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
     };
 
     const handleDeleteCartel = async () => {
-        if (!window.confirm('Are you sure you want to completely delete this Cartel? All posts will be lost forever.')) return;
         try {
             await axios.delete(`/cartels/${cartel._id}`);
             onBack();
-            window.location.reload();
         } catch (err) {
             console.error(err);
             alert('Error deleting cartel');

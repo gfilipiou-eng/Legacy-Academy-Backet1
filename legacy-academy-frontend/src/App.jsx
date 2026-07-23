@@ -1073,13 +1073,13 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                         className="w-[180px] liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
                     >
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10 active:scale-95">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10 active:scale-95">
                                 <Icons.Edit className="w-5 h-5 text-blue-400 group-hover/item:scale-110" />
                                 <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
                             </button>
                         )}
                         {canDelete && (
-                            <button onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-red-500/10 active:scale-95">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); onDelete(post._id); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-red-500/10 active:scale-95">
                                 <Icons.Trash className="w-5 h-5 text-red-500 group-hover/item:scale-110" />
                                 <span className="text-xs font-black text-red-500 uppercase tracking-widest">{t('DELETE')}</span>
                             </button>
@@ -1647,7 +1647,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     </div>
                     <div className="flex items-center gap-1">
                         {isOwner && (
-                            <button onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
                                 <Icons.Edit className="w-5 h-5" />
                             </button>
                         )}
@@ -4036,6 +4036,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     await i18n.changeLanguage(normalizedLanguage);
                 }
                 await handleSave('language', normalizedLanguage);
+                // Immediately reload so all components grab the new language
+                setTimeout(() => window.location.reload(), 200);
             } catch (error) {
                 console.error("Language change error:", error);
                 setPendingLanguage(activeLanguage);
@@ -11236,7 +11238,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className={`h-32 sm:h-36 md:h-40 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
+                                            className={`h-40 sm:h-44 md:h-48 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
@@ -11409,8 +11411,7 @@ const App = () => {
                                                     setAuthError(e.response?.data?.message || e.response?.data || 'Account creation failed.');
                                                     setAuthLoading(false);
                                                 } 
-                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 text-white transition-all duration-300" style={{ backgroundColor: 'var(--gold-primary)' }}>
-                                                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                            }} className="mt-2 w-full relative group overflow-hidden rounded-2xl py-4 flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] disabled:opacity-40 hover:opacity-90 transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#AA771C] text-black border border-white/20 shadow-none cursor-pointer">
                                                 {authLoading ? (
                                                     <div className="w-5 h-5 text-white">
                                                         <Icons.Loader />
@@ -11603,7 +11604,7 @@ const App = () => {
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy Academy"
-                                            className="h-32 sm:h-36 md:h-40 w-auto object-contain"
+                                            className="h-40 sm:h-48 md:h-56 w-auto object-contain"
                                             decoding="sync"
                                             loading="eager"
                                             fetchPriority="high"
