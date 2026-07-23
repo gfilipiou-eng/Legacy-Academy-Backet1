@@ -2369,8 +2369,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                     <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
                         <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
                             <ProfileAvatar user={user} className="object-cover w-full h-full" key={imgKey} cacheKey={imgKey} />
-                            {/* Hover darken overlay */}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+
                         </div>
                     </div>
                     {/* Blue + badge */}
@@ -2437,8 +2436,7 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                                             </span>
                                         </div>
                                     )}
-                                    {/* Hover overlay */}
-                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full" />
+
                                 </div>
                             </div>
 
@@ -7730,8 +7728,6 @@ const ProfileModal = ({
                                                             <div className="w-[68px] h-[68px] rounded-full p-[3px] bg-neutral-800 border-2 border-dashed border-white/30 group-hover:border-white/60 transition-all duration-300">
                                                                 <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 relative">
                                                                     <ProfileAvatar user={currentUser} className="object-cover w-full h-full" />
-                                                                    {/* Hover darken overlay */}
-                                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                                                                 </div>
                                                             </div>
                                                             {/* Blue + badge */}
@@ -7799,8 +7795,7 @@ const ProfileModal = ({
                                                                                 </span>
                                                                             </div>
                                                                         )}
-                                                                        {/* Hover overlay */}
-                                                                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full" />
+
                                                                     </div>
                                                                 </div>
 
