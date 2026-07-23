@@ -7,16 +7,16 @@ export const transporter = nodemailer.createTransport({
     secure: true, // use SSL
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD, // Use App Password, not regular password
+        pass: process.env.EMAIL_PASSWORD || process.env.EMAIL_APP_PASSWORD, 
     },
-    connectionTimeout: 5000, // Fail fast if connection hangs
+    connectionTimeout: 5000, 
     greetingTimeout: 5000,
     socketTimeout: 5000,
 });
 
 export const sendPasswordResetEmail = async (to, resetToken, username) => {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
-        console.warn('⚠️ EMAIL_USER or EMAIL_APP_PASSWORD is not set in environment variables. Email will NOT be sent.');
+    if (!process.env.EMAIL_USER || !(process.env.EMAIL_PASSWORD || process.env.EMAIL_APP_PASSWORD)) {
+        console.warn('⚠️ EMAIL_USER or EMAIL_PASSWORD is not set in environment variables. Email will NOT be sent.');
         // Throw an error so the caller knows it failed, but don't hang!
         throw new Error('Email configuration missing on server.');
     }
