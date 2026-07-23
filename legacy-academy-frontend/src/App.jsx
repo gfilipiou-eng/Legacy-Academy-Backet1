@@ -77,7 +77,7 @@ const upsertHeadLink = ({ rel, href, sizes, type = 'image/png' }) => {
 
 const applyHeadBranding = ({ title } = {}) => {
     if (typeof document === 'undefined') return;
-    document.title = title || 'Legacy Academy Intel';
+    document.title = title || 'Legacy Academy';
     upsertHeadLink({ rel: 'icon', sizes: '16x16', href: ASSET_PATHS.favicon });
     upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.favicon });
     upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo });
@@ -9177,13 +9177,13 @@ const App = () => {
     const { t, i18n, lang } = useTranslation();
 
     useEffect(() => {
-        let title = 'Legacy Academy Intel';
+        let title = 'Legacy Academy';
         if (publicProfileUsername) {
-            title = `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy Intel`;
+            title = `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy`;
         } else if (publicSiteUsername) {
-            title = `${publicUser?.settings?.businessWebsites?.[publicSiteIndex]?.businessName || 'Business Website'} | Legacy Academy Intel`;
+            title = `${publicUser?.settings?.businessWebsites?.[publicSiteIndex]?.businessName || 'Business Website'} | Legacy Academy`;
         } else if (viewPostId) {
-            title = `Post | Legacy Academy Intel`;
+            title = `Post | Legacy Academy`;
         }
         document.title = title;
     }, [publicProfileUsername, publicSiteUsername, publicSiteIndex, publicUser?.username, publicUser?.settings, viewPostId]);
