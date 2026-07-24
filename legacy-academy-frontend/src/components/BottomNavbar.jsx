@@ -205,7 +205,10 @@ const BottomNavbar = memo(({
                     aria-label="Create"
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group"
                 >
-                    <div className="w-[50px] h-[50px] sm:w-[52px] sm:h-[52px] bg-[#1D9BF0] flex items-center justify-center rounded-full text-white hover:scale-105 active:scale-95 transition-all duration-300 ring-2 ring-black">
+                    <div 
+                        className="w-[50px] h-[50px] sm:w-[52px] sm:h-[52px] flex items-center justify-center rounded-full text-black hover:scale-110 active:scale-95 transition-all duration-300 ring-2 ring-black shadow-lg shadow-[var(--gold-primary)]/30"
+                        style={{ background: 'linear-gradient(135deg, var(--gold-primary), var(--gold-secondary))' }}
+                    >
                         <Icons.Plus className="w-7 h-7 sm:w-7 sm:h-7 stroke-[3]" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
