@@ -3783,29 +3783,29 @@ const ShareSettingLabel = ({ t }) => (
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="text-[13px] font-medium text-[#8E8E93] uppercase tracking-wider mb-2 mt-6 px-4 first:mt-0">{label}</h3>
+    <h3 className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-[0.14em] mb-2 mt-8 px-4 first:mt-0 leading-none">{label}</h3>
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`rounded-[12px] overflow-hidden bg-[#1C1C1E] mx-4 settings-group ${className}`}>
+    <div className={`rounded-[14px] overflow-hidden bg-[#1C1C1E] mx-4 settings-group border border-white/[0.06] ${className}`}>
         {children}
     </div>
 );
 
 const SettingRow = ({ label, desc, children, hasChevron = false, onClick }) => (
     <div
-        className={`settings-row flex items-center justify-between gap-4 px-4 py-3.5 min-h-[48px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C] border-b last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
+        className={`settings-row flex items-center justify-between gap-4 px-4 sm:px-5 py-[15px] sm:py-4 min-h-[56px] sm:min-h-[54px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C] border-b last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
         onClick={onClick}
     >
         <div className="flex-1 min-w-0 pr-2 flex items-center gap-3">
             <div className="flex-1 min-w-0">
-                {typeof label === 'string' ? <div className="text-[15px] font-normal text-white leading-tight">{label}</div> : label}
-                {desc && <div className="text-[12px] text-[#8E8E93] mt-0.5 leading-snug">{desc}</div>}
+                {typeof label === 'string' ? <div className="text-[16px] sm:text-[15px] font-normal text-white leading-tight">{label}</div> : label}
+                {desc && <div className="text-[13px] text-[#98989D] mt-1 leading-snug">{desc}</div>}
             </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
             {hasChevron && (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#8E8E93]/70 -mr-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] text-[#8E8E93]/70 -mr-0.5">
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
             )}
@@ -3860,9 +3860,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [enableGlow, setEnableGlow] = useState(
         user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
     );
-    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
-        Math.min(1, Math.max(0, user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0')))
-    );
+    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(0);
 
     useEffect(() => {
         latestUserRef.current = user;
@@ -3903,6 +3901,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     useEffect(() => {
         setPendingLanguage(activeLanguage);
     }, [activeLanguage]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setLiquidGlassIntensity(0);
+            applyLiquidGlass(0);
+            localStorage.setItem('liquidGlassIntensity', '0');
+        }
+    }, [isOpen]);
 
     const handleSave = async (key, val) => {
         setSaving(true);
@@ -4070,34 +4076,34 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
         { id: 'ro', flag: '🇷🇴', labelKey: 'LANG_RO' },
     ];
     return (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-3 sm:p-4">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-2 sm:p-4">
             <div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/70" onClick={onClose}
+                className="absolute inset-0 bg-black/75" onClick={onClose}
             />
 
             <div
-                initial={{ opacity: 0, scale: 0.97, y: 8 }}
+                initial={{ opacity: 0, scale: 0.98, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.97, y: 8 }}
+                exit={{ opacity: 0, scale: 0.98, y: 10 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="relative w-[96%] max-w-[420px] sm:max-w-[440px] max-h-[88dvh] sm:max-h-[86vh] rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col bg-[#1C1C1E]/80 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10"
+                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#0F0F11] shadow-[0_20px_80px_rgba(0,0,0,0.7)] border border-white/[0.08]"
             >
                 {/* HEADER */}
-                <div className="px-4 py-3 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-black/20 relative z-20">
+                <div className="px-5 sm:px-6 py-4 border-b border-white/[0.07] flex items-center justify-between shrink-0 relative z-20">
                     <div className="w-16"></div> {/* Left spacer */}
                     <div className="flex-1 text-center">
-                        <h2 className="font-semibold text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
+                        <h2 className="font-semibold text-[18px] sm:text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
                     </div>
                     <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="w-16 flex items-center justify-end group active:scale-95 transition-all relative z-30">
-                        <div className="w-8 h-8 rounded-full bg-white/[0.08] group-hover:bg-white/[0.15] flex items-center justify-center transition-colors">
+                        <div className="w-9 h-9 rounded-full bg-white/[0.06] group-hover:bg-white/[0.12] flex items-center justify-center transition-colors">
                             <Icons.X className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" />
                         </div>
                     </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-5 py-4 sm:py-4 space-y-5 sm:space-y-4 relative z-10" style={{ maxHeight: '70vh', WebkitOverflowScrolling: 'touch' }}>
+                <div className="flex-1 overflow-y-auto custom-scrollbar py-3 sm:py-4 space-y-0 relative z-10" style={{ maxHeight: '80vh', WebkitOverflowScrolling: 'touch' }}>
 
                     {/* ── PRIVACY ── */}
                     <section>
@@ -4127,11 +4133,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── AESTHETICS ── */}
                     <section>
                         <SectionHeader label={t('AESTHETICS')} />
-                        <SettingsGroup className="mb-3">
-                            <div className="px-4 py-4">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-[16px] sm:text-[14px] font-normal text-white">{t('UI_ZOOM')}</span>
-                                    <span className="text-[15px] sm:text-[13px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(zoomLevel * 100)}%</span>
+                        <SettingsGroup className="mb-4">
+                            <div className="px-5 sm:px-6 py-5">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('UI_ZOOM')}</span>
+                                    <span className="text-[15px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(zoomLevel * 100)}%</span>
                                 </div>
                                 <input
                                     type="range"
@@ -4153,9 +4159,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 />
                             </div>
                         </SettingsGroup>
-                        <div className="space-y-4">
+
+                        <div className="px-4 sm:px-4 space-y-6">
                             <div>
-                                <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('THEME')}</div>
+                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 px-1 leading-none">{t('THEME')}</div>
                                 <div className="theme-swatch-grid settings-theme-grid">
                                     {(showAllThemes ? THEME_PALETTE : THEME_PALETTE.slice(0, 5)).map(({ value, labelKey }) => {
                                         const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
@@ -4170,10 +4177,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-2 py-2"
                                             >
                                                 <span
-                                                    className={`theme-swatch-dot block w-11 h-11 sm:w-9 sm:h-9 rounded-full border-[2.5px] transition-all duration-200 ${active ? 'border-white scale-105' : 'border-white/25'}`}
+                                                    className={`theme-swatch-dot block w-11 h-11 sm:w-10 sm:h-10 rounded-full border-[2.5px] transition-all duration-200 ${active ? 'border-white scale-105' : 'border-white/25'}`}
                                                     style={{ backgroundColor: value }}
                                                 />
-                                                <span className={`text-[12px] sm:text-[10px] font-medium text-center leading-tight px-1 ${active ? 'text-white' : 'text-gray-400'}`}>
+                                                <span className={`text-[12px] font-medium text-center leading-tight px-1 ${active ? 'text-white' : 'text-gray-400'}`}>
                                                     {t(labelKey)}
                                                 </span>
                                             </button>
@@ -4184,15 +4191,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <button 
                                         type="button"
                                         onClick={() => setShowAllThemes(!showAllThemes)}
-                                        className="w-full mt-3 py-2 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-xl transition-all"
+                                        className="w-full mt-3 py-2.5 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-[14px] transition-all bg-white/[0.02]"
                                     >
                                         {showAllThemes ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
                                     </button>
                                 )}
                             </div>
+
                             <div>
-                                <div className="settings-section-label text-[13px] font-semibold text-gray-400 uppercase tracking-wide mb-3 px-1">{t('BACKGROUND')}</div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-2">
+                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 px-1 leading-none">{t('BACKGROUND')}</div>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                                     {(showAllBackgrounds ? BACKGROUND_MODES : BACKGROUND_MODES.slice(0, 8)).map(({ value, labelKey, color, className }) => {
                                         const active = getBackgroundMode(user) === value;
                                         return (
@@ -4200,13 +4208,13 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 key={value}
                                                 type="button"
                                                 onClick={() => handleSave('background', value)}
-                                                className={`settings-tile-btn relative overflow-hidden flex flex-col rounded-[14px] border transition-all duration-200 min-h-[72px] sm:min-h-0 h-full ${
-                                                    active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10'
+                                                className={`settings-tile-btn relative overflow-hidden flex flex-col rounded-[14px] border transition-all duration-200 min-h-[80px] h-full ${
+                                                    active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10 hover:border-white/20'
                                                 }`}
                                             >
-                                                <div className={`w-full h-12 sm:h-10 shrink-0 relative ${className}`} style={{ backgroundColor: color }} />
-                                                <div className={`flex-1 flex items-center justify-center px-2 py-2.5 sm:py-2 text-center w-full ${active ? 'text-white' : 'text-gray-400'}`}>
-                                                    <div className="text-[13px] sm:text-[10px] font-medium leading-snug">{t(labelKey)}</div>
+                                                <div className={`w-full h-14 shrink-0 relative ${className}`} style={{ backgroundColor: color }} />
+                                                <div className={`flex-1 flex items-center justify-center px-2 py-2.5 text-center w-full ${active ? 'text-white' : 'text-gray-400'}`}>
+                                                    <div className="text-[12px] font-medium leading-snug">{t(labelKey)}</div>
                                                 </div>
                                             </button>
                                         );
@@ -4216,58 +4224,35 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <button 
                                         type="button"
                                         onClick={() => setShowAllBackgrounds(!showAllBackgrounds)}
-                                        className="w-full mt-3 py-2 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-xl transition-all"
+                                        className="w-full mt-3 py-2.5 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-[14px] transition-all bg-white/[0.02]"
                                     >
                                         {showAllBackgrounds ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
                                     </button>
                                 )}
                             </div>
-                            
-                            {/* GLOW EFFECT */}
-                            <SettingRow label={t('ENABLE_GLOW')} desc={t('GLOW_EFFECT_DESC')}>
-                                <Toggle active={enableGlow} onToggle={() => {
-                                    const v = !enableGlow;
-                                    setEnableGlow(v);
-                                    applyGlow(v);
-                                    handleSave('enableGlow', v);
-                                }} saving={saving} color="blue" />
-                            </SettingRow>
-
-                            <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations and background effects to save battery')}>
-                                <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
-                            </SettingRow>
-
-                            <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom your profile picture on click')}>
-                                <Toggle active={enableProfileZoom} onToggle={() => handleSave('enableProfileZoom', !enableProfileZoom)} saving={saving} color="blue" />
-                            </SettingRow>
-
-                            {/* LIQUID GLASS INTENSITY */}
-                            <div>
-                                <div className="flex items-center justify-between mb-3 px-1">
-                                    <span className="text-[14px] font-medium text-white">{t('LIQUID_GLASS_INTENSITY')}</span>
-                                    <span className="text-[13px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(liquidGlassIntensity * 100)}%</span>
-                                </div>
-                                <div className="px-1">
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="1"
-                                        step="0.05"
-                                        value={liquidGlassIntensity}
-                                        onChange={(e) => {
-                                            const val = parseFloat(e.target.value);
-                                            setLiquidGlassIntensity(val);
-                                            applyLiquidGlass(val);
-                                        }}
-                                        onPointerUp={(e) => handleSave('liquidGlassIntensity', parseFloat(e.target.value))}
-                                        onKeyUp={(e) => handleSave('liquidGlassIntensity', parseFloat(e.target.value))}
-                                        className="settings-range w-full h-2 accent-[#1D9BF0]"
-                                        style={{ '--progress-width': `${liquidGlassIntensity * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                            
                         </div>
+
+                        <div className="mt-5">
+                            <SettingsGroup>
+                                <SettingRow label={t('ENABLE_GLOW')} desc={t('GLOW_EFFECT_DESC')}>
+                                    <Toggle active={enableGlow} onToggle={() => {
+                                        const v = !enableGlow;
+                                        setEnableGlow(v);
+                                        applyGlow(v);
+                                        handleSave('enableGlow', v);
+                                    }} saving={saving} color="blue" />
+                                </SettingRow>
+
+                                <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations and background effects to save battery')}>
+                                    <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
+                                </SettingRow>
+
+                                <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom your profile picture on click')}>
+                                    <Toggle active={enableProfileZoom} onToggle={() => handleSave('enableProfileZoom', !enableProfileZoom)} saving={saving} color="blue" />
+                                </SettingRow>
+                            </SettingsGroup>
+                        </div>
+
                     </section>
 
                     {/* ── BADGES & CONTENT ── */}
@@ -4279,10 +4264,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             </SettingRow>
                             {showBadge && (
                                 <>
-                                    <div className="px-4 py-4 border-t border-white/5 text-left">
-                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">{t('BADGE_STYLE')}</div>
+                                    <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
+                                        <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-4 leading-none">{t('BADGE_STYLE')}</div>
                                         {user?.role === 'Founder' ? (
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-3">
                                                 {[
                                                     { id: 'live-gold',   label: t('BADGE_DYNAMIC_GOLD', 'Dynamic') },
                                                     { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid') },
@@ -4297,28 +4282,28 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     const isSelected = badgeColor === b.id;
                                                     return (
                                                         <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                            className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
-                                                            {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
-                                                            <VerifiedBadge isFounder={true} className="w-8 h-8" badgeColor={b.id} user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }} />
-                                                            <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
+                                                            className={`badge-swatch-card relative p-4 pt-5 pb-4 rounded-2xl border bg-white/[0.02] flex flex-col items-center justify-center gap-2.5 select-none active:opacity-80 transition-all duration-150 ${isSelected ? 'border-[#1D9BF0] bg-[#1D9BF0]/[0.06] shadow-[0_0_0_1px_rgba(29,155,240,0.25)]' : 'border-white/[0.09] hover:border-white/[0.15] hover:bg-white/[0.035]'}`}>
+                                                            {isSelected && (<div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#1D9BF0] flex items-center justify-center shadow-[0_1px_6px_rgba(29,155,240,0.35)]"><svg viewBox="0 0 12 12" className="w-3 h-3"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
+                                                            <VerifiedBadge isFounder={true} className="w-10 h-10 sm:w-9 sm:h-9" badgeColor={b.id} user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                            <span className={`text-[10px] sm:text-[10.5px] font-bold uppercase tracking-[0.08em] text-center leading-tight ${isSelected ? 'text-white' : 'text-white/45'}`}>{b.label}</span>
                                                         </button>
                                                     );
                                                 })}
                                             </div>
                                         ) : (
-                                            <div className="grid grid-cols-3 gap-2">
+                                            <div className="grid grid-cols-3 gap-3 sm:gap-3.5">
                                                 {[
                                                     { id: 'x_blue',  label: t('BADGE_COBALT', 'Cobalt') },
                                                     { id: 'blue',    label: t('BADGE_NOVA', 'Nova') },
-                                                    { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
+                                                    { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism') },
                                                 ].map(b => {
                                                     const isSelected = badgeColor === b.id;
                                                     return (
                                                         <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                            className="relative p-3 pt-4 pb-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-2 select-none active:opacity-70">
-                                                            {isSelected && (<div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center"><svg viewBox="0 0 12 12" className="w-2.5 h-2.5"><polyline points="2,6 5,9 10,3" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
-                                                            <VerifiedBadge isFounder={false} isUser={true} className="w-8 h-8" badgeColor={b.id} user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }} />
-                                                            <span className={`text-[9px] font-bold uppercase tracking-wider text-center leading-tight ${isSelected ? 'text-white' : 'text-white/40'}`}>{b.label}</span>
+                                                            className={`badge-swatch-card relative p-4 pt-5 pb-4 rounded-2xl border bg-white/[0.02] flex flex-col items-center justify-center gap-2.5 select-none active:opacity-80 transition-all duration-150 ${isSelected ? 'border-[#1D9BF0] bg-[#1D9BF0]/[0.06] shadow-[0_0_0_1px_rgba(29,155,240,0.25)]' : 'border-white/[0.09] hover:border-white/[0.15] hover:bg-white/[0.035]'}`}>
+                                                            {isSelected && (<div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#1D9BF0] flex items-center justify-center shadow-[0_1px_6px_rgba(29,155,240,0.35)]"><svg viewBox="0 0 12 12" className="w-3 h-3"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
+                                                            <VerifiedBadge isFounder={false} isUser={true} className="w-10 h-10 sm:w-9 sm:h-9" badgeColor={b.id} user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                            <span className={`text-[10px] sm:text-[10.5px] font-bold uppercase tracking-[0.08em] text-center leading-tight ${isSelected ? 'text-white' : 'text-white/45'}`}>{b.label}</span>
                                                         </button>
                                                     );
                                                 })}
@@ -4326,19 +4311,19 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         )}
                                     </div>
                                     {/* ⚽ Football Teams Search */}
-                                    <div className="px-4 py-4 border-t border-white/5 text-left">
-                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                                    <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
+                                        <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-4 leading-none flex items-center justify-between">
                                             <span className="truncate pr-2 flex items-center gap-1.5"><Icons.Shield className="w-4 h-4 text-[var(--gold-primary)]" /> {t('FAVORITE_TEAM', 'Favorite Team')}</span>
                                             {footballTeam && (
-                                                <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 flex items-center justify-center transition-colors shrink-0 shadow-sm" aria-label="Remove Team">
-                                                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <button onClick={() => { setFootballTeam(null); handleSave('footballTeam', null); }} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-500 flex items-center justify-center transition-colors shrink-0" aria-label="Remove Team">
+                                                    <Icons.X className="w-4 h-4 sm:w-[18px] sm:h-[18px]" strokeWidth="2.2" />
                                                 </button>
                                             )}
                                         </div>
                                         
                                         {footballTeam ? (
-                                            <div className="relative p-5 rounded-2xl border border-white/[0.1] bg-white/[0.03] flex items-center gap-5 shadow-lg backdrop-blur-md">
-                                                <img key={footballTeam.id || footballTeam.strTeam} src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-2xl transition-transform hover:scale-110" />
+                                            <div className="relative p-5 rounded-2xl border border-white/[0.1] bg-white/[0.03] flex items-center gap-5">
+                                                <img key={footballTeam.id || footballTeam.strTeam} src={footballTeam.strBadge} alt={footballTeam.strTeam} className="w-16 h-16 sm:w-20 sm:h-20 object-contain transition-transform hover:scale-110" />
                                                 <div>
                                                     <div className="text-white font-black text-base sm:text-lg tracking-wider drop-shadow-md">{footballTeam.strTeam}</div>
                                                     <div className="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">{t('YOUR_DESIGNATED_TEAM', 'Your designated sports team / country')}</div>
@@ -4350,7 +4335,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     <input 
                                                         type="text" 
                                                         placeholder={t('SEARCH_TEAM_PLACEHOLDER', 'Search for any sports team or country...')}
-                                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                                                        className="w-full bg-[#0F0F11] border border-white/10 rounded-[14px] px-4 py-3.5 text-[14px] text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
                                                         value={teamSearchQuery}
                                                         onChange={async (e) => {
                                                             const query = e.target.value;
@@ -4384,11 +4369,11 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                             setIsSearchingTeam(false);
                                                         }}
                                                     />
-                                                    {isSearchingTeam && <div className="absolute right-3 top-3.5 w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>}
+                                                    {isSearchingTeam && <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>}
                                                 </div>
                                                 
                                                 {teamSearchResults.length > 0 && (
-                                                    <div className="max-h-[200px] overflow-y-auto pr-1 space-y-1 mt-2">
+                                                    <div className="bg-[#1C1C1E] rounded-[14px] border border-white/10 overflow-hidden max-h-[220px] overflow-y-auto pr-1 mt-2">
                                                         {teamSearchResults.map(t => (
                                                             <button 
                                                                 key={t.idTeam}
@@ -4399,16 +4384,16 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                     setTeamSearchQuery('');
                                                                     setTeamSearchResults([]);
                                                                 }}
-                                                                className="w-full flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition-colors text-left"
+                                                                className="w-full flex items-center gap-3.5 p-3.5 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors text-left"
                                                             >
                                                                 {t.strBadge || t.strTeamBadge ? (
-                                                                    <img src={t.strBadge || t.strTeamBadge} alt={t.strTeam} className="w-8 h-8 object-contain" />
+                                                                    <img src={t.strBadge || t.strTeamBadge} alt={t.strTeam} className="w-9 h-9 object-contain shrink-0" />
                                                                 ) : (
-                                                                    <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">🏆</div>
+                                                                    <div className="w-9 h-9 rounded bg-white/10 flex items-center justify-center text-sm shrink-0">🏆</div>
                                                                 )}
-                                                                <div>
-                                                                    <div className="text-sm font-bold text-white">{t.strTeam}</div>
-                                                                    <div className="text-[10px] text-gray-500">{t.strLeague} • {t.strCountry}</div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="text-[14px] font-semibold text-white truncate">{t.strTeam}</div>
+                                                                    <div className="text-[11px] text-gray-500 truncate mt-0.5">{t.strLeague} • {t.strCountry}</div>
                                                                 </div>
                                                             </button>
                                                         ))}
@@ -4419,34 +4404,33 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </div>
                                     
                                     {/* Favorite Player Input */}
-                                    <div className="px-4 py-4 border-t border-white/5 text-left">
-                                        <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center justify-between">
+                                    <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
+                                        <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-4 leading-none flex items-center justify-between">
                                             <span className="truncate pr-2 flex items-center gap-1.5"><Icons.Star className="w-4 h-4 text-[var(--gold-primary)]" /> {t('FAVORITE_PLAYER', 'Favorite Player')}</span>
                                         </div>
                                         {favoritePlayer ? (
-                                            <div className="relative group rounded-[16px] overflow-hidden bg-gradient-to-br from-white/10 to-transparent border border-white/20 p-4">
-                                                <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+                                            <div className="relative group rounded-[16px] overflow-hidden border border-white/[0.1] bg-white/[0.03] p-4">
                                                 <button 
                                                     type="button" 
                                                     onClick={() => handleSave('favoritePlayer', null)}
-                                                    className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-red-500/80 transition-all shadow-lg backdrop-blur-md"
+                                                    className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-red-500/80 transition-all"
                                                 >
-                                                    <Icons.X className="w-4 h-4" />
+                                                    <Icons.X className="w-4 h-4" strokeWidth="2.2" />
                                                 </button>
                                                 <div className="relative z-10 flex items-center gap-4">
                                                     {(favoritePlayer?.strCutout || favoritePlayer?.strThumb) ? (
                                                         <img 
                                                             src={favoritePlayer.strCutout || favoritePlayer.strThumb} 
                                                             alt={favoritePlayer.strPlayer} 
-                                                            className="w-16 h-16 rounded-full object-cover object-top border-2 border-white/20 shadow-xl bg-white/5"
+                                                            className="w-16 h-16 rounded-full object-cover object-top border-2 border-white/15 bg-white/5"
                                                         />
                                                     ) : (
-                                                        <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/20 shadow-xl flex items-center justify-center">
+                                                        <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/15 flex items-center justify-center">
                                                             <Icons.User className="w-8 h-8 text-white/50" />
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <div className="text-white font-black text-lg tracking-wider drop-shadow-md">{favoritePlayer?.strPlayer || favoritePlayer}</div>
+                                                        <div className="text-white font-black text-base tracking-wider">{favoritePlayer?.strPlayer || favoritePlayer}</div>
                                                         <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
                                                             {(favoritePlayer?.strTeam || favoritePlayer?.strSport) ? formatPlayerTeam(favoritePlayer.strTeam, favoritePlayer.strSport, t) : t("YOUR_DESIGNATED_PLAYER", "Your designated favorite player")}
                                                         </div>
@@ -4459,7 +4443,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     <input 
                                                         type="text" 
                                                         placeholder={t('FAVORITE_PLAYER_PLACEHOLDER', 'e.g. Max Verstappen, Messi, LeBron James...')}
-                                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
+                                                        className="w-full bg-[#0F0F11] border border-white/10 rounded-[14px] px-4 py-3.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all"
                                                         value={playerSearchQuery}
                                                         onChange={(e) => {
                                                             const query = e.target.value;
@@ -4508,7 +4492,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                 </div>
                                                 
                                                 {playerSearchResults.length > 0 && (
-                                                    <div className="bg-[#1C1C1E] rounded-xl border border-white/10 overflow-hidden max-h-[220px] overflow-y-auto mt-2 shadow-xl">
+                                                    <div className="bg-[#1C1C1E] rounded-[14px] border border-white/10 overflow-hidden max-h-[240px] overflow-y-auto mt-2">
                                                         {playerSearchResults.map(player => (
                                                             <button
                                                                 key={player.idPlayer}
@@ -4525,9 +4509,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                     setPlayerSearchQuery('');
                                                                     setPlayerSearchResults([]);
                                                                 }}
-                                                                className="w-full flex items-center gap-3 p-3 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors text-left"
+                                                                className="w-full flex items-center gap-3 p-3.5 hover:bg-white/5 border-b border-white/5 last:border-0 transition-colors text-left"
                                                             >
-                                                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-white/5 flex items-center justify-center border border-white/10">
+                                                                <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 bg-white/5 flex items-center justify-center border border-white/10">
                                                                     {(player.strCutout || player.strThumb) ? (
                                                                         <img src={player.strCutout || player.strThumb} alt={player.strPlayer} className="w-full h-full object-cover object-top" loading="lazy" />
                                                                     ) : (
@@ -4535,7 +4519,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                                     )}
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <div className="text-[13px] font-bold text-white truncate">{player.strPlayer}</div>
+                                                                    <div className="text-[14px] font-semibold text-white truncate">{player.strPlayer}</div>
                                                                     <div className="text-[11px] text-gray-500 truncate mt-0.5">
                                                                         {formatPlayerTeam(player.strTeam, player.strSport, t)}
                                                                     </div>
@@ -4555,9 +4539,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
                                 <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
                             </SettingRow>
-                            <div className="px-4 py-3.5 border-t border-white/5 text-left">
-                                <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('PROFILE_DESCRIPTOR', 'Identity Descriptor')}</div>
-                                <div className="grid grid-cols-2 gap-2">
+                            <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
+                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 leading-none">{t('PROFILE_DESCRIPTOR', 'Identity Descriptor')}</div>
+                                <div className="grid grid-cols-2 gap-2.5">
                                     {PROFILE_DESCRIPTOR_OPTIONS.map((option) => {
                                         const isSelected = profileDescriptor === option.value;
                                         const OptionIcon = option.Icon;
@@ -4570,22 +4554,22 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     setProfileDescriptor(val);
                                                     handleSave('profileDescriptor', val);
                                                 }}
-                                                className={`settings-tile-btn p-2.5 rounded-xl border flex items-center gap-2 transition-all text-left ${
-                                                    isSelected ? `${option.accentClass} border-current` : 'border-white/10 bg-white/[0.02] text-white/70'
+                                                className={`settings-tile-btn p-3 rounded-[14px] border flex items-center gap-2.5 transition-all text-left ${
+                                                    isSelected ? `${option.accentClass} border-current bg-current/10` : 'border-white/10 bg-white/[0.02] text-white/70 hover:border-white/20 hover:bg-white/[0.04]'
                                                 }`}
                                             >
                                                 <OptionIcon className="w-4 h-4 shrink-0" />
-                                                <span className="text-[10px] font-bold uppercase tracking-wider truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</span>
+                                                <span className="text-[11px] font-bold uppercase tracking-wider truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</span>
                                             </button>
                                         );
                                     })}
                                 </div>
                             </div>
                             {user?.role === 'Founder' && (
-                                <div className="px-4 py-3.5 border-t border-white/5 text-left">
-                                    <div className="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
+                                <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
+                                    <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 leading-none">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
                                     <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
+                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
                                         <input
                                             type="text"
                                             value={founderAffiliation}
@@ -4593,10 +4577,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
                                             onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
                                             placeholder="affiliated_username"
-                                            className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-8 pr-4 text-white text-sm font-bold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
+                                            className="w-full bg-[#0F0F11] border border-white/10 rounded-[14px] py-3.5 pl-10 pr-4 text-white text-[14px] font-semibold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
                                         />
                                     </div>
-                                    <div className="text-[9px] text-gray-500 mt-1.5 font-bold uppercase tracking-wide leading-relaxed pl-1">
+                                    <div className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wide leading-relaxed pl-1">
                                         {t('FOUNDER_AFFILIATION_DESC', 'Links your profile to a founder page (shows founder badge next to username).')}
                                     </div>
                                 </div>
@@ -4620,7 +4604,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     {/* ── LANGUAGE ── */}
                     <section>
                         <SectionHeader label={t('COGNITION')} />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-2">
+                        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                             {languageOptions.map(l => (
                                 <button
                                     key={l.id}
@@ -4628,14 +4612,14 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     style={{ WebkitTapHighlightColor: 'transparent' }}
                                     disabled={pendingLanguage === l.id}
                                     onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`settings-lang-btn settings-tile-btn min-h-[56px] sm:min-h-[52px] px-4 py-3.5 sm:py-3 rounded-[14px] border flex items-center gap-4 sm:gap-3 transition-all duration-200 cursor-pointer touch-manipulation ${
+                                    className={`settings-lang-btn settings-tile-btn min-h-[60px] sm:min-h-[56px] px-4 sm:px-5 py-4 rounded-[14px] border flex items-center gap-4 transition-all duration-200 cursor-pointer touch-manipulation ${
                                         pendingLanguage === l.id
-                                            ? 'border-[#1D9BF0] bg-[#1D9BF0]/15'
-                                            : 'border-white/10 bg-white/[0.04] active:bg-white/[0.08]'
+                                            ? 'border-[#1D9BF0] bg-[#1D9BF0]/12 shadow-[0_0_0_1px_rgba(29,155,240,0.2)]'
+                                            : 'border-white/10 bg-[#1C1C1E] hover:border-white/20 active:bg-white/[0.06]'
                                     }`}
                                 >
-                                    <span className="text-[28px] sm:text-2xl leading-none shrink-0">{l.flag}</span>
-                                    <span className={`text-[16px] sm:text-[14px] font-medium text-left leading-snug flex-1 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-300'}`}>
+                                    <span className="text-[30px] sm:text-2xl leading-none shrink-0">{l.flag}</span>
+                                    <span className={`text-[15px] font-medium text-left leading-snug flex-1 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-200'}`}>
                                         {t(l.labelKey)}
                                     </span>
                                     {pendingLanguage === l.id && (
@@ -4647,32 +4631,34 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     </section>
 
                     {/* ── OPERATIONS ── */}
-                    <section className="pt-1 border-t border-white/10">
+                    <section>
                         <SectionHeader label={t('OPERATIONS')} />
-                        <div className="space-y-2.5">
+                        <SettingsGroup>
                             {showDanger ? (
-                                <div className="p-5 bg-red-950/25 rounded-[14px] border border-red-500/25 text-center">
-                                    <div className="text-[14px] font-semibold text-red-400 mb-4">{t('DANGER_ZONE')}</div>
+                                <div className="p-6 border-b last:border-b-0">
+                                    <div className="text-[13px] font-semibold text-red-400 mb-5 text-center uppercase tracking-wider">{t('DANGER_ZONE')}</div>
                                     <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-3.5 bg-red-600 text-white rounded-[14px] font-semibold text-[15px] active:scale-[0.98] transition-transform">
+                                        className="w-full py-3.5 bg-red-600 hover:bg-red-500 text-white rounded-[14px] font-semibold text-[15px] active:scale-[0.98] transition-all">
                                         {t('DELETE_FOREVER')}
                                     </button>
-                                    <button onClick={() => setShowDanger(false)} className="mt-3 text-[14px] font-medium text-gray-400">{t('CANCEL')}</button>
+                                    <button onClick={() => setShowDanger(false)} className="w-full mt-4 py-3 text-[14px] font-medium text-gray-400 hover:text-white transition-colors">{t('CANCEL')}</button>
                                 </div>
                             ) : (
-                                <button onClick={() => setShowDanger(true)} className="w-full py-4 rounded-[14px] border border-white/10 bg-white/[0.04] text-gray-400 text-[15px] font-medium active:scale-[0.98] transition-transform">
-                                    {t('UNCOVER_RESTRICTED_OPS')}
-                                </button>
+                                <SettingRow label={t('UNCOVER_RESTRICTED_OPS')} hasChevron onClick={() => setShowDanger(true)}>
+                                    <span className="text-[13px] text-red-400 font-semibold mr-1">⚠️</span>
+                                </SettingRow>
                             )}
 
-                            <button onClick={logout} className="settings-ios-group w-full flex items-center justify-between px-4 py-4 rounded-[14px] border border-white/10 bg-white/[0.06] group active:scale-[0.98] transition-transform min-h-[56px]">
-                                <div className="flex items-center gap-3">
-                                    <Icons.Logout className="w-5 h-5 text-red-400 shrink-0" />
-                                    <span className="text-[16px] font-medium text-red-400">{t('LOGOUT')}</span>
-                                </div>
-                                <Icons.ArrowRight className="w-5 h-5 text-white/25" />
-                            </button>
-                        </div>
+                            <SettingRow
+                                label={
+                                    <div className="flex items-center gap-3">
+                                        <Icons.Logout className="w-5 h-5 text-red-400 shrink-0" />
+                                        <span className="text-[16px] font-medium text-red-400">{t('LOGOUT')}</span>
+                                    </div>
+                                }
+                                hasChevron onClick={logout}
+                            />
+                        </SettingsGroup>
                     </section>
 
                 </div>
