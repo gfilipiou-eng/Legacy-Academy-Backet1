@@ -93,8 +93,14 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
             cartel.isPrivate = !!pin;
         }
 
-        const updatedCartel = await cartel.save();
-        res.status(200).json(updatedCartel);
+        await cartel.save();
+        
+        // Fetch and populate the updated cartel to return full user objects
+        const populatedCartel = await Cartel.findById(cartel._id).select("-pin")
+            .populate("creator", "username profilePic")
+            .populate("members", "username profilePic role");
+
+        res.status(200).json(populatedCartel);
     } catch (err) {
         console.error("Error updating cartel:", err);
         if (err.code === 11000) return res.status(400).json("Cartel name already exists!");
