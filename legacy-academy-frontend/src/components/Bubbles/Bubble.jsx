@@ -114,44 +114,53 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
 
   return (
     <motion.div
-      className={`bubble-container ${isNew ? 'new-bubble-effect' : ''} ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
-      style={{
-        width: size,
-        height: size,
-      }}
-      variants={finalVariants}
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      whileTap={isDeleteMode && isOwner ? "tap" : undefined}
-      onClick={() => {
-        if (isDeleteMode && isOwner) {
-          onClick(bubble);
-          return;
-        }
-        setIsPopped(true);
-        onClick(bubble);
-      }}
+      layout
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+      transition={{ layout: { type: "spring", stiffness: 200, damping: 20 } }}
+      style={{ width: size, height: size }}
     >
-      <div className={`bubble-content ${bubble.image ? 'bubble-has-image' : ''}`}>
-        <p className="bubble-text">{bubble.text}</p>
-        {bubble.creator && (
-          <div className="bubble-creator">
-          {bubble.fromProfilePic || (bubble.creator && bubble.creator.profilePic) ? (
-            <img src={bubble.fromProfilePic || bubble.creator.profilePic} alt="creator" className="bubble-avatar" />
-          ) : (
-            <div className="bubble-avatar" style={{ background: '#333' }} />
-          )}
-          <span className="bubble-username">@{bubble.fromUsername || (bubble.creator && bubble.creator.username) || 'user'}</span>
-        </div>
-        )}
-        {bubble.image && (
-          <div className="mt-1 w-[80%] flex items-center justify-center">
-            <img src={bubble.image} alt="bubble" className="max-w-full max-h-[60px] object-contain rounded-md drop-shadow-md" />
+      <motion.div
+        className={`bubble-container ${isNew ? 'new-bubble-effect' : ''} ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        variants={finalVariants}
+        initial="initial"
+        animate="animate"
+        whileHover="hover"
+        whileTap={isDeleteMode && isOwner ? "tap" : undefined}
+        onClick={() => {
+          if (isDeleteMode && isOwner) {
+            onClick(bubble);
+            return;
+          }
+          setIsPopped(true);
+          onClick(bubble);
+        }}
+      >
+        <div className={`bubble-content ${bubble.image ? 'bubble-has-image' : ''}`}>
+          <p className="bubble-text">{bubble.text}</p>
+          {bubble.creator && (
+            <div className="bubble-creator">
+            {bubble.fromProfilePic || (bubble.creator && bubble.creator.profilePic) ? (
+              <img src={bubble.fromProfilePic || bubble.creator.profilePic} alt="creator" className="bubble-avatar" />
+            ) : (
+              <div className="bubble-avatar" style={{ background: '#333' }} />
+            )}
+            <span className="bubble-username">@{bubble.fromUsername || (bubble.creator && bubble.creator.username) || 'user'}</span>
           </div>
-        )}
-      </div>
-      <div className="bubble-glare"></div>
+          )}
+          {bubble.image && (
+            <div className="mt-1 w-[80%] flex items-center justify-center">
+              <img src={bubble.image} alt="bubble" className="max-w-full max-h-[60px] object-contain rounded-md drop-shadow-md" />
+            </div>
+          )}
+        </div>
+        <div className="bubble-glare"></div>
+      </motion.div>
     </motion.div>
   );
 };

@@ -1300,19 +1300,32 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   contain: none !important;
   content-visibility: visible;
   overflow: visible !important;
-  border-radius: 18px;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  background: transparent;
 }
 
 @media (min-width: 641px) {
   .profile-feed-shell .premium-post-card {
-    border-radius: 16px;
-    padding: 0.75rem 0.875rem !important;
-    margin-bottom: 0.75rem !important;
+    border-radius: 0;
+    padding: 0.875rem 1.25rem !important;
+    margin-bottom: 0 !important;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: transparent;
+  }
+
+  .profile-feed-shell .premium-post-card:hover {
+    background: rgba(255, 255, 255, 0.015) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
   }
 
   .profile-feed-shell .post-card-body-text {
-    font-size: 14px !important;
-    line-height: 1.5 !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
   }
 }
 
@@ -1598,13 +1611,13 @@ html, body {
   contain: paint;
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
-  background: var(--dynamic-glass-bg, rgb(var(--c-white) / 0.03));
+  background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
   -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border-radius: 28px;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none;
+  border-radius: 0;
+  transition: border-color 0.2s ease, transform 0.15s ease;
   position: relative;
   overflow: hidden;
 }
@@ -1630,8 +1643,11 @@ html, body {
 
 @media (max-width: 640px) {
   .premium-post-card {
-    border-radius: 14px;
-    padding: 0.625rem !important;
+    border-radius: 0;
+    padding: 0.875rem 0.75rem !important;
+    border-left: none;
+    border-right: none;
+    background: transparent;
   }
 
   .profile-copy-block {
@@ -1645,13 +1661,17 @@ html, body {
   }
 
   .profile-feed-shell {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .profile-feed-shell .premium-post-card {
-    border-radius: 18px;
+    border-radius: 0;
     padding: 0.75rem !important;
+    margin-bottom: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    background: transparent;
   }
 
   .profile-feed-shell .post-card-avatar-ring {
@@ -1661,9 +1681,10 @@ html, body {
 
 @media (hover: hover) {
   .premium-post-card:hover, .liquid-image-card:hover {
-    background: rgb(var(--c-white) / 0.06);
-    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1) !important;
     box-shadow: none !important;
+    transform: none;
   }
 }
 
@@ -1917,26 +1938,44 @@ input, textarea {
   border-color: rgba(59, 130, 246, 0.25) !important;
 }
 
-/* Edit profile button styles */
+/* Edit profile button styles - clean X/Twitter style, NO white flash */
 .profile-edit-btn {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border: 1px solid rgba(var(--gold-primary-rgb, 255, 255, 255), 0.2) !important;
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   color: white !important;
   border-radius: 9999px !important;
   font-weight: 800 !important;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .profile-edit-btn:hover {
-  background: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.08) !important;
-  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.4) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
   box-shadow: none !important;
+  transform: none !important;
 }
 .profile-edit-btn:active {
-  transform: scale(0.95) !important;
-  background: transparent !important;
-  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.6) !important;
+  transform: scale(0.97) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #e7e7e8 !important;
+}
+
+/* Entrepreneur descriptor: extra clean look, no funky effects */
+.descriptor-entrepreneur,
+.profile-descriptor-btn[class*="entrepreneur"],
+.profile-descriptor-btn-selected[class*="entrepreneur"] {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.descriptor-entrepreneur:active,
+.profile-descriptor-btn[class*="entrepreneur"]:active {
+  transform: scale(0.985) !important;
+  background: none !important;
 }
 
 /* Tabs adjustment */
@@ -2137,26 +2176,44 @@ input, textarea {
   border-color: rgba(59, 130, 246, 0.25) !important;
 }
 
-/* Edit profile button styles */
+/* Edit profile button styles - clean X/Twitter style, NO white flash */
 .profile-edit-btn {
-  background: rgba(255, 255, 255, 0.02) !important;
-  border: 1px solid rgba(var(--gold-primary-rgb, 255, 255, 255), 0.2) !important;
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   color: white !important;
   border-radius: 9999px !important;
   font-weight: 800 !important;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .profile-edit-btn:hover {
-  background: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.08) !important;
-  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.4) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
   box-shadow: none !important;
+  transform: none !important;
 }
 .profile-edit-btn:active {
-  transform: scale(0.95) !important;
-  background: transparent !important;
-  border-color: rgba(var(--gold-primary-rgb, 255, 255, 255), 0.6) !important;
+  transform: scale(0.97) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #e7e7e8 !important;
+}
+
+/* Entrepreneur descriptor: extra clean look, no funky effects */
+.descriptor-entrepreneur,
+.profile-descriptor-btn[class*="entrepreneur"],
+.profile-descriptor-btn-selected[class*="entrepreneur"] {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.descriptor-entrepreneur:active,
+.profile-descriptor-btn[class*="entrepreneur"]:active {
+  transform: scale(0.985) !important;
+  background: none !important;
 }
 
 /* Tabs adjustment */
@@ -2842,4 +2899,153 @@ textarea:focus {
 
 .live-gold-button:hover {
   transform: translateY(-2px) scale(1.01) !important;
+}
+
+/* ========================================
+   DESKTOP UI POLISH — X/Twitter inspired
+   Clean, no-white-flash, readable layout
+   ======================================== */
+
+@media (min-width: 768px) {
+  /* Feed max-width for optimal readability */
+  main.app-main-scroll {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Post cards: X-style flat dividers, no rounded corners, no white bg */
+  .premium-post-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 1rem 1.25rem !important;
+    margin-bottom: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  .premium-post-card:hover {
+    background: rgba(255, 255, 255, 0.015) !important;
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+    transform: none !important;
+  }
+
+  /* Remove the heavy glass from post header panel for clean look */
+  .premium-post-card .dynamic-glass-panel {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 0 0.5rem 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Action bar: tighter, X-style */
+  .premium-post-card > div > div[class*="border-t border-white/10"],
+  .premium-post-card .flex.items-center.justify-between.mt-4.w-full.border-t,
+  .premium-post-card .flex.items-center.justify-between.mt-3.w-full.border-t {
+    max-width: 425px;
+    margin-top: 0.75rem !important;
+    padding-top: 0.5rem !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* PC: prevent ALL white flashes on tap/click */
+  .premium-post-card:active,
+  .premium-post-card:focus,
+  .premium-post-card:focus-within {
+    background: rgba(255, 255, 255, 0.02) !important;
+    transform: none !important;
+  }
+
+  /* Action buttons on desktop: larger, more spaced, X-style */
+  .action-btn-comment,
+  .action-btn-repost,
+  .action-btn-like,
+  .action-btn-dislike {
+    padding: 0.45rem 0.75rem !important;
+    border-radius: 9999px !important;
+    background: transparent !important;
+  }
+
+  .action-btn-comment:hover,
+  .action-btn-repost:hover,
+  .action-btn-like:hover,
+  .action-btn-dislike:hover {
+    transform: none !important;
+  }
+
+  .action-btn-comment:active,
+  .action-btn-repost:active,
+  .action-btn-like:active,
+  .action-btn-dislike:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Avatar sizing */
+  .post-card-avatar {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: none !important;
+  }
+
+  /* Profile modal desktop improvements */
+  .profile-modal-shell,
+  .profile-page-inner {
+    max-width: 640px !important;
+  }
+
+  /* Profile edit button on desktop: clean outline */
+  .profile-edit-btn {
+    padding: 0.6rem 1.25rem !important;
+    font-size: 12px !important;
+  }
+
+  /* Global: remove any weird backdrop-filter flash */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Scrollbar: thin subtle for desktop main column */
+  main.app-main-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  main.app-main-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+  }
+  main.app-main-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  main.app-main-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    border-left: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  main.app-main-scroll {
+    max-width: 680px;
+  }
+  .premium-post-card {
+    padding: 1.1rem 1.5rem !important;
+  }
+}
+
+/* Prevent global white flash bg rule from affecting posts in any hover state */
+@media (hover: hover) {
+  .premium-post-card:hover,
+  .premium-post-card:active {
+    background-color: rgba(255, 255, 255, 0.015) !important;
+  }
 }
