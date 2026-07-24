@@ -9,16 +9,14 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
   const durationY = 3 + Math.random() * 2;
   const delay = Math.random() * 2;
 
+  const [isNew] = useState(() => Date.now() - new Date(bubble.createdAt).getTime() < 5000);
+
   const floatVariants = {
     initial: {
-      scale: 0,
-      opacity: 0,
       y: 20,
     },
     animate: {
       y: [0, -10, 0],
-      scale: 1,
-      opacity: 1,
       transition: {
         y: {
           duration: durationY,
@@ -26,13 +24,6 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
           repeatType: "mirror",
           ease: "easeInOut",
           delay: delay
-        },
-        scale: {
-          duration: 0.5,
-          ease: "backOut",
-        },
-        opacity: {
-          duration: 0.5,
         }
       }
     },
@@ -123,7 +114,7 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
 
   return (
     <motion.div
-      className={`bubble-container ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
+      className={`bubble-container ${isNew ? 'new-bubble-effect' : ''} ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
       style={{
         width: size,
         height: size,
