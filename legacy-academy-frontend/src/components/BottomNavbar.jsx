@@ -152,8 +152,8 @@ const BottomNavbar = memo(({
     }, []);
 
     const navItemBaseClass = 'relative h-[64px] sm:h-[66px] w-full max-w-[104px] sm:max-w-[116px] flex items-center justify-center rounded-[1.35rem] overflow-hidden transition-colors duration-300';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-white' : 'text-white/70 hover:text-white/90'}`;
-    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105 drop-shadow-[0_1px_4px_rgba(255,255,255,0.35)]' : ''}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-gray-500 hover:text-[#1D9BF0]/70'}`;
+    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105' : ''}`;
 
     return (
         <nav 
@@ -247,7 +247,7 @@ const BottomNavbar = memo(({
                         {isProfileActive && (
                             <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
-                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-white ring-offset-2 ring-offset-black scale-105 drop-shadow-[0_1px_4px_rgba(255,255,255,0.35)]' : 'ring-1 ring-white/20'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
