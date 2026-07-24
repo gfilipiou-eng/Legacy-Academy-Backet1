@@ -183,7 +183,8 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
             onUpdated(res.data);
         } catch (err) {
             console.error(err);
-            alert(err.response?.data || 'Error updating cartel');
+            const msg = err.response?.data?.message || (typeof err.response?.data === 'string' ? err.response.data : null) || 'Error updating cartel';
+            alert(msg);
         } finally {
             setLoading(false);
         }
