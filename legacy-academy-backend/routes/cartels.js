@@ -70,7 +70,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
         const cartel = await Cartel.findById(req.params.id);
         if (!cartel) return res.status(404).json("Cartel not found");
 
-        if (cartel.creator.toString() !== req.user.id && req.user.role !== 'Founder') {
+        if ((!cartel.creator || cartel.creator.toString() !== req.user.id) && req.user.role !== 'Founder') {
             return res.status(403).json("You can only edit your own cartel");
         }
 
@@ -96,8 +96,9 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
         const updatedCartel = await cartel.save();
         res.status(200).json(updatedCartel);
     } catch (err) {
+        console.error("Error updating cartel:", err);
         if (err.code === 11000) return res.status(400).json("Cartel name already exists!");
-        res.status(500).json(err);
+        res.status(500).json(err.message || "Internal server error");
     }
 });
 
