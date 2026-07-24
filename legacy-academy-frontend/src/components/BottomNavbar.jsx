@@ -152,7 +152,7 @@ const BottomNavbar = memo(({
     }, []);
 
     const navItemBaseClass = 'relative h-[64px] sm:h-[66px] w-full max-w-[104px] sm:max-w-[116px] flex items-center justify-center rounded-[1.35rem] overflow-hidden transition-colors duration-300';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-gray-500 hover:text-[#1D9BF0]/70'}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-white hover:text-white/80'}`;
     const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105' : ''}`;
 
     return (
