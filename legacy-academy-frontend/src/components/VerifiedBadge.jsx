@@ -61,9 +61,9 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
 
     const renderMainBadge = () => {
 
-    // ── MASONIC BADGE (Founder only) ──
+    // ── LEGACY MASONIC → UPGRADE to Liquid Glass Gold (seamless fallback for any users who previously had it) ──
     if (effectiveBadgeColor === 'masonic') {
-        return <MasonicSymbol className={className} />;
+        effectiveBadgeColor = 'liquid-gold';
     }
 
     // ── PRISM BLUE (Live Water / Sea Style) ──

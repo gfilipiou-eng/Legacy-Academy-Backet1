@@ -3783,22 +3783,34 @@ const ShareSettingLabel = ({ t }) => (
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="text-[13px] sm:text-[13px] font-normal text-[#8E8E93] uppercase tracking-normal mb-1.5 px-4">{label}</h3>
+    <h3 className="text-[13px] font-medium text-[#8E8E93] uppercase tracking-wider mb-2 mt-6 px-4 first:mt-0">{label}</h3>
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`rounded-[10px] overflow-hidden bg-[#1C1C1E] divide-y divide-white/[0.08] ${className}`}>
+    <div className={`rounded-[12px] overflow-hidden bg-[#1C1C1E] mx-4 settings-group ${className}`}>
         {children}
     </div>
 );
 
-const SettingRow = ({ label, desc, children }) => (
-    <div className="flex items-center justify-between gap-4 px-4 py-3 sm:py-3 min-h-[44px] sm:min-h-[44px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C]">
-        <div className="flex-1 min-w-0 pr-2">
-            {typeof label === 'string' ? <div className="text-[17px] font-normal text-white leading-snug">{label}</div> : label}
-            {desc && <div className="text-[13px] text-[#8E8E93] mt-0.5 leading-snug">{desc}</div>}
+const SettingRow = ({ label, desc, children, hasChevron = false, onClick }) => (
+    <div
+        className={`settings-row flex items-center justify-between gap-4 px-4 py-3.5 min-h-[48px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C] border-b last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
+        onClick={onClick}
+    >
+        <div className="flex-1 min-w-0 pr-2 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+                {typeof label === 'string' ? <div className="text-[15px] font-normal text-white leading-tight">{label}</div> : label}
+                {desc && <div className="text-[12px] text-[#8E8E93] mt-0.5 leading-snug">{desc}</div>}
+            </div>
         </div>
-        <div className="shrink-0">{children}</div>
+        <div className="flex items-center gap-2 shrink-0">
+            {hasChevron && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#8E8E93]/70 -mr-1">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            )}
+            <div>{children}</div>
+        </div>
     </div>
 );
 
@@ -4270,19 +4282,18 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     <div className="px-4 py-4 border-t border-white/5 text-left">
                                         <div className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3">{t('BADGE_STYLE')}</div>
                                         {user?.role === 'Founder' ? (
-                                            <div className="grid grid-cols-3 gap-2">
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                                 {[
-                                                    { id: 'live-gold',   label: t('BADGE_DYNAMIC_GOLD', 'Dynamic Gold') },
-                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid Gold') },
-                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon Purple') },
-                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holographic') },
-                                                    { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Black & White') },
-                                                    { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'White & Black') },
-                                                    { id: 'ig_blue',     label: t('BADGE_PRISM_BLUE', 'Prism Blue') },
-                                                    { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar Gold') },
-                                                    { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember Gold') },
-                                                    { id: 'masonic',     label: t('BADGE_MASONIC', 'Masonic') },
-                                                    ].map(b => {
+                                                    { id: 'live-gold',   label: t('BADGE_DYNAMIC_GOLD', 'Dynamic') },
+                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid') },
+                                                    { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember') },
+                                                    { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar') },
+                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon') },
+                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holo') },
+                                                    { id: 'ig_blue',     label: t('BADGE_PRISM_BLUE', 'Prism') },
+                                                    { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Onyx') },
+                                                    { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'Pearl') },
+                                                ].map(b => {
                                                     const isSelected = badgeColor === b.id;
                                                     return (
                                                         <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
@@ -12262,7 +12273,8 @@ const App = () => {
                             cartel={selectedCartel} 
                             user={user} 
                             t={t} 
-                            onBack={() => setSelectedCartel(null)} 
+                            onBack={() => setSelectedCartel(null)}
+                            onUpdateCartel={(updated) => setSelectedCartel(updated)}
                         />
                     )}
                     <CreateModal isOpen={isCreateOpen} onClose={() => { setIsCreateOpen(false); setCreateModeStory(false); }} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />

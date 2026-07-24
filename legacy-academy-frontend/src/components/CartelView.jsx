@@ -405,7 +405,8 @@ const CartelPostCard = ({ post, user, onEdit, onDelete, t }) => {
 };
 
 /* ─── Main CartelView ─────────────────────────────────────────────────────── */
-export const CartelView = ({ cartel, user, onBack, t }) => {
+export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
+    const [liveCartel, setLiveCartel] = useState(cartel);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isMember, setIsMember] = useState(false);
@@ -413,19 +414,23 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
     const [isEditCartelOpen, setIsEditCartelOpen] = useState(false);
     const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
     const [editingPost, setEditingPost] = useState(null);
-    const isCreator = user && cartel.creator && (user._id === cartel.creator._id || user._id === cartel.creator);
+    const isCreator = user && liveCartel.creator && (user._id === liveCartel.creator._id || user._id === liveCartel.creator);
 
     useEffect(() => {
-        if (!cartel) return;
-        setIsMember(cartel.members?.includes(user._id));
-        setMemberCount(cartel.members?.length || 0);
+        setLiveCartel(cartel);
+    }, [cartel]);
+
+    useEffect(() => {
+        if (!liveCartel) return;
+        setIsMember(liveCartel.members?.includes(user._id));
+        setMemberCount(liveCartel.members?.length || 0);
         fetchPosts();
-    }, [cartel, user]);
+    }, [liveCartel, user]);
 
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`/cartels/${cartel._id}/posts`);
+            const res = await axios.get(`/cartels/${liveCartel._id}/posts`);
             setPosts(res.data);
         } catch (err) {
             console.error(err);
@@ -456,7 +461,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
 
     const handleDeleteCartel = async () => {
         try {
-            await axios.delete(`/cartels/${cartel._id}`);
+            await axios.delete(`/cartels/${liveCartel._id}`);
             onBack();
         } catch (err) {
             console.error(err);
@@ -466,24 +471,24 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
 
     const handleJoin = async () => {
         let enteredPin = '';
-        if (!isMember && cartel.isPrivate) {
+        if (!isMember && liveCartel.isPrivate) {
             enteredPin = prompt(t('CARTELS_ENTER_PIN', 'This cartel is private. Please enter the PIN to join:'));
             if (enteredPin === null) return;
         }
         const previousIsMember = isMember;
-        if (isMember || !cartel.isPrivate) {
+        if (isMember || !liveCartel.isPrivate) {
             setIsMember(!isMember);
             setMemberCount(prev => !isMember ? prev + 1 : prev - 1);
         }
         try {
-            await axios.post(`/cartels/${cartel._id}/join`, { pin: enteredPin });
-            if (!isMember && cartel.isPrivate) {
+            await axios.post(`/cartels/${liveCartel._id}/join`, { pin: enteredPin });
+            if (!isMember && liveCartel.isPrivate) {
                 setIsMember(true);
                 setMemberCount(prev => prev + 1);
             }
         } catch (err) {
             console.error(err);
-            if (isMember || !cartel.isPrivate) {
+            if (isMember || !liveCartel.isPrivate) {
                 setIsMember(previousIsMember);
                 setMemberCount(prev => previousIsMember ? prev + 1 : prev - 1);
             }
@@ -500,8 +505,8 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
             <div className="relative z-10 flex-1 flex flex-col">
                 {/* Cover Banner */}
                 <div className="relative w-full h-48 sm:h-64 bg-black shrink-0">
-                    {cartel.coverImage
-                        ? <img src={cartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
+                    {liveCartel.coverImage
+                        ? <img src={liveCartel.coverImage} alt="Cover" className="w-full h-full object-cover opacity-50" />
                         : <div className="w-full h-full bg-gradient-to-br from-[#111] to-[#222]" />}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent" />
 
@@ -525,14 +530,14 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                     {/* Avatar + info */}
                     <div className="absolute bottom-4 left-4 right-4 flex items-end gap-4">
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-black border-2 border-[var(--gold-primary)] overflow-hidden shrink-0 shadow-xl">
-                            {cartel.image
-                                ? <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover" />
+                            {liveCartel.image
+                                ? <img src={liveCartel.image} alt={liveCartel.name} className="w-full h-full object-cover" />
                                 : <Icons.Users className="w-10 h-10 m-5 text-[var(--gold-primary)]" />}
                         </div>
                         <div className="flex-1 min-w-0 pb-1">
                             <h1 className="text-xl sm:text-3xl font-black text-white tracking-widest truncate drop-shadow-md flex items-center gap-2">
-                                {cartel.name}
-                                {cartel.isPrivate && <Icons.Lock className="w-5 h-5 text-red-500" />}
+                                {liveCartel.name}
+                                {liveCartel.isPrivate && <Icons.Lock className="w-5 h-5 text-red-500" />}
                             </h1>
                             <p className="text-[var(--gold-primary)] font-bold text-sm tracking-wider drop-shadow-md">
                                 {memberCount} {t('CARTELS_MEMBERS', 'Members')}
@@ -549,7 +554,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
 
                 {/* Description */}
                 <div className="px-4 py-4">
-                    <p className="text-white/70 text-sm font-medium leading-relaxed">{cartel.description || t('CARTELS_WELCOME_DESC', 'Welcome to the cartel.')}</p>
+                    <p className="text-white/70 text-sm font-medium leading-relaxed">{liveCartel.description || t('CARTELS_WELCOME_DESC', 'Welcome to the cartel.')}</p>
                 </div>
 
                 {/* Non-member lock */}
@@ -612,7 +617,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                 {isCreatePostOpen && (
                     <CartelPostModal
                         key="create"
-                        cartel={cartel}
+                        cartel={liveCartel}
                         user={user}
                         t={t}
                         onClose={() => setIsCreatePostOpen(false)}
@@ -622,7 +627,7 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                 {editingPost && (
                     <CartelPostModal
                         key="edit"
-                        cartel={cartel}
+                        cartel={liveCartel}
                         user={user}
                         t={t}
                         editPost={editingPost}
@@ -634,11 +639,12 @@ export const CartelView = ({ cartel, user, onBack, t }) => {
                     <EditCartelModal
                         key="editCartel"
                         t={t}
-                        cartel={cartel}
+                        cartel={liveCartel}
                         onClose={() => setIsEditCartelOpen(false)}
-                        onUpdated={(updatedCartel) => { 
-                            setCartel(updatedCartel); 
-                            setIsEditCartelOpen(false); 
+                        onUpdated={(updatedCartel) => {
+                            setLiveCartel(updatedCartel);
+                            onUpdateCartel?.(updatedCartel);
+                            setIsEditCartelOpen(false);
                         }}
                     />
                 )}

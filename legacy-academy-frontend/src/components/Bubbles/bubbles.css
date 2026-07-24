@@ -6,7 +6,7 @@
   width: 100vw;
   height: 100vh;
   z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, #04060d 0%, #070a14 50%, #030508 100%);
   display: flex;
   flex-direction: column;
 }
@@ -15,8 +15,8 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
   width: 40px;
   height: 40px;
@@ -24,99 +24,164 @@
   font-size: 20px;
   cursor: pointer;
   z-index: 10;
-  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
+  transition: all 0.2s;
 }
 
 .bubble-close-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .bubble-space-canvas {
   flex: 1;
   width: 100%;
   height: 100%;
-  padding: 20px;
+  padding: 16px 12px;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
   justify-content: center;
-  gap: 25px;
+  gap: 16px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
-/* 3D Soap Bubble Effect */
+/* 3D Soap Bubble Effect — Smooth, Mobile Friendly, NO heavy filters */
 .bubble-container {
   position: relative;
   border-radius: 50%;
   flex-shrink: 0;
   background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 10%,
-    rgba(255, 255, 255, 0.0) 40%,
-    rgba(200, 220, 255, 0.1) 80%,
-    rgba(255, 255, 255, 0.25) 100%
+    circle at 30% 25%,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(120, 180, 255, 0.08) 25%,
+    rgba(180, 140, 255, 0.06) 50%,
+    rgba(100, 200, 255, 0.1) 75%,
+    rgba(200, 180, 255, 0.2) 100%
   );
-  box-shadow: 
-    inset 0 0 15px rgba(255, 255, 255, 0.3),
-    inset 10px 0 25px rgba(255, 0, 255, 0.15),
-    inset -10px 0 25px rgba(0, 255, 255, 0.15),
-    0 0 10px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.18),
+    inset -8px -6px 18px rgba(120, 80, 220, 0.15),
+    inset 8px 6px 18px rgba(80, 180, 255, 0.15);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+  contain: layout style paint;
+  transform: translateZ(0);
 }
 
 .bubble-container.new-bubble-effect {
-  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: bubbleBlowIn 0.7s cubic-bezier(0.22, 1.6, 0.36, 1) forwards;
 }
 
-@keyframes popIn {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes bubbleBlowIn {
+  0% {
+    transform: scale(0.2) translateY(30px);
+    opacity: 0;
+    filter: blur(6px);
+  }
+  35% {
+    transform: scale(1.12) translateY(-2px);
+    opacity: 1;
+    filter: blur(0);
+  }
+  55% {
+    transform: scale(0.95) translateY(1px);
+  }
+  75% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
+/* Subtle iridescent shimmer on the bubble surface */
+.bubble-container::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(120, 180, 255, 0.08),
+    rgba(180, 140, 255, 0.12),
+    rgba(255, 140, 200, 0.08),
+    rgba(100, 200, 255, 0.12),
+    rgba(120, 180, 255, 0.08)
+  );
+  z-index: 0;
+  mix-blend-mode: screen;
+  animation: bubbleShimmerSlow 8s linear infinite;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+@keyframes bubbleShimmerSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Primary glare (strong highlight) */
 .bubble-glare {
   position: absolute;
-  top: 15%;
-  left: 20%;
-  width: 25%;
-  height: 15%;
+  top: 12%;
+  left: 18%;
+  width: 32%;
+  height: 20%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 70%);
-  transform: rotate(-45deg);
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0) 75%);
+  transform: rotate(-35deg);
   pointer-events: none;
+  z-index: 2;
+}
+
+/* Secondary smaller glare (tiny sparkle) */
+.bubble-container::after {
+  content: '';
+  position: absolute;
+  bottom: 18%;
+  right: 22%;
+  width: 14%;
+  height: 10%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
+  transform: rotate(15deg);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .bubble-content {
   text-align: center;
-  padding: 10px;
+  padding: 10px 8px;
   color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 3;
+  position: relative;
 }
 
 .bubble-text {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
   margin-bottom: 4px;
+  line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
@@ -127,7 +192,7 @@
 }
 
 .bubble-has-image .bubble-text {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   -webkit-line-clamp: 2;
   margin-bottom: 2px;
 }
@@ -135,16 +200,19 @@
 .bubble-creator {
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(0,0,0,0.4);
-  padding: 3px 8px;
+  gap: 4px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 2px 7px;
   border-radius: 12px;
   max-width: 95%;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .bubble-avatar {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -152,170 +220,135 @@
 }
 
 .bubble-username {
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: rgba(255,255,255,0.92);
 }
 
-.bubble-delete-btn {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(200, 20, 20, 0.9);
-  border: 2px solid white;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.bubble-delete-btn:hover, .bubble-delete-btn:active {
-  background: rgba(255, 0, 0, 1);
-}
-
-/* Input Area */
+/* Input Area — Clean Insta-style, NO heavy backdrop-filter on iOS/Android */
 .bubble-input-container {
-  padding: 20px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(4,6,13,1) 60%, rgba(4,6,13,0.85) 85%, transparent);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   z-index: 10;
+  gap: 8px;
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .bubble-form {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 10px;
   width: 100%;
-  max-width: 700px;
   align-items: center;
 }
 
+/* CLEAN text input: no backdrop-blur, no inner shadow — removes typing lag */
 .bubble-input {
   flex: 1;
   min-width: 150px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  padding: 16px 24px;
+  background: #111318;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 13px 18px;
   color: white;
-  font-size: 1.1rem;
-  backdrop-filter: blur(15px);
+  font-size: 15px;
+  font-weight: 500;
   outline: none;
   box-sizing: border-box;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+  transition: border-color 0.15s ease, background 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 1.4;
+}
+
+.bubble-input:focus {
+  border-color: rgba(120, 180, 255, 0.5);
+  background: #151820;
+  box-shadow: 0 0 0 3px rgba(120, 180, 255, 0.1);
+}
+
+.bubble-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
 }
 
 .bubble-img-btn {
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #111318;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  transition: all 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.bubble-img-btn:hover {
+  background: #1a1d25;
+  border-color: rgba(120, 180, 255, 0.3);
+}
+.bubble-img-btn:active {
+  transform: scale(0.94);
 }
 
-@media (max-width: 600px) {
-  .bubble-input-container {
-    padding: 15px;
-  }
-  .bubble-form {
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .bubble-input {
-    padding: 14px 16px;
-    font-size: 1rem;
-    flex: 1 1 100%;
-    min-width: 100%;
-  }
-  .bubble-blow-btn {
-    flex: 1;
-    min-width: 120px;
-    padding: 14px 16px;
-    font-size: 0.95rem;
-  }
-  .bubble-img-btn {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-.bubble-image-preview {
-  position: relative;
-  margin-bottom: 15px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  max-width: 200px;
-}
-.bubble-image-preview img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.bubble-image-preview button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(0,0,0,0.6);
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-}
-.bubble-image-preview button:hover {
-  background: rgba(255,0,0,0.8);
-}
-
-.bubble-input:focus {
-  border-color: rgba(0, 242, 255, 0.6);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.1), 0 0 15px rgba(0, 242, 255, 0.3);
-}
-
+/* ======= BLOW BUBBLE BUTTON — Smooth press effect ======= */
 .bubble-blow-btn {
   flex-shrink: 0;
-  min-width: 180px;
-  background: linear-gradient(135deg, #00f2ff, #ff00ff, #00f2ff);
+  min-width: 140px;
+  background: linear-gradient(135deg, #7ab8ff 0%, #9f7cff 50%, #ff8cc8 100%);
   background-size: 200% 200%;
   border: none;
-  border-radius: 25px;
-  padding: 16px 28px;
+  border-radius: 24px;
+  padding: 13px 22px;
   color: white;
   font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
-  flex-shrink: 0;
-  text-transform: uppercase;
-  animation: gradientFlow 3s ease infinite;
+  text-transform: none;
+  box-shadow:
+    0 2px 10px rgba(159, 124, 255, 0.35),
+    0 0 0 1px rgba(255,255,255,0.1) inset;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  animation: gradientFlow 4s ease infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bubble sparkle icon inside */
+.bubble-blow-btn::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -40%;
+  width: 60%;
+  height: 220%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transform: rotate(20deg);
+  animation: bubbleBtnShine 3.5s ease-in-out infinite;
 }
 
 @keyframes gradientFlow {
@@ -324,64 +357,139 @@
   100% { background-position: 0% 50%; }
 }
 
+@keyframes bubbleBtnShine {
+  0%, 70% { left: -40%; opacity: 0; }
+  75%, 90% { left: 120%; opacity: 1; }
+  100% { left: 120%; opacity: 0; }
+}
+
 .bubble-blow-btn:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 6px 20px rgba(159, 124, 255, 0.45),
+    0 0 0 1px rgba(255,255,255,0.15) inset;
 }
 
 .bubble-blow-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
+  transform: translateY(1px) scale(0.97);
+  box-shadow:
+    0 1px 5px rgba(159, 124, 255, 0.3),
+    0 0 0 1px rgba(255,255,255,0.1) inset;
 }
 
 .bubble-blow-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.38;
   cursor: not-allowed;
-  filter: grayscale(1);
+  filter: saturate(0.5);
   animation: none;
 }
 
 .bubble-character-count {
-  margin-top: 5px;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.28);
   align-self: flex-end;
   max-width: 500px;
   width: 100%;
   text-align: right;
-  padding-right: 15px;
+  padding-right: 4px;
+  letter-spacing: 0.2px;
 }
 
+/* Image preview nice style */
+.bubble-image-preview {
+  position: relative;
+  margin-bottom: 4px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+  max-width: 220px;
+  align-self: flex-start;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.bubble-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.bubble-image-preview button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.15s;
+  backdrop-filter: blur(6px);
+}
+.bubble-image-preview button:hover {
+  background: rgba(220,40,40,0.85);
+  transform: scale(1.06);
+}
+
+/* MOBILE OPTIMIZATIONS — No lag, no heavy effects */
+@media (max-width: 600px) {
+  .bubble-space-canvas {
+    padding: 14px 8px;
+    gap: 12px;
+  }
+
+  .bubble-input-container {
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 6px;
+  }
+
+  .bubble-form {
+    gap: 8px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .bubble-img-btn {
+    width: 44px;
+    height: 44px;
+    order: 1;
+    flex-shrink: 0;
+  }
+
+  .bubble-input {
+    order: 2;
+    flex: 1 1 auto;
+    padding: 12px 16px;
+    font-size: 15px;
+    min-width: 0;
+  }
+
+  .bubble-blow-btn {
+    order: 3;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+
+  .bubble-form {
+    flex-wrap: wrap;
+  }
+
+  .bubble-form > .bubble-img-btn,
+  .bubble-form > .bubble-input {
+    flex: 0 0 auto;
+  }
+  .bubble-form > .bubble-input {
+    flex: 1;
+  }
+}
+
+/* Float animation: very subtle (was heavy) */
 @keyframes floatBubble {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-10px) scale(1.02); }
-}
-@keyframes bubbleShimmer {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  100% { background-position: 0% 0%; }
-}
-
-.bubble-container::before {
-  content: '';
-  position: absolute;
-  top: 15%;
-  left: 20%;
-  width: 30%;
-  height: 20%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-  transform: rotate(-45deg);
-  pointer-events: none;
-}
-
-.bubble-container::after {
-  content: '';
-  position: absolute;
-  bottom: 10%;
-  right: 15%;
-  width: 40%;
-  height: 15%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
-  transform: rotate(20deg);
-  pointer-events: none;
+  50% { transform: translateY(-5px) scale(1.01); }
 }
