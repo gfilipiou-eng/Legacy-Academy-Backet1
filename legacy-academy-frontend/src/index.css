@@ -3168,27 +3168,34 @@ textarea:focus {
 }
 
 
-/* === Liquid Glass Aesthetic (User Setting) === */
+/* === Liquid Glass Aesthetic (User Setting - Expanded for Premium UI) === */
 body.liquid-glass-aesthetic .premium-post-card,
 body.liquid-glass-aesthetic .post-card,
 body.liquid-glass-aesthetic .profile-card,
-body.liquid-glass-aesthetic .profile-shell {
-  background: rgba(20, 20, 20, calc(var(--lg-opacity, 1) * 0.4)) !important;
-  backdrop-filter: blur(var(--lg-blur, 25px)) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(var(--lg-blur, 25px)) saturate(200%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1) !important;
-  border-radius: 1.5rem !important;
-  margin-bottom: 1rem !important;
+body.liquid-glass-aesthetic .profile-shell,
+body.liquid-glass-aesthetic .cartel-card,
+body.liquid-glass-aesthetic .cartel-panel,
+body.liquid-glass-aesthetic .glass-panel,
+body.liquid-glass-aesthetic .nav-drawer-panel,
+body.liquid-glass-aesthetic .comment-card,
+body.liquid-glass-aesthetic .match-widget-container {
+  background: rgba(18, 18, 22, calc(var(--lg-opacity, 1) * 0.45)) !important;
+  backdrop-filter: blur(var(--lg-blur, 25px)) saturate(var(--dynamic-saturate, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--lg-blur, 25px)) saturate(var(--dynamic-saturate, 180%)) !important;
+  border: 1px solid rgba(255, 255, 255, var(--lg-border-opacity, 0.12)) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transition: background 0.2s ease, backdrop-filter 0.2s ease, border-color 0.2s ease !important;
 }
 
 @media (max-width: 640px) {
   body.liquid-glass-aesthetic .premium-post-card,
   body.liquid-glass-aesthetic .post-card,
-  body.liquid-glass-aesthetic .profile-card {
+  body.liquid-glass-aesthetic .profile-card,
+  body.liquid-glass-aesthetic .cartel-card {
     border-radius: 0 !important;
     border-left: none !important;
     border-right: none !important;
     margin-bottom: 0 !important;
   }
 }
+

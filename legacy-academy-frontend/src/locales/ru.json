@@ -20,7 +20,7 @@
   "FOLLOW": "ПОДПИСАТЬСЯ",
   "UNFOLLOW": "ОТПИСАТЬСЯ",
   "REQUESTED": "ЗАПРОШЕНО",
-  "DELETE": "УДАЛИТЬ",
+  "DELETE": "Удалить",
   "CANCEL": "ОТМЕНА",
   "SAVE": "СОХРАНИТЬ",
   "UI_ZOOM": "МАСШТАБ UI",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "ВИДЕО",
   "HIGHLIGHTS": "СЮЖЕТНАЯ ЛИНИЯ",
   "NO_CONTENT": "Контент не найден",
-  "UPLOAD_TITLE": "ЗАГРУЗКА",
+  "UPLOAD_TITLE": "Опубликовать Интел",
   "DECRYPT_PH": "Расшифруйте свои мысли...",
   "YOUTUBE_PH": "YouTube URL (необязательно)",
   "YOUTUBE_NOTE": "Примечание: видео на YouTube должны быть не длиннее 20 минут.",
@@ -562,7 +562,7 @@
   "F1_ASTON_MODE": "F1 Зеленый",
   "ENABLE_GLOW": "Включить свечение",
   "GLOW_EFFECT_DESC": "Добавляет эффект свечения к цветам темы",
-  "LIQUID_GLASS_INTENSITY": "Интенсивность Liquid Glass",
+  "LIQUID_GLASS_INTENSITY": "????????????? Liquid Glass",
   "CAT_BUSINESS": "Бизнес",
   "CAT_BUSINESS_DESC": "Овладейте искусством предпринимательства, налаживания связей и расширения масштабов деятельности.",
   "MISSION_BIZ_LAUNCH": "Запуск продукта",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Описание",
   "CARTELS_IMAGE": "Обложка",
   "EDIT_POST": "Редактировать",
-  "DELETE": "Удалить",
   "CREATE": "Создать",
-  "UPLOAD_TITLE": "Опубликовать Интел"
+  "LIQUID_GLASS": "????????????? Liquid Glass",
+  "LIQUID_GLASS_DESC": "????????? ???? ???????? ? ??????? ?????? ?? ????????? ? ???????."
 }

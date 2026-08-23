@@ -4247,7 +4247,7 @@ useEffect(() => {
 
                                 <div className="px-5 sm:px-6 py-5 border-t border-white/5">
                                   <div className="flex items-center justify-between mb-4">
-                                      <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('LIQUID_GLASS', 'Liquid Glass Intensity')}</span>
+                                      <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('LIQUID_GLASS_INTENSITY', 'Liquid Glass Intensity')}</span>
                                       <span className="text-[15px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(liquidGlassIntensity * 100)}%</span>
                                   </div>
                                   <input
@@ -8456,15 +8456,30 @@ const applyGlow = (enabled) => {
 };
 
 const applyLiquidGlass = (intensity) => {
-    const val = Math.max(0, Math.min(1, Number(intensity) || 0));
-    const blur = 4 + (val * 36); // 4px to 40px
-    const saturate = 100 + (val * 150); // 100% to 250%
-    const bgOpacity = 0.2 + (val * 0.6); // 0.2 to 0.8
-    document.documentElement.style.setProperty('--dynamic-blur', `${blur}px`);
-    document.documentElement.style.setProperty('--dynamic-saturate', `${saturate}%`);
-    document.documentElement.style.setProperty('--dynamic-glass-bg', `rgba(10, 10, 10, ${bgOpacity})`);
+    const val = Math.max(0, Math.min(1, Number(intensity) ?? 1));
+    const blur = Math.round(4 + (val * 36));
+    const saturate = Math.round(100 + (val * 150));
+    const bgOpacity = (0.15 + (val * 0.55)).toFixed(2);
+    const borderOpacity = (0.05 + (val * 0.2)).toFixed(2);
+    
+    const root = document.documentElement;
+    root.style.setProperty('--dynamic-blur', `${blur}px`);
+    root.style.setProperty('--dynamic-saturate', `${saturate}%`);
+    root.style.setProperty('--dynamic-glass-bg', `rgba(10, 10, 10, ${bgOpacity})`);
+    
+    document.body.style.setProperty('--lg-opacity', val);
+    document.body.style.setProperty('--lg-blur', `${blur}px`);
+    document.body.style.setProperty('--lg-border-opacity', borderOpacity);
+    
+    if (val > 0) {
+        document.body.classList.add('liquid-glass-aesthetic');
+    } else {
+        document.body.classList.remove('liquid-glass-aesthetic');
+    }
+    
     localStorage.setItem('liquidGlassIntensity', String(val));
 };
+
 
 const applyZoom = (zoom) => {
     const appContent = document.getElementById('zoomable-content');

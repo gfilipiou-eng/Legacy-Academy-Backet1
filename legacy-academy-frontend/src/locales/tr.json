@@ -20,7 +20,7 @@
   "FOLLOW": "TAKİP ET",
   "UNFOLLOW": "TAKİPTEN ÇIK",
   "REQUESTED": "İSTENDİ",
-  "DELETE": "SİL",
+  "DELETE": "Sil",
   "CANCEL": "İPTAL",
   "SAVE": "KAYDET",
   "UI_ZOOM": "UI YAKINLAŞTIRMA",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VİDEO",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "İçerik bulunamadı",
-  "UPLOAD_TITLE": "YÜKLE",
+  "UPLOAD_TITLE": "Intel Paylaş",
   "DECRYPT_PH": "Düşüncelerini çöz...",
   "YOUTUBE_PH": "YouTube URL (isteğe bağlı)",
   "YOUTUBE_NOTE": "Not: YouTube videoları 20 dakika veya daha kısa olmalıdır.",
@@ -562,7 +562,7 @@
   "F1_ASTON_MODE": "F1 Yeşil",
   "ENABLE_GLOW": "Parlama Etkin",
   "GLOW_EFFECT_DESC": "Tema renklerine parlama efekti ekler",
-  "LIQUID_GLASS_INTENSITY": "Liquid Glass Yoğunluğu",
+  "LIQUID_GLASS_INTENSITY": "Liquid Glass Yogunlugu",
   "CAT_BUSINESS": "İşletme",
   "CAT_BUSINESS_DESC": "Girişimcilik, ağ oluşturma ve ölçek büyütme sanatında ustalaşın.",
   "MISSION_BIZ_LAUNCH": "Ürünü Başlat",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Açıklama",
   "CARTELS_IMAGE": "Kapak Resmi",
   "EDIT_POST": "Düzenle",
-  "DELETE": "Sil",
   "CREATE": "Oluştur",
-  "UPLOAD_TITLE": "Intel Paylaş"
+  "LIQUID_GLASS": "Liquid Glass Yogunlugu",
+  "LIQUID_GLASS_DESC": "Kartlardaki ve panellerdeki bulan?kl?k ve cam efektinin yogunlugunu ayarlay?n."
 }

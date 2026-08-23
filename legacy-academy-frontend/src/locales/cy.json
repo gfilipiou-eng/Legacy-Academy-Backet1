@@ -20,7 +20,7 @@
   "FOLLOW": "ΑΚΟΛΟΥΘΑ",
   "UNFOLLOW": "ΣΒΗΣΤΟ",
   "REQUESTED": "ΣΤΑΛΘΗΚΕ",
-  "DELETE": "ΣΒΗΣΤΟ",
+  "DELETE": "Dileu",
   "CANCEL": "ΑΚΥΡΟΝ",
   "SAVE": "ΣΩΣΤΟ",
   "UI_ZOOM": "ΣΜΙΚΡΥΝΣΗ UI",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "ΒΙΝΤΕΟ",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "Δεν βρέθηκε περιεχομενο",
-  "UPLOAD_TITLE": "ΜΕΤΑΦΟΡΤΩΣΗ",
+  "UPLOAD_TITLE": "Postio Intel",
   "DECRYPT_PH": "Αποκρυπτογράφηση σκέψεων...",
   "YOUTUBE_PH": "YouTube URL (προαιρετικό)",
   "YOUTUBE_NOTE": "Σημείωση: Τα βίντεο YouTube πρέπει να είναι κάτω από 20 λεπτά.",
@@ -564,7 +564,7 @@
   "F1_ASTON_MODE": "F1 Πράσινο",
   "ENABLE_GLOW": "Ενεργοποίηση Φωτισμού",
   "GLOW_EFFECT_DESC": "Προσθέτει εφέ λάμψης στα χρώματα του θέματος (καταναλώνει περισσότερη μπαταρία)",
-  "LIQUID_GLASS_INTENSITY": "Ένταση Liquid Glass",
+  "LIQUID_GLASS_INTENSITY": "������ Liquid Glass",
   "CAT_BUSINESS": "Επιχειρηματικότητα",
   "CAT_BUSINESS_DESC": "Γίνε master στην επιχειρηματικότητα, τη δικτύωση και την ανάπτυξη.",
   "MISSION_BIZ_LAUNCH": "Λανσάρισμα Προϊόντος",
@@ -662,7 +662,7 @@
   "CARTELS_DESC": "Disgrifiad",
   "CARTELS_IMAGE": "Delwedd Clawr",
   "EDIT_POST": "Golygu",
-  "DELETE": "Dileu",
   "CREATE": "Creu",
-  "UPLOAD_TITLE": "Postio Intel"
+  "LIQUID_GLASS": "������ Liquid Glass",
+  "LIQUID_GLASS_DESC": "����������� ��� ������ ��� ��� ��������� ��� ������� �� ���� ��� ������ ��� �� �����."
 }

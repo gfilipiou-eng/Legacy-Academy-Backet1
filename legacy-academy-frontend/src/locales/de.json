@@ -20,7 +20,7 @@
   "FOLLOW": "FOLGEN",
   "UNFOLLOW": "ENTFOLGEN",
   "REQUESTED": "ANGEFORDERT",
-  "DELETE": "LÖSCHEN",
+  "DELETE": "Löschen",
   "CANCEL": "ABBRECHEN",
   "SAVE": "SPEICHERN",
   "UI_ZOOM": "UI-ZOOM",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VIDEO",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "Kein Inhalt gefunden",
-  "UPLOAD_TITLE": "HOCHLADEN",
+  "UPLOAD_TITLE": "Intel posten",
   "DECRYPT_PH": "Entschlüssele deine Gedanken...",
   "YOUTUBE_PH": "YouTube-URL (optional)",
   "YOUTUBE_NOTE": "Hinweis: YouTube-Videos müssen kürzer als 20 Minuten sein.",
@@ -562,7 +562,7 @@
   "F1_ASTON_MODE": "F1 Grün",
   "ENABLE_GLOW": "Leuchten aktivieren",
   "GLOW_EFFECT_DESC": "Fügt Themenfarben einen Leuchteffekt hinzu",
-  "LIQUID_GLASS_INTENSITY": "Liquid Glass Intensität",
+  "LIQUID_GLASS_INTENSITY": "Liquid Glass Intensitat",
   "CAT_BUSINESS": "Geschäft",
   "CAT_BUSINESS_DESC": "Meistern Sie die Kunst des Unternehmertums, der Vernetzung und der Expansion.",
   "MISSION_BIZ_LAUNCH": "Produkt starten",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Beschreibung",
   "CARTELS_IMAGE": "Titelbild",
   "EDIT_POST": "Bearbeiten",
-  "DELETE": "Löschen",
   "CREATE": "Erstellen",
-  "UPLOAD_TITLE": "Intel posten"
+  "LIQUID_GLASS": "Liquid Glass Intensitat",
+  "LIQUID_GLASS_DESC": "Passen Sie die Starke des Unscharfe- und Glaseffekts auf Karten und Panels an."
 }

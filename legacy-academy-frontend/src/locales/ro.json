@@ -20,7 +20,7 @@
   "FOLLOW": "URMEAZĂ",
   "UNFOLLOW": "ANULUI",
   "REQUESTED": "CERAT",
-  "DELETE": "ŞTERGE",
+  "DELETE": "Șterge",
   "CANCEL": "ANULA",
   "SAVE": "SALVA",
   "UI_ZOOM": "UI ZOOM",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VIDEO",
   "HIGHLIGHTS": "POVESTE",
   "NO_CONTENT": "Nu a fost găsit niciun conținut",
-  "UPLOAD_TITLE": "ÎNCĂRCARE",
+  "UPLOAD_TITLE": "Postează Intel",
   "DECRYPT_PH": "Decriptați-vă gândurile...",
   "YOUTUBE_PH": "URL YouTube (opțional)",
   "YOUTUBE_NOTE": "Notă: linkurile YouTube nu pot fi verificate automat pentru durată - asigurați-vă că videoclipul durează 20 de minute sau mai puțin.",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Descriere",
   "CARTELS_IMAGE": "Imagine copertă",
   "EDIT_POST": "Editează",
-  "DELETE": "Șterge",
   "CREATE": "Creează",
-  "UPLOAD_TITLE": "Postează Intel"
+  "LIQUID_GLASS": "Intensitatea sticlei lichide",
+  "LIQUID_GLASS_DESC": "Ajusta?i intensitatea efectului de estompare ?i sticla pe carduri ?i panouri."
 }

@@ -20,7 +20,7 @@
   "FOLLOW": "SEGUIR",
   "UNFOLLOW": "DEJAR DE SEGUIR",
   "REQUESTED": "SOLICITADO",
-  "DELETE": "ELIMINAR",
+  "DELETE": "Eliminar",
   "CANCEL": "CANCELAR",
   "SAVE": "GUARDAR",
   "UI_ZOOM": "ZOOM UI",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VIDEO",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "No se encontró contenido",
-  "UPLOAD_TITLE": "SUBIR",
+  "UPLOAD_TITLE": "Publicar Intel",
   "DECRYPT_PH": "Descifra tus pensamientos...",
   "YOUTUBE_PH": "URL de YouTube (opcional)",
   "YOUTUBE_NOTE": "Nota: Los videos de YouTube deben ser de 20 minutos o menos.",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Descripción",
   "CARTELS_IMAGE": "Imagen de portada",
   "EDIT_POST": "Editar",
-  "DELETE": "Eliminar",
   "CREATE": "Crear",
-  "UPLOAD_TITLE": "Publicar Intel"
+  "LIQUID_GLASS": "Intensidad Liquid Glass",
+  "LIQUID_GLASS_DESC": "Ajusta la intensidad del efecto de desenfoque y cristal en tarjetas y paneles."
 }

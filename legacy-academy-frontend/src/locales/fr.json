@@ -20,7 +20,7 @@
   "FOLLOW": "SUIVRE",
   "UNFOLLOW": "NE PLUS SUIVRE",
   "REQUESTED": "DEMANDÉ",
-  "DELETE": "SUPPRIMER",
+  "DELETE": "Supprimer",
   "CANCEL": "ANNULER",
   "SAVE": "ENREGISTRER",
   "UI_ZOOM": "ZOOM UI",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VIDÉO",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "Aucun contenu trouvé",
-  "UPLOAD_TITLE": "TÉLÉCHARGER",
+  "UPLOAD_TITLE": "Publier Intel",
   "DECRYPT_PH": "Déchiffrez vos pensées...",
   "YOUTUBE_PH": "URL YouTube (optionnel)",
   "YOUTUBE_NOTE": "Note : Les vidéos YouTube doivent être de 20 minutes ou moins.",
@@ -562,7 +562,7 @@
   "F1_ASTON_MODE": "F1 Vert",
   "ENABLE_GLOW": "Activer la lueur",
   "GLOW_EFFECT_DESC": "Ajoute un effet de lueur aux couleurs",
-  "LIQUID_GLASS_INTENSITY": "Intensité Liquid Glass",
+  "LIQUID_GLASS_INTENSITY": "Intensite Liquid Glass",
   "CAT_BUSINESS": "Entreprise",
   "CAT_BUSINESS_DESC": "Maîtrisez l’art de l’entrepreneuriat, du réseautage et de la mise à l’échelle.",
   "MISSION_BIZ_LAUNCH": "Lancement du produit",
@@ -650,7 +650,7 @@
   "CARTELS_DESC": "Description",
   "CARTELS_IMAGE": "Image de couverture",
   "EDIT_POST": "Modifier",
-  "DELETE": "Supprimer",
   "CREATE": "Créer",
-  "UPLOAD_TITLE": "Publier Intel"
+  "LIQUID_GLASS": "Intensite Liquid Glass",
+  "LIQUID_GLASS_DESC": "Ajustez l'intensite de l'effet de flou et de verre sur les cartes et panneaux."
 }

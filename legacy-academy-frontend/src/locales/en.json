@@ -20,7 +20,7 @@
   "FOLLOW": "FOLLOW",
   "UNFOLLOW": "UNFOLLOW",
   "REQUESTED": "REQUESTED",
-  "DELETE": "DELETE",
+  "DELETE": "Delete",
   "CANCEL": "CANCEL",
   "SAVE": "SAVE",
   "UI_ZOOM": "UI ZOOM",
@@ -149,7 +149,7 @@
   "TAB_VIDEO": "VIDEO",
   "HIGHLIGHTS": "STORYLINE",
   "NO_CONTENT": "No Content Found",
-  "UPLOAD_TITLE": "UPLOAD",
+  "UPLOAD_TITLE": "Post Intel",
   "DECRYPT_PH": "Decrypt your thoughts...",
   "YOUTUBE_PH": "YouTube URL (optional)",
   "YOUTUBE_NOTE": "Note: YouTube links cannot be automatically verified for duration — please ensure the video is 20 minutes or shorter.",
@@ -668,7 +668,7 @@
   "CARTELS_DESC": "Description",
   "CARTELS_IMAGE": "Cover Image",
   "EDIT_POST": "Edit",
-  "DELETE": "Delete",
   "CREATE": "Create",
-  "UPLOAD_TITLE": "Post Intel"
+  "LIQUID_GLASS": "Liquid Glass Intensity",
+  "LIQUID_GLASS_DESC": "Adjust the blur and glass effect strength on all cards and panels."
 }
