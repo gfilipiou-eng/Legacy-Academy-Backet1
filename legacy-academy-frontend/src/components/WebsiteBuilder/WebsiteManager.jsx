@@ -107,7 +107,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-[2000] bg-[#050505] flex flex-col items-center justify-start overflow-y-auto pt-safe relative">
+        <div className="fixed inset-0 z-[5000] bg-[#050505] flex flex-col items-center justify-start overflow-y-auto pt-safe">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--builder-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">

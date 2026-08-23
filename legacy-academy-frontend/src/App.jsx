@@ -10466,7 +10466,7 @@ const App = () => {
 
 
     // Unified Scroll Lock for Modals
-    const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || !!selectedPost;
+    const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || isWebsiteBuilderOpen || isBubbleSpaceOpen || !!selectedPost;
 
     useEffect(() => {
         if (publicProfileUsername || viewPostId || publicSiteUsername) return undefined;

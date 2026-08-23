@@ -215,7 +215,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
     return (
         <>
-        <div className="fixed inset-0 z-[3000] bg-black flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none" style={{ '--builder-primary': activeTheme?.primary || '#D4AF37' }}>
+        <div className="fixed inset-0 z-[5000] bg-black flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none" style={{ '--builder-primary': activeTheme?.primary || '#D4AF37' }}>
             
             {/* MOBILE TABS (Only visible on small screens) */}
             <div className="md:hidden flex border-b border-white/10 shrink-0 bg-[#09090b] z-30 pt-safe shadow-lg">
