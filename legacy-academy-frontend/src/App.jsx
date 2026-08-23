@@ -7064,7 +7064,7 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[80dvh] mt-auto rounded-t-3xl sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
+                className={`profile-modal-shell relative w-[96%] max-w-full mx-auto my-auto sm:max-w-lg sm:mx-auto h-[85dvh] rounded-[32px] sm:h-[85vh] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
                 style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
 
