@@ -1620,7 +1620,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[90dvh] mt-auto rounded-t-3xl max-h-[90dvh] mt-auto rounded-t-3xl md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[80dvh] mt-auto rounded-t-3xl max-h-[80dvh] mt-auto rounded-t-3xl md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
@@ -7064,7 +7064,7 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[90dvh] mt-auto rounded-t-3xl sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
+                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[80dvh] mt-auto rounded-t-3xl sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
                 style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
 
@@ -8077,7 +8077,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -8288,7 +8288,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -11258,7 +11258,7 @@ const App = () => {
                             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
-                            <div className="relative p-5 pb-8 overflow-y-auto max-h-[90dvh] no-scrollbar">
+                            <div className="relative p-5 pb-8 overflow-y-auto max-h-[80dvh] no-scrollbar">
                                 {/* LOGO */}
                                 <div className="flex flex-col items-center mb-8 relative">
                                     <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
@@ -11607,7 +11607,7 @@ const App = () => {
                 )}
                 </>
             ) : (
-                <div className="h-[90dvh] mt-auto rounded-t-3xl bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                <div className="h-[80dvh] mt-auto rounded-t-3xl bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef}  className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
