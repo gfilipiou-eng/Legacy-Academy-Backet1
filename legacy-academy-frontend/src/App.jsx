@@ -11614,10 +11614,10 @@ const App = () => {
                 )}
                 </>
             ) : (
-                <div className="min-h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
-                    <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
-                    <div id="app-content" className="flex-1 overflow-hidden relative">
-                        <main ref={mainScrollRef}  className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
+                <div className="h-[100dvh] max-h-[100dvh] w-full bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                    <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundColor: 'var(--app-bg)' }}></div>
+                    <div id="app-content" className="flex-1 overflow-hidden relative flex flex-col min-h-0 w-full">
+                        <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-contain min-h-0 h-full w-full" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                         <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[#ffffff] border-b border-white/10 shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
