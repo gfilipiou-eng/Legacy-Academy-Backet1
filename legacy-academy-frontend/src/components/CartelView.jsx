@@ -433,6 +433,7 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     const [isMember, setIsMember] = useState(false);
     const [showJoinPinModal, setShowJoinPinModal] = useState(false);
     const [joinPinInput, setJoinPinInput] = useState('');
+    const [isJoining, setIsJoining] = useState(false);
     const [memberCount, setMemberCount] = useState(0);
     const [isEditCartelOpen, setIsEditCartelOpen] = useState(false);
     const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
@@ -500,8 +501,11 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     };
 
     const executeJoin = async (enteredPin = '') => {
+        if (isJoining) return;
+        setIsJoining(true);
+        const pinToSend = String(enteredPin || '').trim();
         try {
-            await axios.post(`/cartels/${liveCartel._id}/join`, { pin: enteredPin });
+            await axios.post(`/cartels/${liveCartel._id}/join`, { pin: pinToSend });
             const updatedRes = await axios.get(`/cartels/${liveCartel._id}`);
             const updatedCartel = updatedRes.data;
             setLiveCartel(updatedCartel);
@@ -511,6 +515,7 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
             setIsMember(memberStatus);
             setMemberCount(updatedCartel.members?.length || (memberStatus ? 1 : 0));
             setShowJoinPinModal(false);
+            setJoinPinInput('');
             if (memberStatus || user?.role === 'Founder') {
                 fetchPosts();
             }
@@ -518,20 +523,24 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
             console.error(err);
             const msg = err.response?.data?.message || (typeof err.response?.data === 'string' ? err.response.data : null) || 'Error joining/leaving cartel';
             alert(msg);
+        } finally {
+            setIsJoining(false);
         }
     };
 
     const handleJoin = async () => {
-        if (!isMember && liveCartel.isPrivate) {
+        if (!isMember && liveCartel.isPrivate && !isCreator) {
+            setJoinPinInput('');
             setShowJoinPinModal(true);
             return;
         }
         await executeJoin('');
     };
 
-    const submitJoinPin = async () => {
+    const submitJoinPin = async (e) => {
+        if (e) e.preventDefault();
+        if (!joinPinInput.trim()) return;
         await executeJoin(joinPinInput);
-        setJoinPinInput('');
     };
 
     return (
@@ -677,27 +686,45 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
                 <AnimatePresence>
                     {showJoinPinModal && (
                         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowJoinPinModal(false)} />
+                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => !isJoining && setShowJoinPinModal(false)} />
                             <motion.div
                                 initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.95, opacity: 0 }}
                                 className="relative w-full max-w-sm bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col gap-4"
                             >
-                                <h3 className="text-white font-black italic uppercase tracking-widest text-lg">{t('CARTELS_ENTER_PIN', 'Private Cartel')}</h3>
-                                <p className="text-white/60 text-sm">Please enter the secret PIN to join.</p>
-                                <input 
-                                    type="password" 
-                                    value={joinPinInput}
-                                    onChange={e => setJoinPinInput(e.target.value)}
-                                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none"
-                                    placeholder="Enter PIN..."
-                                    autoFocus
-                                />
-                                <div className="flex justify-end gap-2 mt-2">
-                                    <button onClick={() => setShowJoinPinModal(false)} className="px-4 py-2 text-white/60 hover:text-white font-bold text-sm">Cancel</button>
-                                    <button onClick={submitJoinPin} className="px-6 py-2 bg-[var(--gold-primary)] text-black rounded-lg font-black uppercase tracking-widest text-sm hover:opacity-90">Join</button>
-                                </div>
+                                <form onSubmit={submitJoinPin} className="flex flex-col gap-4">
+                                    <div>
+                                        <h3 className="text-white font-black italic uppercase tracking-widest text-lg">{t('CARTELS_ENTER_PIN', 'Private Cartel')}</h3>
+                                        <p className="text-white/60 text-sm mt-1">Please enter the secret PIN to join.</p>
+                                    </div>
+                                    <input 
+                                        type="password" 
+                                        value={joinPinInput}
+                                        onChange={e => setJoinPinInput(e.target.value)}
+                                        className="w-full bg-black/50 border border-white/10 rounded-xl p-3.5 text-white focus:border-[var(--gold-primary)] outline-none tracking-widest text-center text-lg font-bold"
+                                        placeholder="••••••••"
+                                        autoFocus
+                                        disabled={isJoining}
+                                    />
+                                    <div className="flex justify-end gap-2 mt-2">
+                                        <button 
+                                            type="button" 
+                                            disabled={isJoining}
+                                            onClick={() => setShowJoinPinModal(false)} 
+                                            className="px-4 py-2 text-white/60 hover:text-white font-bold text-sm disabled:opacity-50"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            disabled={isJoining || !joinPinInput.trim()}
+                                            className="px-6 py-2 bg-[var(--gold-primary)] text-black rounded-lg font-black uppercase tracking-widest text-sm hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
+                                        >
+                                            {isJoining ? 'Joining...' : 'Join'}
+                                        </button>
+                                    </div>
+                                </form>
                             </motion.div>
                         </div>
                     )}
