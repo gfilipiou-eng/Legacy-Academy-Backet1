@@ -151,9 +151,9 @@ const BottomNavbar = memo(({
         return () => el.removeEventListener('wheel', blockWheel);
     }, []);
 
-    const navItemBaseClass = 'relative h-[64px] sm:h-[66px] w-full max-w-[104px] sm:max-w-[116px] flex items-center justify-center rounded-[1.35rem] overflow-hidden transition-colors duration-300';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-white hover:text-white/80'}`;
-    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105' : ''}`;
+    const navItemBaseClass = 'relative h-[64px] sm:h-[66px] w-full max-w-[104px] sm:max-w-[116px] flex items-center justify-center rounded-[1.35rem] overflow-hidden transition-colors duration-300 select-none';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`;
+    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105 text-[#1D9BF0]' : 'text-white opacity-90 group-hover:opacity-100'}`;
 
     return (
         <nav 
@@ -176,11 +176,10 @@ const BottomNavbar = memo(({
                         {activeTab === 'home' && (
                             <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
-                        <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'home' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
+                        <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'home' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
-                
                 
 
                 {/* Tab: Search */}
@@ -194,7 +193,7 @@ const BottomNavbar = memo(({
                         {activeTab === 'search' && (
                             <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
-                        <Icons.Search className={iconClass(activeTab === 'search')} fill={activeTab === 'search' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'search' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
+                        <Icons.Search className={iconClass(activeTab === 'search')} fill="none" stroke="currentColor" strokeWidth={activeTab === 'search' ? '2.8' : '2.2'} shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
@@ -209,7 +208,7 @@ const BottomNavbar = memo(({
                         className="w-[50px] h-[50px] sm:w-[52px] sm:h-[52px] flex items-center justify-center rounded-full text-black hover:scale-110 active:scale-95 transition-all duration-300 ring-2 ring-black shadow-lg shadow-[var(--gold-primary)]/30"
                         style={{ background: 'linear-gradient(135deg, var(--gold-primary), var(--gold-secondary))' }}
                     >
-                        <Icons.Plus className="w-7 h-7 sm:w-7 sm:h-7 stroke-[3]" shapeRendering="geometricPrecision" />
+                        <Icons.Plus className="w-7 h-7 sm:w-7 sm:h-7 stroke-[3] text-black" stroke="currentColor" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
@@ -224,7 +223,7 @@ const BottomNavbar = memo(({
                         {activeTab === 'alerts' && (
                             <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
-                        <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'alerts' ? '2.5' : '2'} shapeRendering="geometricPrecision" />
+                        <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'alerts' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
                         {unreadCount > 0 && (
                             <div className="absolute top-[12px] right-[24%] sm:right-[28%] min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-red-500 to-rose-600 rounded-full flex items-center justify-center border border-black/40 shadow-[0_0_8px_rgba(239,68,68,0.5)] z-20">
                                 <span className="text-[9px] font-black text-white leading-none tracking-tighter">
@@ -247,7 +246,7 @@ const BottomNavbar = memo(({
                         {isProfileActive && (
                             <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
                         )}
-                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/20'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/30'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

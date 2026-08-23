@@ -16,7 +16,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     const [zoomImage, setZoomImage] = useState(null);
     const [saving, setSaving] = useState(false);
     const [published, setPublished] = useState(false);
-    const [previewMode, setPreviewMode] = useState('desktop');
+    const [previewMode, setPreviewMode] = useState('mobile');
     const [activeTab, setActiveTab] = useState('newest'); // desktop, mobile
 
     // Mobile specific tab (form vs preview)
@@ -671,21 +671,66 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
 
             {/* MAIN CANVAS - Live Preview */}
-            <div className={`flex-1 bg-[#151518] flex-col relative overflow-hidden ${mobileTab === 'form' ? 'hidden md:flex' : 'flex'}`}>
+            <div className={`flex-1 bg-[#121214] flex flex-col relative overflow-hidden ${mobileTab === 'form' ? 'hidden md:flex' : 'flex'}`}>
+                {/* Desktop Top Toolbar: Device View Switcher */}
+                <div className="hidden md:flex items-center justify-between px-6 py-2.5 bg-[#0a0a0c] border-b border-white/10 z-20 shrink-0 shadow-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Live Preview:</span>
+                        <span className="text-xs font-bold text-white max-w-[200px] truncate">{config.businessName || 'My Website'}</span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
+                        <button
+                            type="button"
+                            onClick={() => setPreviewMode('mobile')}
+                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${previewMode === 'mobile' ? 'bg-[var(--builder-primary)] text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            <Icons.Smartphone className="w-3.5 h-3.5" /> Mobile Phone
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setPreviewMode('desktop')}
+                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${previewMode === 'desktop' ? 'bg-[var(--builder-primary)] text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            <Icons.Monitor className="w-3.5 h-3.5" /> Desktop Full
+                        </button>
+                    </div>
+                </div>
+
                 {/* Workspace / Live Preview */}
-                <div className="flex-1 overflow-y-auto overscroll-contain p-0 md:p-8 flex justify-center items-start custom-scrollbar relative pb-32 w-full touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="flex-1 overflow-y-auto overscroll-contain p-0 md:p-6 flex justify-center items-center custom-scrollbar relative pb-32 w-full touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {/* The Website Preview Container */}
                     <motion.div 
                         layout
-                        className={`shadow-2xl relative z-10 flex flex-col overflow-x-hidden custom-scrollbar transition-all duration-500 ${previewMode === 'mobile' ? 'w-full md:w-[375px] h-full md:h-[812px] md:mt-4 md:rounded-[40px] md:border-8 md:border-gray-900 overflow-y-auto shrink-0' : 'w-full max-w-6xl min-h-full md:rounded-2xl md:border md:border-white/10'}`}
+                        className={`shadow-2xl relative z-10 flex flex-col transition-all duration-300 ${
+                            previewMode === 'mobile' 
+                                ? 'w-full md:w-[390px] h-full md:h-[844px] md:max-h-[calc(100vh-140px)] md:my-auto md:rounded-[50px] md:border-[12px] md:border-[#1c1c1f] md:shadow-[0_30px_90px_rgba(0,0,0,0.9),0_0_0_2px_rgba(255,255,255,0.15)] overflow-hidden shrink-0' 
+                                : 'w-full max-w-6xl min-h-full md:rounded-2xl md:border md:border-white/10 overflow-x-hidden'
+                        }`}
                         style={{ 
                             fontFamily: config.font,
                             backgroundColor: activeTheme.bg,
                             color: config.palette === 'light' ? '#000' : '#fff'
                         }}
                     >
-                        {/* Global Navbar */}
-                        <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+                        {/* Dynamic Island Notch for Mobile Preview Frame */}
+                        {previewMode === 'mobile' && (
+                            <div className="hidden md:flex absolute top-3 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 items-center justify-between px-3 pointer-events-none shadow-md">
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-white/10" />
+                                <div className="w-3 h-3 rounded-full bg-[#0a0a18] border border-blue-900/40 flex items-center justify-center">
+                                    <div className="w-1 h-1 rounded-full bg-blue-500/60" />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Home Indicator Bar */}
+                        {previewMode === 'mobile' && (
+                            <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full pointer-events-none z-50" />
+                        )}
+
+                        <div className={`flex-1 flex flex-col w-full ${previewMode === 'mobile' ? 'overflow-y-auto overflow-x-hidden custom-scrollbar pt-6 pb-8 md:pt-8 md:pb-8' : 'overflow-x-hidden'}`}>
+                            {/* Global Navbar */}
+                            <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3">
                                 {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
@@ -809,6 +854,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 )}
                             </div>
                         </footer>
+                        </div>
                     </motion.div>
                 </div>
             </div>

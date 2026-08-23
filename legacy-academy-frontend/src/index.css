@@ -2836,6 +2836,11 @@ textarea:focus {
   isolation: isolate;
 }
 
+.bottom-nav-glass button svg {
+  opacity: 1 !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
 
 
 
