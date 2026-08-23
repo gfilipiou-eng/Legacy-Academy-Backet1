@@ -113,6 +113,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
     const [desc, setDesc] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
+    const [enablePin, setEnablePin] = useState(false);
     const [pin, setPin] = useState('');
     const [loading, setLoading] = useState(false);
     const fileInputRef = React.useRef(null);
@@ -125,7 +126,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
             const formData = new FormData();
             formData.append('name', name);
             formData.append('description', desc);
-            if (pin.trim()) formData.append('pin', pin);
+            if (enablePin && pin.trim()) formData.append('pin', pin);
             if (imageFile) {
                 formData.append('image', imageFile);
             } else if (imageUrl) {
@@ -208,9 +209,15 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_PIN', 'Secret Access Code (Optional)')}</label>
-                            <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. 1234" />
-                            <p className="text-[10px] text-white/25 font-bold pl-1">Leave blank for open access.</p>
+                            <div className="flex items-center justify-between pl-1">
+                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{t('CARTELS_PIN_TOGGLE', 'Enable PIN Access')}</label>
+                                <button type="button" onClick={() => { setEnablePin(!enablePin); if(enablePin) setPin(''); }} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${enablePin ? 'bg-[var(--gold-primary)]' : 'bg-white/20'}`}>
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enablePin ? 'translate-x-4' : 'translate-x-1'}`} />
+                                </button>
+                            </div>
+                            {enablePin && (
+                                <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-1" placeholder="Enter Secret Code..." />
+                            )}
                         </div>
                         <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50 mt-2">
                             {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish Cartel')}

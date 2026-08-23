@@ -161,6 +161,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
     const [desc, setDesc] = useState(cartel.description || '');
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState(cartel.image || '');
+    const [enablePin, setEnablePin] = useState(cartel.isPrivate || false);
     const [pin, setPin] = useState('');
     const [loading, setLoading] = useState(false);
     const fileInputRef = React.useRef(null);
@@ -178,7 +179,8 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
             } else if (imageUrl) {
                 formData.append('image', imageUrl);
             }
-            if (pin.trim()) formData.append('pin', pin);
+            if (enablePin && pin.trim()) formData.append('pin', pin);
+            else if (!enablePin) formData.append('pin', '');
             const res = await axios.put(`/cartels/${cartel._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             onUpdated(res.data);
         } catch (err) {
@@ -249,23 +251,32 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1 flex items-center gap-2">
-                                {t('CARTELS_PIN', 'Secret PIN')}
-                                {cartel.isPrivate && (
-                                    <span className="px-2 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded-full text-amber-400 text-[9px] font-black tracking-widest">
-                                        ● PIN SET
-                                    </span>
+                            <div className="flex items-center justify-between pl-1">
+                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                                    {t('CARTELS_PIN_TOGGLE', 'Enable PIN Access')}
+                                    {cartel.isPrivate && (
+                                        <span className="px-2 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded-full text-amber-400 text-[9px] font-black tracking-widest">
+                                            ● PIN SET
+                                        </span>
+                                    )}
+                                </label>
+                                <button type="button" onClick={() => { setEnablePin(!enablePin); if(enablePin) setPin(''); }} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${enablePin ? 'bg-[var(--gold-primary)]' : 'bg-white/20'}`}>
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enablePin ? 'translate-x-4' : 'translate-x-1'}`} />
+                                </button>
+                            </div>
+                            {enablePin && (
+                                <>
+                                <input
+                                    type={cartel.isPrivate && pin === '' ? "password" : "text"}
+                                    value={pin}
+                                    onChange={e => setPin(e.target.value)}
+                                    className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-1"
+                                    placeholder={cartel.isPrivate ? '•••••••• (Type to change PIN)' : 'Enter Secret Code...'}
+                                />
+                                {cartel.isPrivate && pin === '' && (
+                                    <p className="text-[10px] text-amber-400/70 font-bold pl-1">⚠ Leave blank to keep existing PIN</p>
                                 )}
-                            </label>
-                            <input
-                                type={cartel.isPrivate && pin === '' ? "password" : "text"}
-                                value={pin}
-                                onChange={e => setPin(e.target.value)}
-                                className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none"
-                                placeholder={cartel.isPrivate ? '•••••••• (Type to change PIN)' : 'Set a secret PIN...'}
-                            />
-                            {cartel.isPrivate && pin === '' && (
-                                <p className="text-[10px] text-amber-400/70 font-bold pl-1">⚠ Leave blank to keep existing PIN</p>
+                                </>
                             )}
                         </div>
                         <div className="mt-4">
@@ -410,6 +421,8 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isMember, setIsMember] = useState(false);
+    const [showJoinPinModal, setShowJoinPinModal] = useState(false);
+    const [joinPinInput, setJoinPinInput] = useState('');
     const [memberCount, setMemberCount] = useState(0);
     const [isEditCartelOpen, setIsEditCartelOpen] = useState(false);
     const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
@@ -469,12 +482,7 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
         }
     };
 
-    const handleJoin = async () => {
-        let enteredPin = '';
-        if (!isMember && liveCartel.isPrivate) {
-            enteredPin = prompt(t('CARTELS_ENTER_PIN', 'This cartel is private. Please enter the PIN to join:'));
-            if (enteredPin === null) return;
-        }
+    const executeJoin = async (enteredPin = '') => {
         const previousIsMember = isMember;
         if (isMember || !liveCartel.isPrivate) {
             setIsMember(!isMember);
@@ -486,6 +494,7 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
                 setIsMember(true);
                 setMemberCount(prev => prev + 1);
             }
+            setShowJoinPinModal(false);
         } catch (err) {
             console.error(err);
             if (isMember || !liveCartel.isPrivate) {
@@ -494,6 +503,19 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
             }
             alert(err.response?.data || 'Error joining/leaving cartel');
         }
+    };
+
+    const handleJoin = async () => {
+        if (!isMember && liveCartel.isPrivate) {
+            setShowJoinPinModal(true);
+            return;
+        }
+        await executeJoin('');
+    };
+
+    const submitJoinPin = async () => {
+        await executeJoin(joinPinInput);
+        setJoinPinInput('');
     };
 
     return (
@@ -635,6 +657,35 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
                         onPosted={(p) => handlePostSaved(p, true)}
                     />
                 )}
+                {/* Join PIN Modal */}
+                <AnimatePresence>
+                    {showJoinPinModal && (
+                        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowJoinPinModal(false)} />
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                className="relative w-full max-w-sm bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col gap-4"
+                            >
+                                <h3 className="text-white font-black italic uppercase tracking-widest text-lg">{t('CARTELS_ENTER_PIN', 'Private Cartel')}</h3>
+                                <p className="text-white/60 text-sm">Please enter the secret PIN to join.</p>
+                                <input 
+                                    type="password" 
+                                    value={joinPinInput}
+                                    onChange={e => setJoinPinInput(e.target.value)}
+                                    className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:border-[var(--gold-primary)] outline-none"
+                                    placeholder="Enter PIN..."
+                                    autoFocus
+                                />
+                                <div className="flex justify-end gap-2 mt-2">
+                                    <button onClick={() => setShowJoinPinModal(false)} className="px-4 py-2 text-white/60 hover:text-white font-bold text-sm">Cancel</button>
+                                    <button onClick={submitJoinPin} className="px-6 py-2 bg-[var(--gold-primary)] text-black rounded-lg font-black uppercase tracking-widest text-sm hover:opacity-90">Join</button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
                 {isEditCartelOpen && (
                     <EditCartelModal
                         key="editCartel"

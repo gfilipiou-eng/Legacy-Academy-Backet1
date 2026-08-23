@@ -1,143 +1,27 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Icons } from '../Icons';
 
 const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false }) => {
   const isOwner = (bubble.creator?._id || bubble.creator) === currentUser?._id;
-  const [isPopped, setIsPopped] = useState(false);
-  // Gentle floating animation
-  const durationY = 3 + Math.random() * 2;
-  const delay = Math.random() * 2;
-
+  
   const [isNew] = useState(() => Date.now() - new Date(bubble.createdAt).getTime() < 5000);
-
-  const floatVariants = {
-    initial: {
-      y: 20,
-    },
-    animate: {
-      y: [0, -10, 0],
-      transition: {
-        y: {
-          duration: durationY,
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
-          delay: delay
-        }
-      }
-    },
-    hover: {
-      scale: 1.1,
-      rotate: [0, -5, 5, -5, 0],
-      transition: {
-        rotate: {
-          duration: 0.3,
-          repeat: Infinity
-        }
-      }
-    },
-    tap: {
-      scale: 1.2,
-      opacity: 0,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-
-  let finalVariants = floatVariants;
-  if (isDeleteMode && isOwner) {
-    finalVariants = {
-      ...floatVariants,
-      animate: {
-        ...floatVariants.animate,
-        rotate: [-2, 2, -2],
-        transition: {
-          ...floatVariants.animate.transition,
-          rotate: {
-            duration: 0.2,
-            repeat: Infinity,
-            repeatType: "mirror"
-          }
-        }
-      }
-    };
-  }
-
-  if (isPopped) {
-    return (
-      <div style={{ width: size, height: size, position: 'relative' }}>
-        {/* Shockwave Ring */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0.8, borderWidth: 4 }}
-          animate={{ scale: 1.6, opacity: 0, borderWidth: 0 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0, bottom: 0,
-            borderRadius: '50%',
-            borderColor: 'rgba(255,255,255,0.8)',
-            borderStyle: 'solid'
-          }}
-        />
-        {/* Droplets */}
-        {[...Array(12)].map((_, i) => {
-          const angle = (i * Math.PI * 2) / 12;
-          const distance = size * 0.7;
-          return (
-            <motion.div
-              key={i}
-              initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-              animate={{ 
-                x: Math.cos(angle) * distance, 
-                y: Math.sin(angle) * distance,
-                scale: 0,
-                opacity: 0
-              }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              style={{
-                position: 'absolute',
-                top: '50%', left: '50%',
-                width: 8, height: 8,
-                backgroundColor: 'rgba(255,255,255,0.9)',
-                borderRadius: '50%',
-                boxShadow: '0 0 8px rgba(255,255,255,0.8)',
-                marginTop: -4, marginLeft: -4
-              }}
-            />
-          );
-        })}
-      </div>
-    );
-  }
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      transition={{ layout: { type: "spring", stiffness: 200, damping: 20 } }}
+      exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.1 } }}
       style={{ width: size, height: size }}
     >
-      <motion.div
-        className={`bubble-container ${isNew ? 'new-bubble-effect' : ''} ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''}`}
+      <div
+        className={`bubble-container ${isNew ? 'new-bubble-effect' : ''} ${isDeleteMode && isOwner ? 'ring-4 ring-red-500 shadow-[0_0_20px_rgba(255,0,0,0.8)]' : ''} transition-transform duration-200 hover:scale-105 active:scale-95`}
         style={{
           width: '100%',
           height: '100%',
+          cursor: 'pointer'
         }}
-        variants={finalVariants}
-        initial="initial"
-        animate="animate"
-        whileHover="hover"
-        whileTap={isDeleteMode && isOwner ? "tap" : undefined}
         onClick={() => {
-          if (isDeleteMode && isOwner) {
-            onClick(bubble);
-            return;
-          }
-          setIsPopped(true);
           onClick(bubble);
         }}
       >
@@ -160,7 +44,7 @@ const Bubble = ({ bubble, currentUser, onClick, size = 120, isDeleteMode = false
           )}
         </div>
         <div className="bubble-glare"></div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };

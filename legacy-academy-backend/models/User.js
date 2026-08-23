@@ -105,6 +105,7 @@ const UserSchema = new mongoose.Schema(
             blur18Plus: { type: Boolean, default: true },
             is18PlusProfile: { type: Boolean, default: false },
             batterySaver: { type: Boolean, default: true },
+            liquidGlassAesthetic: { type: Boolean, default: false },
             liquidGlassIntensity: { type: Number, default: 1.0 },
             cyberSFX: { type: Boolean, default: true },
             neuralNarrator: { type: Boolean, default: false },

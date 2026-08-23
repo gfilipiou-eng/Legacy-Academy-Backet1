@@ -3860,6 +3860,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [enableGlow, setEnableGlow] = useState(
         user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
     );
+    const [liquidGlassAesthetic, setLiquidGlassAesthetic] = useState(
+        user?.settings?.liquidGlassAesthetic ?? localStorage.getItem('liquidGlassAesthetic') === 'true'
+    );
     const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(0);
 
     useEffect(() => {
@@ -4240,6 +4243,15 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                         setEnableGlow(v);
                                         applyGlow(v);
                                         handleSave('enableGlow', v);
+                                    }} saving={saving} color="blue" />
+                                </SettingRow>
+
+                                <SettingRow label={t('LIQUID_GLASS', 'Liquid Glass Aesthetic')} desc={t('LIQUID_GLASS_DESC', 'Enable premium liquid glass on cards')}>
+                                    <Toggle active={liquidGlassAesthetic} onToggle={() => {
+                                        const v = !liquidGlassAesthetic;
+                                        setLiquidGlassAesthetic(v);
+                                        applyLiquidGlassAesthetic(v);
+                                        handleSave('liquidGlassAesthetic', v);
                                     }} saving={saving} color="blue" />
                                 </SettingRow>
 
@@ -8427,6 +8439,15 @@ const applyGlow = (enabled) => {
     localStorage.setItem('enableGlow', enabled ? 'true' : 'false');
 };
 
+const applyLiquidGlassAesthetic = (enabled) => {
+    if (enabled) {
+        document.body.classList.add('liquid-glass-aesthetic');
+    } else {
+        document.body.classList.remove('liquid-glass-aesthetic');
+    }
+    localStorage.setItem('liquidGlassAesthetic', enabled ? 'true' : 'false');
+};
+
 const applyLiquidGlass = (intensity) => {
     const val = Math.max(0, Math.min(1, Number(intensity) || 0));
     const blur = 4 + (val * 36); // 4px to 40px
@@ -9712,6 +9733,8 @@ const App = () => {
         applyZoom(savedZoom);
         const savedGlow = userSettings?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true';
         applyGlow(savedGlow);
+        const savedLiquidGlassAesthetic = userSettings?.settings?.liquidGlassAesthetic ?? localStorage.getItem('liquidGlassAesthetic') === 'true';
+        applyLiquidGlassAesthetic(savedLiquidGlassAesthetic);
         const savedLiquidGlass = userSettings?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0');
         applyLiquidGlass(savedLiquidGlass);
 
@@ -9725,6 +9748,9 @@ const App = () => {
             }
             if (e.key === 'enableGlow' && e.newValue) {
                 applyGlow(e.newValue === 'true');
+            }
+            if (e.key === 'liquidGlassAesthetic' && e.newValue) {
+                applyLiquidGlassAesthetic(e.newValue === 'true');
             }
             if (e.key === 'liquidGlassIntensity' && e.newValue) {
                 applyLiquidGlass(parseFloat(e.newValue));
@@ -9769,6 +9795,12 @@ const App = () => {
             applyGlow(user.settings.enableGlow);
         }
     }, [user?.settings?.enableGlow]);
+
+    useEffect(() => {
+        if (user?.settings?.liquidGlassAesthetic !== undefined) {
+            applyLiquidGlassAesthetic(user.settings.liquidGlassAesthetic);
+        }
+    }, [user?.settings?.liquidGlassAesthetic]);
 
     useEffect(() => {
         if (user?.settings?.liquidGlassIntensity !== undefined) {

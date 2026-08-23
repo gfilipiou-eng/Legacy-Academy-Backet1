@@ -3167,3 +3167,28 @@ textarea:focus {
   cursor: pointer;
 }
 
+
+/* === Liquid Glass Aesthetic (User Setting) === */
+body.liquid-glass-aesthetic .premium-post-card,
+body.liquid-glass-aesthetic .post-card,
+body.liquid-glass-aesthetic .profile-card,
+body.liquid-glass-aesthetic .profile-shell {
+  background: rgba(20, 20, 20, 0.4) !important;
+  backdrop-filter: blur(25px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  border-radius: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+@media (max-width: 640px) {
+  body.liquid-glass-aesthetic .premium-post-card,
+  body.liquid-glass-aesthetic .post-card,
+  body.liquid-glass-aesthetic .profile-card {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    margin-bottom: 0 !important;
+  }
+}
