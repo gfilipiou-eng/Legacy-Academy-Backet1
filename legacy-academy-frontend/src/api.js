@@ -46,6 +46,22 @@ API.interceptors.request.use((config) => {
     return config;
 });
 
+
+API.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            const url = error.config?.url || '';
+            if (!url.includes('/auth/login') && !url.includes('/auth/register')) {
+                console.warn('[AUTH] Session expired or invalid token. Logging out...');
+                removeSafeToken();
+                try { localStorage.removeItem('user'); } catch(e) {}
+                window.location.href = '/';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 export const fetchBubbles = async () => {
     const response = await API.get("/bubbles");
     return response.data;
