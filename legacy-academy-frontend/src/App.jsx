@@ -863,7 +863,7 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
     return (
         <div className="fixed inset-0 z-[6000] flex items-start justify-center pointer-events-none p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-md pointer-events-auto" onClick={onClose} />
-            <div className="relative w-full sm:max-w-[400px] bg-black border-b border-white/20 sm:border sm:rounded-none rounded-none p-6 animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
+            <div className="relative w-full sm:max-w-[400px] bg-black border-b border-white/20 sm:border  rounded-none p-6 animate-slide-down pointer-events-auto flex flex-col pt-[calc(1.5rem+env(safe-area-inset-top,20px))] sm:mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-black italic text-white flex items-center gap-3">
                         <Icons.Terminal className="w-5 h-5 text-white" />
@@ -1620,7 +1620,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[90dvh] mt-auto rounded-t-3xl max-h-[90dvh] mt-auto rounded-t-3xl md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
@@ -3416,7 +3416,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
     return (
         <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black sm:rounded-none  flex overflow-hidden shadow-none">
+            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black   flex overflow-hidden shadow-none">
                 {/* Live Cyber Background */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020202]">
                     <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--gold-primary)]/20 rounded-full blur-[120px] animate-pulse duration-[10000ms]" />
@@ -3860,8 +3860,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [enableGlow, setEnableGlow] = useState(
         user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
     );
-    const [liquidGlassAesthetic, setLiquidGlassAesthetic] = useState(
-        user?.settings?.liquidGlassAesthetic ?? localStorage.getItem('liquidGlassAesthetic') === 'true'
+    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
+        user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0')
     );
     const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(0);
 
@@ -3977,6 +3977,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             }
             if (key === 'liquidGlassIntensity') {
                 payload = { settings: { liquidGlassIntensity: Number(val) } };
+                localStorage.setItem('liquidGlassIntensity', String(val));
             }
             
             // OPTIMISTIC UPDATE FOR ALL SETTINGS
@@ -4246,14 +4247,31 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     }} saving={saving} color="blue" />
                                 </SettingRow>
 
-                                <SettingRow label={t('LIQUID_GLASS', 'Liquid Glass Aesthetic')} desc={t('LIQUID_GLASS_DESC', 'Enable premium liquid glass on cards')}>
-                                    <Toggle active={liquidGlassAesthetic} onToggle={() => {
-                                        const v = !liquidGlassAesthetic;
-                                        setLiquidGlassAesthetic(v);
-                                        applyLiquidGlassAesthetic(v);
-                                        handleSave('liquidGlassAesthetic', v);
-                                    }} saving={saving} color="blue" />
-                                </SettingRow>
+                                <div className="px-5 sm:px-6 py-5 border-t border-white/5">
+                                  <div className="flex items-center justify-between mb-4">
+                                      <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('LIQUID_GLASS', 'Liquid Glass Intensity')}</span>
+                                      <span className="text-[15px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(liquidGlassIntensity * 100)}%</span>
+                                  </div>
+                                  <input
+                                      type="range"
+                                      min="0"
+                                      max="1"
+                                      step="0.05"
+                                      value={liquidGlassIntensity}
+                                      onChange={(e) => {
+                                          const val = parseFloat(e.target.value);
+                                          setLiquidGlassIntensity(val);
+                                          applyLiquidGlass(val);
+                                      }}
+                                      onPointerUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
+                                      onKeyUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
+                                      className="settings-range w-full h-2 accent-[#1D9BF0]"
+                                      style={{
+                                          '--progress-width': `${(liquidGlassIntensity) * 100}%`
+                                      }}
+                                  />
+                                  <p className="text-[#8E8E93] text-sm mt-3">{t('LIQUID_GLASS_DESC', 'Adjust the blur and glass effect strength on cards.')}</p>
+                              </div>
 
                                 <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations and background effects to save battery')}>
                                     <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
@@ -7046,7 +7064,7 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[100dvh] sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
+                className={`profile-modal-shell relative w-full max-w-full sm:max-w-lg sm:mx-auto h-[90dvh] mt-auto rounded-t-3xl sm:h-[85vh] sm:rounded-[32px] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
                 style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
 
 
@@ -8059,7 +8077,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -8270,7 +8288,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
             <div 
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
-                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden"
+                className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[90dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -8437,15 +8455,6 @@ const applyGlow = (enabled) => {
         document.body.classList.remove('glow-enabled');
     }
     localStorage.setItem('enableGlow', enabled ? 'true' : 'false');
-};
-
-const applyLiquidGlassAesthetic = (enabled) => {
-    if (enabled) {
-        document.body.classList.add('liquid-glass-aesthetic');
-    } else {
-        document.body.classList.remove('liquid-glass-aesthetic');
-    }
-    localStorage.setItem('liquidGlassAesthetic', enabled ? 'true' : 'false');
 };
 
 const applyLiquidGlass = (intensity) => {
@@ -9733,8 +9742,6 @@ const App = () => {
         applyZoom(savedZoom);
         const savedGlow = userSettings?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true';
         applyGlow(savedGlow);
-        const savedLiquidGlassAesthetic = userSettings?.settings?.liquidGlassAesthetic ?? localStorage.getItem('liquidGlassAesthetic') === 'true';
-        applyLiquidGlassAesthetic(savedLiquidGlassAesthetic);
         const savedLiquidGlass = userSettings?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0');
         applyLiquidGlass(savedLiquidGlass);
 
@@ -9748,9 +9755,6 @@ const App = () => {
             }
             if (e.key === 'enableGlow' && e.newValue) {
                 applyGlow(e.newValue === 'true');
-            }
-            if (e.key === 'liquidGlassAesthetic' && e.newValue) {
-                applyLiquidGlassAesthetic(e.newValue === 'true');
             }
             if (e.key === 'liquidGlassIntensity' && e.newValue) {
                 applyLiquidGlass(parseFloat(e.newValue));
@@ -9795,12 +9799,6 @@ const App = () => {
             applyGlow(user.settings.enableGlow);
         }
     }, [user?.settings?.enableGlow]);
-
-    useEffect(() => {
-        if (user?.settings?.liquidGlassAesthetic !== undefined) {
-            applyLiquidGlassAesthetic(user.settings.liquidGlassAesthetic);
-        }
-    }, [user?.settings?.liquidGlassAesthetic]);
 
     useEffect(() => {
         if (user?.settings?.liquidGlassIntensity !== undefined) {
@@ -11609,7 +11607,7 @@ const App = () => {
                 )}
                 </>
             ) : (
-                <div className="h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                <div className="h-[90dvh] mt-auto rounded-t-3xl bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef}  className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
