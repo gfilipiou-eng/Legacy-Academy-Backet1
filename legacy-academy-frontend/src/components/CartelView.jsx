@@ -418,12 +418,9 @@ const CartelPostCard = ({ post, user, onEdit, onDelete, t }) => {
 const isCartelMember = (cartelObj, u) => {
     if (!cartelObj || !u) return false;
     const uid = String(u._id || u.userId || u);
-    const creatorId = String(cartelObj.creator?._id || cartelObj.creator || '');
-    if (creatorId && creatorId === uid) return true;
-
     if (!Array.isArray(cartelObj.members)) return false;
     return cartelObj.members.some(m => {
-        const mid = String(m?._id || m);
+        const mid = String(m?._id || m?.userId || m);
         return mid === uid;
     });
 };

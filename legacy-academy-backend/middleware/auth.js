@@ -10,7 +10,7 @@ export const verifyToken = (req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET || "default_Legacy_Academy_Secret", (err, user) => {
             if (err) {
                 console.error("[AUTH] Invalid Token:", token.substring(0, 10) + "...");
-                return res.status(403).json("Token is not valid!");
+                return res.status(401).json("Token is not valid!");
             }
             req.user = user;
             next();
