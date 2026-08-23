@@ -1620,7 +1620,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[80dvh] mt-auto rounded-t-3xl max-h-[80dvh] mt-auto rounded-t-3xl md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
@@ -11605,7 +11605,7 @@ const App = () => {
                 )}
                 </>
             ) : (
-                <div className="h-[80dvh] mt-auto rounded-t-3xl bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
+                <div className="min-h-[100dvh] bg-[var(--app-bg)] text-[var(--app-text)] relative font-sans overflow-hidden flex flex-col">
                     <div className="fixed inset-0 z-0" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative">
                         <main ref={mainScrollRef}  className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-none h-full">
