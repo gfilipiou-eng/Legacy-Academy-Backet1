@@ -4071,7 +4071,7 @@ useEffect(() => {
         { id: 'ro', flag: '🇷🇴', labelKey: 'LANG_RO' },
     ];
     return (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-2 sm:p-4">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 sm:p-4">
             <div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/75" onClick={onClose}
@@ -6032,8 +6032,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 key={item.id}
                                 onClick={() => {
                                     playCyberSFX('menu');
-                                    if (item.action) { item.action(); handleClose(); }
-                                    else handleLink(item.id);
+                                    onClose();
+                                    if (item.action) { item.action(); }
+                                    else { onNavigate(item.id); }
                                 }}
                                 className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation ${
                                     isActive
@@ -7048,7 +7049,7 @@ const ProfileModal = ({
 
     return (
 
-        <div className="fixed inset-0 z-[2100] flex items-end sm:items-center justify-center overflow-x-hidden">
+        <div className="fixed inset-0 z-[2500] flex items-end sm:items-center justify-center overflow-x-hidden">
             <div className="absolute inset-0 bg-black/75 backdrop-blur-2xl" onClick={onClose} />
             <div 
                 initial={{ opacity: 0, y: "100%" }} 
@@ -12172,7 +12173,7 @@ const App = () => {
                             }
                         }}
                         onViewProfile={viewProfile}
-                        onOpenSettings={() => setTimeout(() => setIsSettingsOpen(true), 300)}
+                        onOpenSettings={() => setIsSettingsOpen(true)}
                         onOpenWebsiteBuilder={() => setIsWebsiteBuilderOpen(true)}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onOpenTerms={() => setIsTermsOpen(true)}
