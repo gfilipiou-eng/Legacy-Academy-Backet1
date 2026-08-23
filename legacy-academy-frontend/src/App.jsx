@@ -3863,9 +3863,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
         user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0')
     );
-    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(0);
-
-    useEffect(() => {
+useEffect(() => {
         latestUserRef.current = user;
     }, [user]);
 
