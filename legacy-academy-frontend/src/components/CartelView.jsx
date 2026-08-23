@@ -529,7 +529,7 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     };
 
     const handleJoin = async () => {
-        if (!isMember && liveCartel.isPrivate && !isCreator) {
+        if (!isMember && liveCartel.isPrivate) {
             setJoinPinInput('');
             setShowJoinPinModal(true);
             return;

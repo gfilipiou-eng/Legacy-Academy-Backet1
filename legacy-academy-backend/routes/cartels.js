@@ -147,8 +147,7 @@ router.post("/:id/join", verifyToken, async (req, res) => {
         } else {
             // Join
             const { pin } = req.body;
-            const isCreatorOrFounder = (cartel.creator && cartel.creator.toString() === userIdStr) || req.user.role === 'Founder';
-            if (cartel.isPrivate && cartel.pin && !isCreatorOrFounder) {
+            if (cartel.isPrivate && cartel.pin) {
                 if (String(cartel.pin).trim() !== String(pin || '').trim()) {
                     return res.status(403).json("Invalid PIN. Access denied.");
                 }
