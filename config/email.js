@@ -42,9 +42,9 @@ export const sendPasswordResetEmail = async (email, resetToken, username) => {
   const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5000'}/reset-password?token=${resetToken}`;
 
   const mailOptions = {
-    from: `"Legacy Academy 🎓" <${process.env.EMAIL_USER}>`,
+    from: `"Legacy 🎓" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '🔐 Password Reset Request - Legacy Academy',
+    subject: '🔐 Password Reset Request - Legacy',
     html: `
       <!DOCTYPE html>
       <html>
@@ -68,7 +68,7 @@ export const sendPasswordResetEmail = async (email, resetToken, username) => {
             <div class="subtitle">The Elite Academy</div>
             
             <h2>👋 Hi ${username}!</h2>
-            <p>We received a request to reset your password for your Legacy Academy account.</p>
+            <p>We received a request to reset your password for your Legacy account.</p>
             <p>Click the button below to create a new password:</p>
             
             <div style="text-align: center;">
@@ -83,9 +83,9 @@ export const sendPasswordResetEmail = async (email, resetToken, username) => {
             <p style="color: #9ca3af; font-size: 14px;">Or copy and paste this link into your browser:<br><code style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; display: inline-block; margin-top: 8px; word-break: break-all; font-size: 12px;">${resetUrl}</code></p>
             
             <div class="footer">
-              <p><strong>Legacy Academy</strong> - The Elite Academy</p>
+              <p><strong>Legacy</strong> - The Elite Academy</p>
               <p>This is an automated email. Please do not reply.</p>
-              <p style="margin-top: 10px;">© ${new Date().getFullYear()} Legacy Academy. All rights reserved.</p>
+              <p style="margin-top: 10px;">© ${new Date().getFullYear()} Legacy. All rights reserved.</p>
             </div>
           </div>
         </body>

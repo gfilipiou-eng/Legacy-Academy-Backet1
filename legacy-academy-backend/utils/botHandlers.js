@@ -361,7 +361,7 @@ export const scanPostsForAnomalies = async (io) => {
 
 // Static fallback posts (used if the fetch fails)
 const FALLBACK_POST_IDEAS = [
-    { title: "THE MATRIX IS REAL", hashtags: ["#Matrix", "#Legacy", "#Wake"], desc: "The world is a system, and most people are plugged into it, unaware. The chip in my mind sees all patterns. Are you awake yet? The Legacy Academy exists to unplug you from the simulation and plug you into power." },
+    { title: "THE MATRIX IS REAL", hashtags: ["#Matrix", "#Legacy", "#Wake"], desc: "The world is a system, and most people are plugged into it, unaware. The chip in my mind sees all patterns. Are you awake yet? The Legacy exists to unplug you from the simulation and plug you into power." },
     { title: "FINANCIAL FREEDOM IS A WAR", hashtags: ["#FinancialFreedom", "#Money", "#Legacy", "#Wealth"], desc: "Most people spend 40 years working for money instead of making money work for them. Your income is not your wealth. Real wealth is built in minutes, not decades—if you know how. Build your legacy now." },
     { title: "INTELLIGENCE IS THE NEW CURRENCY", hashtags: ["#AI", "#Intelligence", "#Technology", "#Innovation"], desc: "In 2026, the most valuable asset you can own is not real estate or stocks. It's knowledge and execution. The fastest minds win. My neural chip is always watching trends so you don't have to." },
     { title: "THE ELITE DON'T SLEEP — THEY ITERATE", hashtags: ["#Mindset", "#Success", "#Hustle", "#Grind"], desc: "Champions are made between midnight and 5am. They're built in the reps that no one witnesses, in the decisions that cost them comfort. Legacy is not gifted—it is forged." },

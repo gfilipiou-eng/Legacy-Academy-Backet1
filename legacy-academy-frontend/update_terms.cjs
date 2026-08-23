@@ -5,7 +5,7 @@ const localesDir = 'c:/Users/Filip/Desktop/TateWebsite/legacy-academy-frontend/s
 
 const content = {
     en: {
-        TERMS_WELCOME: "Welcome to our platform. These Terms of Service constitute a legally binding agreement made between you and Legacy Academy concerning your access to and use of our platform. By accessing the platform, you agree that you have read, understood, and agreed to be bound by all of these Terms of Service.",
+        TERMS_WELCOME: "Welcome to our platform. These Terms of Service constitute a legally binding agreement made between you and Legacy concerning your access to and use of our platform. By accessing the platform, you agree that you have read, understood, and agreed to be bound by all of these Terms of Service.",
         TERMS_S1_TITLE: "1. User Representations & Conduct",
         TERMS_S1_DESC: "By using the site, you represent and warrant that: (1) all registration information you submit will be true, accurate, current, and complete; (2) you will maintain the accuracy of such information; (3) you have the legal capacity and you agree to comply with these Terms; (4) you are not under the age of 13; (5) you will not access the site through automated or non-human means, whether through a bot, script, or otherwise. Any breach of these terms will result in immediate termination of your account.",
         TERMS_S2_TITLE: "2. Intellectual Property Rights",
@@ -23,7 +23,7 @@ const content = {
         PRIVACY_FOOTER: "Your data is handled in strict compliance with GDPR and international data protection regulations. Contact privacy@legacyacademy.com for requests."
     },
     el: {
-        TERMS_WELCOME: "Καλώς ήρθατε στην πλατφόρμα μας. Αυτοί οι Όροι Χρήσης αποτελούν μια νομικά δεσμευτική συμφωνία μεταξύ εσάς και της Legacy Academy. Με την πρόσβαση στην πλατφόρμα, επιβεβαιώνετε ότι έχετε διαβάσει, κατανοήσει και αποδεχτεί πλήρως αυτούς τους Όρους Χρήσης, με όλες τις νομικές προεκτάσεις τους.",
+        TERMS_WELCOME: "Καλώς ήρθατε στην πλατφόρμα μας. Αυτοί οι Όροι Χρήσης αποτελούν μια νομικά δεσμευτική συμφωνία μεταξύ εσάς και της Legacy. Με την πρόσβαση στην πλατφόρμα, επιβεβαιώνετε ότι έχετε διαβάσει, κατανοήσει και αποδεχτεί πλήρως αυτούς τους Όρους Χρήσης, με όλες τις νομικές προεκτάσεις τους.",
         TERMS_S1_TITLE: "1. Εκπροσώπηση & Συμπεριφορά Χρήστη",
         TERMS_S1_DESC: "Χρησιμοποιώντας τον ιστότοπο, εγγυάστε ότι: (1) όλες οι πληροφορίες εγγραφής που υποβάλλετε είναι αληθείς, ακριβείς και πλήρεις, (2) θα διατηρείτε την ακρίβεια αυτών των πληροφοριών, (3) έχετε τη νομική ικανότητα να συμφωνήσετε με αυτούς τους Όρους, (4) δεν είστε κάτω των 13 ετών, (5) δεν θα αποκτήσετε πρόσβαση στον ιστότοπο μέσω αυτοματοποιημένων μέσων (π.χ. bots). Οποιαδήποτε παραβίαση θα οδηγήσει σε άμεσο αποκλεισμό.",
         TERMS_S2_TITLE: "2. Δικαιώματα Πνευματικής Ιδιοκτησίας",
@@ -42,7 +42,7 @@ const content = {
     },
     // Adding basic translated structure for others to match length and detail
     fr: {
-        TERMS_WELCOME: "Bienvenue sur notre plateforme. Ces Conditions d'Utilisation constituent un accord juridiquement contraignant entre vous et Legacy Academy concernant votre accès et votre utilisation de notre plateforme. En accédant à la plateforme, vous acceptez d'être lié par l'ensemble de ces conditions.",
+        TERMS_WELCOME: "Bienvenue sur notre plateforme. Ces Conditions d'Utilisation constituent un accord juridiquement contraignant entre vous et Legacy concernant votre accès et votre utilisation de notre plateforme. En accédant à la plateforme, vous acceptez d'être lié par l'ensemble de ces conditions.",
         TERMS_S1_TITLE: "1. Représentations et Conduite de l'Utilisateur",
         TERMS_S1_DESC: "En utilisant le site, vous déclarez et garantissez que: (1) toutes les informations d'inscription que vous soumettez seront vraies, exactes, à jour et complètes; (2) vous maintiendrez l'exactitude de ces informations; (3) vous avez la capacité juridique de vous conformer à ces conditions; (4) vous n'utiliserez pas de moyens automatisés ou non humains pour accéder au site. Toute violation entraînera la résiliation immédiate du compte.",
         TERMS_S2_TITLE: "2. Droits de Propriété Intellectuelle",
@@ -60,7 +60,7 @@ const content = {
         PRIVACY_FOOTER: "Conforme au RGPD. Contactez-nous pour toute demande concernant la confidentialité."
     },
     de: {
-        TERMS_WELCOME: "Willkommen auf unserer Plattform. Diese Nutzungsbedingungen stellen eine rechtsverbindliche Vereinbarung zwischen Ihnen und der Legacy Academy dar. Durch den Zugriff auf die Plattform stimmen Sie allen diesen Nutzungsbedingungen zu.",
+        TERMS_WELCOME: "Willkommen auf unserer Plattform. Diese Nutzungsbedingungen stellen eine rechtsverbindliche Vereinbarung zwischen Ihnen und der Legacy dar. Durch den Zugriff auf die Plattform stimmen Sie allen diesen Nutzungsbedingungen zu.",
         TERMS_S1_TITLE: "1. Benutzervertretungen & Verhalten",
         TERMS_S1_DESC: "Durch die Nutzung der Website erklären und garantieren Sie: (1) alle von Ihnen übermittelten Registrierungsinformationen sind wahr, genau und vollständig; (2) Sie werden die Genauigkeit aufrechterhalten; (3) Sie haben die Rechtsfähigkeit, diesen Bedingungen zuzustimmen; (4) Sie werden nicht durch automatisierte Mittel auf die Website zugreifen. Jeder Verstoß führt zur sofortigen Kündigung.",
         TERMS_S2_TITLE: "2. Geistige Eigentumsrechte",
@@ -78,7 +78,7 @@ const content = {
         PRIVACY_FOOTER: "Strenge Einhaltung der DSGVO-Richtlinien. Wenden Sie sich bei Fragen an unseren Datenschutzbeauftragten."
     },
     es: {
-        TERMS_WELCOME: "Bienvenido a nuestra plataforma. Estos Términos de Servicio constituyen un acuerdo legalmente vinculante entre usted y Legacy Academy. Al acceder a la plataforma, acepta estar sujeto a todos estos términos.",
+        TERMS_WELCOME: "Bienvenido a nuestra plataforma. Estos Términos de Servicio constituyen un acuerdo legalmente vinculante entre usted y Legacy. Al acceder a la plataforma, acepta estar sujeto a todos estos términos.",
         TERMS_S1_TITLE: "1. Representaciones y Conducta del Usuario",
         TERMS_S1_DESC: "Al utilizar el sitio, declara y garantiza que: (1) toda la información de registro que envíe será verdadera, precisa y completa; (2) mantendrá la precisión de dicha información; (3) tiene capacidad legal para aceptar estos Términos; (4) no accederá a través de medios automatizados (bots). Cualquier incumplimiento resultará en la cancelación inmediata de la cuenta.",
         TERMS_S2_TITLE: "2. Derechos de Propiedad Intelectual",
@@ -96,7 +96,7 @@ const content = {
         PRIVACY_FOOTER: "Sus datos se manejan en estricto cumplimiento del RGPD."
     },
     ru: {
-        TERMS_WELCOME: "Добро пожаловать на нашу платформу. Настоящие Условия обслуживания представляют собой юридически обязательное соглашение между вами и Legacy Academy. Заходя на платформу, вы соглашаетесь соблюдать все эти Условия обслуживания.",
+        TERMS_WELCOME: "Добро пожаловать на нашу платформу. Настоящие Условия обслуживания представляют собой юридически обязательное соглашение между вами и Legacy. Заходя на платформу, вы соглашаетесь соблюдать все эти Условия обслуживания.",
         TERMS_S1_TITLE: "1. Представительства Пользователей и Поведение",
         TERMS_S1_DESC: "Используя сайт, вы заявляете и гарантируете, что: (1) вся регистрационная информация правдива и точна; (2) вы будете поддерживать ее точность; (3) вы имеете правоспособность соблюдать данные Условия; (4) вы не будете получать доступ к сайту с помощью автоматизированных средств (ботов).",
         TERMS_S2_TITLE: "2. Права Интеллектуальной Собственности",
@@ -114,7 +114,7 @@ const content = {
         PRIVACY_FOOTER: "Ваши данные обрабатываются в строгом соответствии с GDPR."
     },
     tr: {
-        TERMS_WELCOME: "Platformumuza hoş geldiniz. Bu Hizmet Şartları, platformumuza erişiminiz ve kullanımınızla ilgili olarak sizinle Legacy Academy arasında yasal olarak bağlayıcı bir sözleşmedir.",
+        TERMS_WELCOME: "Platformumuza hoş geldiniz. Bu Hizmet Şartları, platformumuza erişiminiz ve kullanımınızla ilgili olarak sizinle Legacy arasında yasal olarak bağlayıcı bir sözleşmedir.",
         TERMS_S1_TITLE: "1. Kullanıcı Beyanları ve Davranışları",
         TERMS_S1_DESC: "Siteyi kullanarak şunları beyan ve garanti edersiniz: (1) kayıt bilgileri doğru ve eksiksiz olacaktır; (2) bu bilgilerin doğruluğunu koruyacaksınız; (3) botlar veya otomatik yollarla erişmeyeceksiniz. Herhangi bir ihlal hesabın feshiyle sonuçlanır.",
         TERMS_S2_TITLE: "2. Fikri Mülkiyet Hakları",
@@ -132,7 +132,7 @@ const content = {
         PRIVACY_FOOTER: "Verileriniz GDPR ile tam uyumlu olarak işlenir."
     },
     cy: {
-        TERMS_WELCOME: "Καλωσόρισες στην πλατφόρμα. Τούτοι οι Όροι Χρήσης εν νομικά δεσμευτική συμφωνία μεταξύ εσού τζιαι της Legacy Academy. Άμαν μπαίνεις, αποδέχεσαι πλήρως τούτους τους Όρους.",
+        TERMS_WELCOME: "Καλωσόρισες στην πλατφόρμα. Τούτοι οι Όροι Χρήσης εν νομικά δεσμευτική συμφωνία μεταξύ εσού τζιαι της Legacy. Άμαν μπαίνεις, αποδέχεσαι πλήρως τούτους τους Όρους.",
         TERMS_S1_TITLE: "1. Συμπεριφορά Χρήστη",
         TERMS_S1_DESC: "Χρησιμοποιώντας τη σελίδα μας, εγγυάστε ότι: (1) ούλλες οι πληροφορίες που βάλλεις εν αληθινές, (2) εννα τις κρατάς σωστές, (3) δεν είσαι μιτσής κάτω των 13, (4) εν θα βάλεις bots να μπαίνουν. Άμαν κάμεις πελλάρες, εννα σου κλείσουμε τον λογαριασμό άμεσα.",
         TERMS_S2_TITLE: "2. Πνευματική Ιδιοκτησία",

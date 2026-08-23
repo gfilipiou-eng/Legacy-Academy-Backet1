@@ -77,7 +77,7 @@ const upsertHeadLink = ({ rel, href, sizes, type = 'image/png' }) => {
 
 const applyHeadBranding = ({ title } = {}) => {
     if (typeof document === 'undefined') return;
-    document.title = title || 'Legacy Academy';
+    document.title = title || 'Legacy';
     upsertHeadLink({ rel: 'icon', sizes: '16x16', href: ASSET_PATHS.favicon });
     upsertHeadLink({ rel: 'icon', sizes: '32x32', href: ASSET_PATHS.favicon });
     upsertHeadLink({ rel: 'icon', sizes: '192x192', href: ASSET_PATHS.applogo });
@@ -8748,7 +8748,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 </span>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-white leading-tight">
-                                {t('JOIN_ELITE', 'ENTER THE LEGACY ACADEMY')}
+                                {t('JOIN_ELITE', 'ENTER THE LEGACY')}
                             </h3>
                             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em]">
                                 {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
@@ -9174,13 +9174,13 @@ const App = () => {
     const { t, i18n, lang } = useTranslation();
 
     useEffect(() => {
-        let title = 'Legacy Academy';
+        let title = 'Legacy';
         if (publicProfileUsername) {
-            title = `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy Academy`;
+            title = `${publicUser?.username || String(publicProfileUsername).replace(/^@+/, '')} | Legacy`;
         } else if (publicSiteUsername) {
-            title = `${publicUser?.settings?.businessWebsites?.[publicSiteIndex]?.businessName || 'Business Website'} | Legacy Academy`;
+            title = `${publicUser?.settings?.businessWebsites?.[publicSiteIndex]?.businessName || 'Business Website'} | Legacy`;
         } else if (viewPostId) {
-            title = `Post | Legacy Academy`;
+            title = `Post | Legacy`;
         }
         document.title = title;
     }, [publicProfileUsername, publicSiteUsername, publicSiteIndex, publicUser?.username, publicUser?.settings, viewPostId]);
@@ -9852,7 +9852,7 @@ const App = () => {
                 // Trigger browser notification
                 if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
                     try {
-                        new Notification("Legacy Academy Alert", {
+                        new Notification("Legacy Alert", {
                             body: toastMsg,
                             icon: '/favicon.ico'
                         });
@@ -9877,7 +9877,7 @@ const App = () => {
                 // Trigger browser notification
                 if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
                     try {
-                        new Notification("Legacy Academy Chat", {
+                        new Notification("Legacy Chat", {
                             body: msg.text || messageText,
                             icon: '/favicon.ico'
                         });
@@ -11234,7 +11234,7 @@ const App = () => {
                                     <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
                                         <img
                                             src={ASSET_PATHS.logo}
-                                            alt="Legacy Academy"
+                                            alt="Legacy"
                                             className={`h-40 sm:h-44 md:h-48 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
@@ -11509,7 +11509,7 @@ const App = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="text-center mt-6 text-[10px] text-white/15 uppercase tracking-[0.3em] font-black">Legacy Academy © 2026</div>
+                        <div className="text-center mt-6 text-[10px] text-white/15 uppercase tracking-[0.3em] font-black">Legacy © 2026</div>
                     </div>
                 </div>
 
@@ -11530,7 +11530,7 @@ const App = () => {
                                 </div>
                                 
                                 <h2 className="text-base sm:text-[24px] font-black text-white uppercase tracking-[0.2em] mb-1 sm:mb-2 shrink-0">Exclusive Network</h2>
-                                <div className="text-[8px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-3 sm:mb-6 shrink-0">Legacy Academy Membership</div>
+                                <div className="text-[8px] sm:text-[11px] text-[var(--gold-primary)] uppercase tracking-[0.3em] font-bold mb-3 sm:mb-6 shrink-0">Legacy Membership</div>
                                 
                                 {/* Features List - Glass */}
                                 <div className="w-full bg-black/40 backdrop-blur-3xl border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-[24px] p-3.5 sm:p-6 mb-3 sm:mb-6 text-left space-y-2.5 sm:space-y-4 relative overflow-hidden shrink-0">
@@ -11600,7 +11600,7 @@ const App = () => {
                                     <div className="relative flex items-center justify-center transition-transform duration-300 hover:scale-[1.02]">
                                         <img
                                             src={ASSET_PATHS.logo}
-                                            alt="Legacy Academy"
+                                            alt="Legacy"
                                             className="h-40 sm:h-48 md:h-56 w-auto object-contain"
                                             decoding="sync"
                                             loading="eager"

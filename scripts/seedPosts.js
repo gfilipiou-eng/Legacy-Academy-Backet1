@@ -14,7 +14,7 @@ const samplePosts = [
     },
     {
         title: "10 Μαθήματα Ζωής από τον Tate",
-        desc: "Στο Legacy Academy διδάσκουμε την αξία της σκληρής δουλειάς, της επιμονής και του mindset του νικητή. Ανακαλύψτε τα 10 βασικά μαθήματα που θα αλλάξουν τη ζωή σας.",
+        desc: "Στο Legacy διδάσκουμε την αξία της σκληρής δουλειάς, της επιμονής και του mindset του νικητή. Ανακαλύψτε τα 10 βασικά μαθήματα που θα αλλάξουν τη ζωή σας.",
         image: "https://res.cloudinary.com/demo/image/upload/sample_2.jpg", // Placeholder image
     },
     {
