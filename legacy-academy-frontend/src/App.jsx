@@ -3903,13 +3903,6 @@ useEffect(() => {
         setPendingLanguage(activeLanguage);
     }, [activeLanguage]);
 
-    useEffect(() => {
-        if (isOpen) {
-            setLiquidGlassIntensity(0);
-            applyLiquidGlass(0);
-            localStorage.setItem('liquidGlassIntensity', '0');
-        }
-    }, [isOpen]);
 
     const handleSave = async (key, val) => {
         setSaving(true);
@@ -12179,7 +12172,7 @@ const App = () => {
                             }
                         }}
                         onViewProfile={viewProfile}
-                        onOpenSettings={() => setIsSettingsOpen(true)}
+                        onOpenSettings={() => setTimeout(() => setIsSettingsOpen(true), 300)}
                         onOpenWebsiteBuilder={() => setIsWebsiteBuilderOpen(true)}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onOpenTerms={() => setIsTermsOpen(true)}

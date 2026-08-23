@@ -564,7 +564,7 @@
   "F1_ASTON_MODE": "F1 Πράσινο",
   "ENABLE_GLOW": "Ενεργοποίηση Φωτισμού",
   "GLOW_EFFECT_DESC": "Προσθέτει εφέ λάμψης στα χρώματα του θέματος (καταναλώνει περισσότερη μπαταρία)",
-  "LIQUID_GLASS_INTENSITY": "������ Liquid Glass",
+  "LIQUID_GLASS_INTENSITY": "Ένταση Liquid Glass",
   "CAT_BUSINESS": "Επιχειρηματικότητα",
   "CAT_BUSINESS_DESC": "Γίνε master στην επιχειρηματικότητα, τη δικτύωση και την ανάπτυξη.",
   "MISSION_BIZ_LAUNCH": "Λανσάρισμα Προϊόντος",
@@ -679,6 +679,6 @@
   "CARTELS_SAVE": "Αποθήκευση",
   "EDIT_POST": "Επεξεργασία",
   "CREATE": "Δημιουργία",
-  "LIQUID_GLASS": "������ Liquid Glass",
-  "LIQUID_GLASS_DESC": "����������� ��� ������ ��� ��� ��������� ��� ������� �� ���� ��� ������ ��� �� �����."
+  "LIQUID_GLASS": "Ένταση Liquid Glass",
+  "LIQUID_GLASS_DESC": "Ρύθμισε την ένταση θαμπώματος και γυαλιστερής εμφάνισης σε όλες τις κάρτες και τα πάνελ."
 }
