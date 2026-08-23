@@ -32,7 +32,11 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
         });
 
         const savedCartel = await newCartel.save();
-        res.status(200).json(savedCartel);
+        const populatedCartel = await Cartel.findById(savedCartel._id).select("-pin")
+            .populate("creator", "username profilePic")
+            .populate("members", "username profilePic role");
+
+        res.status(200).json(populatedCartel);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -132,10 +136,14 @@ router.post("/:id/join", verifyToken, async (req, res) => {
         const cartel = await Cartel.findById(req.params.id);
         if (!cartel) return res.status(404).json("Cartel not found");
 
-        if (cartel.members.includes(req.user.id)) {
+        const userIdStr = req.user.id.toString();
+        const isCurrentlyMember = cartel.members.some(m => m.toString() === userIdStr);
+
+        if (isCurrentlyMember) {
             // Leave
-            await cartel.updateOne({ $pull: { members: req.user.id } });
-            res.status(200).json("Left cartel");
+            cartel.members = cartel.members.filter(m => m.toString() !== userIdStr);
+            await cartel.save();
+            return res.status(200).json({ status: "left", message: "Left cartel" });
         } else {
             // Join
             const { pin } = req.body;
@@ -144,10 +152,14 @@ router.post("/:id/join", verifyToken, async (req, res) => {
                     return res.status(403).json("Invalid PIN. Access denied.");
                 }
             }
-            await cartel.updateOne({ $push: { members: req.user.id } });
-            res.status(200).json("Joined cartel");
+            if (!cartel.members.some(m => m.toString() === userIdStr)) {
+                cartel.members.push(req.user.id);
+            }
+            await cartel.save();
+            return res.status(200).json({ status: "joined", message: "Joined cartel" });
         }
     } catch (err) {
+        console.error("Cartel join error:", err);
         res.status(500).json(err);
     }
 });
@@ -159,7 +171,11 @@ router.get("/:id/posts", verifyToken, async (req, res) => {
         // Check if user is a member
         const cartel = await Cartel.findById(req.params.id);
         if (!cartel) return res.status(404).json("Cartel not found");
-        if (!cartel.members.includes(req.user.id) && req.user.role !== 'Founder') {
+        const userIdStr = req.user.id.toString();
+        const isMemberOrCreator = cartel.members.some(m => m.toString() === userIdStr) ||
+                                  (cartel.creator && cartel.creator.toString() === userIdStr) ||
+                                  req.user.role === 'Founder';
+        if (!isMemberOrCreator) {
             return res.status(403).json("Intel is encrypted. You must be a member of this cartel to view its posts.");
         }
 

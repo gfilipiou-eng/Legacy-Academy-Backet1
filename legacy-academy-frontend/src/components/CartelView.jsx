@@ -415,6 +415,19 @@ const CartelPostCard = ({ post, user, onEdit, onDelete, t }) => {
     );
 };
 
+const isCartelMember = (cartelObj, u) => {
+    if (!cartelObj || !u) return false;
+    const uid = String(u._id || u.userId || u);
+    const creatorId = String(cartelObj.creator?._id || cartelObj.creator || '');
+    if (creatorId && creatorId === uid) return true;
+
+    if (!Array.isArray(cartelObj.members)) return false;
+    return cartelObj.members.some(m => {
+        const mid = String(m?._id || m);
+        return mid === uid;
+    });
+};
+
 /* ─── Main CartelView ─────────────────────────────────────────────────────── */
 export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     const [liveCartel, setLiveCartel] = useState(cartel);
@@ -427,7 +440,12 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     const [isEditCartelOpen, setIsEditCartelOpen] = useState(false);
     const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
     const [editingPost, setEditingPost] = useState(null);
-    const isCreator = user && liveCartel.creator && (user._id === liveCartel.creator._id || user._id === liveCartel.creator);
+    const isCreator = Boolean(
+        user && liveCartel?.creator && (
+            String(user._id || user) === String(liveCartel.creator._id || liveCartel.creator) ||
+            user.role === 'Founder'
+        )
+    );
 
     useEffect(() => {
         setLiveCartel(cartel);
@@ -435,9 +453,12 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
 
     useEffect(() => {
         if (!liveCartel) return;
-        setIsMember(liveCartel.members?.includes(user._id));
-        setMemberCount(liveCartel.members?.length || 0);
-        fetchPosts();
+        const memberStatus = isCartelMember(liveCartel, user);
+        setIsMember(memberStatus);
+        setMemberCount(liveCartel.members?.length || (memberStatus ? 1 : 0));
+        if (memberStatus || user?.role === 'Founder') {
+            fetchPosts();
+        }
     }, [liveCartel, user]);
 
     const fetchPosts = async () => {
@@ -462,7 +483,6 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     };
 
     const handleDeletePost = async (postId) => {
-        // removed confirmation prompt
         try {
             await axios.delete(`/posts/${postId}`);
             setPosts(prev => prev.filter(p => p._id !== postId));
@@ -483,25 +503,24 @@ export const CartelView = ({ cartel, user, onBack, t, onUpdateCartel }) => {
     };
 
     const executeJoin = async (enteredPin = '') => {
-        const previousIsMember = isMember;
-        if (isMember || !liveCartel.isPrivate) {
-            setIsMember(!isMember);
-            setMemberCount(prev => !isMember ? prev + 1 : prev - 1);
-        }
         try {
             await axios.post(`/cartels/${liveCartel._id}/join`, { pin: enteredPin });
-            if (!isMember && liveCartel.isPrivate) {
-                setIsMember(true);
-                setMemberCount(prev => prev + 1);
-            }
+            const updatedRes = await axios.get(`/cartels/${liveCartel._id}`);
+            const updatedCartel = updatedRes.data;
+            setLiveCartel(updatedCartel);
+            if (onUpdateCartel) onUpdateCartel(updatedCartel);
+
+            const memberStatus = isCartelMember(updatedCartel, user);
+            setIsMember(memberStatus);
+            setMemberCount(updatedCartel.members?.length || (memberStatus ? 1 : 0));
             setShowJoinPinModal(false);
+            if (memberStatus || user?.role === 'Founder') {
+                fetchPosts();
+            }
         } catch (err) {
             console.error(err);
-            if (isMember || !liveCartel.isPrivate) {
-                setIsMember(previousIsMember);
-                setMemberCount(prev => previousIsMember ? prev + 1 : prev - 1);
-            }
-            alert(err.response?.data || 'Error joining/leaving cartel');
+            const msg = err.response?.data?.message || (typeof err.response?.data === 'string' ? err.response.data : null) || 'Error joining/leaving cartel';
+            alert(msg);
         }
     };
 
