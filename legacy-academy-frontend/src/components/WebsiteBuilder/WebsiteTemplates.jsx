@@ -58,7 +58,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
                     {config.businessName || 'Elite Brand'}
                 </div>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6 break-words hyphens-auto w-full">
-                    {config.slogan || 'Build Your Empire.'}
+                    {config.slogan || ''}
                 </h1>
                 <p className="text-base sm:text-lg md:text-xl mb-8 md:mb-10 leading-relaxed max-w-xl opacity-75 break-words hyphens-auto w-full">
                     {config.description}
@@ -107,10 +107,10 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
                     <Icons.ShoppingBag className="w-3.5 h-3.5" /> OFFICIAL DROP / STORE
                 </span>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight leading-[1.05] mb-4">
-                    {config.slogan || 'Exclusive Store Collection'}
+                    {config.slogan || ''}
                 </h1>
                 <p className="text-sm sm:text-base md:text-lg opacity-75 mb-8 leading-relaxed">
-                    {config.description || 'Premium curated apparel, footwear & limited edition drops.'}
+                    {config.description || ''}
                 </p>
                 {config.ctaText && (
                     <a 
@@ -153,7 +153,7 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <Icons.Briefcase className="w-3.5 h-3.5" /> Elite Advisory & Digital Solutions
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.05] mb-6">
-                {config.slogan || 'Scale Your Global Enterprise'}
+                {config.slogan || ''}
             </h1>
             <p className="text-base sm:text-xl opacity-75 max-w-2xl leading-relaxed mb-10">
                 {config.description}
@@ -212,7 +212,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => (
                 ★ Haute Horlogerie & Heritage Goods ★
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.1em] mb-6 leading-tight">
-                {config.slogan || 'Timeless Perfection'}
+                {config.slogan || ''}
             </h1>
             <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mb-8" />
             <p className="text-base sm:text-xl text-white/80 font-light max-w-2xl leading-relaxed mb-10 tracking-wide font-sans">
@@ -250,7 +250,7 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-20 font-sans">
         <div className="text-center max-w-4xl mx-auto mb-16 flex flex-col items-center">
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
-                {config.slogan || 'Automate Everything With Precision'}
+                {config.slogan || ''}
             </h1>
             <p className="text-base sm:text-lg md:text-xl opacity-75 max-w-2xl leading-relaxed mb-10 px-4">
                 {config.description}

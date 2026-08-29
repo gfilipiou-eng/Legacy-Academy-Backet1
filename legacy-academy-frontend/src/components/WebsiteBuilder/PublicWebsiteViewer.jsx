@@ -375,8 +375,11 @@ export const PublicWebsiteViewer = ({ config }) => {
                                         </div>
                                     )}
 
-                                    {/* Stripe Direct Link Button if configured */}
-                                    {(selectedProduct.stripeLink || selectedProduct.buyLink) ? (
+                                    {/* Stripe Direct Link Button if configured (general or per-size) */}
+                                    {(() => {
+                                        const hasGeneralLink = !!(selectedProduct.stripeLink || selectedProduct.buyLink);
+                                        const hasSizeLink = !!(selectedSize && selectedProduct.sizeLinks && selectedProduct.sizeLinks[selectedSize]);
+                                        return hasGeneralLink || hasSizeLink ? (
                                         <div className="space-y-4 mb-4">
                                             <button
                                                 type="button"
@@ -437,7 +440,8 @@ export const PublicWebsiteViewer = ({ config }) => {
                                                 Confirm Order (€{selectedProduct.price})
                                             </button>
                                         </div>
-                                    )}
+                                        );
+                                    })()}
                                 </div>
                             ) : (
                                 <div className="p-8 sm:p-12 text-center flex flex-col items-center">

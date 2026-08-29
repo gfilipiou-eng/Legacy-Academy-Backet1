@@ -500,58 +500,6 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md resize-none"
                             />
                         </div>
-                        <div className="pt-2 border-t border-white/5">
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Contact Information</label>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <input 
-                                    type="text" 
-                                    value={config.contactEmail || ''}
-                                    onChange={(e) => updateConfig('contactEmail', e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
-                                    placeholder="Email Address" 
-                                />
-                                <input 
-                                    type="text" 
-                                    value={config.contactPhone || ''}
-                                    onChange={(e) => updateConfig('contactPhone', e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
-                                    placeholder="Phone Number" 
-                                />
-                            </div>
-                        </div>
-                        <div className="pt-2 border-t border-white/5">
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Social Links (Leave empty to hide)</label>
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <XIcon className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="X (Twitter) URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icons.Instagram className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Instagram URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icons.Linkedin className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="LinkedIn URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <TiktokIcon className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialTiktok || ''} onChange={(e) => updateConfig('socialTiktok', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="TikTok URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icons.Youtube className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialYoutube || ''} onChange={(e) => updateConfig('socialYoutube', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="YouTube URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icons.Facebook className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialFacebook || ''} onChange={(e) => updateConfig('socialFacebook', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Facebook URL" />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Icons.MessageCircle className="w-4 h-4 text-white/50 shrink-0" />
-                                    <input type="text" value={config.socialWhatsapp || ''} onChange={(e) => updateConfig('socialWhatsapp', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="WhatsApp Number/URL" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {/* Media */}
@@ -870,6 +818,68 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 </div>
                             </div>
                         )}
+                    </div>
+
+                    {/* Contact Information (moved below Products for better mobile layout) */}
+                    <div className="space-y-4 pt-4 border-t border-white/10">
+                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                            <Icons.Mail className="w-3.5 h-3.5 text-[var(--builder-primary)]" />
+                            <span>Contact & Social Information</span>
+                        </div>
+                        <div className="space-y-3 pt-1">
+                            <div>
+                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Contact Information</label>
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input 
+                                        type="text" 
+                                        value={config.contactEmail || ''}
+                                        onChange={(e) => updateConfig('contactEmail', e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
+                                        placeholder="Email Address" 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        value={config.contactPhone || ''}
+                                        onChange={(e) => updateConfig('contactPhone', e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
+                                        placeholder="Phone Number" 
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Social Links (Leave empty to hide)</label>
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <XIcon className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialX || ''} onChange={(e) => updateConfig('socialX', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="X (Twitter) URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Icons.Instagram className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialInstagram || ''} onChange={(e) => updateConfig('socialInstagram', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Instagram URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Icons.Linkedin className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialLinkedin || ''} onChange={(e) => updateConfig('socialLinkedin', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="LinkedIn URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <TiktokIcon className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialTiktok || ''} onChange={(e) => updateConfig('socialTiktok', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="TikTok URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Icons.Youtube className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialYoutube || ''} onChange={(e) => updateConfig('socialYoutube', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="YouTube URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Icons.Facebook className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialFacebook || ''} onChange={(e) => updateConfig('socialFacebook', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="Facebook URL" />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Icons.MessageCircle className="w-4 h-4 text-white/50 shrink-0" />
+                                        <input type="text" value={config.socialWhatsapp || ''} onChange={(e) => updateConfig('socialWhatsapp', e.target.value)} className="flex-1 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" placeholder="WhatsApp Number/URL" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Design */}
