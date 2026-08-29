@@ -249,19 +249,16 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-20 font-sans">
         <div className="text-center max-w-4xl mx-auto mb-16 flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-xs font-black tracking-widest uppercase mb-6 shadow-[0_0_15px_rgba(0,242,255,0.2)]">
-                <Icons.Cpu className="w-3.5 h-3.5" /> Next-Gen AI Infrastructure
-            </div>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.05] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
                 {config.slogan || 'Automate Everything With Precision'}
             </h1>
-            <p className="text-base sm:text-xl opacity-75 max-w-2xl leading-relaxed mb-10">
+            <p className="text-base sm:text-lg md:text-xl opacity-75 max-w-2xl leading-relaxed mb-10 px-4">
                 {config.description}
             </p>
             {config.ctaText && (
                 <a 
                     href={config.ctaLink || '#'} 
-                    className="px-10 py-4.5 rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm transition-all hover:scale-105 shadow-2xl flex items-center gap-2"
+                    className="px-8 sm:px-10 py-4 sm:py-4.5 rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm transition-all hover:scale-105 shadow-2xl flex items-center gap-2"
                     style={{ backgroundColor: activeTheme.primary, color: '#000' }}
                 >
                     <Icons.Zap className="w-4 h-4" />
@@ -271,7 +268,7 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
 
         {config.coverImage && (
-            <div className="w-full max-w-5xl mx-auto h-72 sm:h-96 md:h-[480px] rounded-3xl overflow-hidden border border-white/15 shadow-2xl mb-20 relative group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
+            <div className="w-full max-w-5xl mx-auto h-64 sm:h-96 md:h-[500px] rounded-[24px] sm:rounded-[36px] overflow-hidden border border-white/15 shadow-2xl mb-16 sm:mb-20 relative group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
                 <img src={config.coverImage} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="SaaS Dashboard" />
             </div>
@@ -435,13 +432,13 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-6xl mx-auto px-4 py-8" style={{ fontFamily: 'Roboto, sans-serif' }}>
         <div className="bg-[#1a1a1a] rounded-2xl overflow-hidden border border-[#333] mb-8">
-            <div className="p-4 border-b border-[#333] flex justify-between items-center bg-[#222]">
-                <h1 className="text-xl sm:text-2xl font-black uppercase text-white flex items-center gap-2 w-full break-words hyphens-auto">
+            <div className="p-4 sm:p-6 border-b border-[#333] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#222]">
+                <h1 className="text-xl sm:text-2xl font-black uppercase text-white flex items-center gap-3 w-full break-words hyphens-auto leading-tight">
                     <div className="w-3 h-3 rounded-full animate-pulse shrink-0" style={{ backgroundColor: activeTheme.primary }} />
-                    {config.slogan || ''}
+                    <span>{config.slogan || ''}</span>
                 </h1>
                 {config.ctaText && (
-                    <a href={config.ctaLink || '#'} className="px-6 py-2 rounded-xl font-bold uppercase text-xs shrink-0" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
+                    <a href={config.ctaLink || '#'} className="w-full sm:w-auto px-8 py-3 sm:py-2.5 text-center rounded-xl font-black uppercase text-sm sm:text-xs shrink-0 transition-transform hover:scale-105" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
                         {config.ctaText}
                     </a>
                 )}

@@ -67,7 +67,10 @@ export const PublicWebsiteViewer = ({ config }) => {
     };
 
     const handleStripeCheckout = (product) => {
-        const stripeUrl = product.stripeLink || product.buyLink;
+        let stripeUrl = product.stripeLink || product.buyLink;
+        if (selectedSize && product.sizeLinks && product.sizeLinks[selectedSize]) {
+            stripeUrl = product.sizeLinks[selectedSize];
+        }
         if (stripeUrl) {
             const finalUrl = stripeUrl.startsWith('http') ? stripeUrl : `https://${stripeUrl}`;
             window.open(finalUrl, '_blank', 'noopener,noreferrer');
@@ -400,7 +403,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                                     value={buyerEmail}
                                                     onChange={(e) => setBuyerEmail(e.target.value)}
                                                     placeholder="john@example.com"
-                                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--builder-primary)] text-white"
+                                                    className="w-full min-w-0 box-border bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--builder-primary)] text-white"
                                                 />
                                             </div>
                                             <div>
@@ -410,7 +413,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                                                     value={buyerPhone}
                                                     onChange={(e) => setBuyerPhone(e.target.value)}
                                                     placeholder="+30 69..."
-                                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--builder-primary)] text-white"
+                                                    className="w-full min-w-0 box-border bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--builder-primary)] text-white"
                                                 />
                                             </div>
                                             <button 

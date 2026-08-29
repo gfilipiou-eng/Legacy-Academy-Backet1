@@ -269,14 +269,16 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             >
                 <button 
                     onClick={() => handlePublish(true)}
+                    onTouchEnd={(e) => { e.preventDefault(); handlePublish(true); }}
                     disabled={saving}
-                    className="flex-1 py-3.5 rounded-xl border border-white/20 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="flex-1 py-3.5 rounded-xl border border-white/20 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-white/10 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 touch-manipulation cursor-pointer"
                 >
                     <Icons.Save className="w-4 h-4" /> {t('wb_saveDraft', 'Save Draft')}
                 </button>
                 <button 
                     onClick={() => handlePublish(false)}
-                    className="flex-1 py-3.5 rounded-xl bg-[var(--builder-primary)] text-white font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg"
+                    onTouchEnd={(e) => { e.preventDefault(); handlePublish(false); }}
+                    className="flex-1 py-3.5 rounded-xl bg-[var(--builder-primary)] text-white font-black text-[12px] uppercase tracking-wider hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg touch-manipulation cursor-pointer"
                 >
                     <Icons.Globe className="w-4 h-4" /> {saving ? t('wb_publishing', 'Publishing...') : t('wb_publishLive', 'Publish Live')}
                 </button>
@@ -500,19 +502,19 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         </div>
                         <div className="pt-2 border-t border-white/5">
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Contact Information</label>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                                 <input 
                                     type="text" 
                                     value={config.contactEmail || ''}
                                     onChange={(e) => updateConfig('contactEmail', e.target.value)}
-                                    className="w-1/2 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
+                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
                                     placeholder="Email Address" 
                                 />
                                 <input 
                                     type="text" 
                                     value={config.contactPhone || ''}
                                     onChange={(e) => updateConfig('contactPhone', e.target.value)}
-                                    className="w-1/2 bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
+                                    className="w-full bg-white/5 border border-white/10 shadow-sm rounded-xl focus:ring-2 focus:ring-[var(--builder-primary)]/20 hover:bg-white/10 hover:border-white/20 px-4 py-3 text-white text-sm outline-none focus:border-[var(--builder-primary)] transition-all backdrop-blur-md" 
                                     placeholder="Phone Number" 
                                 />
                             </div>
@@ -799,10 +801,36 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                         updated[pIdx].sizes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
                                                         updateConfig('products', updated);
                                                     }}
-                                                    placeholder="Comma separated sizes: S, M, L, XL or 41, 42, 43"
+                                                    placeholder="S, M, L or 42, 43, 44"
                                                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
                                                 />
                                             </div>
+
+                                            {/* Size-Specific Links */}
+                                            {prod.sizes && prod.sizes.length > 0 && (
+                                                <div className="space-y-2 mt-3 pt-3 border-t border-white/10">
+                                                    <label className="text-[10px] uppercase font-bold text-white/50">Stripe Link Per Size (Overrides general link)</label>
+                                                    {prod.sizes.map((s, sIdx) => (
+                                                        <div key={sIdx} className="flex items-center gap-2">
+                                                            <div className="w-16 shrink-0 text-center px-2 py-1.5 bg-white/10 rounded-lg font-bold text-[10px] text-white/80 overflow-hidden truncate">
+                                                                {s}
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                value={(prod.sizeLinks && prod.sizeLinks[s]) || ''}
+                                                                onChange={(e) => {
+                                                                    const updated = [...(config.products || [])];
+                                                                    if (!updated[pIdx].sizeLinks) updated[pIdx].sizeLinks = {};
+                                                                    updated[pIdx].sizeLinks[s] = e.target.value;
+                                                                    updateConfig('products', updated);
+                                                                }}
+                                                                placeholder={`Link for size ${s}`}
+                                                                className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-white text-xs outline-none focus:border-[var(--builder-primary)] font-mono"
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
 
                                             {/* Badge */}
                                             <div className="flex gap-2">
