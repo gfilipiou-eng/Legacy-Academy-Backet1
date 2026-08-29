@@ -3212,3 +3212,47 @@ body.liquid-glass-aesthetic .match-widget-container {
   }
 }
 
+/* === Graffiti & Street Art Signature Styles === */
+.graffiti-tag-text {
+  font-family: 'Permanent Marker', 'Sedgwick Ave Display', cursive, sans-serif;
+  letter-spacing: 0.14em;
+  background: linear-gradient(135deg, #00e5ff 0%, #ffffff 35%, #ffd700 70%, #ff9100 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 229, 255, 0.4)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
+  display: inline-block;
+  transform: rotate(-1.5deg);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.graffiti-tag-text:hover {
+  transform: rotate(0deg) scale(1.04);
+  filter: drop-shadow(0 4px 14px rgba(0, 229, 255, 0.6)) drop-shadow(0 0 28px rgba(255, 215, 0, 0.5));
+}
+
+.graffiti-tag-pill {
+  background: linear-gradient(135deg, rgba(8, 12, 20, 0.8) 0%, rgba(18, 18, 24, 0.85) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 0 25px rgba(0, 229, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.graffiti-tag-pill::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1.5px;
+  background: linear-gradient(90deg, transparent, #00e5ff 25%, #ffffff 50%, #ffd700 75%, transparent);
+}
+
+.graffiti-splatter {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+

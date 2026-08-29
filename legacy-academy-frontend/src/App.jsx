@@ -42,6 +42,7 @@ import { WebsiteManager, PublicWebsiteViewer } from './components/WebsiteBuilder
 import BubbleSpace from './components/Bubbles/BubbleSpace';
 import { CartelsExplore } from './components/Cartels';
 import { CartelView } from './components/CartelView';
+import IosInstallModal from './components/IosInstallModal';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
@@ -156,8 +157,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                     transform = `w_500,h_500,c_fill,so_0,eo_2,q_auto:best,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // f_auto = let Cloudinary pick best format; background handled via CSS
-                    transform = `w_800,h_800,c_fill,g_face,q_auto:best,f_auto`;
+                    // f_auto = let Cloudinary pick best format; g_auto centers subject reliably without face detection failures
+                    transform = `w_800,h_800,c_fill,g_auto,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
                     transform = `w_3000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
@@ -942,19 +943,31 @@ const DefaultAvatar = ({ name, size = "normal" }) => {
 const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = false, cacheKey = null }) => {
     const [imgError, setImgError] = useState(false);
     const [imgLoaded, setImgLoaded] = useState(false);
+    const [useRawFallback, setUseRawFallback] = useState(false);
     const imgRef = useRef(null);
 
-    const rawUrl = user && typeof user === 'object' ? (user.profilePic || user.fromProfilePic) : null;
-    const name = user && typeof user === 'object' ? (user.username || user.fromUsername) : null;
-    const mediaUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
-    const flatMediaUrl = mediaUrl;
-    const isVideo = rawUrl && (rawUrl.match(/\.(mp4|mov|webm)($|\?)/i) || rawUrl.includes('/video/upload/')) && mediaUrl;
+    const rawUrl = user && typeof user === 'object' 
+        ? (user.profilePic || user.authorProfilePic || user.fromProfilePic || user.avatar || user.author?.profilePic) 
+        : (typeof user === 'string' ? user : null);
+    const name = user && typeof user === 'object' 
+        ? (user.username || user.fromUsername || user.author?.username || user.name) 
+        : null;
+
+    const optimizedUrl = resolveMediaUrl(rawUrl, size === 'large' ? 800 : 300, !String(rawUrl || '').includes('/video/upload/'), false, false, cacheKey);
+    const flatMediaUrl = useRawFallback ? rawUrl : (optimizedUrl || rawUrl);
+    const isVideo = rawUrl && (String(rawUrl).match(/\.(mp4|mov|webm)($|\?)/i) || String(rawUrl).includes('/video/upload/')) && flatMediaUrl;
 
     // Reset error state if url or cache key changes, or when app becomes visible again
     useEffect(() => { 
         setImgError(false);
         setImgLoaded(false); 
-        const handleVisibility = () => { if (document.visibilityState === 'visible') setImgError(false); };
+        setUseRawFallback(false);
+        const handleVisibility = () => { 
+            if (document.visibilityState === 'visible') {
+                setImgError(false); 
+                setUseRawFallback(false);
+            }
+        };
         window.addEventListener('visibilitychange', handleVisibility);
         window.addEventListener('online', handleVisibility);
         return () => {
@@ -964,30 +977,28 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     }, [String(rawUrl || ''), cacheKey]);
 
     useEffect(() => {
-        if (imgRef.current && imgRef.current.complete) {
+        if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
             setImgLoaded(true);
         }
     }, [flatMediaUrl]);
 
-    if (!user || typeof user !== 'object') return <DefaultAvatar size={size} />;
+    if (!user || (!rawUrl && typeof user !== 'object')) return <DefaultAvatar size={size} />;
 
-    const isFounder = user?.role === 'Founder';
     let baseClass = 'w-full h-full object-cover rounded-full';
     if (className) {
-        // Remove redundant w-full, h-full, object-cover if already passed in className
         const cleanedClassName = className.replace(/w-full|h-full|object-cover|rounded-full/g, '').trim();
         baseClass = `${baseClass} ${cleanedClassName}`.trim();
     }
     const finalClassName = baseClass.replace(/rounded-none/g, '');
 
-    if (imgError || !mediaUrl) return <DefaultAvatar name={name} size={size} />;
+    if (imgError || !flatMediaUrl) return <DefaultAvatar name={name} size={size} />;
 
     if (isVideo) {
         return (
             <div className={`w-full h-full bg-gray-900 ${finalClassName}`} onClick={onClick}>
                 <div className={`w-full h-full relative overflow-hidden bg-black ${finalClassName}`}>
                     <video
-                        src={mediaUrl}
+                        src={flatMediaUrl}
                         className={`w-full h-full object-cover pointer-events-none ${finalClassName}`}
                         autoPlay
                         muted
@@ -995,7 +1006,13 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
                         playsInline
                         preload="metadata"
                         disableRemotePlayback
-                        onError={() => setImgError(true)}
+                        onError={() => {
+                            if (!useRawFallback && rawUrl && rawUrl !== flatMediaUrl) {
+                                setUseRawFallback(true);
+                            } else {
+                                setImgError(true);
+                            }
+                        }}
                         onLoadedMetadata={(e) => { e.target.currentTime = 0.1; }}
                     />
                 </div>
@@ -1003,7 +1020,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         );
     }
 
-    return flatMediaUrl ? (
+    return (
         <div className={`relative w-full h-full overflow-hidden ${finalClassName}`}>
             {!imgLoaded && (
                 <div className="absolute inset-0 z-10 animate-pulse">
@@ -1020,12 +1037,14 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
                 decoding={priority ? 'sync' : 'async'}
                 alt=""
                 onLoad={() => setImgLoaded(true)}
-                onError={() => setImgError(true)}
+                onError={() => {
+                    if (!useRawFallback && rawUrl && rawUrl !== flatMediaUrl) {
+                        setUseRawFallback(true);
+                    } else {
+                        setImgError(true);
+                    }
+                }}
             />
-        </div>
-    ) : (
-        <div className={`w-full h-full overflow-hidden ${finalClassName}`}>
-            <DefaultAvatar name={name} size={size} />
         </div>
     );
 };
@@ -2422,21 +2441,19 @@ const StoriesBar = ({ stories, user, onAddStory, onViewStory, imgKey }) => {
                             {/* Animated gradient ring */}
                             <div className={`w-[68px] h-[68px] rounded-full p-[3px] bg-gradient-to-br ${ringClass} shadow-lg`}>
                                 <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 border-2 border-black relative">
-                                    {hasStoryMedia && storyMediaUrl ? (
+                                    <div className={`absolute inset-0 w-full h-full bg-gradient-to-br ${gradClass} flex items-center justify-center z-0`}>
+                                        <span className="text-white text-[11px] font-bold text-center break-words line-clamp-3 leading-snug drop-shadow-md px-1">
+                                            {getPostTextPreview(s.desc, 30)}
+                                        </span>
+                                    </div>
+                                    {hasStoryMedia && storyMediaUrl && (
                                         <img
                                             src={resolveMediaUrl(storyMediaUrl, null, false, true)}
-                                            className="w-full h-full object-cover object-center"
+                                            className="absolute inset-0 w-full h-full object-cover object-center z-10"
                                             alt=""
                                             onError={(e) => { e.target.style.display = 'none'; }}
                                         />
-                                    ) : (
-                                        <div className={`w-full h-full bg-gradient-to-br ${gradClass} flex items-center justify-center`}>
-                                            <span className="text-white text-[11px] font-bold text-center break-words line-clamp-3 leading-snug drop-shadow-md px-1">
-                                                {getPostTextPreview(s.desc, 30)}
-                                            </span>
-                                        </div>
                                     )}
-
                                 </div>
                             </div>
 
@@ -2914,7 +2931,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     onDoubleClick={onMediaClick ? () => onMediaClick(post) : undefined}
                                                     onError={() => {
                                                         setImgError(true);
-                                                        if (canDelete) { axios.put(`/posts/${post._id}`, { image: "" }).catch(() => { }); }
                                                     }}
                                                 />
                                             )
@@ -9427,6 +9443,7 @@ const App = () => {
         }
         return false;
     });
+    const [showIosInstallModal, setShowIosInstallModal] = useState(false);
     const [chatTarget, setChatTarget] = useState(null);
     const registerFileRef = useRef(null);
     const [registerPreview, setRegisterPreview] = useState(null);
@@ -11544,11 +11561,76 @@ const App = () => {
                                         </form>
                                     )}
                                 </div>
+
+                                {/* IPHONE / IOS PWA INSTALL BANNER BUTTON */}
+                                <div className="mt-5 pt-3.5 border-t border-white/10 flex flex-col items-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowIosInstallModal(true)}
+                                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#ffd700]/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                                    >
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-8 h-8 rounded-xl bg-white/10 group-hover:bg-[#ffd700]/20 group-hover:text-[#ffd700] text-white flex items-center justify-center transition-all duration-300 shrink-0">
+                                                {/* Apple Logo SVG */}
+                                                <svg className="w-4 h-4 fill-current" viewBox="0 0 170 170">
+                                                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12.01-14.42-5.74-8.8-10.15-18.73-13.23-29.77-3.08-11.04-4.63-21.72-4.63-32.04 0-14.65 3.69-26.69 11.08-36.14 7.39-9.44 16.71-14.28 27.97-14.51 4.58 0 9.77 1.25 15.58 3.76 5.81 2.5 9.78 3.82 11.91 3.96 1.91-.14 6.01-1.52 12.3-4.14 6.29-2.61 11.66-3.79 16.12-3.53 12.3.93 21.94 5.3 28.94 13.12-10.83 6.57-16.13 15.82-15.89 27.76.25 9.53 3.92 17.51 11.01 23.94 7.09 6.43 15.42 10.02 24.99 10.77-2.14 6.42-4.78 12.76-7.92 19.03zM119.22 31.84c0-7.39 2.68-14.45 8.04-21.19 5.36-6.73 12.18-10.65 20.46-11.75.14 1.13.21 2.22.21 3.28 0 7.39-2.78 14.56-8.34 21.52-5.56 6.96-12.38 10.89-20.46 11.8-.07-1.22-.09-2.18-.09-2.88z"/>
+                                                </svg>
+                                            </div>
+                                            <div className="text-left">
+                                                <div className="text-[11px] font-black text-white/95 tracking-wide flex items-center gap-1.5">
+                                                    ADD TO HOME SCREEN
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iPhone iOS</span>
+                                                </div>
+                                                <div className="text-[9.5px] text-white/50 font-medium">Tap for 3-step installation instructions</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-[10px] font-black text-[#ffd700] group-hover:translate-x-0.5 transition-transform">
+                                            <span>Guide</span>
+                                            <Icons.ChevronRight className="w-3.5 h-3.5" />
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div className="text-center mt-6 text-[10px] text-white/15 uppercase tracking-[0.3em] font-black">Legacy © 2026</div>
+
+                        {/* GRAFFITI & URBAN STREET SIGNATURE FOOTER */}
+                        <div className="mt-8 text-center flex flex-col items-center justify-center select-none relative group px-2">
+                            {/* Subtle street spray / ambient glow */}
+                            <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/10 via-[#ffd700]/15 to-blue-500/10 blur-2xl opacity-60 pointer-events-none rounded-3xl" />
+                            
+                            {/* Stylized Graffiti Text Badge */}
+                            <div className="relative inline-flex flex-col items-center">
+                                {/* Graffiti Street Tag */}
+                                <div className="graffiti-tag-pill px-5 py-2 rounded-2xl flex items-center gap-2.5 transition-transform duration-300 group-hover:scale-105">
+                                    <span className="text-base select-none">🇬🇷</span>
+                                    <span className="graffiti-tag-text text-xl sm:text-2xl font-black uppercase">
+                                        MADE IN GREECE
+                                    </span>
+                                    <span className="text-base select-none">🇬🇷</span>
+                                </div>
+                            </div>
+
+                            {/* English Taglines & Platform Identity */}
+                            <div className="mt-3.5 flex flex-col items-center gap-1 max-w-[360px]">
+                                <div className="text-[11px] sm:text-[12px] font-black uppercase tracking-[0.25em] text-white/90 drop-shadow-sm font-['Cinzel',sans-serif]">
+                                    The #1 Greek Elite Social & Wealth Platform
+                                </div>
+                                <div className="text-[9px] sm:text-[9.5px] font-bold uppercase tracking-[0.3em] text-[#ffd700]/80">
+                                    Engineered for High Performers • Built in Athens
+                                </div>
+                                <div className="mt-1 text-[8px] font-mono tracking-[0.35em] uppercase text-white/30">
+                                    LEGACY ACADEMY © 2026 • ALL RIGHTS RESERVED
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                {/* IPHONE / IOS PWA INSTALLATION MODAL */}
+                <IosInstallModal
+                    isOpen={showIosInstallModal}
+                    onClose={() => setShowIosInstallModal(false)}
+                />
 
                 {/* PAYWALL MODAL */}
                 {showPaywall && (
