@@ -41,11 +41,13 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
     const [zoomImage, setZoomImage] = useState(null);
     const [saving, setSaving] = useState(false);
     const [published, setPublished] = useState(false);
-    const [previewMode, setPreviewMode] = useState('mobile');
     const [activeTab, setActiveTab] = useState('newest'); // desktop, mobile
 
     // Mobile specific tab (form vs preview)
     const [mobileTab, setMobileTab] = useState('form');
+    
+    // Preview: always desktop (full size) by default - mobile frame removed from desktop
+    const [previewMode, setPreviewMode] = useState('desktop');
 
     // AI Generator State
     const [aiPrompt, setAiPrompt] = useState('');
@@ -282,10 +284,14 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         emerald: { primary: '#10b981', bg: '#02120a', card: '#052414' },
         midnight: { primary: '#6366f1', bg: '#0a0a0a', card: '#111111' },
         rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
-        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' }
+        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
+        mafia: { primary: '#C9A961', bg: '#0a0a0a', card: '#151515' },
+        light: { primary: '#111827', bg: '#ffffff', card: '#f8fafc' }
     };
 
-    const activeTheme = themeColors[config.palette];
+    // Ensure palette is valid, fallback to gold if invalid
+    const resolvedPalette = themeColors[config.palette] ? config.palette : 'gold';
+    const activeTheme = themeColors[resolvedPalette];
 
     return (
         <>
@@ -681,7 +687,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                 </button>
                                             </div>
 
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-col sm:flex-row gap-2">
                                                 <input
                                                     type="text"
                                                     value={prod.name || ''}
@@ -691,19 +697,22 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                         updateConfig('products', updated);
                                                     }}
                                                     placeholder="Product Name (e.g. Oversized Tee)"
-                                                    className="flex-[2] bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
+                                                    className="sm:flex-[2] w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
                                                 />
-                                                <input
-                                                    type="number"
-                                                    value={prod.price || ''}
-                                                    onChange={(e) => {
-                                                        const updated = [...(config.products || [])];
-                                                        updated[pIdx].price = Number(e.target.value);
-                                                        updateConfig('products', updated);
-                                                    }}
-                                                    placeholder="Price (€)"
-                                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
-                                                />
+                                                <div className="flex gap-2 items-center">
+                                                    <span className="text-[var(--builder-primary)] font-black text-sm">€</span>
+                                                    <input
+                                                        type="number"
+                                                        value={prod.price || ''}
+                                                        onChange={(e) => {
+                                                            const updated = [...(config.products || [])];
+                                                            updated[pIdx].price = Number(e.target.value);
+                                                            updateConfig('products', updated);
+                                                        }}
+                                                        placeholder="Price"
+                                                        className="sm:flex-1 w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
+                                                    />
+                                                </div>
                                             </div>
 
                                             {/* Stripe Checkout Link */}
@@ -1009,75 +1018,44 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
             {/* MAIN CANVAS - Live Preview */}
             <div className={`flex-1 bg-[#121214] flex flex-col relative overflow-hidden ${mobileTab === 'form' ? 'hidden md:flex' : 'flex'}`}>
-                {/* Desktop Top Toolbar: Device View Switcher */}
+                {/* Desktop Top Bar: simple title, no mobile switcher */}
                 <div className="hidden md:flex items-center justify-between px-6 py-2.5 bg-[#0a0a0c] border-b border-white/10 z-20 shrink-0 shadow-sm">
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Live Preview:</span>
-                        <span className="text-xs font-bold text-white max-w-[200px] truncate">{config.businessName || 'My Website'}</span>
+                        <span className="text-xs font-bold text-white max-w-[300px] truncate">{config.businessName || 'My Website'}</span>
                     </div>
-                    <div className="flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
-                        <button
-                            type="button"
-                            onClick={() => setPreviewMode('mobile')}
-                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${previewMode === 'mobile' ? 'bg-[var(--builder-primary)] text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <Icons.Smartphone className="w-3.5 h-3.5" /> Mobile Phone
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setPreviewMode('desktop')}
-                            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${previewMode === 'desktop' ? 'bg-[var(--builder-primary)] text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <Icons.Monitor className="w-3.5 h-3.5" /> Desktop Full
-                        </button>
-                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                        Desktop Full View
+                    </span>
                 </div>
 
-                {/* Workspace / Live Preview */}
-                <div className="flex-1 overflow-y-auto overscroll-contain p-0 md:p-6 flex justify-center items-center custom-scrollbar relative pb-32 w-full touch-pan-y" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    {/* The Website Preview Container */}
+                {/* Workspace / Live Preview - Always full size, no phone frame */}
+                <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar relative pb-32 w-full touch-pan-y bg-[#0c0c0e]" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    {/* The Website Preview Container - Full width always on desktop, natural full width on mobile */}
                     <motion.div 
                         layout
-                        className={`shadow-2xl relative z-10 flex flex-col transition-all duration-300 ${
-                            previewMode === 'mobile' 
-                                ? 'w-full md:w-[390px] h-full md:h-[844px] md:max-h-[calc(100vh-140px)] md:my-auto md:rounded-[50px] md:border-[12px] md:border-[#1c1c1f] md:shadow-[0_30px_90px_rgba(0,0,0,0.9),0_0_0_2px_rgba(255,255,255,0.15)] overflow-hidden shrink-0' 
-                                : 'w-full max-w-6xl min-h-full md:rounded-2xl md:border md:border-white/10 overflow-x-hidden'
-                        }`}
+                        className={`w-full md:max-w-7xl md:mx-auto md:my-6 md:rounded-2xl md:border md:border-white/10 relative z-10 flex flex-col shadow-2xl overflow-x-hidden ${resolvedPalette === 'light' ? 'shadow-white/5' : ''}`}
                         style={{ 
                             fontFamily: config.font,
                             backgroundColor: activeTheme.bg,
-                            color: config.palette === 'light' ? '#000' : '#fff'
+                            color: resolvedPalette === 'light' ? '#000' : '#fff',
+                            minHeight: 'calc(100vh - 140px)'
                         }}
                     >
-                        {/* Dynamic Island Notch for Mobile Preview Frame */}
-                        {previewMode === 'mobile' && (
-                            <div className="hidden md:flex absolute top-3 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 items-center justify-between px-3 pointer-events-none shadow-md">
-                                <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-white/10" />
-                                <div className="w-3 h-3 rounded-full bg-[#0a0a18] border border-blue-900/40 flex items-center justify-center">
-                                    <div className="w-1 h-1 rounded-full bg-blue-500/60" />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Home Indicator Bar */}
-                        {previewMode === 'mobile' && (
-                            <div className="hidden md:block absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/30 rounded-full pointer-events-none z-50" />
-                        )}
-
-                        <div className={`flex-1 flex flex-col w-full ${previewMode === 'mobile' ? 'overflow-y-auto overflow-x-hidden custom-scrollbar pt-6 pb-8 md:pt-8 md:pb-8' : 'overflow-x-hidden'}`}>
+                        <div className="flex-1 flex flex-col w-full overflow-x-hidden">
                             {/* Global Navbar */}
-                            <nav className={`shrink-0 w-full px-6 md:px-12 py-6 flex items-center justify-between ${config.palette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
-                            <div className="flex items-center gap-3">
+                            <nav className={`shrink-0 w-full px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+                            <div className="flex items-center gap-3 min-w-0">
                                 {config.logo ? (
-                                    <img src={config.logo} alt="Logo" className="h-8 w-auto object-contain drop-shadow-lg" />
+                                    <img src={config.logo} alt="Logo" className="h-7 sm:h-8 w-auto object-contain drop-shadow-lg shrink-0" />
                                 ) : null}
-                                <span className="font-black tracking-tight text-lg drop-shadow-md">{config.businessName || 'My Website'}</span>
+                                <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate">{config.businessName || 'My Website'}</span>
                             </div>
-                            <div className="hidden md:flex gap-8 text-sm font-bold opacity-70">
-                                {config.navLink1 !== '' && <a href="#services" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
-                                {config.navLink2 !== '' && <a href="#about" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink2 ?? 'Σχετικά'}</a>}
-                                {config.navLink3 !== '' && <a href="#contact" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity">{config.navLink3 ?? 'Επικοινωνία'}</a>}
+                            <div className="hidden md:flex gap-6 sm:gap-8 text-sm font-bold opacity-70">
+                                {config.navLink1 !== '' && <a href="#services" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity whitespace-nowrap">{config.navLink1 ?? 'Υπηρεσίες'}</a>}
+                                {config.navLink2 !== '' && <a href="#about" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity whitespace-nowrap">{config.navLink2 ?? 'Σχετικά'}</a>}
+                                {config.navLink3 !== '' && <a href="#contact" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity whitespace-nowrap">{config.navLink3 ?? 'Επικοινωνία'}</a>}
                             </div>
                         </nav>
 
@@ -1109,51 +1087,51 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
                         {/* Shop Section is globally available below any template if products exist */}
                         {config.hasStore && config.products && config.products.length > 0 && (
-                            <div id="shop" className={`w-full px-6 md:px-12 py-16 sm:py-24 border-t ${config.palette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
-                                <h3 className="break-words hyphens-auto text-3xl sm:text-4xl font-black mb-3 text-center tracking-tight">Our Products</h3>
-                                <p className="break-words hyphens-auto text-center opacity-60 max-w-2xl mx-auto mb-12 text-sm">Premium selection of our best items.</p>
+                            <div id="shop" className={`w-full px-4 sm:px-6 md:px-12 py-12 sm:py-16 md:py-24 border-t ${resolvedPalette === 'light' ? 'border-black/5' : 'border-white/5'}`}>
+                                <h3 className="break-words hyphens-auto text-2xl sm:text-3xl md:text-4xl font-black mb-2 sm:mb-3 text-center tracking-tight">Our Products</h3>
+                                <p className="break-words hyphens-auto text-center opacity-60 max-w-2xl mx-auto mb-8 sm:mb-12 text-xs sm:text-sm">Premium selection of our best items.</p>
                                 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto">
                                     {config.products.map(product => {
                                         const sizes = product.sizes || product.clothingSizes || product.shoeSizes || [];
                                         const hasStripe = !!(product.stripeLink || product.buyLink);
 
                                         return (
-                                            <div key={product.id} className="group rounded-3xl overflow-hidden shadow-2xl transition-all hover:-translate-y-2 flex flex-col border border-white/10" style={{ backgroundColor: activeTheme.card }}>
-                                                <div className="w-full aspect-square overflow-hidden relative bg-black/20">
+                                            <div key={product.id} className={`group rounded-3xl overflow-hidden shadow-2xl transition-all hover:-translate-y-2 flex flex-col ${resolvedPalette === 'light' ? 'border border-black/10' : 'border border-white/10'}`} style={{ backgroundColor: activeTheme.card }}>
+                                                <div className={`w-full aspect-square overflow-hidden relative ${resolvedPalette === 'light' ? 'bg-black/5' : 'bg-black/20'}`}>
                                                     {product.image ? (
                                                         <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center">
-                                                            <Icons.ShoppingBag className="w-12 h-12 opacity-20" />
+                                                            <Icons.ShoppingBag className={`w-12 h-12 ${resolvedPalette === 'light' ? 'opacity-10' : 'opacity-20'}`} />
                                                         </div>
                                                     )}
-                                                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-                                                        <span className="break-words hyphens-auto text-white font-black text-xs sm:text-sm">€{product.price}</span>
+                                                    <div className={`absolute top-3 sm:top-4 right-3 sm:right-4 ${resolvedPalette === 'light' ? 'bg-black/80' : 'bg-black/60'} backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full ${resolvedPalette === 'light' ? 'border border-black/10' : 'border border-white/10'}`}>
+                                                        <span className="break-words hyphens-auto text-white font-black text-[11px] sm:text-sm">€{product.price}</span>
                                                     </div>
                                                     {product.badge && (
-                                                        <div className="absolute top-4 left-4 bg-[var(--builder-primary)] text-black px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-wider">
+                                                        <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-[var(--builder-primary)] text-black px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-wider shadow-sm">
                                                             {product.badge}
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="p-5 flex-1 flex flex-col">
-                                                    <h4 className="text-base sm:text-lg font-bold mb-1">{product.name}</h4>
+                                                <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                                                    <h4 className="text-sm sm:text-base md:text-lg font-bold mb-1">{product.name}</h4>
                                                     {sizes.length > 0 && (
-                                                        <div className="flex flex-wrap gap-1 mb-3">
+                                                        <div className="flex flex-wrap gap-1 mb-2 sm:mb-3">
                                                             {sizes.slice(0, 4).map((s, idx) => (
-                                                                <span key={idx} className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-bold text-white/60">
+                                                                <span key={idx} className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${resolvedPalette === 'light' ? 'bg-black/5 border border-black/10 text-black/60' : 'bg-white/5 border border-white/10 text-white/60'}`}>
                                                                     {s}
                                                                 </span>
                                                             ))}
-                                                            {sizes.length > 4 && <span className="text-[9px] text-white/40 font-bold self-center">+{sizes.length - 4}</span>}
+                                                            {sizes.length > 4 && <span className={`text-[9px] font-bold self-center ${resolvedPalette === 'light' ? 'text-black/40' : 'text-white/40'}`}>+{sizes.length - 4}</span>}
                                                         </div>
                                                     )}
                                                     <div className="flex-1"></div>
                                                     <button 
                                                         onClick={e=>e.preventDefault()}
-                                                        className="w-full py-3 rounded-xl font-black uppercase tracking-widest text-[11px] transition-colors mt-auto flex items-center justify-center gap-1.5 shadow-md"
-                                                        style={{ backgroundColor: activeTheme.primary, color: config.palette === 'light' ? '#fff' : '#000' }}
+                                                        className="w-full py-2.5 sm:py-3 rounded-xl font-black uppercase tracking-widest text-[10px] sm:text-[11px] transition-all mt-auto flex items-center justify-center gap-1.5 shadow-md active:scale-95"
+                                                        style={{ backgroundColor: activeTheme.primary, color: resolvedPalette === 'light' ? '#fff' : '#000' }}
                                                     >
                                                         <Icons.ShoppingBag className="w-3.5 h-3.5" />
                                                         <span>{hasStripe ? 'Buy (Stripe)' : 'Buy Now'}</span>
@@ -1168,56 +1146,71 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
                         {/* About and Contact Sections appended globally if defined */}
                         {config.aboutText && (
-                            <div id="about" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
-                                {config.navLink2 !== '' && <h3 className="text-4xl font-black mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
-                                <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-lg break-words hyphens-auto">
+                            <div id="about" className={`w-full px-4 sm:px-6 md:px-12 py-12 sm:py-16 ${resolvedPalette === 'light' ? 'bg-white' : 'bg-transparent'}`}>
+                                {config.navLink2 !== '' && <h3 className="text-2xl sm:text-3xl md:text-4xl font-black mb-6 sm:mb-8 text-center tracking-tight">{config.navLink2 ?? 'Σχετικά'}</h3>}
+                                <p className="text-center max-w-2xl mx-auto opacity-70 leading-relaxed text-base sm:text-lg break-words hyphens-auto">
                                     {config.aboutText}
                                 </p>
                             </div>
                         )}
 
                         {(config.contactEmail || config.contactPhone) && (
-                            <div id="contact" className={`w-full px-6 md:px-12 py-16 ${config.palette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
-                                {config.navLink3 !== '' && <h3 className="text-4xl font-black mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
-                                <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-2xl mx-auto">
+                            <div id="contact" className={`w-full px-4 sm:px-6 md:px-12 py-12 sm:py-16 ${resolvedPalette === 'light' ? 'bg-black/5' : 'bg-white/[0.02]'}`}>
+                                {config.navLink3 !== '' && <h3 className="text-2xl sm:text-3xl md:text-4xl font-black mb-8 sm:mb-12 text-center tracking-tight">{config.navLink3 ?? 'Επικοινωνία'}</h3>}
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 max-w-2xl mx-auto w-full">
                                     {config.contactEmail && (
-                                        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                        <a href={`mailto:${config.contactEmail}`} className={`w-full sm:w-auto flex items-center gap-3 p-4 rounded-2xl transition-colors ${resolvedPalette === 'light' ? 'hover:bg-black/5' : 'hover:bg-white/5'}`} style={{ backgroundColor: activeTheme.card }}>
                                             <Icons.Mail className="w-5 h-5 opacity-50" />
-                                            <span className="font-bold">{config.contactEmail}</span>
-                                        </div>
+                                            <span className="font-bold text-sm sm:text-base truncate max-w-[240px]">{config.contactEmail}</span>
+                                        </a>
                                     )}
                                     {config.contactPhone && (
-                                        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ backgroundColor: activeTheme.card }}>
+                                        <a href={`tel:${config.contactPhone}`} className={`w-full sm:w-auto flex items-center gap-3 p-4 rounded-2xl transition-colors ${resolvedPalette === 'light' ? 'hover:bg-black/5' : 'hover:bg-white/5'}`} style={{ backgroundColor: activeTheme.card }}>
                                             <Icons.Phone className="w-5 h-5 opacity-50" />
-                                            <span className="font-bold">{config.contactPhone}</span>
-                                        </div>
+                                            <span className="font-bold text-sm sm:text-base">{config.contactPhone}</span>
+                                        </a>
                                     )}
                                 </div>
                             </div>
                         )}
 
                         {/* Footer */}
-                        <footer className={`w-full px-6 md:px-12 py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${config.palette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
-                            <div className="text-sm font-bold opacity-50">© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
-                            <div className="flex gap-4 opacity-75">
+                        <footer className={`w-full px-4 sm:px-6 md:px-12 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${resolvedPalette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
+                            <div className={`text-xs sm:text-sm font-bold opacity-50 text-center md:text-left">© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
+                            <div className={`flex flex-wrap items-center justify-center gap-2 sm:gap-4 opacity-75`}>
                                 {config.socialX && (
-                                    <a href={config.socialX} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity p-2 rounded-full bg-white/5">
+                                    <a href={config.socialX} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
                                         <XIcon className="w-4 h-4" />
                                     </a>
                                 )}
                                 {config.socialInstagram && (
-                                    <a href={config.socialInstagram} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity p-2 rounded-full bg-white/5">
+                                    <a href={config.socialInstagram} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
                                         <Icons.Instagram className="w-4 h-4" />
                                     </a>
                                 )}
                                 {config.socialTiktok && (
-                                    <a href={config.socialTiktok} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity p-2 rounded-full bg-white/5">
+                                    <a href={config.socialTiktok} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
                                         <TiktokIcon className="w-4 h-4" />
                                     </a>
                                 )}
                                 {config.socialLinkedin && (
-                                    <a href={config.socialLinkedin} onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity p-2 rounded-full bg-white/5">
+                                    <a href={config.socialLinkedin} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
                                         <Icons.Linkedin className="w-4 h-4" />
+                                    </a>
+                                )}
+                                {config.socialYoutube && (
+                                    <a href={config.socialYoutube} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
+                                        <Icons.Youtube className="w-4 h-4" />
+                                    </a>
+                                )}
+                                {config.socialFacebook && (
+                                    <a href={config.socialFacebook} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
+                                        <Icons.Facebook className="w-4 h-4" />
+                                    </a>
+                                )}
+                                {config.socialWhatsapp && (
+                                    <a href={config.socialWhatsapp} onClick={e=>e.preventDefault()} className={`hover:opacity-100 transition-opacity p-2 rounded-full ${resolvedPalette === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'}`}>
+                                        <Icons.MessageCircle className="w-4 h-4" />
                                     </a>
                                 )}
                             </div>
