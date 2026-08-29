@@ -11282,20 +11282,20 @@ const App = () => {
                             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
                             <div className="absolute top-0 left-0 right-0 h-[150px] bg-gradient-to-b from-[var(--gold-primary)]/5 to-transparent pointer-events-none" />
 
-                            <div className="relative p-5 pb-8 overflow-y-auto max-h-[80dvh] no-scrollbar">
+                            <div className="relative p-5 pb-5 overflow-y-auto max-h-[90dvh] no-scrollbar">
                                 {/* LOGO */}
-                                <div className="flex flex-col items-center mb-8 relative">
-                                    <div className="relative flex justify-center items-center w-full mb-2 transition-transform duration-300 hover:scale-105">
+                                <div className="flex flex-col items-center mb-4 relative">
+                                    <div className="relative flex justify-center items-center w-full mb-1 transition-transform duration-300 hover:scale-105">
                                         <img
                                             src={ASSET_PATHS.logo}
                                             alt="Legacy"
-                                            className={`h-40 sm:h-44 md:h-48 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
+                                            className={`h-28 sm:h-32 w-auto object-contain ${authLoading ? 'opacity-50 ' : 'opacity-100'}`}
                                             decoding="async"
                                             fetchPriority="high"
                                             loading="eager"
                                         />
                                     </div>
-                                    <div className="mt-3 flex items-center gap-2">
+                                    <div className="mt-2 flex items-center gap-2">
                                         <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--gold-primary)]/40" />
                                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--gold-primary)]/60">
                                             {authMode === 'login' ? 'SIGN IN' : authMode === 'register' ? 'CREATE ACCOUNT' : 'RESET PASSWORD'}
@@ -11563,7 +11563,7 @@ const App = () => {
                                 </div>
 
                                 {/* IPHONE / IOS PWA INSTALL BANNER BUTTON */}
-                                <div className="mt-5 pt-3.5 border-t border-white/10 flex flex-col items-center">
+                                <div className="mt-3 pt-3 border-t border-white/10 flex flex-col items-center">
                                     <button
                                         type="button"
                                         onClick={() => setShowIosInstallModal(true)}
