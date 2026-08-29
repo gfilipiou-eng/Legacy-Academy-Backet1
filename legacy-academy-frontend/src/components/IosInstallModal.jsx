@@ -4,7 +4,7 @@ import { Icons } from './Icons';
 const content = {
     en: {
         title: 'Add to Home Screen',
-        subtitle: 'Install Legacy Academy on your iPhone for native fullscreen performance and instant access.',
+        subtitle: 'Install Legacy on your iPhone for native fullscreen performance and instant access.',
         steps: [
             {
                 title: 'Open in Safari',
@@ -28,7 +28,7 @@ const content = {
     },
     el: {
         title: 'Προσθήκη στην Αρχική',
-        subtitle: 'Εγκατάστησε το Legacy Academy στο iPhone σου για πλήρη οθόνη και άμεση πρόσβαση.',
+        subtitle: 'Εγκατάστησε το Legacy στο iPhone σου για πλήρη οθόνη και άμεση πρόσβαση.',
         steps: [
             {
                 title: 'Άνοιξε με Safari',
