@@ -158,15 +158,27 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
                                     {site.businessName?.charAt(0) || 'W'}
                                 </div>
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 px-3 py-1 rounded-full flex items-center gap-1"
-                                      style={{
-                                          background: 'rgba(34,197,94,0.12)',
-                                          backdropFilter: 'blur(20px)',
-                                          border: '1px solid rgba(34,197,94,0.25)'
-                                      }}
-                                >
-                                    <Icons.Globe className="w-3 h-3" /> {t('PUBLISHED', 'Published')}
-                                </span>
+                                {site.isDraft ? (
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-3 py-1 rounded-full flex items-center gap-1"
+                                          style={{
+                                              background: 'rgba(107,114,128,0.12)',
+                                              backdropFilter: 'blur(20px)',
+                                              border: '1px solid rgba(107,114,128,0.25)'
+                                          }}
+                                    >
+                                        <Icons.FileText className="w-3 h-3" /> {t('DRAFT', 'Draft')}
+                                    </span>
+                                ) : (
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 px-3 py-1 rounded-full flex items-center gap-1"
+                                          style={{
+                                              background: 'rgba(34,197,94,0.12)',
+                                              backdropFilter: 'blur(20px)',
+                                              border: '1px solid rgba(34,197,94,0.25)'
+                                          }}
+                                    >
+                                        <Icons.Globe className="w-3 h-3" /> {t('PUBLISHED', 'Published')}
+                                    </span>
+                                )}
                             </div>
                             <div className="flex-1 flex flex-col items-start gap-2 min-w-0 mb-6">
                                 <div className="flex items-center gap-2">

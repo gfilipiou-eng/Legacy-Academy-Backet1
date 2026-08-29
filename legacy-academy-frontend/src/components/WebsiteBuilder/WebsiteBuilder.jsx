@@ -78,37 +78,70 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
     const existingWebsite = initialConfig || {};
     
-    const [config, setConfig] = useState({
-        template: existingWebsite.template || 'classic',
-        businessName: existingWebsite.businessName || '',
-        slogan: existingWebsite.slogan || '',
-        description: existingWebsite.description || '',
-        logo: existingWebsite.logo || '',
-        coverImage: existingWebsite.coverImage || '',
-        palette: existingWebsite.palette || 'gold',
-        font: existingWebsite.font || 'Inter',
-        ctaText: existingWebsite.ctaText || '',
-        ctaLink: existingWebsite.ctaLink || '',
-        navLink1: existingWebsite.navLink1 || '',
-        navLink2: existingWebsite.navLink2 || '',
-        navLink3: existingWebsite.navLink3 || '',
-        featuresTitle: existingWebsite.featuresTitle || '',
-        features: existingWebsite.features || [],
-        aboutText: existingWebsite.aboutText || '',
-        contactEmail: existingWebsite.contactEmail || '',
-        contactPhone: existingWebsite.contactPhone || '',
-        socialX: existingWebsite.socialX || '',
-        socialInstagram: existingWebsite.socialInstagram || '',
-        socialLinkedin: existingWebsite.socialLinkedin || '',
-        socialTiktok: existingWebsite.socialTiktok || '',
-        socialYoutube: existingWebsite.socialYoutube || '',
-        socialFacebook: existingWebsite.socialFacebook || '',
-        socialWhatsapp: existingWebsite.socialWhatsapp || '',
-        hasStore: existingWebsite.hasStore || false,
-        products: existingWebsite.products || []
+    const [config, setConfig] = useState(() => {
+        const base = existingWebsite || {};
+        const normalizedProducts = (base.products || []).map(p => {
+            // Use p.sizes if it is explicitly defined (even as empty array = user deleted sizes)
+            // Only fall back to clothingSizes/shoeSizes if p.sizes is completely undefined/null
+            let canonicalSizes;
+            if (p.sizes !== undefined && p.sizes !== null) {
+                canonicalSizes = Array.isArray(p.sizes) ? p.sizes : [];
+            } else if (p.clothingSizes && Array.isArray(p.clothingSizes) && p.clothingSizes.length) {
+                canonicalSizes = p.clothingSizes;
+            } else if (p.shoeSizes && Array.isArray(p.shoeSizes) && p.shoeSizes.length) {
+                canonicalSizes = p.shoeSizes;
+            } else {
+                canonicalSizes = [];
+            }
+            // Only keep sizeLinks that correspond to existing canonicalSizes
+            const cleanLinks = {};
+            canonicalSizes.forEach(sz => {
+                if (p.sizeLinks && (sz in p.sizeLinks)) cleanLinks[sz] = p.sizeLinks[sz];
+            });
+            const { clothingSizes: _c, shoeSizes: _sh, sizes: _sz, sizeLinks: _sl, ...rest } = p;
+            return { ...rest, sizes: canonicalSizes, sizeLinks: cleanLinks };
+        });
+        return {
+            template: base.template || 'classic',
+            businessName: base.businessName || '',
+            slogan: base.slogan || '',
+            description: base.description || '',
+            logo: base.logo || '',
+            coverImage: base.coverImage || '',
+            palette: base.palette || 'gold',
+            font: base.font || 'Inter',
+            ctaText: base.ctaText || '',
+            ctaLink: base.ctaLink || '',
+            navLink1: base.navLink1 || '',
+            navLink2: base.navLink2 || '',
+            navLink3: base.navLink3 || '',
+            featuresTitle: base.featuresTitle || '',
+            features: base.features || [],
+            aboutText: base.aboutText || '',
+            contactEmail: base.contactEmail || '',
+            contactPhone: base.contactPhone || '',
+            socialX: base.socialX || '',
+            socialInstagram: base.socialInstagram || '',
+            socialLinkedin: base.socialLinkedin || '',
+            socialTiktok: base.socialTiktok || '',
+            socialYoutube: base.socialYoutube || '',
+            socialFacebook: base.socialFacebook || '',
+            socialWhatsapp: base.socialWhatsapp || '',
+            hasStore: base.hasStore || false,
+            products: normalizedProducts,
+            isDraft: base.isDraft !== undefined ? base.isDraft : false
+        };
     });
 
     const updateConfig = (key, value) => setConfig(prev => ({ ...prev, [key]: value }));
+
+    const updateProduct = (pIdx, updater) => setConfig(prev => {
+        const next = { ...prev, products: [...(prev.products || [])] };
+        next.products[pIdx] = updater({ ...(next.products[pIdx] || {}) });
+        if ('clothingSizes' in next.products[pIdx]) delete next.products[pIdx].clothingSizes;
+        if ('shoeSizes' in next.products[pIdx]) delete next.products[pIdx].shoeSizes;
+        return next;
+    });
 
     const handleImageUpload = (e, key, maxWidth) => {
         const file = e.target.files[0];
@@ -151,11 +184,27 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         if (!user?._id) return;
         if (!quiet) setSaving(true);
         try {
-            // Use passed isDraftParam, or fallback to current config.isDraft, or default to true
-            const finalIsDraft = isDraftParam !== undefined ? isDraftParam : (config.isDraft !== undefined ? config.isDraft : true);
+            // Use passed isDraftParam, or fallback to current config.isDraft, or default to false (live)
+            const currentIsDraft = config.isDraft !== undefined ? config.isDraft : false;
+            const finalIsDraft = isDraftParam !== undefined ? isDraftParam : currentIsDraft;
             
             const newWebsites = [...(websitesArray || [])];
-            const updatedConfig = { ...config, lastUpdated: new Date(), isDraft: finalIsDraft };
+            // Sanitize products: clean up old clothingSizes/shoeSizes and keep only sizes array + valid sizeLinks
+            const sanitizedProducts = (config.products || []).map(p => {
+                const sizesArray = Array.isArray(p.sizes) ? p.sizes.filter(Boolean) : [];
+                const cleanSizeLinks = {};
+                sizesArray.forEach(sz => {
+                    if (p.sizeLinks && (sz in p.sizeLinks)) cleanSizeLinks[sz] = p.sizeLinks[sz];
+                });
+                const { clothingSizes: _c, shoeSizes: _sh, sizes: _sz, sizeLinks: _sl, ...rest } = p;
+                return { ...rest, sizes: sizesArray, sizeLinks: cleanSizeLinks };
+            });
+            const updatedConfig = { 
+                ...config, 
+                products: sanitizedProducts,
+                lastUpdated: new Date(), 
+                isDraft: finalIsDraft 
+            };
             
             if (websiteIndex !== undefined && websiteIndex !== null && websiteIndex < newWebsites.length) {
                 newWebsites[websiteIndex] = updatedConfig;
@@ -167,7 +216,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             const res = await axios.put('/users/settings', payload);
             
             // Update local config to remember the draft status so auto-save doesn't overwrite it
-            setConfig(prev => ({ ...prev, lastUpdated: updatedConfig.lastUpdated, isDraft: finalIsDraft }));
+            setConfig(prev => ({ ...prev, lastUpdated: updatedConfig.lastUpdated, isDraft: finalIsDraft, products: sanitizedProducts }));
             
             if (onUpdateUser) {
                 onUpdateUser({
@@ -721,10 +770,17 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                         <button
                                                             type="button"
                                                             onClick={() => {
-                                                                const updated = [...(config.products || [])];
-                                                                updated[pIdx].sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-                                                                updateConfig('products', updated);
-                                                            }}
+                                                            updateProduct(pIdx, (p) => {
+                                                                const newSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+                                                                const oldSizes = (p.sizes || []).concat(p.clothingSizes || [], p.shoeSizes || []);
+                                                                const newSizeLinks = {};
+                                                                newSizes.forEach(sz => { newSizeLinks[sz] = (p.sizeLinks || {})[sz] || ''; });
+                                                                const out = { ...p, sizes: newSizes, sizeLinks: newSizeLinks };
+                                                                delete out.clothingSizes;
+                                                                delete out.shoeSizes;
+                                                                return out;
+                                                            });
+                                                        }}
                                                             className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[9px] font-bold text-white/70 cursor-pointer"
                                                         >
                                                             + Clothes (XS-XXL)
@@ -732,9 +788,15 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                         <button
                                                             type="button"
                                                             onClick={() => {
-                                                                const updated = [...(config.products || [])];
-                                                                updated[pIdx].sizes = ['EU 39', 'EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44', 'EU 45'];
-                                                                updateConfig('products', updated);
+                                                                updateProduct(pIdx, (p) => {
+                                                                    const newSizes = ['EU 39', 'EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44', 'EU 45'];
+                                                                    const newSizeLinks = {};
+                                                                    newSizes.forEach(sz => { newSizeLinks[sz] = (p.sizeLinks || {})[sz] || ''; });
+                                                                    const out = { ...p, sizes: newSizes, sizeLinks: newSizeLinks };
+                                                                    delete out.clothingSizes;
+                                                                    delete out.shoeSizes;
+                                                                    return out;
+                                                                });
                                                             }}
                                                             className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[9px] font-bold text-white/70 cursor-pointer"
                                                         >
@@ -744,11 +806,17 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                 </div>
                                                 <input
                                                     type="text"
-                                                    value={(prod.sizes || prod.clothingSizes || prod.shoeSizes || []).join(', ')}
+                                                    value={(prod.sizes || []).join(', ')}
                                                     onChange={(e) => {
-                                                        const updated = [...(config.products || [])];
-                                                        updated[pIdx].sizes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
-                                                        updateConfig('products', updated);
+                                                        const newSizes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                                                        updateProduct(pIdx, (p) => {
+                                                            const newSizeLinks = {};
+                                                            newSizes.forEach(sz => { newSizeLinks[sz] = (p.sizeLinks || {})[sz] || ''; });
+                                                            const out = { ...p, sizes: newSizes, sizeLinks: newSizeLinks };
+                                                            delete out.clothingSizes;
+                                                            delete out.shoeSizes;
+                                                            return out;
+                                                        });
                                                     }}
                                                     placeholder="S, M, L or 42, 43, 44"
                                                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)]"
@@ -807,7 +875,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                 price: 49,
                                                 stripeLink: '',
                                                 image: '',
-                                                sizes: ['S', 'M', 'L', 'XL'],
+                                                sizes: [],
                                                 badge: 'NEW'
                                             };
                                             updateConfig('products', [...(config.products || []), newProd]);
@@ -830,7 +898,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div className="space-y-3 pt-1">
                             <div>
                                 <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-1.5 block">Contact Information</label>
-                                <div className="flex flex-col sm:flex-row gap-2">
+                                <div className="flex flex-col gap-2">
                                     <input 
                                         type="text" 
                                         value={config.contactEmail || ''}
