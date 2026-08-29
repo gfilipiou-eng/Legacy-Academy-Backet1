@@ -53,10 +53,11 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-16">
         <div className="flex-1 flex flex-col md:flex-row items-center justify-center py-8 md:py-20 gap-8 md:gap-16">
             <div className="flex-1 flex flex-col items-start z-10 text-left">
+                {config.businessName && (
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest mb-6" style={{ color: activeTheme.primary }}>
-                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activeTheme.primary }}></span>
                     {config.businessName}
                 </div>
+                )}
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6 break-words hyphens-auto w-full">
                     {config.slogan || ''}
                 </h1>
@@ -69,7 +70,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
                         target={config.ctaLink?.startsWith('http') ? '_blank' : '_self'}
                         rel="noopener noreferrer"
                         className="px-8 py-4 sm:px-10 sm:py-5 rounded-2xl font-black uppercase tracking-widest text-xs sm:text-sm transition-all hover:scale-105 shadow-2xl flex items-center gap-3" 
-                        style={{ backgroundColor: activeTheme.primary, color: '#000', boxShadow: `0 10px 30px ${activeTheme.primary}50` }}
+                        style={{ backgroundColor: activeTheme.primary, color: '#000' }}
                     >
                         <span>{config.ctaText}</span>
                         <Icons.ArrowRight className="w-4 h-4" />
@@ -79,7 +80,6 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
             {config.coverImage && (
                 <div className="flex-1 w-full flex justify-center mt-4 md:mt-0">
                     <div className="relative w-full max-w-lg aspect-[4/3] md:aspect-square group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
-                        <div className="absolute -inset-4 rounded-[2.5rem] opacity-30 blur-2xl transition-all group-hover:opacity-50" style={{ backgroundColor: activeTheme.primary }} />
                         <img src={config.coverImage} className="relative w-full h-full object-cover rounded-[2rem] border border-white/10 shadow-2xl transition-transform duration-500 group-hover:scale-102" alt="Cover" />
                     </div>
                 </div>
@@ -134,7 +134,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
         {config.features?.length > 0 && (
             <div id="services" className="py-12">
                 <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
-                    <h3 className="text-2xl sm:text-4xl font-black uppercase tracking-tight">{config.featuresTitle || 'Featured Highlights'}</h3>
+                    <h3 className="text-2xl sm:text-4xl font-black uppercase tracking-tight">{config.featuresTitle}</h3>
                     {config.businessName && <span className="text-xs font-bold opacity-50 uppercase tracking-widest">{config.businessName}</span>}
                 </div>
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
@@ -195,7 +195,7 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
 
         {config.features?.length > 0 && (
             <div id="services" className="py-12">
-                <h3 className="text-3xl sm:text-5xl font-black text-center mb-16 tracking-tight">{config.featuresTitle || 'Our Core Capabilities'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black text-center mb-16 tracking-tight">{config.featuresTitle}</h3>
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
             </div>
         )}
@@ -208,20 +208,21 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-24" style={{ fontFamily: 'Cinzel, serif, Playfair Display' }}>
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20">
+            {config.businessName && (
             <div className="text-[10px] sm:text-xs tracking-[0.4em] uppercase font-bold text-[#D4AF37] mb-4">
-                ★ {config.businessName} ★
+                {config.businessName}
             </div>
+            )}
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.1em] mb-6 leading-tight">
                 {config.slogan || ''}
             </h1>
-            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mb-8" />
             <p className="text-base sm:text-xl text-white/80 font-light max-w-2xl leading-relaxed mb-10 tracking-wide font-sans">
                 {config.description}
             </p>
             {config.ctaText && (
                 <a 
                     href={config.ctaLink || '#'} 
-                    className="px-10 py-4 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all duration-500 uppercase tracking-[0.3em] text-xs font-bold rounded-full shadow-[0_0_20px_rgba(212,175,55,0.2)] font-sans"
+                    className="px-10 py-4 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all duration-500 uppercase tracking-[0.3em] text-xs font-bold rounded-full font-sans"
                 >
                     {config.ctaText}
                 </a>
@@ -229,14 +230,14 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
 
         {config.coverImage && (
-            <div className="w-full h-80 sm:h-[500px] rounded-[2rem] overflow-hidden border border-[#D4AF37]/30 shadow-[0_0_50px_rgba(0,0,0,0.8)] mb-24 relative group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
+            <div className="w-full h-80 sm:h-[500px] rounded-[2rem] overflow-hidden border border-[#D4AF37]/30 mb-24 relative group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
                 <img src={config.coverImage} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Luxury Showcase" />
             </div>
         )}
 
         {config.features?.length > 0 && (
             <div id="services" className="py-12 border-t border-[#D4AF37]/20 font-sans">
-                <h3 className="text-2xl sm:text-4xl font-bold uppercase tracking-[0.2em] text-center mb-16 font-['Cinzel',serif]">{config.featuresTitle || 'The Collection'}</h3>
+                {config.featuresTitle && <h3 className="text-2xl sm:text-4xl font-bold uppercase tracking-[0.2em] text-center mb-16 font-['Cinzel',serif]">{config.featuresTitle}</h3>}
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
             </div>
         )}
@@ -276,7 +277,7 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
 
         {config.features?.length > 0 && (
             <div id="services" className="py-12">
-                <h3 className="text-3xl sm:text-5xl font-black text-center mb-16 tracking-tight">{config.featuresTitle || 'Engineered For Performance'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black text-center mb-16 tracking-tight">{config.featuresTitle}</h3>
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
             </div>
         )}
@@ -334,7 +335,7 @@ export const RestaurantTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 max-w-5xl mx-auto px-4 sm:px-6 text-center">
-                <h3 className="text-2xl sm:text-4xl tracking-widest uppercase mb-12 sm:mb-16 w-full break-words hyphens-auto" style={{ fontFamily: 'Playfair Display, serif' }}>{config.featuresTitle || 'Our Menu'}</h3>
+                <h3 className="text-2xl sm:text-4xl tracking-widest uppercase mb-12 sm:mb-16 w-full break-words hyphens-auto" style={{ fontFamily: 'Playfair Display, serif' }}>{config.featuresTitle}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                     {config.features.map((feat, i) => (
                         <div key={i} className="flex flex-col items-center text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5">
@@ -375,7 +376,7 @@ export const TechnologyTemplate = ({ config, activeTheme, setZoomImage }) => (
         {config.features?.length > 0 && (
             <div>
                 <div className="flex items-center gap-4 mb-8">
-                    <h3 className="text-2xl font-black uppercase w-full break-words hyphens-auto">{config.featuresTitle || 'MODULES'}</h3>
+                    <h3 className="text-2xl font-black uppercase w-full break-words hyphens-auto">{config.featuresTitle}</h3>
                     <div className="flex-1 h-px border-t border-dashed" style={{ borderColor: activeTheme.primary }} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -410,7 +411,7 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
         {config.features?.length > 0 && (
             <div className="py-12 px-4 sm:px-6">
                 <div className="w-full flex justify-between items-end border-b-4 pb-2 mb-8" style={{ borderColor: activeTheme.primary }}>
-                    <h3 className="text-2xl sm:text-4xl font-black uppercase italic w-full break-words hyphens-auto">{config.featuresTitle || 'SQUAD / NEWS'}</h3>
+                    <h3 className="text-2xl sm:text-4xl font-black uppercase italic w-full break-words hyphens-auto">{config.featuresTitle}</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {config.features.map((feat, i) => (
@@ -463,7 +464,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
         {config.features?.length > 0 && (
             <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: cardBg, borderColor }}>
                 <div className="p-4 border-b" style={{ borderColor, backgroundColor: headerBg }}>
-                    <h3 className="font-bold uppercase w-full break-words hyphens-auto">{config.featuresTitle || 'TOP MATCHES'}</h3>
+                    <h3 className="font-bold uppercase w-full break-words hyphens-auto">{config.featuresTitle}</h3>
                 </div>
                 <div style={{ '--divide-color': divideColor }}>
                     {config.features.map((feat, i) => (
@@ -510,7 +511,7 @@ export const CorporateTemplate = ({ config, activeTheme, setZoomImage, resolvedP
         )}
         {config.features?.length > 0 && (
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-                <h3 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-16 text-center" style={{ color: isLight ? '#111827' : undefined }}>{config.featuresTitle || 'Our Expertise'}</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-16 text-center" style={{ color: isLight ? '#111827' : undefined }}>{config.featuresTitle}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                     {config.features.map((feat, i) => (
                         <div key={i} className="p-6 md:p-8 rounded-2xl hover:shadow-xl transition-shadow border" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? '#e5e7eb' : 'rgba(255,255,255,0.1)' }}>
@@ -553,7 +554,7 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
         </div>
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
-                <h3 className="text-3xl sm:text-5xl font-black mb-12 sm:mb-16 lowercase tracking-tight" style={{ color: textColor }}>{config.featuresTitle || 'what we do'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black mb-12 sm:mb-16 lowercase tracking-tight" style={{ color: textColor }}>{config.featuresTitle}</h3>
                 <div className="flex flex-col gap-8 md:gap-12">
                     {config.features.map((feat, i) => (
                         <div key={i} className="flex flex-col md:flex-row gap-6 md:gap-8 items-center group">
@@ -597,7 +598,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
         </div>
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 max-w-7xl mx-auto">
-                <h3 className="text-3xl sm:text-5xl font-black italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle || 'PROGRAMS'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {config.features.map((feat, i) => (
                         <div key={i} className="relative h-80 sm:h-96 group overflow-hidden rounded-2xl cursor-pointer" style={{ backgroundColor: activeTheme.card }} onClick={() => setZoomImage && setZoomImage(feat.image)}>
@@ -634,7 +635,7 @@ export const PortfolioTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
         {config.features?.length > 0 && (
             <div>
-                <h3 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12">{config.featuresTitle || 'Selected Works'}</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12">{config.featuresTitle}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
                     {config.features.map((feat, i) => (
                         <div key={i} className="group cursor-pointer" onClick={() => setZoomImage && setZoomImage(feat.image)}>
@@ -675,7 +676,7 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage, resolved
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h3 className="text-2xl sm:text-4xl font-serif mb-4" style={{ color: isLight ? '#0f172a' : undefined }}>{config.featuresTitle || 'Featured Properties'}</h3>
+                    <h3 className="text-2xl sm:text-4xl font-serif mb-4" style={{ color: isLight ? '#0f172a' : undefined }}>{config.featuresTitle}</h3>
                     <div className={`w-16 h-1 mx-auto ${isLight ? 'bg-slate-800' : 'bg-white'}`} style={{ backgroundColor: isLight ? '#0f172a' : activeTheme.primary }}></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -731,7 +732,7 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage, resolvedPale
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 max-w-6xl mx-auto relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-lg max-h-lg opacity-20 blur-[100px] rounded-full pointer-events-none" style={{ backgroundColor: activeTheme.primary }}></div>
-                <h3 className="text-3xl sm:text-5xl font-black uppercase italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle || 'GAME FEATURES'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black uppercase italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 relative z-10">
                     {config.features.map((feat, i) => (
                         <div key={i} className="border p-6 sm:p-8 rounded-2xl backdrop-blur-md transition-colors group" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' }}>
@@ -809,7 +810,7 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
                 <div className="flex items-center gap-4 mb-4">
                     <div className="h-[2px] w-16 sm:w-24" style={{ backgroundColor: activeTheme.primary }} />
                     <h3 className="text-xs sm:text-sm font-black uppercase tracking-[0.4em] opacity-50">
-                        {config.featuresTitle || 'Operations'}
+                        {config.featuresTitle}
                     </h3>
                     <div className="h-[2px] flex-1 opacity-10" style={{ backgroundColor: isLight ? '#000' : '#fff' }} />
                 </div>
