@@ -11597,7 +11597,7 @@ const App = () => {
                         <div className="mt-8 text-center flex flex-col items-center justify-center select-none relative group px-2">
                             {/* Stylized Calligraphy Signature */}
                             <div className="relative inline-flex flex-col items-center">
-                                <span className="text-3xl sm:text-4xl text-white drop-shadow-md hover:scale-105 transition-transform duration-500" style={{ fontFamily: "'Great Vibes', cursive", fontWeight: 400 }}>
+                                <span className="text-xl sm:text-2xl text-white drop-shadow-md hover:scale-105 transition-transform duration-500" style={{ fontFamily: "'Great Vibes', cursive", fontWeight: 400 }}>
                                     Made in Greece
                                 </span>
                             </div>
