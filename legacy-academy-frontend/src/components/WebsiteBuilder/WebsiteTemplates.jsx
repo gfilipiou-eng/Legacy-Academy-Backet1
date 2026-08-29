@@ -55,7 +55,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="flex-1 flex flex-col items-start z-10 text-left">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest mb-6" style={{ color: activeTheme.primary }}>
                     <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activeTheme.primary }}></span>
-                    {config.businessName || 'Elite Brand'}
+                    {config.businessName}
                 </div>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black leading-[1.1] tracking-tight mb-6 break-words hyphens-auto w-full">
                     {config.slogan || ''}
@@ -104,7 +104,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
             <div className="relative z-10 flex-1 flex flex-col items-start text-left max-w-xl">
                 <span className="px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-white/10 border border-white/20 mb-4 flex items-center gap-2" style={{ color: activeTheme.primary }}>
-                    <Icons.ShoppingBag className="w-3.5 h-3.5" /> OFFICIAL DROP / STORE
+                    <Icons.ShoppingBag className="w-3.5 h-3.5" /> {config.businessName || 'STORE'}
                 </span>
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight leading-[1.05] mb-4">
                     {config.slogan || ''}
@@ -135,7 +135,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div id="services" className="py-12">
                 <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
                     <h3 className="text-2xl sm:text-4xl font-black uppercase tracking-tight">{config.featuresTitle || 'Featured Highlights'}</h3>
-                    <span className="text-xs font-bold opacity-50 uppercase tracking-widest">Limited Availability</span>
+                    {config.businessName && <span className="text-xs font-bold opacity-50 uppercase tracking-widest">{config.businessName}</span>}
                 </div>
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
             </div>
@@ -150,7 +150,7 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-20">
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest mb-6" style={{ color: activeTheme.primary }}>
-                <Icons.Briefcase className="w-3.5 h-3.5" /> Elite Advisory & Digital Solutions
+                <Icons.Briefcase className="w-3.5 h-3.5" /> {config.businessName}
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.05] mb-6">
                 {config.slogan || ''}
@@ -209,7 +209,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-24" style={{ fontFamily: 'Cinzel, serif, Playfair Display' }}>
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20">
             <div className="text-[10px] sm:text-xs tracking-[0.4em] uppercase font-bold text-[#D4AF37] mb-4">
-                ★ Haute Horlogerie & Heritage Goods ★
+                ★ {config.businessName} ★
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-[0.1em] mb-6 leading-tight">
                 {config.slogan || ''}
@@ -469,7 +469,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
                     {config.features.map((feat, i) => (
                         <div key={i} className="p-4 flex flex-col md:flex-row items-center justify-between gap-4 border-t" style={{ borderColor: divideColor }}>
                             <div className="flex-1 w-full">
-                                <div className="text-xs mb-1 font-bold" style={{ color: activeTheme.primary }}>In-Play Live</div>
+
                                 <h4 className="font-bold text-base sm:text-lg w-full break-words hyphens-auto">{feat.title}</h4>
                                 <p className="text-sm w-full break-words hyphens-auto opacity-60">{feat.desc}</p>
                             </div>
@@ -716,7 +716,7 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage, resolvedPale
                 </>
             )}
             <div className="relative z-10 text-center px-4 sm:px-6 flex flex-col items-center max-w-5xl">
-                <div className="mb-6 px-4 py-1.5 border-2 text-xs font-black uppercase tracking-[0.3em] backdrop-blur-sm rounded" style={{ borderColor: activeTheme.primary, color: activeTheme.primary }}>New Release</div>
+                {config.businessName && <div className="mb-6 px-4 py-1.5 border-2 text-xs font-black uppercase tracking-[0.3em] backdrop-blur-sm rounded" style={{ borderColor: activeTheme.primary, color: activeTheme.primary }}>{config.businessName}</div>}
                 <h1 className="text-4xl sm:text-7xl md:text-8xl font-black uppercase italic tracking-tighter mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{config.slogan || ''}</h1>
                 <p className="text-base sm:text-xl max-w-2xl mb-10 opacity-70">{config.description}</p>
                 {config.ctaText && (
@@ -766,9 +766,9 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
                 <div className="mb-8 flex flex-col items-center gap-4">
-                    <div className="px-5 py-1.5 rounded-full backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] border" style={{ borderColor: `${activeTheme.primary}80`, backgroundColor: `${activeTheme.primary}10`, color: activeTheme.primary }}>
-                        ⚠ The Family Business ⚠
-                    </div>
+                    {config.businessName && <div className="px-5 py-1.5 rounded-full backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] border" style={{ borderColor: `${activeTheme.primary}80`, backgroundColor: `${activeTheme.primary}10`, color: activeTheme.primary }}>
+                        {config.businessName}
+                    </div>}
                     <div className="text-[72px] sm:text-[96px] leading-none" style={{ color: activeTheme.primary, textShadow: `0 0 30px ${activeTheme.primary}59` }}>
                         $
                     </div>
@@ -799,9 +799,6 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
                             <span className="relative z-10">{config.ctaText}</span>
                             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
                         </a>
-                        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold opacity-40">
-                            Established • No Witnesses
-                        </div>
                     </div>
                 )}
             </div>
@@ -816,13 +813,6 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
                     </h3>
                     <div className="h-[2px] flex-1 opacity-10" style={{ backgroundColor: isLight ? '#000' : '#fff' }} />
                 </div>
-                <h2 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mb-12 sm:mb-16 break-words"
-                    style={{
-                        fontFamily: "'Syne', sans-serif",
-                        color: activeTheme.primary
-                    }}>
-                    The Lineup
-                </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                     {config.features.map((feat, i) => (
