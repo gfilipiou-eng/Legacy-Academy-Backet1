@@ -477,13 +477,15 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
 // ==========================================
 // 11. CORPORATE TEMPLATE
 // ==========================================
-export const CorporateTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full bg-white text-gray-900 rounded-3xl overflow-hidden my-4">
-        <div className="w-full bg-slate-900 text-white py-16 md:py-24 px-6 md:px-12 text-center flex flex-col items-center">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight">{config.slogan || ''}</h1>
-            <p className="text-base sm:text-xl opacity-80 max-w-2xl mb-10">{config.description}</p>
+export const CorporateTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
+    <div className="w-full rounded-3xl overflow-hidden my-4" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#111827' : '#fff' }}>
+        <div className="w-full py-16 md:py-24 px-6 md:px-12 text-center flex flex-col items-center" style={{ backgroundColor: isLight ? '#0f172a' : '#111827' }}>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-4xl leading-tight text-white">{config.slogan || ''}</h1>
+            <p className="text-base sm:text-xl opacity-80 max-w-2xl mb-10 text-white/90">{config.description}</p>
             {config.ctaText && (
-                <a href={config.ctaLink || '#'} className="px-8 py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors" style={{ backgroundColor: activeTheme.primary, color: '#fff' }}>
+                <a href={config.ctaLink || '#'} className="px-8 py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-colors" style={{ backgroundColor: activeTheme.primary, color: isLight ? '#fff' : '#000' }}>
                     {config.ctaText}
                 </a>
             )}
@@ -495,33 +497,37 @@ export const CorporateTemplate = ({ config, activeTheme, setZoomImage }) => (
         )}
         {config.features?.length > 0 && (
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
-                <h3 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-16 text-center text-gray-900">{config.featuresTitle || 'Our Expertise'}</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-16 text-center" style={{ color: isLight ? '#111827' : undefined }}>{config.featuresTitle || 'Our Expertise'}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                     {config.features.map((feat, i) => (
-                        <div key={i} className="bg-gray-50 border border-gray-100 p-6 md:p-8 rounded-2xl hover:shadow-xl transition-shadow">
+                        <div key={i} className="p-6 md:p-8 rounded-2xl hover:shadow-xl transition-shadow border" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? '#e5e7eb' : 'rgba(255,255,255,0.1)' }}>
                             {feat.image && <img src={feat.image} className="w-16 h-16 object-cover rounded-xl mb-6 cursor-pointer" onClick={() => setZoomImage && setZoomImage(feat.image)} alt={feat.title} />}
-                            <h4 className="text-xl font-bold mb-3 text-gray-900">{feat.title}</h4>
-                            <p className="text-gray-600 leading-relaxed text-sm">{feat.desc}</p>
+                            <h4 className="text-xl font-bold mb-3" style={{ color: isLight ? '#111827' : undefined }}>{feat.title}</h4>
+                            <p className="leading-relaxed text-sm" style={{ color: isLight ? '#4b5563' : undefined, opacity: isLight ? 1 : 0.7 }}>{feat.desc}</p>
                         </div>
                     ))}
                 </div>
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 12. CREATIVE TEMPLATE
 // ==========================================
-export const CreativeTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full min-h-screen" style={{ backgroundColor: activeTheme.background || '#111', color: activeTheme.text || '#fff' }}>
+export const CreativeTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    const textColor = isLight ? '#000' : '#fff';
+    return (
+    <div className="w-full min-h-screen" style={{ backgroundColor: activeTheme.bg, color: textColor }}>
         <div className="flex flex-col md:flex-row min-h-[70vh] md:min-h-[80vh]">
             <div className="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-24 z-10 relative">
                 <div className="absolute top-0 left-0 w-32 h-32 opacity-20 rounded-full blur-3xl" style={{ backgroundColor: activeTheme.primary }}></div>
-                <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-6 md:mb-8 leading-[0.95] tracking-tighter mix-blend-difference">{config.slogan || ''}</h1>
+                <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-6 md:mb-8 leading-[0.95] tracking-tighter" style={{ mixBlendMode: isLight ? 'normal' : 'difference', color: textColor }}>{config.slogan || ''}</h1>
                 <p className="text-lg sm:text-xl md:text-2xl font-light opacity-80 max-w-md mb-8 md:mb-12">{config.description}</p>
                 {config.ctaText && (
-                    <a href={config.ctaLink || '#'} className="w-max px-8 py-3.5 sm:px-10 sm:py-4 rounded-full text-xs sm:text-sm font-black uppercase tracking-widest hover:scale-105 transition-transform" style={{ backgroundColor: activeTheme.text || '#fff', color: activeTheme.background || '#000' }}>
+                    <a href={config.ctaLink || '#'} className="w-max px-8 py-3.5 sm:px-10 sm:py-4 rounded-full text-xs sm:text-sm font-black uppercase tracking-widest hover:scale-105 transition-transform" style={{ backgroundColor: isLight ? '#000' : textColor, color: isLight ? textColor : activeTheme.bg }}>
                         {config.ctaText}
                     </a>
                 )}
@@ -534,7 +540,7 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
-                <h3 className="text-3xl sm:text-5xl font-black mb-12 sm:mb-16 lowercase tracking-tight">{config.featuresTitle || 'what we do'}</h3>
+                <h3 className="text-3xl sm:text-5xl font-black mb-12 sm:mb-16 lowercase tracking-tight" style={{ color: textColor }}>{config.featuresTitle || 'what we do'}</h3>
                 <div className="flex flex-col gap-8 md:gap-12">
                     {config.features.map((feat, i) => (
                         <div key={i} className="flex flex-col md:flex-row gap-6 md:gap-8 items-center group">
@@ -553,7 +559,8 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 13. FITNESS TEMPLATE
@@ -633,15 +640,17 @@ export const PortfolioTemplate = ({ config, activeTheme, setZoomImage }) => (
 // ==========================================
 // 15. REAL ESTATE TEMPLATE
 // ==========================================
-export const RealEstateTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full bg-[#f8f9fa] text-slate-800 rounded-3xl overflow-hidden my-4">
+export const RealEstateTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
+    <div className="w-full rounded-3xl overflow-hidden my-4" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#0f172a' : '#fff' }}>
         <div className="relative min-h-[60vh] sm:min-h-[75vh] flex items-center justify-center">
-            {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover brightness-50" alt="Property Hero" />}
+            {config.coverImage && <img src={config.coverImage} className={`absolute inset-0 w-full h-full object-cover ${isLight ? 'brightness-50' : 'brightness-50'}`} alt="Property Hero" />}
             <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl py-12">
-                <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif text-white mb-6 leading-tight drop-shadow-lg">{config.slogan || ''}</h1>
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif mb-6 leading-tight drop-shadow-lg text-white">{config.slogan || ''}</h1>
                 <p className="text-base sm:text-xl text-white/90 mb-8 md:mb-10 font-light drop-shadow">{config.description}</p>
                 {config.ctaText && (
-                    <a href={config.ctaLink || '#'} className="inline-block px-8 sm:px-10 py-3.5 sm:py-4 bg-white text-slate-900 font-bold uppercase tracking-widest text-xs sm:text-sm hover:bg-gray-100 transition-colors shadow-xl rounded-xl">
+                    <a href={config.ctaLink || '#'} className="inline-block px-8 sm:px-10 py-3.5 sm:py-4 font-bold uppercase tracking-widest text-xs sm:text-sm hover:bg-gray-100 transition-colors shadow-xl rounded-xl" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
                         {config.ctaText}
                     </a>
                 )}
@@ -650,21 +659,21 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage }) => (
         {config.features?.length > 0 && (
             <div className="py-16 md:py-24 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h3 className="text-2xl sm:text-4xl font-serif mb-4">{config.featuresTitle || 'Featured Properties'}</h3>
-                    <div className="w-16 h-1 bg-slate-800 mx-auto"></div>
+                    <h3 className="text-2xl sm:text-4xl font-serif mb-4" style={{ color: isLight ? '#0f172a' : undefined }}>{config.featuresTitle || 'Featured Properties'}</h3>
+                    <div className={`w-16 h-1 mx-auto ${isLight ? 'bg-slate-800' : 'bg-white'}`} style={{ backgroundColor: isLight ? '#0f172a' : activeTheme.primary }}></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {config.features.map((feat, i) => (
-                        <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
+                        <div key={i} className="rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group border" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? '#e5e7eb' : 'rgba(255,255,255,0.1)' }}>
                             {feat.image && (
                                 <div className="relative h-56 sm:h-64 overflow-hidden cursor-pointer" onClick={() => setZoomImage && setZoomImage(feat.image)}>
                                     <img src={feat.image} className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700" alt={feat.title} />
-                                    <div className="absolute top-4 right-4 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider rounded" style={{ backgroundColor: activeTheme.primary }}>Featured</div>
+                                    <div className="absolute top-4 right-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>Featured</div>
                                 </div>
                             )}
                             <div className="p-6">
-                                <h4 className="text-xl font-bold mb-2">{feat.title}</h4>
-                                <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-3">{feat.desc}</p>
+                                <h4 className="text-xl font-bold mb-2" style={{ color: isLight ? '#0f172a' : undefined }}>{feat.title}</h4>
+                                <p className="text-sm leading-relaxed mb-4 line-clamp-3" style={{ color: isLight ? '#475569' : undefined, opacity: isLight ? 1 : 0.7 }}>{feat.desc}</p>
                                 <div className="text-sm font-bold uppercase tracking-wider" style={{ color: activeTheme.primary }}>View Details &rarr;</div>
                             </div>
                         </div>
@@ -673,7 +682,8 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 16. GAMING TEMPLATE
