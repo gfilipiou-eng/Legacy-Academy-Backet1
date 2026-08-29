@@ -11593,30 +11593,22 @@ const App = () => {
                             </div>
                         </div>
 
-                        {/* GRAFFITI & URBAN STREET SIGNATURE FOOTER */}
+                        {/* SIGNATURE FOOTER */}
                         <div className="mt-8 text-center flex flex-col items-center justify-center select-none relative group px-2">
-                            {/* Subtle street spray / ambient glow */}
-                            <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/10 via-[#ffd700]/15 to-blue-500/10 blur-2xl opacity-60 pointer-events-none rounded-3xl" />
-                            
-                            {/* Stylized Graffiti Text Badge */}
+                            {/* Stylized Calligraphy Signature */}
                             <div className="relative inline-flex flex-col items-center">
-                                {/* Graffiti Street Tag */}
-                                <div className="graffiti-tag-pill px-5 py-2 rounded-2xl flex items-center gap-2.5 transition-transform duration-300 group-hover:scale-105">
-                                    <span className="text-base select-none">🇬🇷</span>
-                                    <span className="graffiti-tag-text text-xl sm:text-2xl font-black uppercase">
-                                        MADE IN GREECE
-                                    </span>
-                                    <span className="text-base select-none">🇬🇷</span>
-                                </div>
+                                <span className="text-3xl sm:text-4xl text-white drop-shadow-md hover:scale-105 transition-transform duration-500" style={{ fontFamily: "'Great Vibes', cursive", fontWeight: 400 }}>
+                                    Made in Greece
+                                </span>
                             </div>
 
-                            {/* English Taglines & Platform Identity */}
-                            <div className="mt-3.5 flex flex-col items-center gap-1 max-w-[360px]">
-                                <div className="text-[11px] sm:text-[12px] font-black uppercase tracking-[0.25em] text-white/90 drop-shadow-sm font-['Cinzel',sans-serif]">
-                                    The #1 Greek Elite Social & Wealth Platform
+                            {/* Refined English Taglines */}
+                            <div className="mt-4 flex flex-col items-center gap-1.5 max-w-[360px]">
+                                <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.25em] text-white/90 drop-shadow-sm">
+                                    The Premium Social & Wealth Network
                                 </div>
                                 <div className="text-[9px] sm:text-[9.5px] font-bold uppercase tracking-[0.3em] text-[#ffd700]/80">
-                                    Engineered for High Performers • Built in Athens
+                                    Global Elite Community
                                 </div>
                                 <div className="mt-1 text-[8px] font-mono tracking-[0.35em] uppercase text-white/30">
                                     LEGACY ACADEMY © 2026 • ALL RIGHTS RESERVED
