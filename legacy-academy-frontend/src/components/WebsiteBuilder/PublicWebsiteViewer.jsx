@@ -104,7 +104,7 @@ export const PublicWebsiteViewer = ({ config }) => {
         };
 
         const desc = config.description || config.slogan || siteName;
-        const logo = config.logoImage || '/Applogo.png?v=20260829';
+        const logo = config.logoImage || '/Applogo.png?v=20260829c';
         const fullUrl = window.location.href;
 
         setMeta('meta[property="og:title"]', 'content', siteName);

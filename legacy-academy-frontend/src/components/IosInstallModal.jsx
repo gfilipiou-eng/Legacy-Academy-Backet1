@@ -1,16 +1,70 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Icons } from './Icons';
 
+const content = {
+    en: {
+        title: 'Add to Home Screen',
+        subtitle: 'Install Legacy Academy on your iPhone for native fullscreen performance and instant access.',
+        steps: [
+            {
+                title: 'Open in Safari',
+                desc: 'Make sure you are browsing this site in Safari on your iPhone.',
+            },
+            {
+                title: 'Tap the Share Button',
+                desc: 'Tap the Share icon at the bottom of your browser.',
+                hasShareIcon: true,
+            },
+            {
+                title: 'Choose "Add to Home Screen"',
+                desc: 'Scroll down and select "Add to Home Screen".',
+            },
+            {
+                title: 'Tap "Add"',
+                desc: 'Tap "Add" at the top right of your screen.',
+            },
+        ],
+        cta: "Got it, let's go",
+    },
+    el: {
+        title: 'Προσθήκη στην Αρχική',
+        subtitle: 'Εγκατάστησε το Legacy Academy στο iPhone σου για πλήρη οθόνη και άμεση πρόσβαση.',
+        steps: [
+            {
+                title: 'Άνοιξε με Safari',
+                desc: 'Βεβαιώσου ότι χρησιμοποιείς το Safari στο iPhone σου.',
+            },
+            {
+                title: 'Πάτα το κουμπί Κοινής Χρήσης',
+                desc: 'Πάτα το εικονίδιο κοινής χρήσης στο κάτω μέρος του προγράμματος περιήγησης.',
+                hasShareIcon: true,
+            },
+            {
+                title: 'Επίλεξε "Προσθήκη στην Αρχική Οθόνη"',
+                desc: 'Κάνε scroll και επίλεξε "Προσθήκη στην Αρχική Οθόνη".',
+            },
+            {
+                title: 'Πάτα "Προσθήκη"',
+                desc: 'Πάτα "Προσθήκη" πάνω δεξιά στην οθόνη σου.',
+            },
+        ],
+        cta: 'Εντάξει, πάμε!',
+    },
+};
+
 export default function IosInstallModal({ isOpen, onClose }) {
+    const [lang, setLang] = useState('en');
     if (!isOpen) return null;
 
+    const t = content[lang];
+
     return (
-        <div 
+        <div
             className="fixed inset-0 z-[6000] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in"
             onClick={onClose}
         >
             {/* Modal Container */}
-            <div 
+            <div
                 className="relative bg-[#1c1c1e] border border-white/10 rounded-[32px] md:rounded-[36px] max-w-[460px] w-full max-h-[92dvh] overflow-y-auto no-scrollbar shadow-2xl flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -24,11 +78,26 @@ export default function IosInstallModal({ isOpen, onClose }) {
                     <Icons.X className="w-4 h-4" />
                 </button>
 
-                <div className="p-5 sm:p-7 flex flex-col items-center text-center">
+                {/* Language Toggle */}
+                <div className="absolute top-4 left-4 z-20 flex gap-1.5">
+                    <button
+                        onClick={() => setLang('en')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${lang === 'en' ? 'bg-white text-black' : 'bg-white/10 text-white/60 hover:bg-white/20'}`}
+                    >
+                        EN
+                    </button>
+                    <button
+                        onClick={() => setLang('el')}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${lang === 'el' ? 'bg-white text-black' : 'bg-white/10 text-white/60 hover:bg-white/20'}`}
+                    >
+                        EL
+                    </button>
+                </div>
+
+                <div className="p-5 sm:p-7 flex flex-col items-center text-center pt-14 sm:pt-14">
                     {/* Header Icon Badge */}
                     <div className="relative mb-4 mt-2">
                         <div className="w-16 h-16 rounded-2xl bg-[#2c2c2e] flex items-center justify-center">
-                            {/* Apple Logo SVG */}
                             <svg className="w-8 h-8 fill-white" viewBox="0 0 384 512">
                                 <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
                             </svg>
@@ -37,74 +106,38 @@ export default function IosInstallModal({ isOpen, onClose }) {
 
                     {/* Title & Tagline */}
                     <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                        Add to Home Screen
+                        {t.title}
                     </h2>
                     <p className="text-[12px] sm:text-[13px] text-white/70 font-medium max-w-[340px] leading-relaxed mb-6">
-                        Install Legacy Academy on your iPhone for native fullscreen performance and instant access.
+                        {t.subtitle}
                     </p>
 
                     {/* 4 Step Visual Walkthrough */}
                     <div className="w-full space-y-3 text-left mb-6">
-                        {/* Step 1 */}
-                        <div className="p-3.5 rounded-xl bg-[#2c2c2e] flex items-start gap-3.5">
-                            <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                1
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-[13px] font-semibold text-white">Open in Safari</div>
-                                <div className="text-[11px] text-white/60 mt-1 leading-relaxed">
-                                    Make sure you are browsing this site in Safari on your iPhone.
+                        {t.steps.map((step, i) => (
+                            <div key={i} className="p-3.5 rounded-xl bg-[#2c2c2e] flex items-start gap-3.5">
+                                <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                                    {i + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <div className="text-[13px] font-semibold text-white flex items-center gap-2">
+                                        {step.title}
+                                        {step.hasShareIcon && (
+                                            <span className="inline-flex items-center justify-center w-5 h-5">
+                                                <svg className="w-4 h-4 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
+                                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                                                    <polyline points="16 6 12 2 8 6" />
+                                                    <line x1="12" y1="2" x2="12" y2="15" />
+                                                </svg>
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="text-[11px] text-white/60 mt-1 leading-relaxed">
+                                        {step.desc}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Step 2 */}
-                        <div className="p-3.5 rounded-xl bg-[#2c2c2e] flex items-start gap-3.5">
-                            <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                2
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-[13px] font-semibold text-white flex items-center gap-2">
-                                    Tap the Share Button
-                                    <span className="inline-flex items-center justify-center w-5 h-5">
-                                        <svg className="w-4 h-4 fill-none stroke-current stroke-[2]" viewBox="0 0 24 24">
-                                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                                            <polyline points="16 6 12 2 8 6" />
-                                            <line x1="12" y1="2" x2="12" y2="15" />
-                                        </svg>
-                                    </span>
-                                </div>
-                                <div className="text-[11px] text-white/60 mt-1 leading-relaxed">
-                                    Tap the Share icon at the bottom of your browser.
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 3 */}
-                        <div className="p-3.5 rounded-xl bg-[#2c2c2e] flex items-start gap-3.5">
-                            <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                3
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-[13px] font-semibold text-white">Choose "Add to Home Screen"</div>
-                                <div className="text-[11px] text-white/60 mt-1 leading-relaxed">
-                                    Scroll down and select "Add to Home Screen" (Προσθήκη στην οθόνη αφετηρίας).
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 4 */}
-                        <div className="p-3.5 rounded-xl bg-[#2c2c2e] flex items-start gap-3.5">
-                            <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                                4
-                            </div>
-                            <div className="flex-1">
-                                <div className="text-[13px] font-semibold text-white">Tap "Add"</div>
-                                <div className="text-[11px] text-white/60 mt-1 leading-relaxed">
-                                    Tap "Add" at the top right of your screen.
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
 
                     {/* Close / Action Button */}
@@ -113,7 +146,7 @@ export default function IosInstallModal({ isOpen, onClose }) {
                         onClick={onClose}
                         className="w-full rounded-xl py-3.5 flex items-center justify-center gap-2 font-bold text-[13px] bg-white text-black hover:bg-gray-200 transition-colors cursor-pointer"
                     >
-                        <span>Got it, let's go</span>
+                        <span>{t.cta}</span>
                     </button>
                 </div>
             </div>
