@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { 
@@ -17,7 +17,8 @@ import {
     FitnessTemplate, 
     PortfolioTemplate, 
     RealEstateTemplate, 
-    GamingTemplate 
+    GamingTemplate,
+    MafiaTemplate
 } from './WebsiteTemplates';
 
 const XIcon = ({ className }) => (
@@ -58,6 +59,39 @@ export const PublicWebsiteViewer = ({ config }) => {
     };
 
     const activeTheme = themeColors[config.palette] || themeColors.gold;
+
+    useEffect(() => {
+        const siteName = config.businessName || config.slogan || 'My Website';
+        document.title = `${siteName}`;
+
+        const setMeta = (selector, attr, content) => {
+            let el = document.head.querySelector(selector);
+            if (!el) {
+                el = document.createElement('meta');
+                if (selector.startsWith('meta[property=')) {
+                    el.setAttribute('property', selector.match(/property="([^"]+)"/)?.[1] || '');
+                } else if (selector.startsWith('meta[name=')) {
+                    el.setAttribute('name', selector.match(/name="([^"]+)"/)?.[1] || '');
+                }
+                document.head.appendChild(el);
+            }
+            el.setAttribute(attr, content);
+        };
+
+        const desc = config.description || config.slogan || siteName;
+        const logo = config.logoImage || '/Applogo.png?v=20260829';
+        const fullUrl = window.location.href;
+
+        setMeta('meta[property="og:title"]', 'content', siteName);
+        setMeta('meta[property="og:description"]', 'content', desc);
+        setMeta('meta[property="og:image"]', 'content', logo);
+        setMeta('meta[property="og:url"]', 'content', fullUrl);
+        setMeta('meta[property="og:site_name"]', 'content', siteName);
+        setMeta('meta[name="twitter:title"]', 'content', siteName);
+        setMeta('meta[name="twitter:description"]', 'content', desc);
+        setMeta('meta[name="twitter:image"]', 'content', logo);
+        setMeta('meta[name="description"]', 'content', desc);
+    }, [config.businessName, config.slogan, config.description, config.logoImage]);
 
     const handleOpenProduct = (product) => {
         setSelectedProduct(product);
@@ -144,6 +178,7 @@ export const PublicWebsiteViewer = ({ config }) => {
                     case 'portfolio': return <PortfolioTemplate {...tmplProps} />;
                     case 'realestate': return <RealEstateTemplate {...tmplProps} />;
                     case 'gaming': return <GamingTemplate {...tmplProps} />;
+                    case 'mafia': return <MafiaTemplate {...tmplProps} />;
                     case 'classic':
                     default:
                         return <ClassicTemplate {...tmplProps} />;

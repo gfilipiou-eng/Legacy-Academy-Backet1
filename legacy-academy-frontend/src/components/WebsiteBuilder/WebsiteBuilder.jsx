@@ -20,7 +20,8 @@ import {
     FitnessTemplate, 
     PortfolioTemplate, 
     RealEstateTemplate, 
-    GamingTemplate 
+    GamingTemplate,
+    MafiaTemplate
 } from './WebsiteTemplates';
 
 const XIcon = ({ className }) => (
@@ -889,7 +890,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Website Template</label>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">
-                                {['classic', 'ecommerce', 'agency', 'luxury', 'saas', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting', 'portfolio', 'realestate', 'gaming'].map(tmpl => (
+                                {['classic', 'ecommerce', 'agency', 'luxury', 'saas', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting', 'portfolio', 'realestate', 'gaming', 'mafia'].map(tmpl => (
                                     <button
                                         key={tmpl}
                                         onClick={() => updateConfig('template', tmpl)}
@@ -1031,6 +1032,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 case 'portfolio': return <PortfolioTemplate {...tmplProps} />;
                                 case 'realestate': return <RealEstateTemplate {...tmplProps} />;
                                 case 'gaming': return <GamingTemplate {...tmplProps} />;
+                                case 'mafia': return <MafiaTemplate {...tmplProps} />;
                                 case 'classic':
                                 default:
                                     return <ClassicTemplate {...tmplProps} />;

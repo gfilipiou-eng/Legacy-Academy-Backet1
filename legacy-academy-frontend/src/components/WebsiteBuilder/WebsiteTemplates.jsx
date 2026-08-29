@@ -717,3 +717,115 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage }) => (
         )}
     </div>
 );
+
+// ==========================================
+// MAFIA / GTA THEME (Gangster Los Santos Style)
+// ==========================================
+export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
+    <div className="w-full bg-black text-white font-sans overflow-hidden relative">
+        <div className="relative min-h-[75vh] md:min-h-screen flex items-center justify-center py-24 px-4 sm:px-6">
+            {config.coverImage && (
+                <>
+                    <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-30" alt="" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black via-black/70 to-black"></div>
+                </>
+            )}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.12),transparent_60%)] pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-700 via-red-500 to-red-700" />
+
+            <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
+                <div className="mb-8 flex flex-col items-center gap-4">
+                    <div className="px-5 py-1.5 rounded-full border border-red-600/50 bg-red-950/40 backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] text-red-400">
+                        ⚠ The Family Business ⚠
+                    </div>
+                    <div className="text-[72px] sm:text-[96px] leading-none drop-shadow-[0_0_30px_rgba(220,38,38,0.35)]" style={{ color: activeTheme.primary || '#dc2626' }}>
+                        $
+                    </div>
+                </div>
+
+                <h1 className="text-5xl sm:text-7xl md:text-[120px] font-black uppercase leading-[0.92] tracking-tighter mb-6 break-words hyphens-auto"
+                    style={{
+                        fontFamily: "'Syne', 'Impact', sans-serif",
+                        textShadow: `4px 4px 0 rgba(0,0,0,0.8), 0 0 40px rgba(220,38,38,0.25)`
+                    }}>
+                    {config.slogan || ''}
+                </h1>
+
+                <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed tracking-wide">
+                    {config.description}
+                </p>
+
+                {config.ctaText && (
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                        <a href={config.ctaLink || '#'}
+                           className="relative group px-8 sm:px-10 py-4 rounded-none border-2 font-black uppercase text-sm tracking-[0.25em] overflow-hidden transition-all"
+                           style={{
+                               borderColor: activeTheme.primary || '#dc2626',
+                               backgroundColor: activeTheme.primary || '#dc2626',
+                               color: '#000',
+                               clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)'
+                           }}>
+                            <span className="relative z-10">{config.ctaText}</span>
+                            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
+                        </a>
+                        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gray-500 font-bold">
+                            Established • No Witnesses
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+
+        {config.features?.length > 0 && (
+            <div className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="h-[2px] w-16 sm:w-24" style={{ backgroundColor: activeTheme.primary || '#dc2626' }} />
+                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-[0.4em] text-gray-400">
+                        {config.featuresTitle || 'Operations'}
+                    </h3>
+                    <div className="h-[2px] flex-1 bg-white/10" />
+                </div>
+                <h2 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mb-12 sm:mb-16 break-words"
+                    style={{
+                        fontFamily: "'Syne', sans-serif",
+                        color: activeTheme.primary || '#dc2626'
+                    }}>
+                    The Lineup
+                </h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                    {config.features.map((feat, i) => (
+                        <div key={i}
+                             className="relative group bg-[#0b0b0b] border border-white/10 p-6 sm:p-7 overflow-hidden transition-all hover:border-red-600/40"
+                             style={{
+                                 clipPath: i % 2 === 0
+                                    ? 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)'
+                                    : 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))'
+                             }}>
+                            <div className="absolute top-4 right-4 text-5xl font-black text-white/5 select-none"
+                                 style={{ fontFamily: "'Syne', sans-serif" }}>
+                                {String(i + 1).padStart(2, '0')}
+                            </div>
+                            {feat.image && (
+                                <img src={feat.image}
+                                     className="w-full h-48 sm:h-56 object-cover mb-6 grayscale-[30%] group-hover:grayscale-0 transition-all duration-500 cursor-pointer"
+                                     onClick={() => setZoomImage && setZoomImage(feat.image)}
+                                     alt={feat.title} />
+                            )}
+                            <div className="mb-3 w-10 h-[2px]" style={{ backgroundColor: activeTheme.primary || '#dc2626' }} />
+                            <h4 className="text-xl sm:text-2xl font-black uppercase tracking-wider mb-3"
+                                style={{ fontFamily: "'Syne', sans-serif" }}>
+                                {feat.title}
+                            </h4>
+                            <p className="text-gray-400 leading-relaxed text-sm sm:text-[15px]">
+                                {feat.desc}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <div className="w-full h-1 bg-gradient-to-r from-transparent via-red-700/40 to-transparent" />
+    </div>
+);
