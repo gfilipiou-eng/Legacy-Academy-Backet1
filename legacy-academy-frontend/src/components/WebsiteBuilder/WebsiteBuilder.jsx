@@ -1061,7 +1061,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
                         {/* Render Template Body based on config.template */}
                         {(() => {
-                            const tmplProps = { config, activeTheme, setZoomImage };
+                            const tmplProps = { config, activeTheme, setZoomImage, resolvedPalette };
                             switch (config.template) {
                                 case 'ecommerce': return <EcommerceTemplate {...tmplProps} />;
                                 case 'agency': return <AgencyTemplate {...tmplProps} />;

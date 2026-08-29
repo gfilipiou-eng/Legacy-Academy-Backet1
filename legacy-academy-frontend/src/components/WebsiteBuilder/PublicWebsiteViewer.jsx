@@ -186,7 +186,7 @@ export const PublicWebsiteViewer = ({ config }) => {
 
             {/* Render Template Body based on config.template */}
             {(() => {
-                const tmplProps = { config: normalizedConfig, activeTheme, setZoomImage };
+                const tmplProps = { config: normalizedConfig, activeTheme, setZoomImage, resolvedPalette };
                 switch (config.template) {
                     case 'ecommerce': return <EcommerceTemplate {...tmplProps} />;
                     case 'agency': return <AgencyTemplate {...tmplProps} />;

@@ -395,9 +395,11 @@ export const TechnologyTemplate = ({ config, activeTheme, setZoomImage }) => (
 // ==========================================
 // 9. FOOTBALL & SPORTS TEMPLATE
 // ==========================================
-export const FootballTemplate = ({ config, activeTheme, setZoomImage }) => (
+export const FootballTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
     <div className="w-full max-w-7xl mx-auto">
-        <div className="relative w-full h-[50vh] sm:h-[60vh] bg-black overflow-hidden flex flex-col justify-end p-6 sm:p-8 md:p-16">
+        <div className="relative w-full h-[50vh] sm:h-[60vh] overflow-hidden flex flex-col justify-end p-6 sm:p-8 md:p-16" style={{ backgroundColor: activeTheme.bg }}>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-80 z-0 scale-105" alt="Stadium" />}
             <div className="relative z-20 w-full flex flex-col items-start border-l-8 pl-4 sm:pl-6" style={{ borderColor: activeTheme.primary }}>
@@ -412,11 +414,11 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage }) => (
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {config.features.map((feat, i) => (
-                        <div key={i} className="bg-white text-black p-1 relative overflow-hidden group cursor-pointer rounded-xl" onClick={() => setZoomImage && setZoomImage(feat.image)}>
+                        <div key={i} className="p-1 relative overflow-hidden group cursor-pointer rounded-xl border" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' }} onClick={() => setZoomImage && setZoomImage(feat.image)}>
                             {feat.image && <img src={feat.image} className="w-full h-48 object-cover mb-2 group-hover:scale-105 transition-transform duration-300 rounded" alt="Player/News" />}
-                            <div className="p-4 bg-black text-white h-full rounded">
+                            <div className="p-4 h-full rounded">
                                 <h4 className="font-black uppercase italic text-lg sm:text-xl mb-1 w-full break-words hyphens-auto">{feat.title}</h4>
-                                <p className="text-xs opacity-80 w-full break-words hyphens-auto">{feat.desc}</p>
+                                <p className="text-xs opacity-70 w-full break-words hyphens-auto">{feat.desc}</p>
                             </div>
                         </div>
                     ))}
@@ -424,16 +426,26 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 10. BETTING & SPORTSBOOK TEMPLATE
 // ==========================================
-export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
+export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    const cardBg = activeTheme.card;
+    const headerBg = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)';
+    const borderColor = isLight ? '#d1d5db' : '#333';
+    const divideColor = isLight ? '#e5e7eb' : '#333';
+    const rowHover = isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
+    const btnBg = isLight ? 'rgba(0,0,0,0.08)' : '#333';
+    const btnHover = isLight ? 'rgba(0,0,0,0.14)' : '#444';
+    return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8" style={{ fontFamily: 'Roboto, sans-serif' }}>
-        <div className="bg-[#1a1a1a] rounded-2xl overflow-hidden border border-[#333] mb-8">
-            <div className="p-4 sm:p-6 border-b border-[#333] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#222]">
-                <h1 className="text-xl sm:text-2xl font-black uppercase text-white flex items-center gap-3 w-full break-words hyphens-auto leading-tight">
+        <div className="rounded-2xl overflow-hidden mb-8 border" style={{ backgroundColor: cardBg, borderColor }}>
+            <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4" style={{ borderColor, backgroundColor: headerBg }}>
+                <h1 className="text-xl sm:text-2xl font-black uppercase flex items-center gap-3 w-full break-words hyphens-auto leading-tight">
                     <div className="w-3 h-3 rounded-full animate-pulse shrink-0" style={{ backgroundColor: activeTheme.primary }} />
                     <span>{config.slogan || ''}</span>
                 </h1>
@@ -444,27 +456,27 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
                 )}
             </div>
             <div className="p-6 flex flex-col md:flex-row items-center gap-8">
-                <p className="text-base sm:text-lg text-white/80 flex-1 w-full break-words hyphens-auto">{config.description}</p>
-                {config.coverImage && <img src={config.coverImage} className="w-full md:w-1/3 rounded-xl border border-[#333] cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)} alt="Promo" />}
+                <p className="text-base sm:text-lg flex-1 w-full break-words hyphens-auto opacity-80">{config.description}</p>
+                {config.coverImage && <img src={config.coverImage} className="w-full md:w-1/3 rounded-xl border cursor-pointer" style={{ borderColor }} onClick={() => setZoomImage && setZoomImage(config.coverImage)} alt="Promo" />}
             </div>
         </div>
         {config.features?.length > 0 && (
-            <div className="bg-[#1a1a1a] rounded-2xl border border-[#333] overflow-hidden">
-                <div className="bg-[#222] p-4 border-b border-[#333]">
-                    <h3 className="font-bold text-white uppercase w-full break-words hyphens-auto">{config.featuresTitle || 'TOP MATCHES'}</h3>
+            <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: cardBg, borderColor }}>
+                <div className="p-4 border-b" style={{ borderColor, backgroundColor: headerBg }}>
+                    <h3 className="font-bold uppercase w-full break-words hyphens-auto">{config.featuresTitle || 'TOP MATCHES'}</h3>
                 </div>
-                <div className="divide-y divide-[#333]">
+                <div style={{ '--divide-color': divideColor }}>
                     {config.features.map((feat, i) => (
-                        <div key={i} className="p-4 hover:bg-[#222] transition-colors flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div key={i} className="p-4 flex flex-col md:flex-row items-center justify-between gap-4 border-t" style={{ borderColor: divideColor }}>
                             <div className="flex-1 w-full">
                                 <div className="text-xs mb-1 font-bold" style={{ color: activeTheme.primary }}>In-Play Live</div>
-                                <h4 className="font-bold text-white text-base sm:text-lg w-full break-words hyphens-auto">{feat.title}</h4>
-                                <p className="text-sm text-gray-400 w-full break-words hyphens-auto">{feat.desc}</p>
+                                <h4 className="font-bold text-base sm:text-lg w-full break-words hyphens-auto">{feat.title}</h4>
+                                <p className="text-sm w-full break-words hyphens-auto opacity-60">{feat.desc}</p>
                             </div>
                             <div className="flex gap-2 w-full md:w-auto shrink-0">
-                                <button className="flex-1 md:w-20 py-3 bg-[#333] hover:bg-[#444] rounded-xl text-white font-bold transition-colors">1</button>
-                                <button className="flex-1 md:w-20 py-3 bg-[#333] hover:bg-[#444] rounded-xl text-white font-bold transition-colors">X</button>
-                                <button className="flex-1 md:w-20 py-3 bg-[#333] hover:bg-[#444] rounded-xl text-white font-bold transition-colors">2</button>
+                                <button className="flex-1 md:w-20 py-3 rounded-xl font-bold transition-colors" style={{ backgroundColor: btnBg }}>1</button>
+                                <button className="flex-1 md:w-20 py-3 rounded-xl font-bold transition-colors" style={{ backgroundColor: btnBg }}>X</button>
+                                <button className="flex-1 md:w-20 py-3 rounded-xl font-bold transition-colors" style={{ backgroundColor: btnBg }}>2</button>
                             </div>
                         </div>
                     ))}
@@ -472,7 +484,8 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 11. CORPORATE TEMPLATE
@@ -565,13 +578,15 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
 // ==========================================
 // 13. FITNESS TEMPLATE
 // ==========================================
-export const FitnessTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full bg-[#0a0a0a] text-white uppercase">
+export const FitnessTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
+    <div className="w-full uppercase" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#000' : '#fff' }}>
         <div className="relative min-h-[70vh] md:min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 py-20 overflow-hidden">
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Fitness Hero" />}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
+            <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${activeTheme.bg}, transparent)` }}></div>
             <div className="relative z-10 max-w-5xl">
-                <h1 className="text-4xl sm:text-7xl md:text-9xl font-black italic tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">{config.slogan || ''}</h1>
+                <h1 className={`text-4xl sm:text-7xl md:text-9xl font-black italic tracking-tighter mb-4 text-transparent bg-clip-text ${isLight ? 'bg-gradient-to-r from-black to-gray-500' : 'bg-gradient-to-r from-white to-gray-500'}`}>{config.slogan || ''}</h1>
                 <p className="text-base sm:text-xl md:text-2xl font-bold tracking-widest mb-8 md:mb-10" style={{ color: activeTheme.primary }}>{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="inline-block px-8 sm:px-12 py-4 sm:py-5 font-black text-lg sm:text-xl tracking-widest skew-x-[-10deg] hover:scale-110 transition-transform rounded" style={{ backgroundColor: activeTheme.primary, color: '#000' }}>
@@ -585,7 +600,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <h3 className="text-3xl sm:text-5xl font-black italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle || 'PROGRAMS'}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {config.features.map((feat, i) => (
-                        <div key={i} className="relative h-80 sm:h-96 group overflow-hidden bg-zinc-900 rounded-2xl cursor-pointer" onClick={() => setZoomImage && setZoomImage(feat.image)}>
+                        <div key={i} className="relative h-80 sm:h-96 group overflow-hidden rounded-2xl cursor-pointer" style={{ backgroundColor: activeTheme.card }} onClick={() => setZoomImage && setZoomImage(feat.image)}>
                             {feat.image && <img src={feat.image} className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-20 transition-opacity duration-500" alt={feat.title} />}
                             <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end transform translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
                                 <h4 className="text-2xl sm:text-3xl font-black italic mb-2" style={{ color: activeTheme.primary }}>{feat.title}</h4>
@@ -597,7 +612,8 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // 14. PORTFOLIO TEMPLATE
@@ -688,19 +704,21 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage, resolved
 // ==========================================
 // 16. GAMING TEMPLATE
 // ==========================================
-export const GamingTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full bg-[#050505] text-white font-sans overflow-hidden">
+export const GamingTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
+    <div className="w-full font-sans overflow-hidden" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#000' : '#fff' }}>
         <div className="relative min-h-[70vh] md:min-h-screen flex items-center justify-center py-20">
             {config.coverImage && (
                 <>
                     <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-30" alt="Game Hero" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent"></div>
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${activeTheme.bg} 0%, ${activeTheme.bg}80 40%, transparent 100%)` }}></div>
                 </>
             )}
             <div className="relative z-10 text-center px-4 sm:px-6 flex flex-col items-center max-w-5xl">
                 <div className="mb-6 px-4 py-1.5 border-2 text-xs font-black uppercase tracking-[0.3em] backdrop-blur-sm rounded" style={{ borderColor: activeTheme.primary, color: activeTheme.primary }}>New Release</div>
                 <h1 className="text-4xl sm:text-7xl md:text-8xl font-black uppercase italic tracking-tighter mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{config.slogan || ''}</h1>
-                <p className="text-base sm:text-xl text-gray-300 max-w-2xl mb-10">{config.description}</p>
+                <p className="text-base sm:text-xl max-w-2xl mb-10 opacity-70">{config.description}</p>
                 {config.ctaText && (
                     <a href={config.ctaLink || '#'} className="relative group px-10 py-4 font-black uppercase tracking-widest overflow-hidden rounded-xl">
                         <div className="absolute inset-0 transition-transform group-hover:scale-105" style={{ backgroundColor: activeTheme.primary }}></div>
@@ -716,39 +734,42 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <h3 className="text-3xl sm:text-5xl font-black uppercase italic tracking-tighter mb-12 sm:mb-16 text-center">{config.featuresTitle || 'GAME FEATURES'}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 relative z-10">
                     {config.features.map((feat, i) => (
-                        <div key={i} className="bg-white/5 border border-white/10 p-6 sm:p-8 rounded-2xl backdrop-blur-md hover:bg-white/10 transition-colors group">
+                        <div key={i} className="border p-6 sm:p-8 rounded-2xl backdrop-blur-md transition-colors group" style={{ backgroundColor: activeTheme.card, borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' }}>
                             {feat.image && <img src={feat.image} className="w-full h-48 object-cover rounded-xl mb-6 group-hover:scale-105 transition-transform duration-500 cursor-pointer" onClick={() => setZoomImage && setZoomImage(feat.image)} alt={feat.title} />}
                             <h4 className="text-xl sm:text-2xl font-bold uppercase tracking-wider mb-3" style={{ color: activeTheme.primary }}>{feat.title}</h4>
-                            <p className="text-gray-400 leading-relaxed text-sm sm:text-base">{feat.desc}</p>
+                            <p className="leading-relaxed text-sm sm:text-base opacity-60">{feat.desc}</p>
                         </div>
                     ))}
                 </div>
             </div>
         )}
     </div>
-);
+    );
+};
 
 // ==========================================
 // MAFIA / GTA THEME (Gangster Los Santos Style)
 // ==========================================
-export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full bg-black text-white font-sans overflow-hidden relative">
+export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
+    const isLight = resolvedPalette === 'light';
+    return (
+    <div className="w-full font-sans overflow-hidden relative" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#000' : '#fff' }}>
         <div className="relative min-h-[75vh] md:min-h-screen flex items-center justify-center py-24 px-4 sm:px-6">
             {config.coverImage && (
                 <>
                     <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-30" alt="" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black via-black/70 to-black"></div>
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, ${activeTheme.bg} 0%, ${activeTheme.bg}b0 50%, ${activeTheme.bg} 100%)` }}></div>
                 </>
             )}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.12),transparent_60%)] pointer-events-none" />
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-700 via-red-500 to-red-700" />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at top, ${activeTheme.primary}1f, transparent 60%)` }} />
+            <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(to right, ${activeTheme.primary}99, ${activeTheme.primary}, ${activeTheme.primary}99)` }} />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
                 <div className="mb-8 flex flex-col items-center gap-4">
-                    <div className="px-5 py-1.5 rounded-full border border-red-600/50 bg-red-950/40 backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] text-red-400">
+                    <div className="px-5 py-1.5 rounded-full backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] border" style={{ borderColor: `${activeTheme.primary}80`, backgroundColor: `${activeTheme.primary}10`, color: activeTheme.primary }}>
                         ⚠ The Family Business ⚠
                     </div>
-                    <div className="text-[72px] sm:text-[96px] leading-none drop-shadow-[0_0_30px_rgba(220,38,38,0.35)]" style={{ color: activeTheme.primary || '#dc2626' }}>
+                    <div className="text-[72px] sm:text-[96px] leading-none" style={{ color: activeTheme.primary, textShadow: `0 0 30px ${activeTheme.primary}59` }}>
                         $
                     </div>
                 </div>
@@ -756,12 +777,12 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <h1 className="text-5xl sm:text-7xl md:text-[120px] font-black uppercase leading-[0.92] tracking-tighter mb-6 break-words hyphens-auto"
                     style={{
                         fontFamily: "'Syne', 'Impact', sans-serif",
-                        textShadow: `4px 4px 0 rgba(0,0,0,0.8), 0 0 40px rgba(220,38,38,0.25)`
+                        textShadow: `4px 4px 0 rgba(0,0,0,0.8), 0 0 40px ${activeTheme.primary}40`
                     }}>
                     {config.slogan || ''}
                 </h1>
 
-                <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed tracking-wide">
+                <p className="text-base sm:text-lg md:text-xl max-w-2xl mb-10 leading-relaxed tracking-wide opacity-70">
                     {config.description}
                 </p>
 
@@ -770,15 +791,15 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
                         <a href={config.ctaLink || '#'}
                            className="relative group px-8 sm:px-10 py-4 rounded-none border-2 font-black uppercase text-sm tracking-[0.25em] overflow-hidden transition-all"
                            style={{
-                               borderColor: activeTheme.primary || '#dc2626',
-                               backgroundColor: activeTheme.primary || '#dc2626',
+                               borderColor: activeTheme.primary,
+                               backgroundColor: activeTheme.primary,
                                color: '#000',
                                clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)'
                            }}>
                             <span className="relative z-10">{config.ctaText}</span>
                             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
                         </a>
-                        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gray-500 font-bold">
+                        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold opacity-40">
                             Established • No Witnesses
                         </div>
                     </div>
@@ -789,16 +810,16 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
         {config.features?.length > 0 && (
             <div className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="h-[2px] w-16 sm:w-24" style={{ backgroundColor: activeTheme.primary || '#dc2626' }} />
-                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-[0.4em] text-gray-400">
+                    <div className="h-[2px] w-16 sm:w-24" style={{ backgroundColor: activeTheme.primary }} />
+                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-[0.4em] opacity-50">
                         {config.featuresTitle || 'Operations'}
                     </h3>
-                    <div className="h-[2px] flex-1 bg-white/10" />
+                    <div className="h-[2px] flex-1 opacity-10" style={{ backgroundColor: isLight ? '#000' : '#fff' }} />
                 </div>
                 <h2 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mb-12 sm:mb-16 break-words"
                     style={{
                         fontFamily: "'Syne', sans-serif",
-                        color: activeTheme.primary || '#dc2626'
+                        color: activeTheme.primary
                     }}>
                     The Lineup
                 </h2>
@@ -806,13 +827,15 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                     {config.features.map((feat, i) => (
                         <div key={i}
-                             className="relative group bg-[#0b0b0b] border border-white/10 p-6 sm:p-7 overflow-hidden transition-all hover:border-red-600/40"
+                             className="relative group border p-6 sm:p-7 overflow-hidden transition-all"
                              style={{
+                                 backgroundColor: activeTheme.card,
+                                 borderColor: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)',
                                  clipPath: i % 2 === 0
                                     ? 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)'
                                     : 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))'
                              }}>
-                            <div className="absolute top-4 right-4 text-5xl font-black text-white/5 select-none"
+                            <div className="absolute top-4 right-4 text-5xl font-black select-none opacity-5"
                                  style={{ fontFamily: "'Syne', sans-serif" }}>
                                 {String(i + 1).padStart(2, '0')}
                             </div>
@@ -822,12 +845,12 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
                                      onClick={() => setZoomImage && setZoomImage(feat.image)}
                                      alt={feat.title} />
                             )}
-                            <div className="mb-3 w-10 h-[2px]" style={{ backgroundColor: activeTheme.primary || '#dc2626' }} />
+                            <div className="mb-3 w-10 h-[2px]" style={{ backgroundColor: activeTheme.primary }} />
                             <h4 className="text-xl sm:text-2xl font-black uppercase tracking-wider mb-3"
                                 style={{ fontFamily: "'Syne', sans-serif" }}>
                                 {feat.title}
                             </h4>
-                            <p className="text-gray-400 leading-relaxed text-sm sm:text-[15px]">
+                            <p className="leading-relaxed text-sm sm:text-[15px] opacity-60">
                                 {feat.desc}
                             </p>
                         </div>
@@ -836,6 +859,8 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
         )}
 
-        <div className="w-full h-1 bg-gradient-to-r from-transparent via-red-700/40 to-transparent" />
+        <div className="w-full h-1" style={{ background: `linear-gradient(to right, transparent, ${activeTheme.primary}66, transparent)` }} />
     </div>
-);
+    );
+};
+
