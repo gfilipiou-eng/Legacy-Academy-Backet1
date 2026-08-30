@@ -173,19 +173,24 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-20">
-            {[
-                { label: 'Client Revenue', val: '$50M+' },
-                { label: 'Global Reach', val: '48+ Countries' },
-                { label: 'Client Satisfaction', val: '99.8%' },
-                { label: 'ROI Guarantee', val: '3.5x Avg' }
-            ].map((stat, i) => (
-                <div key={i} className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 text-center backdrop-blur-md">
-                    <div className="text-2xl sm:text-4xl font-black tracking-tight mb-1" style={{ color: activeTheme.primary }}>{stat.val}</div>
-                    <div className="text-xs uppercase tracking-widest opacity-60 font-bold">{stat.label}</div>
-                </div>
-            ))}
-        </div>
+        {config.showAgencyStats !== false && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-20">
+                {(config.agencyStats && config.agencyStats.length === 4
+                    ? config.agencyStats
+                    : [
+                        { label: 'Client Revenue', val: '$50M+' },
+                        { label: 'Global Reach', val: '48+ Countries' },
+                        { label: 'Client Satisfaction', val: '99.8%' },
+                        { label: 'ROI Guarantee', val: '3.5x Avg' }
+                    ]
+                ).map((stat, i) => (
+                    <div key={i} className="p-6 rounded-3xl bg-white/[0.03] border border-white/10 text-center backdrop-blur-md">
+                        <div className="text-2xl sm:text-4xl font-black tracking-tight mb-1" style={{ color: activeTheme.primary }}>{stat.val}</div>
+                        <div className="text-xs uppercase tracking-widest opacity-60 font-bold">{stat.label}</div>
+                    </div>
+                ))}
+            </div>
+        )}
 
         {config.coverImage && (
             <div className="w-full h-72 sm:h-96 md:h-[480px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl mb-20 relative group cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
@@ -766,14 +771,9 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
             <div className="absolute inset-x-0 top-0 h-1" style={{ background: `linear-gradient(to right, ${activeTheme.primary}99, ${activeTheme.primary}, ${activeTheme.primary}99)` }} />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
-                <div className="mb-8 flex flex-col items-center gap-4">
-                    {config.businessName && <div className="px-5 py-1.5 rounded-full backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] border" style={{ borderColor: `${activeTheme.primary}80`, backgroundColor: `${activeTheme.primary}10`, color: activeTheme.primary }}>
-                        {config.businessName}
-                    </div>}
-                    <div className="text-[72px] sm:text-[96px] leading-none" style={{ color: activeTheme.primary, textShadow: `0 0 30px ${activeTheme.primary}59` }}>
-                        $
-                    </div>
-                </div>
+                {config.businessName && <div className="mb-10 px-5 py-1.5 rounded-full backdrop-blur-sm text-[11px] sm:text-xs font-black uppercase tracking-[0.35em] border" style={{ borderColor: `${activeTheme.primary}80`, backgroundColor: `${activeTheme.primary}10`, color: activeTheme.primary }}>
+                    {config.businessName}
+                </div>}
 
                 <h1 className="text-5xl sm:text-7xl md:text-[120px] font-black uppercase leading-[0.92] tracking-tighter mb-6 break-words hyphens-auto"
                     style={{

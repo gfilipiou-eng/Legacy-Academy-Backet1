@@ -651,6 +651,80 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         </div>
                     </div>
 
+                    {/* Agency Stats Section (Agency template only) */}
+                    {config.template === 'agency' && (
+                        <div className="space-y-4 pt-4 border-t border-white/10">
+                            <div className="flex items-center justify-between">
+                                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                                    <Icons.TrendingUp className="w-3.5 h-3.5 text-[var(--builder-primary)]" />
+                                    <span>Agency Stats (Revenue / Reach / Satisfaction / ROI)</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => updateConfig('showAgencyStats', config.showAgencyStats === false ? true : !config.showAgencyStats)}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                        config.showAgencyStats !== false
+                                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                                            : 'bg-white/5 border-white/10 text-white/50'
+                                    }`}
+                                >
+                                    {config.showAgencyStats !== false ? 'Stats Visible' : 'Stats Hidden'}
+                                </button>
+                            </div>
+
+                            {config.showAgencyStats !== false && (
+                                <div className="space-y-3 pt-1">
+                                    {[
+                                        { key: 'statRevenue', label: 'Client Revenue', defaultLabel: 'Client Revenue', defaultVal: '$50M+' },
+                                        { key: 'statCountries', label: 'Global Reach', defaultLabel: 'Global Reach', defaultVal: '48+ Countries' },
+                                        { key: 'statSatisfaction', label: 'Client Satisfaction', defaultLabel: 'Client Satisfaction', defaultVal: '99.8%' },
+                                        { key: 'statRoi', label: 'ROI Guarantee', defaultLabel: 'ROI Guarantee', defaultVal: '3.5x Avg' }
+                                    ].map((s) => {
+                                        const arr = config.agencyStats || [];
+                                        const defaults = [
+                                            { label: 'Client Revenue', val: '$50M+' },
+                                            { label: 'Global Reach', val: '48+ Countries' },
+                                            { label: 'Client Satisfaction', val: '99.8%' },
+                                            { label: 'ROI Guarantee', val: '3.5x Avg' }
+                                        ];
+                                        const idx = ['statRevenue', 'statCountries', 'statSatisfaction', 'statRoi'].indexOf(s.key);
+                                        const cur = arr[idx] || defaults[idx];
+                                        return (
+                                            <div key={s.key} className="flex flex-col sm:flex-row gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/10">
+                                                <div className="flex-1">
+                                                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1 block">Label · {s.label}</label>
+                                                    <input
+                                                        type="text"
+                                                        value={cur.label}
+                                                        onChange={(e) => {
+                                                            const next = [...(config.agencyStats || defaults)];
+                                                            next[idx] = { ...next[idx], label: e.target.value };
+                                                            updateConfig('agencyStats', next);
+                                                        }}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-all"
+                                                    />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <label className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1 block">Value</label>
+                                                    <input
+                                                        type="text"
+                                                        value={cur.val}
+                                                        onChange={(e) => {
+                                                            const next = [...(config.agencyStats || defaults)];
+                                                            next[idx] = { ...next[idx], val: e.target.value };
+                                                            updateConfig('agencyStats', next);
+                                                        }}
+                                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs outline-none focus:border-[var(--builder-primary)] transition-all font-black"
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {/* Store & Products Section (Shopify / Stripe Links & Size Selectors) */}
                     <div className="space-y-4 pt-4 border-t border-white/10">
                         <div className="flex items-center justify-between">
