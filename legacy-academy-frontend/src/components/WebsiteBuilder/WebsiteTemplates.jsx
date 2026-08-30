@@ -103,9 +103,11 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
         <div className="relative w-full rounded-[2.5rem] overflow-hidden border border-white/10 bg-gradient-to-br from-neutral-900 to-black p-6 sm:p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 mb-12 shadow-2xl">
             <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
             <div className="relative z-10 flex-1 flex flex-col items-start text-left max-w-xl">
+                {config.businessName && (
                 <span className="px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-white/10 border border-white/20 mb-4 flex items-center gap-2" style={{ color: activeTheme.primary }}>
-                    <Icons.ShoppingBag className="w-3.5 h-3.5" /> {config.businessName || 'STORE'}
+                    <Icons.ShoppingBag className="w-3.5 h-3.5" /> {config.businessName}
                 </span>
+                )}
                 <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight leading-[1.05] mb-4">
                     {config.slogan || ''}
                 </h1>
@@ -149,9 +151,11 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
 export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-12 md:py-20">
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center">
+            {config.businessName && (
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest mb-6" style={{ color: activeTheme.primary }}>
                 <Icons.Briefcase className="w-3.5 h-3.5" /> {config.businessName}
             </div>
+            )}
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.05] mb-6">
                 {config.slogan || ''}
             </h1>

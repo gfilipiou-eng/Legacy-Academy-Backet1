@@ -1103,7 +1103,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Live Preview:</span>
-                        <span className="text-xs font-bold text-white max-w-[300px] truncate">{config.businessName || 'My Website'}</span>
+                        {config.businessName && (
+                            <span className="text-xs font-bold text-white max-w-[300px] truncate">{config.businessName}</span>
+                        )}
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                         Desktop Full View
@@ -1127,10 +1129,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             {/* Global Navbar */}
                             <nav className={`shrink-0 w-full px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3 min-w-0">
-                                {config.logo ? (
+                                {config.logo && (
                                     <img src={config.logo} alt="Logo" className="h-7 sm:h-8 w-auto object-contain drop-shadow-lg shrink-0" />
-                                ) : null}
-                                <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate">{config.businessName || 'My Website'}</span>
+                                )}
+                                {config.businessName && (
+                                    <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate">{config.businessName}</span>
+                                )}
                             </div>
                             <div className="hidden md:flex gap-6 sm:gap-8 text-sm font-bold opacity-70">
                                 {config.navLink1 !== '' && <a href="#services" onClick={e=>e.preventDefault()} className="hover:opacity-100 transition-opacity whitespace-nowrap">{config.navLink1 ?? 'Υπηρεσίες'}</a>}

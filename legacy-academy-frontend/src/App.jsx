@@ -626,13 +626,12 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`founder-affiliation-badge group inline-flex items-center rounded-full transition-all duration-300 cursor-pointer select-none relative overflow-hidden bg-neutral-900/60 hover:bg-neutral-800/80 border border-white/5 hover:border-white/10 ${className}`}
+            className={`founder-affiliation-badge group inline-flex items-center rounded-full cursor-pointer select-none ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
-            <div className="relative flex items-center gap-2.5 pl-1 pr-4 py-1 rounded-full w-full h-full z-10">
+            <div className="flex items-center gap-2.5 pr-1">
                 
-                {/* The Circular Avatar */}
-                <div className="relative w-7 h-7 rounded-full shrink-0 overflow-hidden bg-black">
+                <div className="relative w-6 h-6 rounded-full shrink-0 overflow-hidden bg-neutral-800 ring-1 ring-white/10">
                     {isLoading ? (
                         <div className="w-full h-full flex items-center justify-center bg-neutral-800">
                             <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
@@ -641,26 +640,23 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                         <img 
                             src={resolvedProfilePic} 
                             alt="" 
-                            className="w-full h-full object-cover transition-transform duration-500" 
+                            className="w-full h-full object-cover" 
                             loading="lazy" 
                             decoding="async" 
                             onError={() => setImgError(true)}
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-neutral-800">
-                            <span className="text-[12px] font-bold text-white/80 transition-colors duration-500">
+                            <span className="text-[11px] font-bold text-white/70">
                                 {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                             </span>
                         </div>
                     )}
                 </div>
                 
-                {/* The Text Info */}
-                <div className="flex flex-col justify-center relative z-10 pt-0.5 pb-[2px]">
-                    <span className="text-[13px] sm:text-[14px] font-bold text-white/90 leading-none tracking-wide group-hover:text-white transition-colors duration-300">
-                        @{normalizedUsername}
-                    </span>
-                </div>
+                <span className="text-[13px] sm:text-[13.5px] font-semibold text-white/90 leading-none group-hover:text-white transition-colors duration-200 whitespace-nowrap">
+                    @{normalizedUsername}
+                </span>
             </div>
         </div>
     );

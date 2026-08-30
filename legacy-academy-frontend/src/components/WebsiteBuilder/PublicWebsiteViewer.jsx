@@ -160,15 +160,13 @@ export const PublicWebsiteViewer = ({ config }) => {
                          : '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)'
                  }}
             >
-                <div className="flex items-center gap-3">
-                    {config.logo ? (
-                        <img src={config.logo} alt="Logo" className="h-8 sm:h-9 w-auto object-contain drop-shadow-lg" />
-                    ) : (
-                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center font-black text-white shadow-lg">
-                            {config.businessName?.charAt(0) || 'W'}
-                        </div>
+                <div className="flex items-center gap-3 min-w-0">
+                    {config.logo && (
+                        <img src={config.logo} alt="Logo" className="h-8 sm:h-9 w-auto object-contain drop-shadow-lg shrink-0" />
                     )}
-                    <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate max-w-[200px] sm:max-w-none">{config.businessName}</span>
+                    {config.businessName && (
+                        <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate max-w-[200px] sm:max-w-none">{config.businessName}</span>
+                    )}
                 </div>
                 <div className="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-bold opacity-80">
                     {config.hasStore && normalizedProducts?.length > 0 && (
