@@ -2538,31 +2538,32 @@ button:active,
   }
 }
 
-/* ── Founder Affiliation Badge (X/Twitter-style, clean) ─────── */
-/* Simple, understated chip — no gold gradient, no text clipping */
+/* ── Founder Affiliation Badge (OLD-SCHOOL TWITTER vibes) ─────── */
+/* Soft pill, blue accents, 2015-era friendly look — no gold, no X-darkness */
 
 .founder-affiliation-badge {
   position: relative;
   overflow: visible;
-  background: rgba(23, 23, 23, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Old Twitter: very soft gray background + subtle blue border tint */
+  background: rgba(118, 118, 128, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(29, 155, 240, 0.18);
   border-radius: 9999px;
-  transition: background-color 200ms ease, border-color 200ms ease, transform 200ms ease;
+  transition: background-color 200ms ease, border-color 200ms ease, transform 150ms ease;
   box-shadow: none;
   text-shadow: none;
   filter: none;
-  padding: 2px 12px 2px 2px;
+  padding: 2px 14px 2px 2px;
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  max-width: 260px;
+  max-width: 320px;
 }
 
 .founder-affiliation-badge:hover {
-  background: rgba(30, 30, 32, 0.85);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(29, 155, 240, 0.12);
+  border-color: rgba(29, 155, 240, 0.35);
 }
 
 .founder-affiliation-badge::before {
@@ -2574,15 +2575,23 @@ button:active,
   -webkit-background-clip: initial !important;
           background-clip: initial !important;
   -webkit-text-fill-color: currentColor !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  /* Old Twitter: near-black text on light chips */
+  color: rgba(231, 233, 234, 0.96) !important;
   animation: none !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   text-shadow: none !important;
   white-space: nowrap;
   overflow: visible;
   text-overflow: clip;
-  line-height: 1.2;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   display: inline-block;
+}
+
+@media (hover: hover) {
+  .founder-affiliation-badge:hover span {
+    color: rgb(29, 155, 240) !important;
+  }
 }
 .descriptor-entrepreneur {
   color: #ef4444 !important;

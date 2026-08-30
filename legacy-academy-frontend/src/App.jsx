@@ -629,12 +629,12 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
             className={`founder-affiliation-badge group inline-flex items-center rounded-full cursor-pointer select-none ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
-            <div className="flex items-center gap-2.5 pr-1">
+            <div className="flex items-center gap-2.5 pr-0.5">
                 
-                <div className="relative w-6 h-6 rounded-full shrink-0 overflow-hidden bg-neutral-800 ring-1 ring-white/10">
+                <div className="relative w-7 h-7 rounded-full shrink-0 overflow-hidden bg-white" style={{ boxShadow: '0 0 0 2px rgba(29,155,240,0.22)' }}>
                     {isLoading ? (
-                        <div className="w-full h-full flex items-center justify-center bg-neutral-800">
-                            <Icons.Loader className="w-3 h-3 text-white/50 animate-spin" />
+                        <div className="w-full h-full flex items-center justify-center bg-white/90">
+                            <Icons.Loader className="w-3 h-3 text-[#1D9BF0] animate-spin" />
                         </div>
                     ) : resolvedProfilePic && !imgError ? (
                         <img 
@@ -646,15 +646,15 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                             onError={() => setImgError(true)}
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-neutral-800">
-                            <span className="text-[11px] font-bold text-white/70">
+                        <div className="w-full h-full flex items-center justify-center bg-[#1D9BF0]/10">
+                            <span className="text-[12px] font-bold text-[#1D9BF0]">
                                 {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
                             </span>
                         </div>
                     )}
                 </div>
                 
-                <span className="text-[13px] sm:text-[13.5px] font-semibold text-white/90 leading-none group-hover:text-white transition-colors duration-200 whitespace-nowrap">
+                <span className="text-[13px] sm:text-[13.5px] font-semibold leading-none group-hover:text-[#1D9BF0] transition-colors duration-150 whitespace-nowrap">
                     @{normalizedUsername}
                 </span>
             </div>
