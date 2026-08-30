@@ -145,41 +145,48 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         return next;
     });
 
-    const handleImageUpload = (e, key, maxWidth) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        // Immediately show a local preview so the UI updates instantly
-        const objectUrl = URL.createObjectURL(file);
-        updateConfig(key, objectUrl);
-
+    // Shared image compression helper — converts a File to a compressed JPEG data URL
+    // maxWidth: max pixel width, quality: JPEG quality 0-1
+    const compressImageFile = (file, maxWidth = 800, quality = 0.75) => new Promise((resolve, reject) => {
         const reader = new FileReader();
+        reader.onerror = reject;
         reader.onload = (event) => {
             const img = new Image();
+            img.onerror = reject;
             img.onload = () => {
-                const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                
                 if (width > maxWidth) {
                     height = Math.round((height * maxWidth) / width);
                     width = maxWidth;
                 }
-                
+                const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                
-                // Compress to WebP or JPEG
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                updateConfig(key, dataUrl);
-                if (e && e.target) e.target.value = '';
-                URL.revokeObjectURL(objectUrl); // Clean up the object URL
+                resolve(canvas.toDataURL('image/jpeg', quality));
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
+    });
+
+    const handleImageUpload = (e, key, maxWidth) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Immediately show a local object-URL preview (fast, no memory overhead)
+        const objectUrl = URL.createObjectURL(file);
+        updateConfig(key, objectUrl);
+
+        compressImageFile(file, maxWidth, 0.8).then(dataUrl => {
+            updateConfig(key, dataUrl);
+            if (e && e.target) e.target.value = '';
+            URL.revokeObjectURL(objectUrl);
+        }).catch(() => {
+            // On error keep the objectUrl preview — not ideal but won't crash
+        });
     };
 
     const handlePublish = async (isDraftParam, quiet = false) => {
@@ -504,13 +511,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                 <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                                                     const file = e.target.files[0];
                                                     if (!file) return;
-                                                    const reader = new FileReader();
-                                                    reader.onload = (event) => {
+                                                    compressImageFile(file, 600, 0.75).then(dataUrl => {
                                                         const updated = [...config.features];
-                                                        updated[idx].image = event.target.result;
+                                                        updated[idx].image = dataUrl;
                                                         updateConfig('features', updated);
-                                                    };
-                                                    reader.readAsDataURL(file);
+                                                        if (e && e.target) e.target.value = '';
+                                                    }).catch(() => {});
                                                 }} />
                                             </label>
                                         </div>
@@ -746,13 +752,12 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                                             onChange={(e) => {
                                                                 const file = e.target.files[0];
                                                                 if (file) {
-                                                                    const reader = new FileReader();
-                                                                    reader.onload = (re) => {
+                                                                    compressImageFile(file, 800, 0.75).then(dataUrl => {
                                                                         const updated = [...(config.products || [])];
-                                                                        updated[pIdx].image = re.target.result;
+                                                                        updated[pIdx].image = dataUrl;
                                                                         updateConfig('products', updated);
-                                                                    };
-                                                                    reader.readAsDataURL(file);
+                                                                        if (e && e.target) e.target.value = '';
+                                                                    }).catch(() => {});
                                                                 }
                                                             }} 
                                                         />
