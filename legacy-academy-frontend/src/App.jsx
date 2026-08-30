@@ -1508,6 +1508,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [imgError, setImgError] = useState(false); // Handle detail image error
     const [zoomImage, setZoomImage] = useState(null);
     const openedAtRef = useRef(0);
+    const [detailLikePop, setDetailLikePop] = useState(0);
+    const [detailRepostPop, setDetailRepostPop] = useState(0);
+    const [detailCommentPop, setDetailCommentPop] = useState(0);
 
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
@@ -1755,24 +1758,24 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     <div className="px-3 py-2 border-b border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent">
                         <div className="flex items-center justify-around w-full max-w-md mx-auto">
                             <button
-                                onClick={(e) => { e.stopPropagation(); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0]"
+                                onClick={(e) => { e.stopPropagation(); setDetailCommentPop(v => v + 1); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
+                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0] action-btn-comment"
                             >
-                                <Icons.MessageSquare className="w-5 h-5" />
+                                <Icons.MessageSquare key={`dcmt-${detailCommentPop}`} className={`w-5 h-5 ${detailCommentPop > 0 ? 'tweet-chip-pop' : ''}`} />
                                 <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
                             </button>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onRepost?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-400 hover:bg-[#00BA7C]/10 hover:text-[#00BA7C]'}`}
+                                onClick={(e) => { e.stopPropagation(); setDetailRepostPop(v => v + 1); onRepost?.(post._id); }}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#17BF63]' : 'text-gray-400 hover:bg-[#17BF63]/10 hover:text-[#17BF63]'}`}
                             >
-                                <Icons.RefreshCcw className="w-5 h-5" />
+                                <Icons.RefreshCcw key={`drp-${detailRepostPop}`} className={`w-5 h-5 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${detailRepostPop > 0 ? 'tweet-chip-pop' : ''}`} />
                                 <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
                             </button>
                             <button
-                                onClick={(e) => { e.stopPropagation(); onLike?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-400 hover:bg-[#F91880]/10 hover:text-[#F91880]'}`}
+                                onClick={(e) => { e.stopPropagation(); setDetailLikePop(v => v + 1); onLike?.(post._id); }}
+                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#E0245E]' : 'text-gray-400 hover:bg-[#E0245E]/10 hover:text-[#E0245E]'}`}
                             >
-                                <Icons.Heart className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                <Icons.Heart key={`dlk-${detailLikePop}`} className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${detailLikePop > 0 ? 'tweet-heart-pop' : ''}`} />
                                 <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
                             </button>
 
@@ -2261,7 +2264,7 @@ const NotificationItem = memo(({ note, onViewProfile, onOpenPost, onOpenChat, on
     // Rich colors for different notification types
     const getTypeConfig = () => {
         switch(note.type) {
-            case 'like': return { color: 'bg-red-500', glow: 'from-red-500/10', icon: Icons.Heart, textClass: 'text-red-400' };
+            case 'like': return { color: 'bg-[#E0245E]', glow: 'from-[#E0245E]/10', icon: Icons.Heart, textClass: 'text-[#E0245E]' };
             case 'comment': return { color: 'bg-blue-500', glow: 'from-blue-500/10', icon: Icons.MessageSquare, textClass: 'text-blue-400' };
             case 'message': return { color: 'bg-green-500', glow: 'from-green-500/10', icon: Icons.Mail, textClass: 'text-green-400' };
             case 'follow': return { color: 'bg-[var(--gold-primary)]', glow: 'from-[var(--gold-primary)]/10', icon: Icons.UserPlus, textClass: 'text-[var(--gold-primary)]' };
@@ -2694,6 +2697,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const [imgRetryCount, setImgRetryCount] = useState(0);
     const [imgRetryKey, setImgRetryKey] = useState(Date.now());
     const [revealed, setRevealed] = useState(false);
+    const [tweetLikePop, setTweetLikePop] = useState(0);
+    const [tweetDislikePop, setTweetDislikePop] = useState(0);
+    const [tweetRepostPop, setTweetRepostPop] = useState(0);
+    const [tweetCommentPop, setTweetCommentPop] = useState(0);
 
     useEffect(() => {
         if (imgError && imgRetryCount < 8) {
@@ -2952,15 +2959,16 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        setTweetCommentPop(v => v + 1);
                                         if (openCommentsInModal && onOpenDetail) {
                                             onOpenDetail(post);
                                         } else {
                                             setShowComments(!showComments);
                                         }
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-comment ${showComments ? 'text-[#1D9BF0]' : 'text-gray-500 md:hover:bg-[#1D9BF0]/10 md:hover:text-[#1D9BF0] active:bg-[#1D9BF0]/20 active:text-[#1D9BF0]'}`}
+                                    className={`${actionButtonBaseClass} action-btn-comment ${showComments ? 'text-[#1D9BF0]' : 'text-gray-500 md:hover:bg-[#1D9BF0]/12 md:hover:text-[#1D9BF0] active:bg-[#1D9BF0]/18 active:text-[#1D9BF0]'}`}
                                 >
-                                    <Icons.MessageSquare className={actionIconClass} />
+                                    <Icons.MessageSquare key={`cmt-${tweetCommentPop}`} className={`${actionIconClass} ${tweetCommentPop > 0 ? 'tweet-chip-pop' : ''}`} />
                                     <span className={actionCountClass}>{post.comments?.length || 0}</span>
                                 </button>
 
@@ -2968,11 +2976,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        setTweetRepostPop(v => v + 1);
                                         onRepost && onRepost(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-gray-500 md:hover:bg-[#00BA7C]/10 md:hover:text-[#00BA7C] active:bg-[#00BA7C]/20 active:text-[#00BA7C]'}`}
+                                    className={`${actionButtonBaseClass} action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#17BF63]' : 'text-gray-500 md:hover:bg-[#17BF63]/12 md:hover:text-[#17BF63] active:bg-[#17BF63]/18 active:text-[#17BF63]'}`}
                                 >
-                                    <Icons.RefreshCcw className={`${actionIconClass} transition-transform ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'scale-110' : ''}`} />
+                                    <Icons.RefreshCcw key={`rp-${tweetRepostPop}`} className={`${actionIconClass} ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetRepostPop > 0 ? 'tweet-chip-pop' : ''}`} />
                                     <span className={actionCountClass}>{post.reposts?.length || 0}</span>
                                 </button>
 
@@ -2981,12 +2990,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         const isLiked = post.likes?.some(id => isSameId(id, user?._id));
+                                        setTweetLikePop(v => v + 1);
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-gray-500 md:hover:bg-[#F91880]/10 md:hover:text-[#F91880] active:bg-[#F91880]/20 active:text-[#F91880]'}`}
+                                    className={`${actionButtonBaseClass} action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#E0245E]' : 'text-gray-500 md:hover:bg-[#E0245E]/12 md:hover:text-[#E0245E] active:bg-[#E0245E]/18 active:text-[#E0245E]'}`}
                                 >
-                                        <Icons.Heart className={`${actionIconClass} transition-transform ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
+                                        <Icons.Heart key={`lk-${tweetLikePop}`} className={`${actionIconClass} ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetLikePop > 0 ? 'tweet-heart-pop' : ''}`} />
                                     <span className={actionCountClass}>{post.likes?.length || 0}</span>
                                 </button>
 
@@ -2995,12 +3005,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
+                                        setTweetDislikePop(v => v + 1);
                                         playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                         onDislike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-purple-500' : 'text-gray-500 md:hover:bg-purple-500/10 md:hover:text-purple-500 active:bg-purple-500/20 active:text-purple-500'}`}
+                                    className={`${actionButtonBaseClass} action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#536471]' : 'text-gray-500 md:hover:bg-[#536471]/14 md:hover:text-[#536471] active:bg-[#536471]/20 active:text-[#536471]'}`}
                                 >
-                                    <Icons.ThumbsDown className={`${actionIconClass} transition-transform ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current scale-110' : ''}`} />
+                                    <Icons.ThumbsDown key={`dl-${tweetDislikePop}`} className={`${actionIconClass} ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetDislikePop > 0 ? 'tweet-chip-pop' : ''}`} />
                                     <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
@@ -3008,19 +3019,19 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                             <div className={actionBarClass}>
                                 {/* REPOSTS (read-only) */}
                                 <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.RefreshCcw className={`${actionIconClass} ${post.reposts?.length ? 'text-green-500' : ''}`} />
+                                    <Icons.RefreshCcw className={`${actionIconClass} ${post.reposts?.length ? 'text-[#17BF63]' : ''}`} />
                                     <span className={actionCountClass}>{post.reposts?.length || 0}</span>
                                 </div>
 
                                 {/* LIKES (read-only) */}
                                 <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.Heart className={`${actionIconClass} ${post.likes?.length ? 'text-red-500' : ''}`} />
+                                    <Icons.Heart className={`${actionIconClass} ${post.likes?.length ? 'text-[#E0245E] fill-current' : ''}`} />
                                     <span className={actionCountClass}>{post.likes?.length || 0}</span>
                                 </div>
 
                                 {/* DISLIKES (read-only) */}
                                 <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.ThumbsDown className={`${actionIconClass} ${post.dislikes?.length ? 'text-blue-500' : ''}`} />
+                                    <Icons.ThumbsDown className={`${actionIconClass} ${post.dislikes?.length ? 'text-[#536471] fill-current' : ''}`} />
                                     <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
                                 </div>
 
@@ -12191,9 +12202,9 @@ const App = () => {
                             
                             {/* Footer stats */}
                             <div className="flex items-center gap-6 mt-4 text-gray-500 text-sm font-medium">
-                                <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-red-500 fill-current" /> {shareModalPost.likes?.length || 0}</div>
+                                <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-[#E0245E] fill-current" /> {shareModalPost.likes?.length || 0}</div>
                                 <div className="flex items-center gap-1.5"><Icons.MessageSquare className="w-4 h-4" /> {shareModalPost.comments?.length || 0}</div>
-                                <div className="flex items-center gap-1.5"><Icons.RefreshCcw className="w-4 h-4 text-green-500" /> {shareModalPost.reposts?.length || 0}</div>
+                                <div className="flex items-center gap-1.5"><Icons.RefreshCcw className="w-4 h-4 text-[#17BF63]" /> {shareModalPost.reposts?.length || 0}</div>
                             </div>
                         </div>
                         

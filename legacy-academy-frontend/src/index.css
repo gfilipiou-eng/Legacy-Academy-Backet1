@@ -1372,6 +1372,86 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* ── OLD-SCHOOL TWITTER POST ACTIONS (Press + Pop feel) ─────── */
+/* Classic tweet actions: press micro-squash + icon bounce on release,
+   bright circular hover backgrounds, old-colors */
+
+/* The press/tap micro-squash — every tweet action button */
+.action-btn-comment,
+.action-btn-repost,
+.action-btn-like,
+.action-btn-dislike {
+  position: relative;
+  transform-origin: 50% 55%;
+  transition:
+    background-color 130ms cubic-bezier(0.2, 0, 0, 1),
+    color 130ms cubic-bezier(0.2, 0, 0, 1),
+    transform  120ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* Hover: bright circular tint — the old Twitter "chip" */
+.action-btn-comment:hover,
+.action-btn-repost:hover,
+.action-btn-like:hover,
+.action-btn-dislike:hover {
+  transition:
+    background-color 170ms ease-out,
+    color 170ms ease-out,
+    transform 170ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ACTIVE / PRESS → micro-squash the chip + icon pops smaller (old Twitter feel) */
+.action-btn-comment:active,
+.action-btn-repost:active,
+.action-btn-like:active,
+.action-btn-dislike:active {
+  transform: scale(0.88) !important;
+  transition: transform 60ms linear !important;
+}
+
+/* The icon itself: micro spring on interaction */
+.action-btn-comment svg,
+.action-btn-repost svg,
+.action-btn-like svg,
+.action-btn-dislike svg {
+  transform-origin: 50% 55%;
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.action-btn-comment:active svg,
+.action-btn-repost:active svg,
+.action-btn-like:active svg,
+.action-btn-dislike:active svg {
+  transform: scale(0.78);
+  transition: transform 60ms linear;
+}
+
+/* ── Heart "pop" (old Twitter like-burst) ────────────────────── */
+@keyframes tweetHeartPop {
+  0%   { transform: scale(1); }
+  15%  { transform: scale(0.72); }
+  35%  { transform: scale(1.28); }
+  55%  { transform: scale(0.95); }
+  75%  { transform: scale(1.08); }
+  100% { transform: scale(1.08); }
+}
+
+.tweet-heart-pop {
+  animation: tweetHeartPop 520ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+/* ── Retweet / ThumbDown small pop on active ─────────────────── */
+@keyframes tweetChipPop {
+  0%   { transform: scale(0.78); }
+  60%  { transform: scale(1.22); }
+  100% { transform: scale(1.1); }
+}
+.tweet-chip-pop {
+  animation: tweetChipPop 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+}
+
 @media (max-width: 640px) {
   .post-grid-mobile {
     grid-template-columns: repeat(3, 1fr) !important;
