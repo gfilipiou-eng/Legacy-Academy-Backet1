@@ -2446,45 +2446,99 @@ button:active,
 
 
 
-.descriptor-founder-entrepreneur {
-  background: linear-gradient(135deg, rgba(40, 30, 0, 0.85) 0%, rgba(10, 5, 0, 0.95) 100%) !important;
-  border: 1px solid rgba(252, 246, 186, 0.5) !important;
-  transition: all 0.3s ease !important;
+/* ── Live Gold Animated Identity (Founder + Affiliation) ─────────────── */
+/* NO glow / box-shadow / text-shadow — pure flowing gradient animation */
+
+@keyframes liveGoldSweep {
+  0%   { background-position:   0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+.descriptor-founder-entrepreneur,
+.founder-affiliation-badge {
+  position: relative !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(135deg,
+      rgba(22, 15, 0, 0.92) 0%,
+      rgba(55, 40, 5, 0.90) 35%,
+      rgba(80, 58, 10, 0.92) 50%,
+      rgba(55, 40, 5, 0.90) 65%,
+      rgba(22, 15, 0, 0.92) 100%
+    ) !important;
+  background-size: 300% 100% !important;
+  animation: liveGoldSweep 4.5s ease-in-out infinite !important;
+  border: 1px solid transparent !important;
+  background-clip: padding-box !important;
+  transition: transform 0.3s ease, opacity 0.3s ease !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* Animated gold border via ::before pseudo-element */
+.descriptor-founder-entrepreneur::before,
+.founder-affiliation-badge::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  padding: 1px !important;
+  background: linear-gradient(
+    -70deg,
+    #6b4e0e 0%,
+    #BF953F 18%,
+    #FCF6BA 38%,
+    #B38728 50%,
+    #FBF5B7 62%,
+    #AA771C 82%,
+    #4a3508 100%
+  ) !important;
+  background-size: 300% 100% !important;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0) !important;
+  -webkit-mask-composite: xor !important;
+          mask-composite: exclude !important;
+  animation: liveGoldSweep 3.2s linear infinite !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 .descriptor-founder-entrepreneur svg {
   color: #FCF6BA !important;
+  filter: drop-shadow(0 0 0 transparent) !important;
 }
 
-.descriptor-founder-entrepreneur span {
+.descriptor-founder-entrepreneur span,
+.founder-affiliation-badge span {
   background: linear-gradient(
     -45deg,
-    #BF953F 0%,
-    #FCF6BA 25%,
+    #8a6417 0%,
+    #BF953F 15%,
+    #FCF6BA 35%,
     #B38728 50%,
-    #FBF5B7 75%,
-    #AA771C 100%
+    #FBF5B7 65%,
+    #AA771C 85%,
+    #7a5610 100%
   ) !important;
-  background-size: 200% auto !important;
+  background-size: 280% 100% !important;
   color: transparent !important;
   -webkit-background-clip: text !important;
-  background-clip: text !important;
+          background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  animation: shineLiveGold 3s linear infinite !important;
+  animation: liveGoldSweep 3.4s linear infinite !important;
   font-weight: 900 !important;
-}
-
-@keyframes shineLiveGold {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+  text-shadow: none !important;
 }
 
 @media (hover: hover) {
-  .descriptor-founder-entrepreneur:hover {
-    border-color: #FFF !important;
-    background: linear-gradient(135deg, rgba(60, 45, 0, 0.9) 0%, rgba(20, 10, 0, 0.95) 100%) !important;
+  .descriptor-founder-entrepreneur:hover,
+  .founder-affiliation-badge:hover {
+    transform: translateY(-0.5px) scale(1.01) !important;
   }
 }
 .descriptor-entrepreneur {

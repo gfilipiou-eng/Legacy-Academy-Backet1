@@ -293,7 +293,8 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
         amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
         mafia: { primary: '#C9A961', bg: '#0a0a0a', card: '#151515' },
-        light: { primary: '#111827', bg: '#ffffff', card: '#f8fafc' }
+        light: { primary: '#1f2937', bg: '#ffffff', card: '#f8fafc' },
+        charcoal: { primary: '#4b5563', bg: '#0b0b0f', card: '#15151a' }
     };
 
     // Ensure palette is valid, fallback to gold if invalid
