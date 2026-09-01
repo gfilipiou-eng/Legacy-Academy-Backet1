@@ -964,6 +964,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
                         <Icons.Swords className="w-3 h-3" /> Today's Matches
                     </span>
                     <h3 className="font-black uppercase w-full break-words hyphens-auto tracking-wide text-lg sm:text-xl leading-tight">{config.featuresTitle}</h3>
+                    </div>
                 </div>
                 <div>
                     {config.features.map((feat, i) => (
