@@ -3558,3 +3558,53 @@ body.liquid-glass-aesthetic .match-widget-container {
 }
 
 
+
+/* Force Post Card Themes to override liquid glass aesthetic */
+body[class*="pc-theme-"] .premium-post-card {
+  background: var(--pc-bg, rgba(0, 0, 0, 0.18)) !important;
+  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
+  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
+  border: 1px solid var(--pc-border, rgba(255, 255, 255, 0.06)) !important;
+}
+
+body[class*="pc-theme-"] .premium-post-card:hover {
+  background: var(--pc-bg-hover, rgba(255, 255, 255, 0.025)) !important;
+  border-color: var(--pc-border-hover, rgba(255, 255, 255, 0.1)) !important;
+}
+
+.founder-affiliation-badge {
+  background: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+.founder-affiliation-badge:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  transform: none !important;
+}
+
+.founder-affiliation-badge span {
+  font-family: "Great Vibes", cursive !important;
+  font-size: 30px !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  color: #fff !important;
+  text-transform: none !important;
+  font-style: normal !important;
+}
+
+.founder-affiliation-badge:hover span {
+  color: #1D9BF0 !important;
+}
+
+
+.founder-affiliation-badge:active {
+  transform: none !important;
+  background: transparent !important;
+}
+

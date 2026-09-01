@@ -651,7 +651,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         >
             <div className="flex items-center gap-3 pr-0.5">
                 
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full shrink-0 overflow-hidden bg-white" style={{ boxShadow: '0 0 0 2.5px rgba(29,155,240,0.28)' }}>
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full shrink-0 overflow-hidden">
                     {isLoading ? (
                         <div className="w-full h-full flex items-center justify-center bg-white/90">
                             <Icons.Loader className="w-3.5 h-3.5 text-[#1D9BF0] animate-spin" />
