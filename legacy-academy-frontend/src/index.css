@@ -1696,45 +1696,122 @@ html, body {
 }
 
 .premium-post-card {
-  contain: paint;
+  /* ⚡ Fix PC pixelation on hover:
+     content-visibility: auto + contain: paint re-rasterizes child layers
+     near the border when parent has transforms — causes jittery/pixelated
+     badge/avatar edges on desktop. Use layout/style only on PC, keep
+     paint on mobile for scroll perf. */
+  contain: layout style;
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  box-shadow: none;
+  /* Per-theme card background (CSS var; falls back to translucent black) */
+  background: var(--pc-bg, rgba(0, 0, 0, 0.18));
+  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%));
+  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%));
+  border: 1px solid var(--pc-border, rgba(255, 255, 255, 0.06)) !important;
+  /* Soft card inner highlight (old-Twitter separator look) */
+  box-shadow: var(--pc-shadow, inset 0 1px 0 rgba(255,255,255,0.025));
   border-radius: 0;
-  transition: border-color 0.2s ease, transform 0.15s ease;
+  transition:
+    border-color 200ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 200ms cubic-bezier(0.2, 0, 0, 1),
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   overflow: hidden;
+  /* Anti-pixelation layer isolation */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  image-rendering: auto;
 }
 
-.dynamic-glass-panel {
-  background: var(--dynamic-glass-bg, rgba(255, 255, 255, 0.04));
-  backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 150%));
+/* Ensure every image inside cards stays subpixel-smooth */
+.premium-post-card img,
+.premium-post-card svg {
+  image-rendering: auto;
+  image-rendering: high-quality;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-.liquid-image-card {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(var(--dynamic-blur, 40px));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px));
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: none;
-  border-radius: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  will-change: transform;
+/* Hover: micro-border brighten — NO transform scale on container
+   (scale re-rasterizes the whole card layer → pixelation) */
+.premium-post-card:hover {
+  border-color: var(--pc-border-hover, rgba(255, 255, 255, 0.10)) !important;
+  background: var(--pc-bg-hover, rgba(255, 255, 255, 0.015));
 }
 
+/* OLD-SCHOOL TWITTER CARD THEMES — applied via <body class="pc-theme-..."> */
+
+/* 1) TWEET-2015: Clean bright separators, near-black bg (default fallbacks above) */
+body.pc-theme-tweet2015 {
+  --pc-bg: rgba(20, 23, 26, 0.35);
+  --pc-bg-hover: rgba(255, 255, 255, 0.025);
+  --pc-border: rgba(255, 255, 255, 0.05);
+  --pc-border-hover: rgba(29, 155, 240, 0.18);
+  --pc-blur: 28px;
+  --pc-sat: 130%;
+  --pc-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 0 rgba(0,0,0,0.3);
+}
+
+/* 2) CHIRP-2018: Warmer, slight cream tint dark bg (old mobile Twitter) */
+body.pc-theme-chirp2018 {
+  --pc-bg: rgba(26, 26, 22, 0.42);
+  --pc-bg-hover: rgba(255, 242, 204, 0.03);
+  --pc-border: rgba(255, 236, 179, 0.06);
+  --pc-border-hover: rgba(255, 173, 51, 0.22);
+  --pc-blur: 26px;
+  --pc-sat: 125%;
+  --pc-shadow: inset 0 1px 0 rgba(255, 236, 179, 0.035);
+}
+
+/* 3) CLASSIC-PAPER: Very light translucent card (old TweetDeck/air look) */
+body.pc-theme-classic-paper {
+  --pc-bg: rgba(255, 255, 255, 0.035);
+  --pc-bg-hover: rgba(255, 255, 255, 0.06);
+  --pc-border: rgba(255, 255, 255, 0.08);
+  --pc-border-hover: rgba(29, 155, 240, 0.28);
+  --pc-blur: 24px;
+  --pc-sat: 150%;
+  --pc-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* 4) NOIR-EDGE: Sharp, dark, high-contrast card (X precursor dark Twitter) */
+body.pc-theme-noir-edge {
+  --pc-bg: rgba(0, 0, 0, 0.55);
+  --pc-bg-hover: rgba(0, 0, 0, 0.72);
+  --pc-border: rgba(255, 255, 255, 0.08);
+  --pc-border-hover: rgba(224, 36, 94, 0.28);
+  --pc-blur: 40px;
+  --pc-sat: 160%;
+  --pc-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+/* 5) OCEAN-TWEET: Blue-tinted glass (old Twitter verified-account vibe) */
+body.pc-theme-ocean-tweet {
+  --pc-bg: rgba(4, 22, 40, 0.55);
+  --pc-bg-hover: rgba(29, 155, 240, 0.06);
+  --pc-border: rgba(29, 155, 240, 0.14);
+  --pc-border-hover: rgba(29, 155, 240, 0.38);
+  --pc-blur: 34px;
+  --pc-sat: 155%;
+  --pc-shadow: inset 0 1px 0 rgba(142, 206, 252, 0.05);
+}
+
+/* Mobile: keep paint-contain + transparent native feed rows */
 @media (max-width: 640px) {
   .premium-post-card {
+    contain: layout style paint;
     border-radius: 0;
     padding: 0.875rem 0.75rem !important;
     border-left: none;
     border-right: none;
+    background: transparent;
+  }
+
+  .premium-post-card:hover {
     background: transparent;
   }
 
@@ -2619,58 +2696,97 @@ button:active,
 }
 
 /* ── Founder Affiliation Badge (OLD-SCHOOL TWITTER vibes) ─────── */
-/* Soft pill, blue accents, 2015-era friendly look — no gold, no X-darkness */
+/* Soft pill, blue accents, 2015-era friendly look — no gold, no X-darkness
+   Also: anti-pixelation (HiDPI smoothing) + slightly larger + calligraphic @handle */
 
 .founder-affiliation-badge {
   position: relative;
   overflow: visible;
   /* Old Twitter: very soft gray background + subtle blue border tint */
-  background: rgba(118, 118, 128, 0.18);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(29, 155, 240, 0.18);
+  background: rgba(118, 118, 128, 0.22);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(29, 155, 240, 0.22);
   border-radius: 9999px;
-  transition: background-color 200ms ease, border-color 200ms ease, transform 150ms ease;
+  transition:
+    background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 180ms cubic-bezier(0.2, 0, 0, 1),
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: none;
   text-shadow: none;
   filter: none;
-  padding: 2px 14px 2px 2px;
+  /* Prevent pixelation when hovered near card edges on PC */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  padding: 3px 18px 3px 3px;
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  max-width: 320px;
+  max-width: 360px;
+  /* Crisp rendering on all DPRs */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Inner wrapper image smoothing (anti-pixelation for avatar) */
+.founder-affiliation-badge img {
+  image-rendering: auto;
+  image-rendering: high-quality;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0) scale(1.001);
+  will-change: transform;
 }
 
 .founder-affiliation-badge:hover {
-  background: rgba(29, 155, 240, 0.12);
-  border-color: rgba(29, 155, 240, 0.35);
+  background: rgba(29, 155, 240, 0.14);
+  border-color: rgba(29, 155, 240, 0.42);
 }
 
 .founder-affiliation-badge::before {
   display: none;
 }
 
+/* Signature/calligraphic style for the @handle text */
 .founder-affiliation-badge span {
   background: none !important;
   -webkit-background-clip: initial !important;
           background-clip: initial !important;
   -webkit-text-fill-color: currentColor !important;
   /* Old Twitter: near-black text on light chips */
-  color: rgba(231, 233, 234, 0.96) !important;
+  color: rgba(236, 239, 241, 0.98) !important;
   animation: none !important;
-  font-weight: 600 !important;
+  /* Signature/handwritten-caligraphic feel:
+     - Slightly italic-like with subtle slant via skew
+     - Generous letter spacing
+     - Semi-bold weight with slight stroke contrast
+  */
+  font-weight: 650 !important;
+  font-style: italic !important;
+  letter-spacing: -0.005em;
+  font-synthesis: style weight;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   text-shadow: none !important;
   white-space: nowrap;
   overflow: visible;
   text-overflow: clip;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  line-height: 1.2;
   display: inline-block;
+  /* Prevent pixelation when the card hover re-rasterizes */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, color;
 }
 
 @media (hover: hover) {
   .founder-affiliation-badge:hover span {
     color: rgb(29, 155, 240) !important;
+    /* Hover signature extra elegance */
+    letter-spacing: 0.01em;
   }
 }
 .descriptor-entrepreneur {
