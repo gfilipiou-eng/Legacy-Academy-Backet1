@@ -83,7 +83,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
             <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-10 blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
 
             <div className="flex-1 flex flex-col items-start z-10 text-left relative">
-                {config.businessName && (
+                {false && (
                 <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.14em] mb-7 border backdrop-blur-xl"
                     style={{
                         backgroundColor: `${activeTheme.primary}12`,
@@ -172,7 +172,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
                 style={{ backgroundImage: `radial-gradient(circle at 12% 20%, ${activeTheme.primary}1f 0%, transparent 55%)` }}
             />
             <div className="relative z-10 flex-1 flex flex-col items-start text-left max-w-2xl">
-                {config.businessName && (
+                {false && (
                 <span className="px-4 py-1.5 rounded-full text-[11px] font-black tracking-[0.14em] uppercase mb-5 inline-flex items-center gap-2 backdrop-blur-xl border"
                     style={{
                         backgroundColor: `${activeTheme.primary}14`,
@@ -225,7 +225,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
                         <h3 className="text-[28px] sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">{config.featuresTitle || 'Collections'}</h3>
                         <p className="text-xs sm:text-sm opacity-60 tracking-wide">Handpicked favorites & signature drops</p>
                     </div>
-                    {config.businessName && <span className="hidden sm:block text-[11px] font-black opacity-60 uppercase tracking-[0.16em]">{config.businessName}</span>}
+                    {false && <span className="hidden sm:block text-[11px] font-black opacity-60 uppercase tracking-[0.16em]">{config.businessName}</span>}
                 </div>
                 {renderFeatures(config.features, activeTheme, setZoomImage)}
             </div>
@@ -245,7 +245,7 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
         </div>
 
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center relative z-10">
-            {config.businessName && (
+            {false && (
             <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.18em] mb-7 border backdrop-blur-xl"
                 style={{
                     backgroundColor: `${activeTheme.primary}10`,
@@ -353,7 +353,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
         <div className="absolute bottom-0 right-10 w-[28rem] h-[28rem] rounded-full opacity-[0.11] blur-[140px] pointer-events-none" style={{ backgroundColor: GOLD }} />
 
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20 md:mb-28 relative z-10">
-            {config.businessName && (
+            {false && (
             <div className="flex flex-col items-center gap-3 mb-8">
                 <div className="flex items-center gap-4 opacity-80">
                     <span className="w-16 md:w-24 h-[1px]" style={{ background: `linear-gradient(to right, transparent, ${GOLD})` }} />
@@ -445,7 +445,7 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
                 }}
             >
                 <Icons.Zap className="w-3.5 h-3.5" />
-                {config.businessName || 'AI Powered Platform'}
+                {null || 'AI Powered Platform'}
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.02] mb-7 max-w-5xl w-full"
                 style={{
@@ -537,7 +537,7 @@ export const NewspaperTemplate = ({ config, activeTheme, setZoomImage, resolvedP
 
         {/* Masthead */}
         <div className="flex flex-col items-center text-center pt-5 pb-8 mb-6 border-b-4 relative" style={{ borderColor: lineColor }}>
-            {config.businessName && (
+            {false && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[10px] px-4 py-0.5 text-[10px] font-black uppercase tracking-[0.28em]"
                     style={{ backgroundColor: activeTheme.primary, color: isLight ? '#fff' : '#000' }}
                 >
@@ -610,7 +610,7 @@ export const RestaurantTemplate = ({ config, activeTheme, setZoomImage, resolved
             <div className="relative z-20 flex flex-col items-center max-w-4xl mx-auto">
                 <div className="flex items-center gap-4 mb-7 opacity-90">
                     <span className="w-12 md:w-20 h-[1px]" style={{ background: `linear-gradient(to right, transparent, ${warmGold})` }} />
-                    {config.businessName && <span className="text-[11px] sm:text-xs tracking-[0.42em] uppercase font-black" style={{ color: warmGold }}>{config.businessName}</span>}
+                    {false && <span className="text-[11px] sm:text-xs tracking-[0.42em] uppercase font-black" style={{ color: warmGold }}>{config.businessName}</span>}
                     <span className="w-12 md:w-20 h-[1px]" style={{ background: `linear-gradient(to left, transparent, ${warmGold})` }} />
                 </div>
                 <h1 className="text-4xl sm:text-6xl md:text-8xl font-light tracking-widest uppercase mb-6 text-white w-full break-words hyphens-auto leading-[1.06]" style={{ fontFamily: '"Playfair Display", Georgia, serif' }}>{config.slogan || ''}</h1>
@@ -694,7 +694,7 @@ export const TechnologyTemplate = ({ config, activeTheme, setZoomImage, resolved
                 }}
             >
                 <span className="w-1.5 h-1.5 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: activeTheme.primary }} />
-                {config.businessName || 'system://init'}
+                {null || 'system://init'}
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-7 uppercase leading-[1.02] w-full break-words hyphens-auto max-w-5xl"
                 style={{
@@ -809,7 +809,7 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
             }} />
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover z-0 scale-100" alt="Stadium" loading="lazy" decoding="async" />}
             <div className="absolute top-0 left-0 right-0 z-10 p-6 sm:p-10 md:px-16 md:pt-14 flex items-center justify-between">
-                {config.businessName && (
+                {false && (
                     <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-[0.18em] border backdrop-blur-xl"
                         style={{
                             backgroundColor: `${activeTheme.primary}22`,
@@ -908,7 +908,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
                         </span>
                         <span>{config.slogan || ''}</span>
                     </h1>
-                    {config.businessName && (
+                    {false && (
                         <span className="text-[11px] font-black uppercase tracking-[0.2em] opacity-65 flex items-center gap-2">
                         <Icons.Coins className="w-3.5 h-3.5" style={{ color: activeTheme.primary }} /> {config.businessName}
                         </span>
@@ -1035,7 +1035,7 @@ export const CorporateTemplate = ({ config, activeTheme, setZoomImage, resolvedP
         <div className="w-full py-20 md:py-32 px-6 md:px-14 text-center flex flex-col items-center relative overflow-hidden" style={{ backgroundColor: isLight ? '#0f172a' : '#111827' }}>
             <div className="absolute top-10 left-1/4 w-[22rem] h-[22rem] rounded-full opacity-[0.18] blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
             <div className="absolute bottom-0 right-1/4 w-[24rem] h-[24rem] rounded-full opacity-[0.12] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-            {config.businessName && (
+            {false && (
                 <div className="relative z-10 inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.18em] mb-7 border backdrop-blur-xl"
                     style={{
                         backgroundColor: `${activeTheme.primary}18`,
@@ -1132,7 +1132,7 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
                         }}
                     >
                         <Icons.Sparkles className="w-3.5 h-3.5 shrink-0" />
-                        {config.businessName || 'Creative Studio'}
+                        {null || 'Creative Studio'}
                     </div>
                     <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-7 md:mb-9 leading-[0.96] tracking-tighter" style={{ color: textColor }}>{config.slogan || ''}</h1>
                     <div className="w-14 h-1 rounded-full mb-7" style={{ backgroundColor: activeTheme.primary }} />
@@ -1216,7 +1216,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
             <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 100%), linear-gradient(0deg, ${activeTheme.bg} 0%, rgba(0,0,0,0.05) 60%)` }}></div>
             <div className="absolute top-10 left-1/4 w-[22rem] h-[22rem] rounded-full opacity-[0.2] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
             <div className="relative z-10 max-w-5xl flex flex-col items-center">
-                {config.businessName && (
+                {false && (
                     <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.22em] mb-8 border backdrop-blur-xl"
                         style={{
                             backgroundColor: `${activeTheme.primary}1c`,
@@ -1309,7 +1309,7 @@ export const PortfolioTemplate = ({ config, activeTheme, setZoomImage, resolvedP
                 }}
             >
                 <Icons.User className="w-3.5 h-3.5 shrink-0" />
-                {config.businessName || 'Portfolio 2025'}
+                {null || 'Portfolio 2025'}
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight mb-7 md:mb-9 max-w-4xl leading-[1.03]" style={{ color: textColor }}>{config.slogan || ''}</h1>
             <div className="w-16 h-1 rounded-full mb-7 md:mb-9" style={{ backgroundColor: activeTheme.primary }} />
@@ -1426,7 +1426,7 @@ export const RealEstateTemplate = ({ config, activeTheme, setZoomImage, resolved
                 `
             }} />
             <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl py-16 flex flex-col items-center">
-                {config.businessName && (
+                {false && (
                     <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.2em] mb-8 border backdrop-blur-xl"
                         style={{
                             backgroundColor: `${activeTheme.primary}1c`,
@@ -1541,7 +1541,7 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage, resolvedPale
             }} />
 
             <div className="relative z-10 text-center px-4 sm:px-6 flex flex-col items-center max-w-5xl">
-                {config.businessName && (
+                {false && (
                     <div className="mb-8 px-5 py-2 border-[1.5px] text-[11px] font-black uppercase tracking-[0.28em] backdrop-blur-xl rounded-full flex items-center gap-2.5"
                         style={{
                             borderColor: `${activeTheme.primary}80`,
@@ -1643,7 +1643,7 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
             <div className="absolute bottom-10 right-1/4 w-[24rem] h-[24rem] rounded-full opacity-[0.14] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-5xl">
-                {config.businessName && (
+                {false && (
                     <div className="mb-10 px-6 py-2 rounded-full backdrop-blur-xl text-[11px] sm:text-xs font-black uppercase tracking-[0.32em] border flex items-center gap-2.5"
                         style={{
                             borderColor: `${activeTheme.primary}70`,
@@ -1757,4 +1757,5 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
     </div>
     );
 };
+
 

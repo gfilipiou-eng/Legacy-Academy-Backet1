@@ -1142,10 +1142,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             {/* Global Navbar */}
                             <nav className={`shrink-0 w-full px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3 min-w-0">
-                                {config.logo && (
+                                {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-7 sm:h-8 w-auto object-contain drop-shadow-lg shrink-0" />
-                                )}
-                                {config.businessName && (
+                                ) : (
                                     <span className="font-black tracking-tight text-base sm:text-lg drop-shadow-md truncate">{config.businessName}</span>
                                 )}
                             </div>
