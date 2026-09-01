@@ -3831,14 +3831,14 @@ const SectionHeader = ({ label }) => (
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`rounded-[14px] overflow-hidden bg-[#1C1C1E] mx-4 settings-group border border-white/[0.06] ${className}`}>
+    <div className={`rounded-[18px] overflow-hidden bg-white/[0.03] backdrop-blur-md mx-4 settings-group border border-white/[0.08] shadow-sm ${className}`}>
         {children}
     </div>
 );
 
 const SettingRow = ({ label, desc, children, hasChevron = false, onClick }) => (
     <div
-        className={`settings-row flex items-center justify-between gap-4 px-4 sm:px-5 py-[15px] sm:py-4 min-h-[56px] sm:min-h-[54px] hover:bg-[#2C2C2E] transition-colors active:bg-[#3A3A3C] border-b last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
+        className={`settings-row flex items-center justify-between gap-4 px-4 sm:px-5 py-[15px] sm:py-4 min-h-[56px] sm:min-h-[54px] hover:bg-white/[0.04] transition-colors active:bg-white/[0.08] border-b border-white/[0.05] last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
         onClick={onClick}
     >
         <div className="flex-1 min-w-0 pr-2 flex items-center gap-3">
@@ -4137,7 +4137,7 @@ useEffect(() => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98, y: 10 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#0F0F11] shadow-[0_20px_80px_rgba(0,0,0,0.7)] border border-white/[0.08]"
+                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#0F0F11]/80 backdrop-blur-3xl shadow-[0_20px_80px_rgba(0,0,0,0.7)] border border-white/[0.08]"
             >
                 {/* HEADER */}
                 <div className="px-5 sm:px-6 py-4 border-b border-white/[0.07] flex items-center justify-between shrink-0 relative z-20">
@@ -8604,7 +8604,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
                     <div className="w-1 h-5 bg-[var(--gold-primary)] rounded-full shrink-0" />
-                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">{t('INTELLIGENCE_BRIEFINGS', 'INTELLIGENCE BRIEFINGS')}</span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">{t('POSTS', 'POSTS')}</span>
                     <div className="h-[1px] flex-1 bg-white/20" />
                 </div>
 

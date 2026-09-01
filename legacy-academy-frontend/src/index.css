@@ -1705,9 +1705,9 @@ html, body {
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
   /* Per-theme card background (CSS var; falls back to translucent black) */
-  background: var(--pc-bg, rgba(0, 0, 0, 0.18));
-  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%));
-  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%));
+  background: var(--pc-bg, rgba(0, 0, 0, 0.18)) !important;
+  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
+  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
   border: 1px solid var(--pc-border, rgba(255, 255, 255, 0.06)) !important;
   /* Soft card inner highlight (old-Twitter separator look) */
   box-shadow: var(--pc-shadow, inset 0 1px 0 rgba(255,255,255,0.025));
