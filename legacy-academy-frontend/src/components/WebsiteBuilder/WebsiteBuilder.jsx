@@ -129,7 +129,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             socialYoutube: base.socialYoutube || '',
             socialFacebook: base.socialFacebook || '',
             socialWhatsapp: base.socialWhatsapp || '',
-            hasStore: base.hasStore || false,
+            hasStore: base.hasStore !== undefined ? base.hasStore : false,
+            showAgencyStats: base.showAgencyStats !== undefined ? base.showAgencyStats : true,
+            agencyStats: base.agencyStats || [],
             products: normalizedProducts,
             isDraft: base.isDraft !== undefined ? base.isDraft : false
         };
@@ -191,7 +193,10 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
 
     const handlePublish = async (isDraftParam, quiet = false) => {
         if (!user?._id) return;
-        if (!quiet) setSaving(true);
+        if (!quiet) {
+            setSaving(true);
+            pendingExplicitActionRef.current = true;
+        }
         try {
             // Use passed isDraftParam, or fallback to current config.isDraft, or default to false (live)
             const currentIsDraft = config.isDraft !== undefined ? config.isDraft : false;
@@ -254,11 +259,19 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         }
     };
 
+    const pendingExplicitActionRef = useRef(false);
+
     // Auto-save debounced
     useEffect(() => {
         if (!config || Object.keys(config).length === 0) return;
+        // ✅ Protect Save/Publish race:
+        // When user just clicked Save Draft / Publish Live explicitly,
+        // skip the next auto-save tick so config.isDraft never flips back.
+        if (pendingExplicitActionRef.current === true) {
+            pendingExplicitActionRef.current = false;
+            return;
+        }
         const timer = setTimeout(() => {
-            // Pass undefined for isDraftParam so it preserves the current draft status
             handlePublish(undefined, true);
         }, 3000);
         return () => clearTimeout(timer);
@@ -661,7 +674,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => updateConfig('showAgencyStats', config.showAgencyStats === false ? true : !config.showAgencyStats)}
+                                    onClick={() => updateConfig('showAgencyStats', !(config.showAgencyStats !== false ? true : false))}
                                     className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${
                                         config.showAgencyStats !== false
                                             ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
