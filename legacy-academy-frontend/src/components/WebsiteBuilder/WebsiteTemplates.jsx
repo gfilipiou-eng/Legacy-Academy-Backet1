@@ -1118,7 +1118,7 @@ export const CreativeTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
     const isLight = resolvedPalette === 'light';
     const textColor = isLight ? '#000' : '#fff';
     return (
-    <div className="w-full min-h-screen relative overflow-hidden" style={{ backgroundColor: activeTheme.bg, color: textColor }}>
+    <div className="w-full min-h-[100dvh] relative overflow-hidden" style={{ backgroundColor: activeTheme.bg, color: textColor }}>
         <div className="flex flex-col md:flex-row min-h-[70vh] md:min-h-[82vh]">
             <div className="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-24 z-10 relative">
                 <div className="absolute top-10 left-10 w-52 h-52 opacity-[0.22] rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: activeTheme.primary }}></div>
@@ -1211,7 +1211,7 @@ export const FitnessTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
     const isLight = resolvedPalette === 'light';
     return (
     <div className="w-full uppercase relative overflow-hidden" style={{ backgroundColor: activeTheme.bg, color: isLight ? '#000' : '#fff' }}>
-        <div className="relative min-h-[72vh] md:min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 py-28 overflow-hidden">
+        <div className="relative min-h-[72vh] md:min-h-[100dvh] flex flex-col justify-center items-center text-center px-4 sm:px-6 py-28 overflow-hidden">
             {config.coverImage && <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-40" alt="Fitness Hero" loading="lazy" decoding="async" />}
             <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 100%), linear-gradient(0deg, ${activeTheme.bg} 0%, rgba(0,0,0,0.05) 60%)` }}></div>
             <div className="absolute top-10 left-1/4 w-[22rem] h-[22rem] rounded-full opacity-[0.2] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
@@ -1309,7 +1309,7 @@ export const PortfolioTemplate = ({ config, activeTheme, setZoomImage, resolvedP
                 }}
             >
                 <Icons.User className="w-3.5 h-3.5 shrink-0" />
-                {null || 'Portfolio 2025'}
+                {config.businessName || 'Portfolio'}
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight mb-7 md:mb-9 max-w-4xl leading-[1.03]" style={{ color: textColor }}>{config.slogan || ''}</h1>
             <div className="w-16 h-1 rounded-full mb-7 md:mb-9" style={{ backgroundColor: activeTheme.primary }} />
@@ -1521,7 +1521,7 @@ export const GamingTemplate = ({ config, activeTheme, setZoomImage, resolvedPale
     const textColor = isLight ? '#0a0a0a' : '#ffffff';
     return (
     <div className="w-full font-sans overflow-hidden relative" style={{ backgroundColor: activeTheme.bg, color: textColor }}>
-        <div className="relative min-h-[72vh] md:min-h-screen flex items-center justify-center py-20 overflow-hidden">
+        <div className="relative min-h-[72vh] md:min-h-[100dvh] flex items-center justify-center py-20 overflow-hidden">
             {config.coverImage && (
                 <>
                     <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-30" alt="Game Hero" loading="lazy" decoding="async" />
@@ -1624,7 +1624,7 @@ export const MafiaTemplate = ({ config, activeTheme, setZoomImage, resolvedPalet
     const textColor = isLight ? '#0a0a0a' : '#ffffff';
     return (
     <div className="w-full font-sans overflow-hidden relative" style={{ backgroundColor: activeTheme.bg, color: textColor }}>
-        <div className="relative min-h-[78vh] md:min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="relative min-h-[78vh] md:min-h-[100dvh] flex items-center justify-center py-24 px-4 sm:px-6 overflow-hidden">
             {config.coverImage && (
                 <>
                     <img src={config.coverImage} className="absolute inset-0 w-full h-full object-cover opacity-30" alt="" loading="lazy" decoding="async" />

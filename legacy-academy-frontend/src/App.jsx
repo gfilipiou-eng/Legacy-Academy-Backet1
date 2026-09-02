@@ -336,25 +336,7 @@ const getBackgroundMode = (user) => user?.settings?.background || localStorage.g
 
 const getBackgroundEntry = (mode) => BACKGROUND_MODES.find((entry) => entry.value === mode) || BACKGROUND_MODES.find((entry) => entry.value === 'dark-blue') || BACKGROUND_MODES[0];
 
-/* ── POST CARD THEMES (Old-School Twitter-era visual styles) ── */
-const POST_CARD_THEMES = [
-    { value: 'tweet2015',        label: 'Tweet 2015',   preview: ['#14171a', '#1d9bf0'], bodyClass: 'pc-theme-tweet2015' },
-    { value: 'chirp2018',        label: 'Chirp 2018',   preview: ['#1a1a16', '#ffad33'], bodyClass: 'pc-theme-chirp2018' },
-    { value: 'classic-paper',    label: 'Classic Paper', preview: ['#ffffff', '#1d9bf0'], bodyClass: 'pc-theme-classic-paper' },
-    { value: 'noir-edge',        label: 'Noir Edge',    preview: ['#000000', '#e0245e'], bodyClass: 'pc-theme-noir-edge' },
-    { value: 'ocean-tweet',      label: 'Ocean Tweet',  preview: ['#041628', '#1d9bf0'], bodyClass: 'pc-theme-ocean-tweet' },
-];
 
-const getPostCardTheme = (user) => user?.settings?.postCardTheme || localStorage.getItem('postCardTheme') || 'tweet2015';
-
-const getPostCardThemeEntry = (val) => POST_CARD_THEMES.find(t => t.value === val) || POST_CARD_THEMES[0];
-
-const applyPostCardTheme = (mode) => {
-    const entry = getPostCardThemeEntry(mode);
-    POST_CARD_THEMES.forEach(t => document.body.classList.remove(t.bodyClass));
-    document.body.classList.add(entry.bodyClass);
-    localStorage.setItem('postCardTheme', entry.value);
-};
 
 const getPostTextPreview = (text, maxLen = 110) => {
     if (!text) return '';
@@ -3831,7 +3813,7 @@ const SectionHeader = ({ label }) => (
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`rounded-[18px] overflow-hidden bg-white/[0.03] backdrop-blur-md mx-4 settings-group border border-white/[0.08] shadow-sm ${className}`}>
+    <div className={`rounded-[20px] overflow-hidden bg-white/[0.04] backdrop-blur-xl mx-4 settings-group border border-white/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.12)] ${className}`}>
         {children}
     </div>
 );
@@ -3997,17 +3979,7 @@ useEffect(() => {
                     }
                 });
             }
-            if (key === 'postCardTheme') {
-                payload = { settings: { postCardTheme: val } };
-                applyPostCardTheme(val);
-                onUpdateUser?.({
-                    ...(latestUserRef.current || user || {}),
-                    settings: {
-                        ...((latestUserRef.current || user || {})?.settings || {}),
-                        postCardTheme: val
-                    }
-                });
-            }
+
             if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
@@ -4137,7 +4109,7 @@ useEffect(() => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98, y: 10 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#0F0F11]/80 backdrop-blur-3xl shadow-[0_20px_80px_rgba(0,0,0,0.7)] border border-white/[0.08]"
+                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#000000]/70 backdrop-blur-[40px] shadow-[0_20px_80px_rgba(0,0,0,0.8)] border border-white/[0.05]"
             >
                 {/* HEADER */}
                 <div className="px-5 sm:px-6 py-4 border-b border-white/[0.07] flex items-center justify-between shrink-0 relative z-20">
@@ -4281,39 +4253,7 @@ useEffect(() => {
                                 )}
                             </div>
 
-                            {/* ── POST CARD STYLE ── */}
-                            <div>
-                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 px-1 leading-none">{t('POST_CARD_STYLE', 'Post Card Style')}</div>
-                                <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 sm:gap-3">
-                                    {POST_CARD_THEMES.map(({ value, label, preview, bodyClass: _bc }) => {
-                                        const active = getPostCardTheme(user) === value;
-                                        return (
-                                            <button
-                                                key={value}
-                                                type="button"
-                                                onClick={() => handleSave('postCardTheme', value)}
-                                                className={`settings-tile-btn relative overflow-hidden flex flex-col rounded-[14px] border transition-all duration-200 min-h-[72px] h-full ${
-                                                    active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10 hover:border-white/20'
-                                                }`}
-                                            >
-                                                <div className="w-full h-10 shrink-0 relative border-b border-white/5 flex items-center gap-1.5 px-2"
-                                                    style={{ background: `linear-gradient(135deg, ${preview[0]} 0%, ${preview[0]}ee 100%)` }}>
-                                                    <div className="w-3.5 h-3.5 rounded-full" style={{ background: preview[0], boxShadow: `0 0 0 1.5px ${preview[1]}55` }} />
-                                                    <div className="flex flex-col gap-0.5">
-                                                        <div className="h-1 rounded-full w-10 opacity-80" style={{ background: preview[1] }} />
-                                                        <div className="h-0.5 rounded-full w-6 opacity-50" style={{ background: preview[1] }} />
-                                                    </div>
-                                                </div>
-                                                <div className={`flex-1 flex items-center justify-center px-2 py-2 text-center w-full ${active ? 'text-white' : 'text-gray-400'}`}>
-                                                    <div className="text-[12px] font-semibold leading-tight">{label}</div>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                <p className="mt-2.5 text-[11px] text-[#8E8E93] leading-relaxed px-1">{t('POST_CARD_STYLE_DESC', 'Different visual skins for your feed cards. Old-school Twitter inspired.')}</p>
-                            </div>
-                        </div>
+
 
                         <div className="mt-5">
                             <SettingsGroup>
@@ -9548,8 +9488,7 @@ const App = () => {
         if (savedTheme) applyTheme(savedTheme);
         const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
         applyBackground(savedBackground);
-        const savedPostCardTheme = userSettings?.settings?.postCardTheme || localStorage.getItem('postCardTheme') || 'tweet2015';
-        applyPostCardTheme(savedPostCardTheme);
+
         applyDisplayMode('dark');
         const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
@@ -9566,9 +9505,7 @@ const App = () => {
             if (e.key === 'backgroundMode' && e.newValue) {
                 applyBackground(e.newValue);
             }
-            if (e.key === 'postCardTheme' && e.newValue) {
-                applyPostCardTheme(e.newValue);
-            }
+
             if (e.key === 'enableGlow' && e.newValue) {
                 applyGlow(e.newValue === 'true');
             }
@@ -9600,12 +9537,7 @@ const App = () => {
         }
     }, [user?.settings?.background]);
 
-    // Sync post card theme when user object updates (e.g. from backend)
-    useEffect(() => {
-        if (user?.settings?.postCardTheme) {
-            applyPostCardTheme(user.settings.postCardTheme);
-        }
-    }, [user?.settings?.postCardTheme]);
+
 
     useEffect(() => {
         applyDisplayMode('dark');

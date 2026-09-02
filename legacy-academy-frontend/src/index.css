@@ -1704,13 +1704,13 @@ html, body {
   contain: layout style;
   content-visibility: auto;
   contain-intrinsic-size: 1px 600px;
-  /* Per-theme card background (CSS var; falls back to translucent black) */
-  background: var(--pc-bg, rgba(0, 0, 0, 0.18)) !important;
-  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
-  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
-  border: 1px solid var(--pc-border, rgba(255, 255, 255, 0.06)) !important;
-  /* Soft card inner highlight (old-Twitter separator look) */
-  box-shadow: var(--pc-shadow, inset 0 1px 0 rgba(255,255,255,0.025));
+  /* Unified beautiful and neat card background */
+  background: rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(28px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  /* Soft card inner highlight */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
   border-radius: 0;
   transition:
     border-color 200ms cubic-bezier(0.2, 0, 0, 1),
@@ -1737,67 +1737,8 @@ html, body {
 /* Hover: micro-border brighten — NO transform scale on container
    (scale re-rasterizes the whole card layer → pixelation) */
 .premium-post-card:hover {
-  border-color: var(--pc-border-hover, rgba(255, 255, 255, 0.10)) !important;
-  background: var(--pc-bg-hover, rgba(255, 255, 255, 0.015));
-}
-
-/* OLD-SCHOOL TWITTER CARD THEMES — applied via <body class="pc-theme-..."> */
-
-/* 1) TWEET-2015: Clean bright separators, near-black bg (default fallbacks above) */
-body.pc-theme-tweet2015 {
-  --pc-bg: rgba(20, 23, 26, 0.35);
-  --pc-bg-hover: rgba(255, 255, 255, 0.025);
-  --pc-border: rgba(255, 255, 255, 0.05);
-  --pc-border-hover: rgba(29, 155, 240, 0.18);
-  --pc-blur: 28px;
-  --pc-sat: 130%;
-  --pc-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 1px 0 rgba(0,0,0,0.3);
-}
-
-/* 2) CHIRP-2018: Warmer, slight cream tint dark bg (old mobile Twitter) */
-body.pc-theme-chirp2018 {
-  --pc-bg: rgba(26, 26, 22, 0.42);
-  --pc-bg-hover: rgba(255, 242, 204, 0.03);
-  --pc-border: rgba(255, 236, 179, 0.06);
-  --pc-border-hover: rgba(255, 173, 51, 0.22);
-  --pc-blur: 26px;
-  --pc-sat: 125%;
-  --pc-shadow: inset 0 1px 0 rgba(255, 236, 179, 0.035);
-}
-
-/* 3) CLASSIC-PAPER: Very light translucent card (old TweetDeck/air look) */
-body.pc-theme-classic-paper {
-  --pc-bg: rgba(255, 255, 255, 0.035);
-  --pc-bg-hover: rgba(255, 255, 255, 0.06);
-  --pc-border: rgba(255, 255, 255, 0.08);
-  --pc-border-hover: rgba(29, 155, 240, 0.28);
-  --pc-blur: 24px;
-  --pc-sat: 150%;
-  --pc-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    0 2px 10px rgba(0, 0, 0, 0.25);
-}
-
-/* 4) NOIR-EDGE: Sharp, dark, high-contrast card (X precursor dark Twitter) */
-body.pc-theme-noir-edge {
-  --pc-bg: rgba(0, 0, 0, 0.55);
-  --pc-bg-hover: rgba(0, 0, 0, 0.72);
-  --pc-border: rgba(255, 255, 255, 0.08);
-  --pc-border-hover: rgba(224, 36, 94, 0.28);
-  --pc-blur: 40px;
-  --pc-sat: 160%;
-  --pc-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
-}
-
-/* 5) OCEAN-TWEET: Blue-tinted glass (old Twitter verified-account vibe) */
-body.pc-theme-ocean-tweet {
-  --pc-bg: rgba(4, 22, 40, 0.55);
-  --pc-bg-hover: rgba(29, 155, 240, 0.06);
-  --pc-border: rgba(29, 155, 240, 0.14);
-  --pc-border-hover: rgba(29, 155, 240, 0.38);
-  --pc-blur: 34px;
-  --pc-sat: 155%;
-  --pc-shadow: inset 0 1px 0 rgba(142, 206, 252, 0.05);
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
 }
 
 /* Mobile: keep paint-contain + transparent native feed rows */
@@ -3559,18 +3500,7 @@ body.liquid-glass-aesthetic .match-widget-container {
 
 
 
-/* Force Post Card Themes to override liquid glass aesthetic */
-body[class*="pc-theme-"] .premium-post-card {
-  background: var(--pc-bg, rgba(0, 0, 0, 0.18)) !important;
-  backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
-  -webkit-backdrop-filter: blur(var(--pc-blur, 30px)) saturate(var(--pc-sat, 140%)) !important;
-  border: 1px solid var(--pc-border, rgba(255, 255, 255, 0.06)) !important;
-}
 
-body[class*="pc-theme-"] .premium-post-card:hover {
-  background: var(--pc-bg-hover, rgba(255, 255, 255, 0.025)) !important;
-  border-color: var(--pc-border-hover, rgba(255, 255, 255, 0.1)) !important;
-}
 
 .founder-affiliation-badge {
   background: transparent !important;
