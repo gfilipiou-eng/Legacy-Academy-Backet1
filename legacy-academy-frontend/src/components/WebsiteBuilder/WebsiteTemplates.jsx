@@ -76,7 +76,7 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
 // 1. CLASSIC TEMPLATE
 // ==========================================
 export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-10 md:py-20">
+    <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-24 pb-10 md:pt-32 md:pb-20">
         <div className="flex-1 flex flex-col md:flex-row items-center justify-center py-10 md:py-24 gap-10 md:gap-16 relative">
             {/* Decorative background orbs */}
             <div className="absolute top-12 left-0 w-72 h-72 rounded-full opacity-20 blur-[100px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
@@ -136,7 +136,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
             )}
         </div>
         {config.features?.length > 0 && (
-            <div id="services" className="py-14 md:py-24 border-t border-white/5 relative">
+            <div id="services" className="pt-28 pb-14 md:pt-36 md:pb-24 border-t border-white/5 relative">
                 <div className="max-w-3xl mx-auto text-center mb-14 md:mb-20">
                     {config.featuresTitle && (
                         <div className="flex flex-col items-center gap-4">
@@ -155,7 +155,7 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
 // 2. E-COMMERCE / STORE TEMPLATE (Apparel, Sneakers, Products with Sizes)
 // ==========================================
 export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-14 relative overflow-hidden">
+    <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-24 pb-8 md:pt-32 md:pb-14 relative overflow-hidden">
         {/* Ambient background blobs */}
         <div className="absolute -top-20 -left-24 w-[28rem] h-[28rem] rounded-full opacity-[0.15] blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
         <div className="absolute top-1/3 -right-28 w-[26rem] h-[26rem] rounded-full opacity-[0.12] blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
@@ -219,7 +219,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
 
         {/* Features / Highlights */}
         {config.features?.length > 0 && (
-            <div id="services" className="py-10 md:py-16 relative z-10">
+            <div id="services" className="pt-24 pb-10 md:pt-32 md:pb-16 relative z-10">
                 <div className="flex items-end justify-between mb-10 md:mb-14 pb-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
                     <div className="flex flex-col gap-2.5">
                         <h3 className="text-[28px] sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-none">{config.featuresTitle || 'Collections'}</h3>
@@ -237,7 +237,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
 // 3. AGENCY & BUSINESS TEMPLATE
 // ==========================================
 export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 md:py-24 relative overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-14 md:pt-36 md:pb-24 relative overflow-hidden">
         {/* Hero background atmosphere */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute top-10 left-1/4 w-[32rem] h-[32rem] rounded-full opacity-[0.14] blur-[130px]" style={{ backgroundColor: activeTheme.primary }} />
@@ -347,7 +347,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
     const GOLD_EDGE = 'rgba(212, 175, 55, 0.48)';
     const GOLD_GLOW = 'rgba(212, 175, 55, 0.16)';
     return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 md:py-28 relative overflow-hidden" style={{ fontFamily: 'Cinzel, "Playfair Display", serif' }}>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-32 pb-14 md:pt-40 md:pb-28 relative overflow-hidden" style={{ fontFamily: 'Cinzel, "Playfair Display", serif' }}>
         {/* Soft gold atmosphere */}
         <div className="absolute top-0 left-1/3 w-[24rem] h-[24rem] rounded-full opacity-[0.14] blur-[130px] pointer-events-none" style={{ backgroundColor: GOLD }} />
         <div className="absolute bottom-0 right-10 w-[28rem] h-[28rem] rounded-full opacity-[0.11] blur-[140px] pointer-events-none" style={{ backgroundColor: GOLD }} />
@@ -431,7 +431,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
 // 5. SAAS & AI TECH TEMPLATE
 // ==========================================
 export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 md:py-24 relative overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-14 md:pt-36 md:pb-24 relative overflow-hidden">
         {/* Subtle tech ambient */}
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[42rem] h-[42rem] rounded-full opacity-[0.12] blur-[140px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
         <div className="absolute bottom-0 right-0 w-[26rem] h-[26rem] rounded-full opacity-[0.1] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
@@ -527,7 +527,7 @@ export const NewspaperTemplate = ({ config, activeTheme, setZoomImage, resolvedP
     const lineSoft = isLight ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)';
     const sectionBg = isLight ? 'rgba(0,0,0,0.025)' : 'rgba(255,255,255,0.025)';
     return (
-    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-10 md:py-16 relative" style={{ color: ink }}>
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-24 pb-10 md:pt-32 md:pb-16 relative" style={{ color: ink }}>
         {/* Masthead date strip */}
         <div className="flex items-center justify-between py-2 mb-3 text-[11px] uppercase tracking-[0.2em] font-bold opacity-70 border-y" style={{ borderColor: lineSoft }}>
             <span className="hidden sm:block">Vol. I · No. 1</span>
@@ -679,7 +679,7 @@ export const RestaurantTemplate = ({ config, activeTheme, setZoomImage, resolved
 export const TechnologyTemplate = ({ config, activeTheme, setZoomImage, resolvedPalette }) => {
     const isLight = resolvedPalette === 'light';
     return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 md:py-24 relative overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-14 md:pt-36 md:pb-24 relative overflow-hidden">
         {/* Ambient tech glow */}
         <div className="absolute top-10 left-1/4 w-[34rem] h-[34rem] rounded-full opacity-[0.1] blur-[140px] pointer-events-none" style={{ background: `linear-gradient(180deg, ${activeTheme.primary}, transparent)` }} />
         <div className="absolute bottom-0 right-1/4 w-[28rem] h-[28rem] rounded-full opacity-[0.07] blur-[130px] pointer-events-none" style={{ background: `linear-gradient(0deg, ${activeTheme.primary}, transparent)` }} />
@@ -840,7 +840,7 @@ export const FootballTemplate = ({ config, activeTheme, setZoomImage, resolvedPa
             </div>
         </div>
         {config.features?.length > 0 && (
-            <div className="py-14 md:py-20 px-4 sm:px-6 md:px-8 relative">
+            <div className="pt-28 pb-14 md:pt-32 md:pb-20 px-4 sm:px-6 md:px-8 relative">
                 <div className="w-full flex justify-between items-end border-b-4 pb-3 mb-10 md:mb-14" style={{ borderColor: activeTheme.primary }}>
                     <div className="flex flex-col items-start gap-2">
                         <div className="text-[11px] font-black uppercase tracking-[0.22em] opacity-65">Latest Squad</div>
@@ -892,7 +892,7 @@ export const BettingTemplate = ({ config, activeTheme, setZoomImage, resolvedPal
     const divideColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)';
     const btnBg = isLight ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.07)';
     return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-10 md:py-16 relative overflow-hidden" style={{ fontFamily: '"Inter", Roboto, system-ui, sans-serif' }}>
+    <div className="w-full max-w-6xl mx-auto px-4 pt-24 pb-10 md:pt-32 md:pb-16 relative overflow-hidden" style={{ fontFamily: '"Inter", Roboto, system-ui, sans-serif' }}>
         <div className="absolute top-10 left-1/4 w-[22rem] h-[22rem] rounded-full opacity-[0.13] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
 
         {/* Hero Promo Card */}

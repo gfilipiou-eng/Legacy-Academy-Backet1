@@ -1138,9 +1138,9 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             minHeight: 'calc(100vh - 140px)'
                         }}
                     >
-                        <div className="flex-1 flex flex-col w-full overflow-x-hidden">
+                        <div className="flex-1 flex flex-col w-full overflow-x-hidden relative">
                             {/* Global Navbar */}
-                            <nav className={`shrink-0 w-full px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
+                            <nav className={`absolute top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/5' : 'border-b border-white/5'}`}>
                             <div className="flex items-center gap-3 min-w-0">
                                 {config.logo ? (
                                     <img src={config.logo} alt="Logo" className="h-7 sm:h-8 w-auto object-contain drop-shadow-lg shrink-0" />

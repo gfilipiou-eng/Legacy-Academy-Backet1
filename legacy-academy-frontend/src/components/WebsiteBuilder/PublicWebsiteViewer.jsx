@@ -139,7 +139,7 @@ export const PublicWebsiteViewer = ({ config }) => {
 
     return (
         <div 
-            className="h-[100dvh] w-full flex flex-col font-sans overflow-y-auto overflow-x-hidden"
+            className="h-[100dvh] w-full flex flex-col font-sans overflow-y-auto overflow-x-hidden relative"
             style={{ 
                 fontFamily: config.font || 'Inter',
                 backgroundColor: activeTheme.bg,
@@ -148,7 +148,7 @@ export const PublicWebsiteViewer = ({ config }) => {
             }}
         >
             {/* Navbar */}
-            <nav className={`sticky top-0 z-30 shrink-0 w-full px-4 sm:px-6 md:px-12 py-3.5 sm:py-4 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/10' : 'border-b border-white/10'}`}
+            <nav className={`absolute top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 md:px-12 py-3.5 sm:py-4 flex items-center justify-between ${resolvedPalette === 'light' ? 'border-b border-black/10' : 'border-b border-white/10'}`}
                  style={{
                      background: resolvedPalette === 'light' 
                          ? 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.85) 100%)'
