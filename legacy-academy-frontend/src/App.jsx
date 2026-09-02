@@ -5770,7 +5770,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(88vw,320px)] sm:w-[300px]
+                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(85vw,300px)] sm:w-[280px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
@@ -11342,7 +11342,7 @@ const App = () => {
                                     Global Elite Community
                                 </div>
                                 <div className="mt-1 text-[8px] font-mono tracking-[0.35em] uppercase text-white/30">
-                                    LEGACY ACADEMY © 2026 • ALL RIGHTS RESERVED
+                                    LEGACY © 2026 • ALL RIGHTS RESERVED
                                 </div>
                             </div>
                         </div>
