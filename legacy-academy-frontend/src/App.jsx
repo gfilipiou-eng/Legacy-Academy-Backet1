@@ -4252,8 +4252,7 @@ useEffect(() => {
                                     </button>
                                 )}
                             </div>
-
-
+                        </div>
 
                         <div className="mt-5">
                             <SettingsGroup>
