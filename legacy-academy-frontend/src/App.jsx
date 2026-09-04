@@ -11985,27 +11985,27 @@ const App = () => {
                                                                          )
                                                                     ) : (
                                                                         <div className="w-full h-full bg-gradient-to-br from-black via-[#0a0a0a] to-black flex items-center justify-center p-5 text-center">
-                                                                            <span className="font-semibold text-white/90 text-sm sm:text-base leading-snug line-clamp-6 break-words">{getPostTextPreview(post.content || post.desc)}</span>
+                                                                            <span className="font-semibold text-white/90 !text-white keep-white text-sm sm:text-base leading-snug line-clamp-6 break-words" style={{ color: '#ffffff' }}>{getPostTextPreview(post.content || post.desc)}</span>
                                                                         </div>
                                                                     )}
                                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
                                                                     
                                                                     <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2 z-10">
                                                                         <div className="flex items-center gap-2 mb-1">
-                                                                            <div className="w-6 h-6 rounded-full overflow-hidden ">
+                                                                            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shrink-0">
                                                                                 <ProfileAvatar user={post.author} />
                                                                             </div>
-                                                                            <span className="text-[11px] font-bold text-white uppercase tracking-wider truncate shadow-sm">
+                                                                            <span className="text-[11px] font-bold text-white !text-white keep-white uppercase tracking-wider truncate shadow-sm" style={{ color: '#ffffff' }}>
                                                                                 {post.author?.username || 'Agent'}
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-xs text-white/90 font-medium line-clamp-2 leading-snug drop-shadow-md break-words">{getPostTextPreview(post.content || post.desc, 90)}</p>
-                                                                        <div className="flex items-center gap-4 text-[10px] text-white font-black uppercase tracking-widest pt-1">
-                                                                            <div className="flex items-center gap-1.5">
+                                                                        <p className="text-xs text-white/90 !text-white keep-white font-medium line-clamp-2 leading-snug drop-shadow-md break-words" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>{getPostTextPreview(post.content || post.desc, 90)}</p>
+                                                                        <div className="flex items-center gap-4 text-[10px] text-white !text-white keep-white font-black uppercase tracking-widest pt-1" style={{ color: '#ffffff' }}>
+                                                                            <div className="flex items-center gap-1.5" style={{ color: '#ffffff' }}>
                                                                                 <Icons.Heart className="w-3.5 h-3.5" />
                                                                                 <span>{post.likes?.length || 0}</span>
                                                                             </div>
-                                                                            <div className="flex items-center gap-1.5 text-gray-300">
+                                                                            <div className="flex items-center gap-1.5 text-gray-300" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                                                                                 <Icons.MessageSquare className="w-3.5 h-3.5" />
                                                                                 <span>{post.comments?.length || 0}</span>
                                                                             </div>

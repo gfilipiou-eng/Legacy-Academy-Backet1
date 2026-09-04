@@ -3706,10 +3706,16 @@ body.bg-light .website-builder-panel textarea::placeholder {
   color: rgba(255, 255, 255, 0.4) !important;
 }
 
+.liquid-image-card p,
+.liquid-image-card span,
+.liquid-image-card .text-white,
+.liquid-image-card .text-white\/90,
+.liquid-image-card .text-black:not(.bg-white *):not(.border-white *),
+body.bg-light .liquid-image-card p,
+body.bg-light .liquid-image-card span,
 body.bg-light .liquid-image-card .text-white,
 body.bg-light .liquid-image-card .text-white\/90,
-body.bg-light .liquid-image-card p,
-body.bg-light .liquid-image-card span {
+body.bg-light .liquid-image-card .text-black:not(.bg-white *):not(.border-white *) {
   color: #ffffff !important;
 }
 
