@@ -3048,7 +3048,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                         {/* ── POST ACTIONS/STATS BAR (100% Old School Twitter) ── */}
                         {!isReadOnly ? (
-                            <div className="flex items-center justify-between mt-2.5 max-w-[420px] text-[var(--app-secondary)]">
+                            <div className="flex items-center gap-6 mt-2.5 max-w-[420px] text-[var(--app-secondary)]">
                                 {/* COMMENTS */}
                                 <button
                                     onClick={(e) => {
@@ -3060,12 +3060,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             setShowComments(!showComments);
                                         }
                                     }}
-                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
-                                        showComments ? 'text-[#1D9BF0]' : 'text-[var(--app-secondary)] hover:text-[#1D9BF0]'
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors select-none pointer-events-auto ${
+                                        showComments ? 'text-[#1D9BF0]' : 'text-[var(--app-secondary)]'
                                     }`}
                                     title="Reply"
                                 >
-                                    <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
+                                    <div className="p-2 rounded-full">
                                         <Icons.MessageSquare key={`cmt-${tweetCommentPop}`} className="w-[18px] h-[18px]" />
                                     </div>
                                     <span className="tabular-nums pr-2">{post.comments?.length || 0}</span>
@@ -3078,13 +3078,13 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         setTweetRepostPop(v => v + 1);
                                         onRepost && onRepost(post._id);
                                     }}
-                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
-                                        post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-[var(--app-secondary)] hover:text-[#00BA7C]'
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors select-none pointer-events-auto ${
+                                        post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-[var(--app-secondary)]'
                                     }`}
                                     title="Repost"
                                 >
-                                    <div className="p-2 rounded-full group-hover:bg-[#00BA7C]/10 transition-colors">
-                                        <Icons.Repost key={`rp-${tweetRepostPop}`} className="w-[18px] h-[18px] transition-transform duration-200 active:scale-125" />
+                                    <div className="p-2 rounded-full">
+                                        <Icons.Repost key={`rp-${tweetRepostPop}`} className="w-[18px] h-[18px] transition-transform duration-200" />
                                     </div>
                                     <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
                                 </button>
@@ -3098,30 +3098,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
                                     }}
-                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
-                                        post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-[var(--app-secondary)] hover:text-[#F91880]'
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors select-none pointer-events-auto ${
+                                        post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-[var(--app-secondary)]'
                                     }`}
                                     title="Like"
                                 >
-                                    <div className="p-2 rounded-full group-hover:bg-[#F91880]/10 transition-colors">
+                                    <div className="p-2 rounded-full">
                                         <Icons.Heart key={`lk-${tweetLikePop}`} className={`w-[18px] h-[18px] ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
-                                </button>
-
-
-                                {/* SHARE */}
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onShare && onShare(post);
-                                    }}
-                                    className="group flex items-center gap-1 text-[13px] font-normal text-[var(--app-secondary)] hover:text-[#1D9BF0] transition-colors cursor-pointer select-none"
-                                    title="Share"
-                                >
-                                    <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
-                                        <Icons.Share className="w-[18px] h-[18px]" />
-                                    </div>
                                 </button>
                             </div>
                         ) : (
