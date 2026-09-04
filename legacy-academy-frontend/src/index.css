@@ -3094,26 +3094,25 @@ textarea:focus {
 
 .bottom-nav-glass {
   position: relative;
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(80px) saturate(250%) !important;
-  -webkit-backdrop-filter: blur(80px) saturate(250%) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  background: var(--glass-bg, rgba(0, 0, 0, 0.88)) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid var(--app-border, #2f3336) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.12) !important;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  isolation: isolate;
+}
+
+body.bg-light .bottom-nav-glass {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--app-border, #eff3f4) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 .bottom-nav-glass button svg {
-  opacity: 1 !important;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+  filter: none;
 }
 
 

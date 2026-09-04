@@ -1925,7 +1925,17 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
             </div>
 
-            <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
+            <ImageLightbox
+                src={zoomImage}
+                post={post}
+                user={user}
+                onLike={onLike}
+                onRepost={onRepost}
+                onComment={() => { setZoomImage(null); }}
+                onShare={onShare}
+                onClose={() => setZoomImage(null)}
+                alt="Post media"
+            />
         </div>,
         document.body
     );
@@ -2823,8 +2833,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     const [showComments, setShowComments] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
 
+    const handleCardClick = (e) => {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) return;
+        if (onOpenDetail) onOpenDetail(post);
+    };
+
     return (
     <div
+      onClick={handleCardClick}
       initial={{ opacity: 0, y: 15 }}
       animate={{ 
         opacity: isDeleting ? 0 : 1, 
@@ -2834,7 +2851,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] transition-colors select-text ${cardSpacingClass}`}
+      className={`group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] active:bg-[var(--app-hover)] transition-colors cursor-pointer select-text ${cardSpacingClass}`}
     >
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
@@ -3054,25 +3071,6 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
                                 </button>
 
-                                {/* DISLIKE */}
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        const isDisliked = post.dislikes?.some(id => isSameId(id, user?._id));
-                                        setTweetDislikePop(v => v + 1);
-                                        playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
-                                        onDislike(post._id);
-                                    }}
-                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
-                                        post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#536471]' : 'text-[var(--app-secondary)] hover:text-[#536471]'
-                                    }`}
-                                    title="Dislike"
-                                >
-                                    <div className="p-2 rounded-full group-hover:bg-gray-500/10 transition-colors">
-                                        <Icons.ThumbsDown key={`dl-${tweetDislikePop}`} className={`w-[18px] h-[18px] ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
-                                    </div>
-                                    <span className="tabular-nums pr-2">{post.dislikes?.length || 0}</span>
-                                </button>
 
                                 {/* SHARE */}
                                 <button
@@ -4036,12 +4034,17 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 onUpdateUser?.(nextUser);
             }
 
+            const extraSettings = key === 'background' ? { displayMode: val } : (key === 'displayMode' ? { background: val } : {});
+            const payloadFinal = { settings: { ...(user?.settings || {}), [key]: val, ...extraSettings } };
+            if (key === 'background') {
+                localStorage.setItem('backgroundMode', String(val));
+            }
             if (key === 'showProfileShareButton') {
                 const nextToggleValue = Boolean(val);
                 pendingShareToggleRef.current = nextToggleValue;
                 setShowProfileShareButton(nextToggleValue);
             }
-            const res = await axios.put('/users/settings', payload);
+            const res = await axios.put('/users/settings', payloadFinal);
             const baseUser = latestUserRef.current || user || {};
             const mergedResponse = {
                 ...baseUser,
@@ -4049,7 +4052,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                 settings: {
                     ...(baseUser?.settings || {}),
                     ...(res.data?.settings || {}),
-                    ...(payload.settings || {})
+                    ...(payloadFinal.settings || {})
                 }
             };
             latestUserRef.current = mergedResponse;
@@ -4083,25 +4086,19 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
     const handleLanguageSelect = (nextLanguage) => {
         const normalizedLanguage = normalizeLanguageCode(nextLanguage);
-        if (!normalizedLanguage || normalizedLanguage === pendingLanguage) return;
+        if (!normalizedLanguage) return;
 
         localStorage.setItem('language', normalizedLanguage);
         setPendingLanguage(normalizedLanguage);
         playCyberSFX('success');
-        onClose();
 
-        setTimeout(async () => {
-            try {
-                if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
-                    await i18n.changeLanguage(normalizedLanguage);
-                }
-                await handleSave('language', normalizedLanguage);
-                setTimeout(() => window.location.reload(), 200);
-            } catch (error) {
-                console.error("Language change error:", error);
-                setPendingLanguage(activeLanguage);
-            }
-        }, 50);
+        if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
+            i18n.changeLanguage(normalizedLanguage);
+        }
+
+        handleSave('language', normalizedLanguage).catch(err => {
+            console.error("Language save error:", err);
+        });
     };
 
     if (!isOpen) return null;
@@ -4211,42 +4208,6 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </p>
                             </div>
 
-                            {/* Live Tweet Preview */}
-                            <div
-                                className="p-4 rounded-2xl border transition-all select-none"
-                                style={{
-                                    backgroundColor: currentBgMode === 'light' ? '#ffffff' : currentBgMode === 'dim' ? '#15202b' : '#000000',
-                                    borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336',
-                                    color: currentBgMode === 'light' ? '#0f1419' : '#ffffff'
-                                }}
-                            >
-                                <div className="flex gap-3">
-                                    <div
-                                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm font-black text-white text-sm"
-                                        style={{ backgroundColor: activeThemeColor }}
-                                    >
-                                        {user?.username?.[0]?.toUpperCase() || 'L'}
-                                    </div>
-                                    <div className="flex-1 min-w-0 text-left">
-                                        <div className="flex items-center gap-1.5 flex-wrap leading-tight">
-                                            <span className="font-bold text-[15px]">{user?.username || 'Legacy'}</span>
-                                            <Icons.Verified className="w-4 h-4 shrink-0" style={{ color: activeThemeColor }} />
-                                            <span
-                                                className="text-[14px]"
-                                                style={{ color: currentBgMode === 'light' ? '#536471' : '#71767b' }}
-                                            >
-                                                @{user?.username?.toLowerCase()?.replace(/\s+/g, '') || 'legacy'} · 26m
-                                            </span>
-                                        </div>
-                                        <div className="text-[14px] sm:text-[15px] mt-1.5 leading-snug">
-                                            At the heart of Twitter are short messages — called Tweets — just like this one — which can include photos, videos, links, text, and{' '}
-                                            <span className="cursor-pointer hover:underline font-medium" style={{ color: activeThemeColor }}>
-                                                #hashtags
-                                            </span>!
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             {/* Font Size */}
                             <div className="space-y-2">
@@ -6648,7 +6609,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher, onMediaClick }) => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
     // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
@@ -7825,6 +7786,7 @@ const ProfileModal = ({
                                                                             cacheKey={imgKey}
                                                                             onOpenSubscription={onOpenSubscription}
                                                                             openCommentsInModal={true}
+                                                                            onMediaClick={onMediaClick}
                                                                         />
                                                                     </div>
                                                                 ))}
@@ -9338,6 +9300,7 @@ const App = () => {
     const [alerts, setAlerts] = useState([]);
     const [selectedNotifs, setSelectedNotifs] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
+    const [lightboxPost, setLightboxPost] = useState(null); // For Fullscreen Twitter Media Lightbox
     const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
     const [followLoading, setFollowLoading] = useState({}); // per-user follow loading state
     const [authMode, setAuthMode] = useState(() => {
@@ -9720,16 +9683,11 @@ const App = () => {
 
     // Sync background when user object updates (e.g. from backend)
     useEffect(() => {
-        if (user?.settings?.background) {
-            applyBackground(user.settings.background);
+        const bg = user?.settings?.background || user?.settings?.displayMode;
+        if (bg) {
+            applyBackground(bg);
         }
-    }, [user?.settings?.background]);
-
-    useEffect(() => {
-        if (user?.settings?.displayMode) {
-            applyBackground(user.settings.displayMode);
-        }
-    }, [user?.settings?.displayMode]);
+    }, [user?.settings?.background, user?.settings?.displayMode]);
 
     useEffect(() => {
         if (user?.settings?.zoom) {
@@ -10477,6 +10435,9 @@ const App = () => {
         if (selectedPost && String(selectedPost._id) === safeId) {
             setSelectedPost(prev => updateFn(prev));
         }
+        if (lightboxPost && String(lightboxPost._id) === safeId) {
+            setLightboxPost(prev => updateFn(prev));
+        }
 
         setLoadingActions(prev => ({ ...prev, [safeId]: true }));
 
@@ -10489,6 +10450,9 @@ const App = () => {
                 setPosts(prev => prev.map(p => String(p._id) === safeId ? { ...p, reposts } : p));
                 if (selectedPost && String(selectedPost._id) === safeId) {
                     setSelectedPost(prev => ({ ...prev, reposts }));
+                }
+                if (lightboxPost && String(lightboxPost._id) === safeId) {
+                    setLightboxPost(prev => ({ ...prev, reposts }));
                 }
 
                 if (isReposting && newRepostPost) {
@@ -10539,6 +10503,9 @@ const App = () => {
         if (selectedPost && String(selectedPost._id) === String(safeId)) {
             setSelectedPost(prev => updateFn(prev));
         }
+        if (lightboxPost && String(lightboxPost._id) === String(safeId)) {
+            setLightboxPost(prev => updateFn(prev));
+        }
 
         const isLiking = posts.find(p => String(p._id) === String(safeId))?.likes?.includes(userId) === false;
 
@@ -10558,6 +10525,9 @@ const App = () => {
                 });
                 if (selectedPost && String(selectedPost._id) === String(safeId)) {
                     setSelectedPost(prev => ({ ...prev, likes, dislikes }));
+                }
+                if (lightboxPost && String(lightboxPost._id) === String(safeId)) {
+                    setLightboxPost(prev => ({ ...prev, likes, dislikes }));
                 }
             }
         } catch (e) {
@@ -12050,7 +12020,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} onMediaClick={(post) => setLightboxPost(post)} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
                                                                         </div>
                                                                     ))}
                                                                 </>
@@ -12071,15 +12041,6 @@ const App = () => {
 
                     <ScrollToTop mainScrollRef={mainScrollRef} />
 
-                    {/* CREATE FAB (Bluesky Style) */}
-                    {(!isChatOpen && !isProfileOpen && !isSettingsOpen && !isCreateOpen && !isEditOpen && !selectedPost && !selectedCartel) && (
-                        <button
-                            onClick={() => { setIsCreateOpen(true); }}
-                            className={`fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-4 sm:right-10 z-[1000] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 shrink-0 flex-none backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out ${activeTab === 'cartels' ? 'hidden' : ''}`}
-                        >
-                            <Icons.Compose className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-                        </button>
-                    )}
 
                     <ProfileModal 
                         isOpen={isProfileOpen}
@@ -12122,6 +12083,7 @@ const App = () => {
                         loadingActions={loadingActions}
                         deletingPostIds={deletingPostIds}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
+                        onMediaClick={(post) => setLightboxPost(post)}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
@@ -12426,6 +12388,24 @@ const App = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Fullscreen Twitter Media Lightbox */}
+            {lightboxPost && (
+                <ImageLightbox
+                    src={resolveMediaUrl(lightboxPost.image || lightboxPost.thumbnailUrl || lightboxPost.videoUrl, null, false, false)}
+                    post={lightboxPost}
+                    user={user}
+                    onLike={handleLike}
+                    onRepost={handleRepost}
+                    onComment={(p) => {
+                        setLightboxPost(null);
+                        setSelectedPost(p);
+                    }}
+                    onShare={handleShare}
+                    onClose={() => setLightboxPost(null)}
+                    alt="Post media"
+                />
             )}
 
             {/* Profile Share Modal */}

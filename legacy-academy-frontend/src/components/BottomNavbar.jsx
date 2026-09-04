@@ -151,48 +151,40 @@ const BottomNavbar = memo(({
         return () => el.removeEventListener('wheel', blockWheel);
     }, []);
 
-    const navItemBaseClass = 'relative h-[64px] sm:h-[66px] w-full max-w-[104px] sm:max-w-[116px] flex items-center justify-center rounded-[1.35rem] overflow-hidden transition-colors duration-300 select-none';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`;
-    const iconClass = (isActive) => `relative z-10 transition-all duration-300 w-8 h-8 sm:w-9 sm:h-9 ${isActive ? 'scale-105 text-[#1D9BF0]' : 'text-white opacity-90 group-hover:opacity-100'}`;
+    const navItemBaseClass = 'relative h-[48px] sm:h-[52px] w-full max-w-[80px] sm:max-w-[92px] flex items-center justify-center rounded-2xl overflow-hidden transition-all duration-200 select-none cursor-pointer';
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.06))]' : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#0f1419)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'}`;
+    const iconClass = (isActive) => `relative z-10 transition-transform duration-200 w-6 h-6 sm:w-[26px] sm:h-[26px] ${isActive ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]' : 'text-[var(--app-secondary,#71767b)] group-hover:text-[var(--app-text,#0f1419)]'}`;
 
     return (
         <nav 
             ref={navRef}
-            className="fixed bottom-0 pb-[calc(24px+env(safe-area-inset-bottom))] sm:pb-[calc(32px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-2 sm:px-4"
+            className="fixed bottom-0 pb-[calc(20px+env(safe-area-inset-bottom))] sm:pb-[calc(28px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-3 sm:px-4"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            <div className="bottom-nav-glass w-full max-w-[680px] mx-auto rounded-full pointer-events-auto px-3 sm:px-4 py-2.5 flex items-center justify-between relative gap-2 sm:gap-2.5">
+            <div className="bottom-nav-glass w-full max-w-[540px] mx-auto rounded-full pointer-events-auto px-2 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between relative gap-1 sm:gap-2">
                 
                 {/* Tab: Home */}
                 <button
                     type="button"
                     onClick={() => { playCyberSFX('menu'); onTabChange('home'); }}
                     aria-label="Home"
-                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
+                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(activeTab === 'home')}>
-                        {activeTab === 'home' && (
-                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
-                        )}
                         <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'home' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
                     </div>
                 </button>
-
-                
 
                 {/* Tab: Search */}
                 <button
                     type="button"
                     onClick={() => { playCyberSFX('menu'); onTabChange('search'); }}
                     aria-label="Search"
-                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
+                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(activeTab === 'search')}>
-                        {activeTab === 'search' && (
-                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
-                        )}
                         <Icons.Search className={iconClass(activeTab === 'search')} fill="none" stroke="currentColor" strokeWidth={activeTab === 'search' ? '2.8' : '2.2'} shapeRendering="geometricPrecision" />
                     </div>
                 </button>
@@ -202,13 +194,13 @@ const BottomNavbar = memo(({
                     type="button"
                     onClick={() => { playCyberSFX('menu'); onCreate(); }}
                     aria-label="Create"
-                    className="flex items-center justify-center relative z-20 flex-1 min-w-0 group"
+                    className="flex items-center justify-center relative z-20 flex-1 min-w-0 group cursor-pointer"
                 >
                     <div 
-                        className="w-[50px] h-[50px] sm:w-[52px] sm:h-[52px] flex items-center justify-center rounded-full text-black hover:scale-110 active:scale-95 transition-all duration-300 ring-2 ring-black shadow-lg shadow-[var(--gold-primary)]/30"
-                        style={{ background: 'linear-gradient(135deg, var(--gold-primary), var(--gold-secondary))' }}
+                        className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-95 transition-all duration-200 shadow-md ring-2 ring-[var(--app-bg,#000000)]"
+                        style={{ background: 'linear-gradient(135deg, var(--gold-primary, #1D9BF0), var(--gold-secondary, #1a8cd8))' }}
                     >
-                        <Icons.Plus className="w-7 h-7 sm:w-7 sm:h-7 stroke-[3] text-black" stroke="currentColor" shapeRendering="geometricPrecision" />
+                        <Icons.Plus className="w-6 h-6 sm:w-6 sm:h-6 stroke-[3] text-black" stroke="currentColor" shapeRendering="geometricPrecision" />
                     </div>
                 </button>
 
@@ -217,19 +209,15 @@ const BottomNavbar = memo(({
                     type="button"
                     onClick={() => { playCyberSFX('menu'); onTabChange('alerts'); }}
                     aria-label="Alerts"
-                    className="flex items-center justify-center relative flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
+                    className="flex items-center justify-center relative flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(activeTab === 'alerts')}>
-                        {activeTab === 'alerts' && (
-                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
-                        )}
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'alerts' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
                         {unreadCount > 0 && (
-                            <div className="absolute top-[12px] right-[24%] sm:right-[28%] min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-red-500 to-rose-600 rounded-full flex items-center justify-center border border-black/40 shadow-[0_0_8px_rgba(239,68,68,0.5)] z-20">
-                                <span className="text-[9px] font-black text-white leading-none tracking-tighter">
+                            <div className="absolute top-[8px] right-[20%] sm:right-[24%] min-w-[17px] h-[17px] px-1 bg-[#F91880] rounded-full flex items-center justify-center border border-[var(--app-bg,#000000)] shadow-sm z-20">
+                                <span className="text-[9px] font-extrabold text-white leading-none">
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
-                                <span className="absolute -inset-0.5 rounded-full bg-red-500/30 animate-ping pointer-events-none z-[-1]" />
                             </div>
                         )}
                     </div>
@@ -240,13 +228,10 @@ const BottomNavbar = memo(({
                     type="button"
                     onClick={() => { playCyberSFX('menu'); onProfile(); }}
                     aria-label="Profile"
-                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-200"
+                    className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(isProfileActive)}>
-                        {isProfileActive && (
-                            <div className="absolute inset-0 bottom-nav-item-active pointer-events-none animate-in fade-in duration-300" />
-                        )}
-                        <div className={`relative z-10 overflow-hidden bg-black transition-all duration-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full ${isProfileActive ? 'ring-2 ring-[#1D9BF0] ring-offset-2 ring-offset-black scale-105' : 'ring-1 ring-white/30'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-neutral-800 transition-all duration-200 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-[var(--app-bg,#000000)] scale-105' : 'border border-[var(--app-border,#2f3336)]'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>
