@@ -1375,7 +1375,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 {/* Header: Name + Badge + Handle + Dot + Time */}
                 <div className="x-comment__header flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
                     <span
-                        className="x-comment__username font-bold text-[14px] text-[var(--app-text,#ffffff)] hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
+                        className="x-comment__username font-bold text-[14px] text-[var(--app-text)] hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
                         onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
                         {commentAuthor?.username || 'User'}
@@ -1395,7 +1395,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             autoFocus
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
-                            className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-[15px] text-[var(--app-text,#ffffff)] outline-none mb-2 focus:border-[var(--gold-primary)] min-h-[72px] resize-none leading-relaxed"
+                            className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-[15px] text-[var(--app-text)] outline-none mb-2 focus:border-[var(--gold-primary)] min-h-[72px] resize-none leading-relaxed"
                         />
                         <div className="flex gap-2 justify-end">
                             <button
@@ -1695,7 +1695,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border,rgba(255,255,255,0.1))] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
@@ -1706,15 +1706,15 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Glassmorphic Header */}
-                <div className="pt-6 md:pt-4 pb-3 px-4 border-b border-[var(--app-border,rgba(255,255,255,0.08))] flex items-center justify-between bg-[var(--app-bg,#0a0a0a)]/90 backdrop-blur-2xl shrink-0 sticky top-0 z-50">
+                <div className="pt-6 md:pt-4 pb-3 px-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]/90 backdrop-blur-2xl shrink-0 sticky top-0 z-50">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <Icons.ArrowLeft className="w-6 h-6 text-[var(--app-text,#ffffff)] cursor-pointer hover:bg-[var(--app-hover)] rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
+                        <Icons.ArrowLeft className="w-6 h-6 text-[var(--app-text)] cursor-pointer hover:bg-[var(--app-hover)] rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                         </div>
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
-                                <span className="font-bold text-[16px] text-[var(--app-text,#ffffff)] truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
+                                <span className="font-bold text-[16px] text-[var(--app-text)] truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
                                 <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder && authorShowBadge} className="w-4 h-4 shrink-0" user={author} />
                             </div>
                             <span className="text-[13px] text-[var(--app-secondary,#71767b)] font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
@@ -1740,7 +1740,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 >
                     {/* Post Content */}
                     <div className="px-5 py-4 bg-transparent z-10 relative">
-                        <p className="text-[16px] sm:text-[17px] text-[var(--app-text,#ffffff)] leading-relaxed whitespace-pre-wrap break-words font-medium">
+                        <p className="text-[16px] sm:text-[17px] text-[var(--app-text)] leading-relaxed whitespace-pre-wrap break-words font-medium">
                             {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
                                 onClose();
                                 if (onHashtagClick) onHashtagClick(tag);
@@ -1833,7 +1833,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 title="Repost"
                             >
                                 <div className="p-2 rounded-full group-hover:bg-[#00BA7C]/10 transition-colors">
-                                    <Icons.RefreshCcw key={`drp-${detailRepostPop}`} className={`w-[18px] h-[18px] ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                    <Icons.Repost key={`drp-${detailRepostPop}`} className="w-[18px] h-[18px] transition-transform duration-200 active:scale-125" />
                                 </div>
                                 <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
                             </button>
@@ -1879,8 +1879,8 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <div className="w-16 h-16 rounded-full bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center mb-4 text-[var(--app-secondary)]">
                                     <Icons.MessageSquare className="w-8 h-8" />
                                 </div>
-                                <h3 className="text-[var(--app-text,#ffffff)] font-bold text-lg mb-1">No Comments Yet</h3>
-                                <p className="text-[var(--app-secondary,#71767b)] text-[15px]">Be the first to share your thoughts!</p>
+                                <h3 className="text-[var(--app-text)] font-bold text-lg mb-1">No Comments Yet</h3>
+                                <p className="text-[var(--app-secondary)] text-[15px]">Be the first to share your thoughts!</p>
                             </div>
                         ) : (
                             <div className="px-1 py-1">
@@ -1904,9 +1904,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Sleek Bottom Input Area */}
-                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[var(--app-bg,#0a0a0a)]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-[var(--app-border,rgba(255,255,255,0.08))]" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
+                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[var(--app-bg)]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-[var(--app-border)]" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
                     <div className="flex items-end gap-3 w-full max-w-4xl mx-auto">
-                        <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-[var(--app-border,rgba(255,255,255,0.1))] mb-0.5 hidden sm:block">
+                        <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-[var(--app-border)] mb-0.5 hidden sm:block">
                             <ProfileAvatar user={user} />
                         </div>
                         {isRecordingComment ? (
@@ -1946,7 +1946,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         e.target.style.height = 'inherit';
                                         e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
                                     }}
-                                    className="w-full bg-transparent py-3 px-4 text-[15px] sm:text-[16px] text-[var(--app-text,#ffffff)] outline-none placeholder:text-[var(--app-secondary,#71767b)] resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed"
+                                    className="w-full bg-transparent py-3 px-4 text-[15px] sm:text-[16px] text-[var(--app-text)] outline-none placeholder:text-[var(--app-secondary)] resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed"
                                     rows="1"
                                 />
                                 <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-[var(--app-border,rgba(255,255,255,0.05))]">
@@ -2907,7 +2907,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
             <div className="relative z-10 flex flex-col w-full max-w-full">
                 {resolvedReposter && (
                     <div className="flex items-center gap-2 mb-1.5 pl-11 sm:pl-12 text-[var(--app-secondary)] text-[12px] font-bold">
-                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[#00BA7C]" />
+                        <Icons.Repost className="w-3.5 h-3.5 text-[#00BA7C]" />
                         <span>
                             {(resolvedReposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'You Reposted') : `${resolvedReposter?.username || 'Agent'} ${t('REPOSTED', 'reposted')}`}
                         </span>
@@ -3084,7 +3084,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     title="Repost"
                                 >
                                     <div className="p-2 rounded-full group-hover:bg-[#00BA7C]/10 transition-colors">
-                                        <Icons.RefreshCcw key={`rp-${tweetRepostPop}`} className={`w-[18px] h-[18px] ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                        <Icons.Repost key={`rp-${tweetRepostPop}`} className="w-[18px] h-[18px] transition-transform duration-200 active:scale-125" />
                                     </div>
                                     <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
                                 </button>
@@ -3127,7 +3127,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                         ) : (
                             <div className="flex items-center justify-between mt-2.5 max-w-[320px] text-[var(--app-secondary)]">
                                 <div className="flex items-center gap-1.5 text-[var(--app-secondary)]">
-                                    <Icons.RefreshCcw className="w-[18px] h-[18px]" />
+                                    <Icons.Repost className="w-[18px] h-[18px]" />
                                     <span className="text-[13px] tabular-nums">{post.reposts?.length || 0}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-[var(--app-secondary)]">
@@ -3538,24 +3538,23 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
     if (!isOpen) return null;
     return (
-        <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4">
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
-            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-black   flex overflow-hidden shadow-none">
+        <div className="fixed inset-0 z-[2200] flex items-center justify-center p-0 sm:p-4 animate-fade-in">
+            <div className="absolute inset-0 bg-black/60 md:backdrop-blur-md" onClick={onClose} />
+            <div className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-[var(--app-bg)] text-[var(--app-text)] border-0 sm:border border-[var(--app-border)] sm:rounded-2xl flex overflow-hidden shadow-2xl">
                 {/* Live Cyber Background */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020202]">
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--gold-primary)]/20 rounded-full blur-[120px] animate-pulse duration-[10000ms]" />
-                    <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[100px] animate-pulse duration-[7000ms]" />
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[50px]" />
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-40">
+                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[var(--gold-primary)]/10 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[100px]" />
                 </div>
-                <div className={`w-full sm:w-80 border-r border-white/10 flex-col bg-black/50 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    <div className="p-4 border-b border-white/10 space-y-4">
+                <div className={`w-full sm:w-80 border-r border-[var(--app-border)] flex-col bg-[var(--app-bg)]/80 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
+                    <div className="p-4 border-b border-[var(--app-border)] space-y-4">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
-                                <h2 className="text-xl font-black italic flex items-center gap-2 text-white">
+                                <h2 className="text-xl font-black italic flex items-center gap-2 text-[var(--app-text)]">
                                     <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('WHISPERS')}
                                 </h2>
-                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
+                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)]"><Icons.X className="w-6 h-6" /></button>
                             </div>
                         </div>
                         <div className="relative">
@@ -3571,7 +3570,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
-                        {filteredUsers.length === 0 && <div className="p-4 text-center text-gray-500 text-xs">{t('ZERO_AGENTS')}</div>}
+                        {filteredUsers.length === 0 && <div className="p-4 text-center text-[var(--app-secondary)] text-xs">{t('ZERO_AGENTS')}</div>}
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
                             return (
@@ -3579,10 +3578,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     key={u._id}
                                     type="button"
                                     onClick={() => { setActiveChat(u); }}
-                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent appearance-none focus:outline-none transition-none active:bg-transparent"
+                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent hover:bg-[var(--app-hover)] transition-colors active:bg-[var(--app-hover)]"
                                 >
-                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[#0a0a0a] ${online ? 'bg-green-500' : 'bg-gray-500'}`} /></div>
-                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-white flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500/90' : 'text-gray-500'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
+                                    <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[var(--app-bg)] ${online ? 'bg-green-500' : 'bg-gray-400'}`} /></div>
+                                    <div className="min-w-0 flex-1"><div className="font-bold text-sm text-[var(--app-text)] flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500' : 'text-[var(--app-secondary)]'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
                                 </button>
                             )
                         })}
@@ -3593,10 +3592,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 <div className={`flex-1 min-w-0 flex-col bg-transparent chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
                     {activeChat ? (
                         <>
-                            <div className="p-3 border-b border-white/10 flex items-center gap-3 bg-black/80 backdrop-blur-xl shrink-0 z-10">
+                            <div className="p-3 border-b border-[var(--app-border)] flex items-center gap-3 bg-[var(--app-bg)]/90 backdrop-blur-xl shrink-0 z-10">
                                 <button
                                     onClick={() => { setActiveChat(null); }}
-                                    className="sm:hidden p-2 -ml-2 text-gray-400"
+                                    className="sm:hidden p-2 -ml-2 text-[var(--app-secondary)] hover:text-[var(--app-text)]"
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
@@ -3606,7 +3605,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     </div>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <div className="font-bold text-sm text-white flex items-center gap-2 truncate">
+                                    <div className="font-bold text-sm text-[var(--app-text)] flex items-center gap-2 truncate">
                                         {chatUser?.username}
                                         <VerifiedBadge isFounder={chatUser?.role === 'Founder'} isUser={chatUser?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={chatUser} />
                                         {getActiveStreak(chatUser) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(chatUser)}</span>}
@@ -3614,16 +3613,16 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                     {(() => {
                                         const isChatUserOnline = isUserOnline(chatUser, user);
                                         return (
-                                            <div className={`mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 ${isChatUserOnline ? 'bg-green-500/20' : 'bg-white/5'}`}>
-                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500' : 'bg-gray-500'}`} />
-                                                <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${isChatUserOnline ? 'text-green-400' : 'text-gray-400'}`}>
+                                            <div className={`mt-1 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[var(--app-border)] ${isChatUserOnline ? 'bg-green-500/10' : 'bg-[var(--app-hover)]'}`}>
+                                                <div className={`w-2 h-2 rounded-full ${isChatUserOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
+                                                <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest ${isChatUserOnline ? 'text-green-500' : 'text-[var(--app-secondary)]'}`}>
                                                     {isChatUserOnline ? t('ONLINE') : t('OFFLINE')}
                                                 </span>
                                             </div>
                                         );
                                     })()}
                                 </div>
-                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-gray-400"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 <>
@@ -3660,13 +3659,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group/msg items-end gap-2`}
                                             >
                                                 {!isOwn && (
-                                                    <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10 mb-1">
+                                                    <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-[var(--app-border)] mb-1">
                                                         <ProfileAvatar user={chatUser} />
                                                     </div>
                                                 )}
                                                 <div
                                                     onDoubleClick={toggleLockMessage}
-                                                    className={`max-w-[75%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[20px] text-[15px] shadow-2xl relative cursor-pointer select-none overflow-hidden transition-all duration-300 ${isOwn ? 'rounded-br-sm' : 'rounded-bl-sm'} ${m.isLocked ? (isOwn ? 'bg-cyan-950/60 border-l-4 border-l-cyan-400 text-white' : 'bg-purple-950/60 border-l-4 border-l-purple-400 text-white') : (isOwn ? 'bg-gradient-to-br from-cyan-600/90 to-blue-600/90 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]' : 'bg-white/10 backdrop-blur-md text-white shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-white/5')}`}
+                                                    className={`max-w-[75%] px-4 py-2.5 sm:px-5 sm:py-3 rounded-[20px] text-[15px] shadow-2xl relative cursor-pointer select-none overflow-hidden transition-all duration-300 ${isOwn ? 'rounded-br-sm' : 'rounded-bl-sm'} ${m.isLocked ? (isOwn ? 'bg-cyan-950/60 border-l-4 border-l-cyan-400 text-[var(--app-text)]' : 'bg-purple-950/60 border-l-4 border-l-purple-400 text-[var(--app-text)]') : (isOwn ? 'bg-gradient-to-br from-cyan-600/90 to-blue-600/90 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]' : 'bg-[var(--app-hover,rgba(255,255,255,0.1))] backdrop-blur-md text-[var(--app-text)] shadow-[0_0_20px_rgba(255,255,255,0.05)] border border-[var(--app-border)]')}`}
                                                 >
                                                     {/* Glass/Sparkle overlay */}
                                                     <div className="absolute inset-0 bg-gradient-to-b from-white/[0.1] via-transparent to-black/[0.2] pointer-events-none" />
@@ -3684,7 +3683,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                             <img
                                                                 src={resolveMediaUrl(imageUrl)}
                                                                 alt=""
-                                                                className="max-w-full max-h-[250px] rounded-[12px] object-cover cursor-pointer hover:opacity-90 transition-opacity border border-white/10 shadow-lg"
+                                                                className="max-w-full max-h-[250px] rounded-[12px] object-cover cursor-pointer hover:opacity-90 transition-opacity border border-[var(--app-border)] shadow-lg"
                                                                 onClick={() => window.open(resolveMediaUrl(imageUrl), '_blank')}
                                                                 loading="lazy"
                                                                 onError={(e) => e.target.style.display = 'none'}
@@ -3695,27 +3694,27 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     {realAudio ? (
                                                         <div className="flex flex-col gap-2 relative z-10 mt-1">
                                                             <div className="flex items-center gap-2">
-                                                                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                                                                <span className="text-[10px] font-black uppercase tracking-widest text-white/80">{t('VOICE_NOTE')}</span>
+                                                                <div className="w-2 h-2 rounded-full bg-[var(--app-text)] animate-pulse" />
+                                                                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--app-secondary)]">{t('VOICE_NOTE')}</span>
                                                             </div>
                                                             <audio src={resolveMediaUrl(realAudio)} controls className="h-8 max-w-full custom-audio-mini" />
-                                                            {m.text && <p className="font-medium leading-relaxed mt-1 text-white/95">{m.text}</p>}
+                                                            {m.text && <p className="font-medium leading-relaxed mt-1 text-[var(--app-text)]">{m.text}</p>}
                                                         </div>
                                                     ) : (
-                                                        m.text && <p className={`leading-relaxed font-medium text-white/95 relative z-10 ${!m.isLocked ? 'mt-2' : ''}`}>{m.text}</p>
+                                                        m.text && <p className={`leading-relaxed font-medium ${isOwn ? 'text-white' : 'text-[var(--app-text)]'} relative z-10 ${!m.isLocked ? 'mt-2' : ''}`}>{m.text}</p>
                                                     )}
                                                     
                                                     <div className={`flex justify-end items-center gap-1.5 mt-2 relative z-10 ${m.isLocked ? 'opacity-50' : 'opacity-80'}`}>
-                                                        <div className="text-[9px] font-bold tracking-widest">
+                                                        <div className="text-[9px] font-bold tracking-widest text-[var(--app-secondary)]">
                                                             <CyberDate date={m.createdAt} t={t} lang={lang} />
                                                         </div>
                                                         {isOwn && (
                                                             m.isRead ? (
-                                                                <span className="text-[9px] font-black uppercase text-cyan-300 tracking-wider flex items-center gap-1">
+                                                                <span className="text-[9px] font-black uppercase text-cyan-400 tracking-wider flex items-center gap-1">
                                                                     <Icons.Eye className="w-3 h-3" /> Opened
                                                                 </span>
                                                             ) : (
-                                                                <span className="text-[9px] font-bold uppercase text-white/60 tracking-wider">
+                                                                <span className="text-[9px] font-bold uppercase text-[var(--app-secondary)] tracking-wider">
                                                                     Delivered
                                                                 </span>
                                                             )
@@ -3723,7 +3722,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                     </div>
                                                 </div>
                                                 {m.isLocked && (
-                                                    <div className="shrink-0 text-white/30" title={t('LOCKED_MESSAGE', 'Αποθηκεύτηκε στο Chat')}>
+                                                    <div className="shrink-0 text-[var(--app-secondary)]" title={t('LOCKED_MESSAGE', 'Αποθηκεύτηκε στο Chat')}>
                                                         <Icons.Lock className="w-3.5 h-3.5" />
                                                     </div>
                                                 )}
@@ -3738,7 +3737,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
 
                             {/* IMAGE PREVIEW STRIP */}
                             {imagePreview && (
-                                <div className="absolute bottom-full left-0 right-0 p-3 bg-black/90 backdrop-blur-xl border-t border-white/10">
+                                <div className="absolute bottom-full left-0 right-0 p-3 bg-[var(--app-bg)] backdrop-blur-xl border-t border-[var(--app-border)]">
                                     <div className="relative inline-block">
                                         <img src={imagePreview} alt="" className="h-24 max-w-[200px] rounded-xl object-cover  shadow-xl" />
                                         <button onClick={clearImage} className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg   ">
@@ -3748,13 +3747,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 </div>
                             )}
 
-                            <div className="w-full min-w-0 p-3 pb-[90px] sm:pb-3 bg-transparent border-t border-white/5 flex flex-col gap-2 z-[100] relative backdrop-blur-md">
+                            <div className="w-full min-w-0 p-3 pb-[90px] sm:pb-3 bg-transparent border-t border-[var(--app-border)] flex flex-col gap-2 z-[100] relative backdrop-blur-md">
                                 {activeChat?.isPrivate && !user?.following?.some(id => isSameId(id, activeChat._id)) ? (
-                                    <div className="w-full py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-widest bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="w-full py-4 text-center text-xs font-bold text-[var(--app-secondary)] uppercase tracking-widest bg-[var(--app-hover,rgba(255,255,255,0.05))] rounded-2xl border border-[var(--app-border)]">
                                         {t('MUST_FOLLOW_PRIVATE_MESSAGE', 'YOU MUST FOLLOW THIS PRIVATE AGENT TO SEND MESSAGES')}
                                     </div>
                                 ) : (
-                                    <div className="w-full relative grid grid-cols-[minmax(0,1fr)_auto] items-center bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] pl-4 pr-3 py-1.5 transition-all duration-300 group overflow-hidden gap-2">
+                                    <div className="w-full relative grid grid-cols-[minmax(0,1fr)_auto] items-center bg-[var(--app-hover,rgba(0,0,0,0.4))] backdrop-blur-2xl border border-[var(--app-border)] rounded-[24px] pl-4 pr-3 py-1.5 transition-all duration-300 group overflow-hidden gap-2">
                                         <div className="min-w-0 w-full overflow-hidden">
                                             <input
                                                 id="chat-input"
@@ -3775,12 +3774,12 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                                 placeholder={isRecording ? t('RECORDING') : "Send a message..."}
                                                 style={{ fontSize: '16px' }}
-                                                className={`w-full min-w-0 bg-transparent py-2.5 text-base text-white outline-none placeholder-white/30 font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
+                                                className={`w-full min-w-0 bg-transparent py-2.5 text-base text-[var(--app-text)] outline-none placeholder:text-[var(--app-secondary)] font-medium overflow-hidden text-ellipsis ${isRecording ? 'text-red-400' : ''}`}
                                             />
                                         </div>
                                         <div className="flex items-center gap-2 justify-end">
                                             {isPhonetic && <span className="text-[10px] font-black text-cyan-400 border border-cyan-400/30 px-1.5 py-0.5 rounded-md bg-cyan-400/10">GR</span>}
-                                            <Icons.CommandLine className="w-5 h-5 text-white/20 group-focus-within:text-cyan-400 transition-colors" />
+                                            <Icons.CommandLine className="w-5 h-5 text-[var(--app-secondary)] group-focus-within:text-cyan-400 transition-colors" />
                                         </div>
                                     </div>
                                 )}
@@ -3832,10 +3831,10 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                         <div className="flex-1 flex items-center justify-center text-center px-4">
                             <div className="flex flex-col items-center">
                                 <button className="mb-6 bg-transparent border-none p-0 group">
-                                    <Icons.MessageSquare className="w-24 h-24 text-white group-hover:scale-105 duration-500" />
+                                    <Icons.MessageSquare className="w-24 h-24 text-[var(--app-secondary)] group-hover:scale-105 duration-500" />
                                 </button>
-                                <h3 className="font-black italic text-2xl tracking-tighter text-white/90">{t('MESSAGES')}</h3>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
+                                <h3 className="font-black italic text-2xl tracking-tighter text-[var(--app-text)]">{t('MESSAGES')}</h3>
+                                <p className="text-[var(--app-secondary)] text-[10px] font-black uppercase tracking-[0.2em] mt-3">{t('SECURE_COMMS')}</p>
                             </div>
                         </div>
                     )}
@@ -7479,7 +7478,7 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
+                                        <Icons.Repost className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                                     </div>
 
                                     {/* FOLLOWERS */}
@@ -8698,7 +8697,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 ).length;
                             })()}
                         </span>
-                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
+                        <Icons.Repost className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                     </div>
  
                     {/* FOLLOWERS */}
@@ -12415,7 +12414,7 @@ const App = () => {
                             <div className="flex items-center gap-6 mt-4 text-gray-500 text-sm font-medium">
                                 <div className="flex items-center gap-1.5"><Icons.Heart className="w-4 h-4 text-[#E0245E] fill-current" /> {shareModalPost.likes?.length || 0}</div>
                                 <div className="flex items-center gap-1.5"><Icons.MessageSquare className="w-4 h-4" /> {shareModalPost.comments?.length || 0}</div>
-                                <div className="flex items-center gap-1.5"><Icons.RefreshCcw className="w-4 h-4 text-[#17BF63]" /> {shareModalPost.reposts?.length || 0}</div>
+                                <div className="flex items-center gap-1.5"><Icons.Repost className="w-4 h-4 text-[#17BF63]" /> {shareModalPost.reposts?.length || 0}</div>
                             </div>
                         </div>
                         

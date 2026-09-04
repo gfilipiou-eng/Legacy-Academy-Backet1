@@ -2182,95 +2182,6 @@ input, textarea {
   cursor: wait;
 }
 
-/* β”€β”€ X/Twitter-style comment β€” Liquid Glass Premium Bubbles β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€ */
-.x-comment {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 6px 4px;
-  margin: 0 0 8px 0;
-  position: relative;
-  overflow: visible;
-}
-.x-comment__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 9999px;
-  overflow: visible;
-  flex-shrink: 0;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.06);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  position: relative;
-  margin-top: 4px;
-}
-.x-comment__avatar:hover { opacity: 0.82; transform: scale(1.04); }
-
-/* Founder avatar β€” gold ring glow */
-.x-comment__avatar--founder {
-  box-shadow: 0 0 0 2px rgba(250,214,32,0.45), 0 0 12px rgba(250,214,32,0.25);
-}
-
-.x-comment__body {
-  flex: 1;
-  min-width: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(10,10,12,0.95);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px 20px 20px 20px;
-  padding: 12px 14px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.3);
-  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
-}
-.x-comment:hover .x-comment__body {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%), rgba(10,10,12,0.95);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-.x-comment__header {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 3px;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-.x-comment__username {
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 130px;
-  flex-shrink: 1;
-  letter-spacing: -0.01em;
-}
-.x-comment__username:hover { text-decoration: underline; }
-.x-comment__dot {
-  font-size: 12px;
-  color: rgba(255,255,255,0.2);
-  flex-shrink: 0;
-}
-.x-comment__time {
-  font-size: 12px;
-  color: rgba(255,255,255,0.35);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.x-comment__text {
-  font-size: 15px;
-  line-height: 1.55;
-  color: rgba(255,255,255,0.88);
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  margin: 3px 0 6px;
-}
-
-
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
   background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
@@ -2419,88 +2330,6 @@ input, textarea {
   opacity: 0.55;
   cursor: wait;
 }
-
-/* β”€β”€ X/Twitter-style comment β€” Liquid Glass Premium Bubbles (mobile) β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€ */
-.x-comment {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 4px 2px;
-  margin: 0 0 8px 0;
-  position: relative;
-  overflow: visible;
-}
-.x-comment__avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 9999px;
-  overflow: visible;
-  flex-shrink: 0;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.06);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  position: relative;
-  margin-top: 4px;
-}
-.x-comment__avatar:hover { opacity: 0.82; transform: scale(1.04); }
-
-.x-comment__body {
-  flex: 1;
-  min-width: 0;
-  background: var(--dynamic-glass-bg, rgba(255, 255, 255, 0.03));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 4px 18px 18px 18px;
-  padding: 10px 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.05);
-  transition: background 0.25s ease, border-color 0.25s ease;
-}
-.x-comment:hover .x-comment__body {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-.x-comment__header {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 3px;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-.x-comment__username {
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 110px;
-  flex-shrink: 1;
-}
-.x-comment__username:hover { text-decoration: underline; }
-.x-comment__dot {
-  font-size: 11px;
-  color: rgba(255,255,255,0.2);
-  flex-shrink: 0;
-}
-.x-comment__time {
-  font-size: 11px;
-  color: rgba(255,255,255,0.35);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.x-comment__text {
-  font-size: 15px;
-  line-height: 1.55;
-  color: rgba(255,255,255,0.9);
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  margin: 3px 0 6px;
-}
-
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
@@ -2870,11 +2699,23 @@ body.glow-enabled .action-btn-dislike.text-purple-500 svg {
 
 /* Post detail modal sheet */
 .post-detail-modal__sheet {
-  background: linear-gradient(180deg, rgba(8,8,10,0.96) 0%, rgba(6,6,8,0.99) 100%);
+  background-color: var(--app-bg, #000000) !important;
+  color: var(--app-text, #e7e9ea) !important;
+  border-color: var(--app-border, #2f3336) !important;
   backdrop-filter: blur(40px) saturate(160%);
   -webkit-backdrop-filter: blur(40px) saturate(160%);
-  border-top: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 -16px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+body.bg-light .post-detail-modal__sheet {
+  background-color: #ffffff !important;
+  color: #0f1419 !important;
+  border-color: #eff3f4 !important;
+  box-shadow: 0 -16px 64px rgba(0,0,0,0.12) !important;
+}
+
+body.bg-light .post-detail-modal__sheet header,
+body.bg-light .post-detail-modal__sheet div[class*="bg-[var(--app-bg"] {
+  background-color: #ffffff !important;
 }
 
 /* Input fields β€” glass style */
@@ -3527,6 +3368,23 @@ body.liquid-glass-aesthetic .match-widget-container {
   line-height: 1.5 !important;
   color: var(--app-text, #e7e9ea) !important;
   margin: 2px 0 4px !important;
+}
+
+body.bg-light .x-comment__username,
+body.bg-light .post-detail-modal__sheet .x-comment__username {
+  color: #0f1419 !important;
+}
+
+body.bg-light .x-comment__text,
+body.bg-light .post-detail-modal__sheet .x-comment__text {
+  color: #0f1419 !important;
+}
+
+body.bg-light .x-comment__dot,
+body.bg-light .x-comment__time,
+body.bg-light .post-detail-modal__sheet .x-comment__dot,
+body.bg-light .post-detail-modal__sheet .x-comment__time {
+  color: #536471 !important;
 }
 
 /* Classic Twitter Cards & Feed Styling */
