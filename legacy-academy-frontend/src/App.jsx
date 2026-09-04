@@ -4149,7 +4149,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                     style={{ borderColor: 'var(--app-border, #2f3336)' }}
                 >
                     <div className="w-9 h-9 flex items-center justify-center">
-                        <Icons.TwitterBird className="w-7 h-7" style={{ color: activeThemeColor }} />
+                        <Icons.Settings className="w-6 h-6" style={{ color: activeThemeColor }} />
                     </div>
                     <span className="font-extrabold text-[17px] text-[var(--app-text,#ffffff)]">
                         {t('SETTINGS', 'Settings')}
@@ -4222,20 +4222,20 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                             >
                                 <div className="flex gap-3">
                                     <div
-                                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm"
+                                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm font-black text-white text-sm"
                                         style={{ backgroundColor: activeThemeColor }}
                                     >
-                                        <Icons.TwitterBird className="w-5 h-5 text-white" />
+                                        {user?.username?.[0]?.toUpperCase() || 'L'}
                                     </div>
                                     <div className="flex-1 min-w-0 text-left">
                                         <div className="flex items-center gap-1.5 flex-wrap leading-tight">
-                                            <span className="font-bold text-[15px]">Twitter</span>
+                                            <span className="font-bold text-[15px]">{user?.username || 'Legacy'}</span>
                                             <Icons.Verified className="w-4 h-4 shrink-0" style={{ color: activeThemeColor }} />
                                             <span
                                                 className="text-[14px]"
                                                 style={{ color: currentBgMode === 'light' ? '#536471' : '#71767b' }}
                                             >
-                                                @Twitter · 26m
+                                                @{user?.username?.toLowerCase()?.replace(/\s+/g, '') || 'legacy'} · 26m
                                             </span>
                                         </div>
                                         <div className="text-[14px] sm:text-[15px] mt-1.5 leading-snug">
@@ -5959,14 +5959,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(85vw,300px)] sm:w-[280px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
-            `}>
-                <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-white/10">
-                    <span className="text-[11px] font-black uppercase tracking-[0.22em] text-white/45">Menu</span>
+            `}
+            style={{
+                backgroundColor: 'var(--app-bg, #000000)',
+                color: 'var(--app-text, #ffffff)'
+            }}>
+                <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-[var(--app-border,#2f3336)]">
+                    <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--app-secondary,#71767b)]">Menu</span>
                     <button
                         type="button"
                         onClick={handleClose}
                         aria-label="Close menu"
-                        className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-white/[0.06] active:scale-95 transition-all duration-300 touch-manipulation"
+                        className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-95 transition-all duration-300 touch-manipulation cursor-pointer"
                     >
                         <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
                     </button>
@@ -5974,35 +5978,35 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
                 <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
                     <div
-                        className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-white/[0.05] active:scale-[0.98] touch-manipulation"
+                        className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] active:scale-[0.98] touch-manipulation"
                         onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] shrink-0">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
-                                    <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
+                                    <span className="font-bold text-[16px] text-[var(--app-text,#ffffff)] leading-tight truncate">{user?.username}</span>
                                     <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                                     {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-sm shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-4 h-4 shrink-0" />{getActiveStreak(user)}</span>}
                                 </div>
-                                <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                                <span className="text-[13px] text-[var(--app-secondary,#71767b)] leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-5 mt-4 pt-3 border-t border-white/10">
+                        <div className="flex items-center gap-5 mt-4 pt-3 border-t border-[var(--app-border,#2f3336)]">
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[13px] tabular-nums">
+                                <span className="font-bold text-[var(--app-text,#ffffff)] text-[13px] tabular-nums">
                                     {getUniqueCount(user?.followers)}
                                 </span>
-                                <span className="text-[12px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
+                                <span className="text-[12px] text-[var(--app-secondary,#71767b)]">{t('FOLLOWERS') || 'Followers'}</span>
                             </div>
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[13px] tabular-nums">
+                                <span className="font-bold text-[var(--app-text,#ffffff)] text-[13px] tabular-nums">
                                     {getUniqueCount(user?.following)}
                                 </span>
-                                <span className="text-[12px] text-gray-500">{t('FOLLOWING')}</span>
+                                <span className="text-[12px] text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
@@ -6010,7 +6014,6 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
-
                             { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
                             { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
@@ -6029,10 +6032,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     if (item.action) { item.action(); }
                                     else { onNavigate(item.id); }
                                 }}
-                                className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation ${
+                                className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation cursor-pointer ${
                                     isActive
                                         ? 'text-[#1D9BF0]'
-                                        : 'text-gray-500 hover:text-[#1D9BF0]/70 hover:bg-white/[0.04]'
+                                        : 'text-[var(--app-secondary,#71767b)] hover:text-[#1D9BF0] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
                                 }`}
                                 style={{ animationDelay: `${index * 0.04}s` }}
                             >
@@ -6040,7 +6043,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${isActive ? 'scale-105' : ''}`}
                                     {...(item.highlight ? { stroke: "url(#bubbleGradient)", fill: "none" } : { fill: isActive ? 'currentColor' : 'none', strokeWidth: isActive ? '2.5' : '2' })}
                                 />
-                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`}>{item.label}</span>
+                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-[var(--app-text,#ffffff)]'}`}>{item.label}</span>
 
                                 {item.isSubscription && (
                                     <div className="ml-auto shrink-0 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
@@ -6062,17 +6065,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
                         <button
                             onClick={() => { onLogout(); handleClose(); }}
-                            className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98]"
+                            className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98] cursor-pointer"
                             style={{ animationDelay: '0.24s' }}
                         >
-                            <Icons.Logout className="w-7 h-7 text-gray-500 group-hover:text-red-400 transition-colors shrink-0 pointer-events-none" strokeWidth={2} />
-                            <span className="text-[15px] font-bold text-white tracking-wide group-hover:text-red-400 transition-colors">{t('LOGOUT')}</span>
+                            <Icons.Logout className="w-7 h-7 text-[var(--app-secondary,#71767b)] group-hover:text-red-400 transition-colors shrink-0 pointer-events-none" strokeWidth={2} />
+                            <span className="text-[15px] font-bold text-[var(--app-text,#ffffff)] tracking-wide group-hover:text-red-400 transition-colors">{t('LOGOUT')}</span>
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-2 px-6 pt-2 pb-8 mt-auto border-t border-white/10">
-                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[12px]">{t('TERMS_OF_SERVICE')}</button>
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-gray-500 hover:text-white transition-colors font-medium text-[12px]">{t('PRIVACY_POLICY')}</button>
+                    <div className="flex flex-col gap-2 px-6 pt-2 pb-8 mt-auto border-t border-[var(--app-border,#2f3336)]">
+                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
+                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('PRIVACY_POLICY')}</button>
                     </div>
                 </div>
             </div>
@@ -7405,7 +7408,7 @@ const ProfileModal = ({
                             <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wide flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
-                                        <span className="profile-headline font-black text-white text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
+                                        <span className="profile-headline font-black text-[var(--app-text,#ffffff)] text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} />
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(displayUser)}</span>}
                                     </div>
@@ -7423,12 +7426,12 @@ const ProfileModal = ({
                                         </div>
                                     )}
                                     <div className="profile-handle-row flex flex-col items-center gap-2 mt-1.5">
-                                        <div className="text-gray-400 text-sm font-bold">
+                                        <div className="text-[var(--app-secondary,#71767b)] text-sm font-bold">
                                             @{displayUser?.username?.toLowerCase().replace(/\s+/g, '')}
                                         </div>
-                                        <div className={`mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 ${isUserOnline(displayUser, currentUser) ? 'bg-green-500/20' : 'bg-white/5'}`}>
+                                        <div className={`mt-1 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[var(--app-border,#eff3f4)] ${isUserOnline(displayUser, currentUser) ? 'bg-green-500/20' : 'bg-[var(--app-hover,rgba(255,255,255,0.05))]'}`}>
                                             <div className={`w-2 h-2 rounded-full ${isUserOnline(displayUser, currentUser) ? 'bg-green-500' : 'bg-gray-500'}`} />
-                                            <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest ${isUserOnline(displayUser, currentUser) ? 'text-green-400' : 'text-gray-400'}`}>
+                                            <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-widest ${isUserOnline(displayUser, currentUser) ? 'text-green-400' : 'text-[var(--app-secondary,#71767b)]'}`}>
                                                 {isUserOnline(displayUser, currentUser) ? t('ONLINE', 'ONLINE') : t('OFFLINE', 'OFFLINE')}
                                             </span>
                                         </div>
@@ -7437,13 +7440,13 @@ const ProfileModal = ({
 
                                 {displayUser?.bio && displayUser.bio.trim() !== "" && (
                                     <div className="mb-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
-                                        <div className="w-full h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-black/50 hover:border-white/20">
+                                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-6 text-left sm:text-center shadow-sm relative group transition-all duration-300">
                                             <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                                 </svg>
                                             </div>
-                                            <p className="text-white/90 font-medium select-text whitespace-pre-wrap break-words">
+                                            <p className="text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words">
                                                 {parseText(
                                                     displayUser.bio,
                                                     (tag) => onHashtagClick?.(tag),
@@ -7461,14 +7464,14 @@ const ProfileModal = ({
                                 <div className="grid grid-cols-4 gap-2 w-full">
 
                                     {/* POSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">{(userPosts || []).length}</span>
-                                        <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">{(userPosts || []).length}</span>
+                                        <Icons.Grid className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                                     </div>
 
                                     {/* REPOSTS */}
-                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">
+                                    <div className="flex flex-col items-center justify-center gap-1 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                                             {(() => {
                                                 const uid = safeId(displayUser);
                                                 return (userSpecificPosts || []).filter(p =>
@@ -7477,17 +7480,17 @@ const ProfileModal = ({
                                                 ).length;
                                             })()}
                                         </span>
-                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
+                                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                                     </div>
 
                                     {/* FOLLOWERS */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('followers');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm relative z-10 select-none cursor-pointer">
+                                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.followers)}
                                         </span>
-                                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
+                                        <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                                             {getUniqueCount(displayUser?.followers) === 1 ? (t('FOLLOWER') || 'FOLLOWER') : t('FOLLOWERS')}
                                         </span>
                                     </div>
@@ -7495,11 +7498,11 @@ const ProfileModal = ({
                                     {/* FOLLOWING */}
                                     <div onClick={(e) => {
                                         e.preventDefault(); e.stopPropagation(); setClickLock(true); lastOpenedAt.current = Date.now(); setActiveList('following');
-                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 select-none">
-                                        <span className="font-black text-white text-base leading-none tabular-nums">
+                                    }} className="flex flex-col items-center justify-center gap-1 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm relative z-10 select-none cursor-pointer">
+                                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                                             {getUniqueCount(displayUser?.following)}
                                         </span>
-                                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
+                                        <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                                     </div>
 
                                 </div>
@@ -7509,7 +7512,7 @@ const ProfileModal = ({
                             <div className="px-2 mb-6 space-y-3 mt-4 w-full">
                                 <div className="flex items-center gap-3">
                                     {isMe ? (
-                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3 rounded-full border border-white/20 text-white font-black text-[11px] sm:text-[12px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 cursor-pointer select-none touch-manipulation">
+                                        <button onClick={() => setIsEditing(true)} className="profile-edit-btn flex-1 py-3 rounded-full border border-[var(--app-border,#eff3f4)] text-[var(--app-text,#ffffff)] font-black text-[11px] sm:text-[12px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 cursor-pointer select-none touch-manipulation hover:bg-[var(--app-hover,rgba(255,255,255,0.05))]">
                                             <Icons.Settings className="w-4 h-4" />
                                             {t('EDIT_PROFILE')}
                                         </button>
@@ -7518,7 +7521,7 @@ const ProfileModal = ({
                                             <button
                                                 disabled={followLoading[displayUser?._id]}
                                                 onClick={() => onFollow(displayUser)}
-                                                className={`flex-1 relative py-2.5 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center touch-manipulation select-none cursor-pointer ${isFollowing ? 'bg-transparent border border-white/30 text-white active:border-red-500/50 active:text-red-500 active:bg-red-500/5 md:hover:border-red-500/50 md:hover:text-red-500 md:hover:bg-red-500/5' : 'bg-white border border-transparent text-black active:bg-neutral-200 md:hover:bg-neutral-200'}`}
+                                                className={`flex-1 relative py-2.5 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center touch-manipulation select-none cursor-pointer ${isFollowing ? 'bg-transparent border border-[var(--app-border,#eff3f4)] text-[var(--app-text,#ffffff)] active:border-red-500/50 active:text-red-500 active:bg-red-500/5 md:hover:border-red-500/50 md:hover:text-red-500 md:hover:bg-red-500/5' : 'bg-[var(--app-text,#ffffff)] border border-transparent text-[var(--app-bg,#000000)] active:opacity-90 md:hover:opacity-90'}`}
                                             >
                                                 <span className="relative z-10 flex items-center justify-center">
                                                     {isFollowing ? t('UNFOLLOW') : (hasRequested ? t('REQUESTED') : t('FOLLOW'))}
@@ -7530,7 +7533,7 @@ const ProfileModal = ({
                                                     setTimeout(() => onOpenChat(displayUser), 50);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="relative py-2.5 px-6 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center bg-transparent border border-white/30 text-white active:bg-white/10 md:hover:bg-white/10 shrink-0 touch-manipulation select-none cursor-pointer"
+                                                className="relative py-2.5 px-6 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center bg-transparent border border-[var(--app-border,#eff3f4)] text-[var(--app-text,#ffffff)] active:bg-[var(--app-hover,rgba(255,255,255,0.06))] md:hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] shrink-0 touch-manipulation select-none cursor-pointer"
                                             >
                                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                                     <Icons.MessageSquare className="w-4 h-4" />
@@ -7568,11 +7571,11 @@ const ProfileModal = ({
                                 )}
                             </div>
 
-                            <div className="flex border-b border-white/10 w-full mb-6 mt-4 relative">
+                            <div className="flex border-b border-[var(--app-border,#eff3f4)] w-full mb-6 mt-4 relative">
                                 {(isMe ? ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS', 'MISSIONS'] : ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS']).map((tab, index) => {
                                     const isActive = activeTab === tab;
                                     const renderIcon = (isActive) => {
-                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-white scale-105' : 'text-gray-400'}`;
+                                        const iconClass = `w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-all duration-200 ${isActive ? 'text-[var(--app-text,#ffffff)] scale-105' : 'text-[var(--app-secondary,#71767b)]'}`;
                                         if (tab === 'ALL') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>;
                                         if (tab === 'POSTS') return <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" className={iconClass}><path d="M 20 9 L 20 16 C 20 18.209 18.209 20 16 20 L 8 20 C 5.791 20 4 18.209 4 16 L 4 8 C 4 5.791 5.791 4 8 4 L 15 4" strokeWidth="1.5" /><line strokeLinecap="round" x1="10" y1="14" x2="18.5" y2="5.5" strokeWidth="2.25" /><line strokeLinecap="round" x1="20.5" y1="3.5" x2="21" y2="3" strokeWidth="2.25" /></svg>;
                                         if (tab === 'PHOTOS') return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={iconClass}><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>;
@@ -7591,8 +7594,8 @@ const ProfileModal = ({
                                             scaleDown={0.94}
                                             duration={120}
                                             className={`profile-tab-btn flex-1 min-w-0 min-h-[48px] sm:min-h-[52px] px-1 py-2 font-black uppercase flex flex-col items-center justify-center gap-1.5 transition-all duration-200 relative select-none appearance-none focus:outline-none cursor-pointer overflow-hidden group touch-manipulation bg-transparent ${isActive
-                                                ? 'text-white font-extrabold z-10'
-                                                : 'text-white/50 hover:text-white hover:bg-white/5'
+                                                ? 'text-[var(--app-text,#ffffff)] font-extrabold z-10'
+                                                : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
                                                 }`}
                                         >
                                             <div className="relative z-10 flex flex-col items-center justify-center gap-1 w-full pb-1">
@@ -7601,7 +7604,7 @@ const ProfileModal = ({
                                                     className={`max-w-full text-center leading-none transition-all duration-200 whitespace-nowrap ${isLongTabLabel
                                                         ? 'text-[7px] sm:text-[8px] tracking-[0.03em]'
                                                         : 'text-[8px] sm:text-[9px] tracking-[0.08em]'
-                                                        } ${isActive ? 'text-white font-extrabold' : 'text-gray-400'} font-black`}
+                                                        } ${isActive ? 'text-[var(--app-text,#ffffff)] font-extrabold' : 'text-[var(--app-secondary,#71767b)]'} font-black`}
                                                 >
                                                     {tabLabel}
                                                 </span>
@@ -8623,7 +8626,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                        <h1 className="profile-headline text-lg sm:text-xl font-black text-white tracking-[0.1em]">{publicUser.username}</h1>
+                        <h1 className="profile-headline text-lg sm:text-xl font-black text-[var(--app-text,#ffffff)] tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(publicUser)}</span>}
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
@@ -8644,13 +8647,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* BIO CARD */}
                 {publicUser.bio && (
                     <div className="mt-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
-                        <div className="w-full h-full bg-black/40 backdrop-blur-xl border border-white/10 rounded-[1.4rem] p-6 text-left sm:text-center shadow-lg relative group transition-all duration-300 hover:bg-black/50 hover:border-white/20">
+                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-6 text-left sm:text-center shadow-sm relative group transition-all duration-300">
                             <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
                             </div>
-                            <p className="text-xs sm:text-sm text-white/90 font-medium select-text whitespace-pre-wrap break-words">
+                            <p className="text-xs sm:text-sm text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words">
                                 {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
                             </p>
                         </div>
@@ -8659,8 +8662,8 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* STATS GRID — 4 equal columns */}
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
-                        <span className="font-black text-white text-base leading-none tabular-nums">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
                                 return (publicPosts || []).filter(p =>
@@ -8668,12 +8671,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 ).length;
                             })()}
                         </span>
-                        <Icons.Grid className="w-3.5 h-3.5 text-gray-400" />
+                        <Icons.Grid className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                     </div>
  
                     {/* REPOSTS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
-                        <span className="font-black text-white text-base leading-none tabular-nums">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
                                 return (publicPosts || []).filter(p =>
@@ -8681,25 +8684,25 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 ).length;
                             })()}
                         </span>
-                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-gray-400" />
+                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[var(--app-secondary,#71767b)]" />
                     </div>
  
                     {/* FOLLOWERS */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
-                        <span className="font-black text-white text-base leading-none tabular-nums">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.followers)}
                         </span>
-                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
+                        <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
                             {t('FOLLOWERS') || 'FOLLOWERS'}
                         </span>
                     </div>
  
                     {/* FOLLOWING */}
-                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 dynamic-glass-panel border border-white/5 rounded-2xl shadow-lg select-none">
-                        <span className="font-black text-white text-base leading-none tabular-nums">
+                    <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
+                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.following)}
                         </span>
-                        <span className="text-gray-400 text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
+                        <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
                     </div>
                 </div>
  
@@ -11608,7 +11611,7 @@ const App = () => {
                     <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative flex flex-col min-h-0 w-full">
                         <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-contain min-h-0 h-full w-full" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
-                        <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[#ffffff] border-b border-white/10 shrink-0">
+                        <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[var(--app-text,#ffffff)] border-b border-[var(--app-border,#eff3f4)] shrink-0">
                             <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
@@ -11618,7 +11621,7 @@ const App = () => {
                                         scaleDown={0.95}
                                         duration={150}
                                     >
-                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-gray-300 group-hover:text-[#ffffff] transition-colors duration-300 pointer-events-none">
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-[var(--app-text,#0f1419)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-300 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
                                         </svg>
                                     </EnhancedButton>

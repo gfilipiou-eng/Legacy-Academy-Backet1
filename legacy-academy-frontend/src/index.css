@@ -2715,7 +2715,7 @@ button:active,
           background-clip: initial !important;
   -webkit-text-fill-color: currentColor !important;
   /* Old Twitter: near-black text on light chips */
-  color: rgba(236, 239, 241, 0.98) !important;
+  color: var(--app-text, rgba(236, 239, 241, 0.98)) !important;
   animation: none !important;
   /* Signature/handwritten-caligraphic feel:
      - Slightly italic-like with subtle slant via skew
@@ -3542,7 +3542,7 @@ body.liquid-glass-aesthetic .match-widget-container {
   font-size: 30px !important;
   font-weight: 400 !important;
   letter-spacing: normal !important;
-  color: #fff !important;
+  color: var(--app-text, #ffffff) !important;
   text-transform: none !important;
   font-style: normal !important;
 }
@@ -3667,6 +3667,25 @@ body.bg-light .border-white\/5 {
 body.bg-light .bg-white\/5,
 body.bg-light .bg-white\/10 {
   background-color: rgba(15, 20, 25, 0.04);
+}
+
+body.bg-light .founder-affiliation-badge span {
+  color: #0f1419 !important;
+}
+
+body.bg-light .nav-drawer-panel {
+  background: var(--app-bg, #ffffff) !important;
+  border-right: 1px solid var(--app-border, #eff3f4) !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.bg-light .profile-tab-btn {
+  color: #536471;
+}
+
+body.bg-light .profile-tab-btn:hover {
+  background-color: rgba(15, 20, 25, 0.04) !important;
+  color: #0f1419 !important;
 }
 
 
