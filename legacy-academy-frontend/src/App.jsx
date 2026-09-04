@@ -7407,7 +7407,7 @@ const ProfileModal = ({
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wide flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
                                         <span className="profile-headline font-black text-[var(--app-text,#ffffff)] text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
-                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} />
+                                        <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0" user={displayUser} />
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(displayUser)}</span>}
                                     </div>
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (() => {
