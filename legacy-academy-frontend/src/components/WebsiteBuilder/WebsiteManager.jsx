@@ -107,32 +107,30 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-[5000] bg-[#050505] flex flex-col items-center justify-start overflow-y-auto pt-safe">
+        <div className="fixed inset-0 z-[5000] bg-[var(--app-bg,#050505)] flex flex-col items-center justify-start overflow-y-auto pt-safe">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--builder-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full hover:bg-white/10 flex items-center justify-center transition-all"
+                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full hover:bg-[var(--app-hover)] flex items-center justify-center transition-all"
                                 style={{
-                                    background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+                                    background: 'linear-gradient(135deg, rgba(128,128,128,0.12) 0%, rgba(128,128,128,0.04) 100%)',
                                     backdropFilter: 'blur(24px)',
                                     WebkitBackdropFilter: 'blur(24px)',
-                                    border: '1px solid rgba(255,255,255,0.12)',
-                                    boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+                                    border: '1px solid var(--app-border, rgba(255,255,255,0.12))',
+                                    boxShadow: '0 2px 10px rgba(0,0,0,0.15)'
                                 }}
                         >
-                            <Icons.ArrowLeft className="w-5 h-5 text-white/70" />
+                            <Icons.ArrowLeft className="w-5 h-5 text-[var(--app-text)]" />
                         </button>
-                        <h1 className="text-3xl font-black text-white">{t('MY_WEBSITES', 'My Websites')}</h1>
+                        <h1 className="text-3xl font-black text-[var(--app-text)]">{t('MY_WEBSITES', 'My Websites')}</h1>
                     </div>
-                    <div className="text-sm font-bold text-gray-500 px-4 py-2 rounded-full"
+                    <div className="text-sm font-bold text-[var(--app-secondary)] px-4 py-2 rounded-full border border-[var(--app-border)]"
                          style={{
-                             background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                             background: 'var(--app-hover, rgba(128,128,128,0.06))',
                              backdropFilter: 'blur(24px)',
                              WebkitBackdropFilter: 'blur(24px)',
-                             border: '1px solid rgba(255,255,255,0.12)',
-                             boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
                          }}
                     >
                         {websites.length} / 2 {t('SAVED', 'Saved')}
@@ -145,13 +143,12 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             key={idx} 
                             onClick={() => setActiveWebsiteIndex(idx)}
                             type="button"
-                            className="rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--builder-primary)] transition-all hover:-translate-y-1 text-left touch-manipulation appearance-none"
+                            className="rounded-3xl p-6 flex flex-col justify-between group cursor-pointer hover:border-[var(--builder-primary,#1D9BF0)] transition-all hover:-translate-y-1 text-left touch-manipulation appearance-none border border-[var(--app-border)]"
                             style={{
-                                background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(10,10,12,0.95)',
+                                background: 'var(--app-card-bg, var(--app-hover, rgba(10,10,12,0.95)))',
                                 backdropFilter: 'blur(28px) saturate(180%)',
                                 WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-                                border: '1px solid rgba(255,255,255,0.12)',
-                                boxShadow: '0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)',
+                                boxShadow: '0 4px 30px rgba(0,0,0,0.15)',
                             }}
                         >
                             <div className="flex items-center justify-between mb-4">
@@ -159,20 +156,13 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                     {site.businessName?.charAt(0) || 'W'}
                                 </div>
                                 {site.isDraft ? (
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-3 py-1 rounded-full flex items-center gap-1"
-                                          style={{
-                                              background: 'rgba(107,114,128,0.12)',
-                                              backdropFilter: 'blur(20px)',
-                                              border: '1px solid rgba(107,114,128,0.25)'
-                                          }}
-                                    >
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-3 py-1 rounded-full flex items-center gap-1 border border-[var(--app-border)] bg-[var(--app-hover)]">
                                         <Icons.FileText className="w-3 h-3" /> {t('DRAFT', 'Draft')}
                                     </span>
                                 ) : (
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-green-500 px-3 py-1 rounded-full flex items-center gap-1"
                                           style={{
                                               background: 'rgba(34,197,94,0.12)',
-                                              backdropFilter: 'blur(20px)',
                                               border: '1px solid rgba(34,197,94,0.25)'
                                           }}
                                     >
@@ -181,20 +171,16 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 )}
                             </div>
                             <div className="flex-1 flex flex-col items-start gap-2 min-w-0 mb-6">
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-xl font-black text-white truncate">{site.businessName || t('UNTITLED', 'Untitled')}</h3>
-                                    {site.isDraft && <span className="px-2 py-0.5 bg-gray-500/20 text-gray-400 text-[10px] font-black uppercase rounded border border-gray-500/30">DRAFT</span>}
+                                <div className="flex items-center gap-2 min-w-0 w-full">
+                                    <h3 className="text-xl font-black text-[var(--app-text)] truncate">{site.businessName || t('UNTITLED', 'Untitled')}</h3>
+                                    {site.isDraft && <span className="shrink-0 px-2 py-0.5 bg-[var(--app-hover)] text-[var(--app-secondary)] text-[10px] font-black uppercase rounded border border-[var(--app-border)]">DRAFT</span>}
                                 </div>
-                                <p className="text-sm text-white/50 truncate w-full text-left">{site.slogan || t('NO_SLOGAN', 'No slogan yet')}</p>
+                                <p className="text-sm text-[var(--app-secondary)] truncate w-full text-left">{site.slogan || t('NO_SLOGAN', 'No slogan yet')}</p>
                             </div>
 
-                            <div className="flex items-center gap-2 pt-4 border-t w-full" style={{borderColor: 'rgba(255,255,255,0.12)'}}>
-                                <button type="button" onClick={(e) => handleCopyLink(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleCopyLink(idx, e); }} className="flex-1 py-2 rounded-lg text-xs font-bold text-white transition-all flex items-center justify-center gap-2 touch-manipulation"
-                                        style={{
-                                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-                                            backdropFilter: 'blur(24px)',
-                                            border: '1px solid rgba(255,255,255,0.12)',
-                                        }}
+                            <div className="flex items-center gap-2 pt-4 border-t border-[var(--app-border)] w-full">
+                                <button type="button" onClick={(e) => handleCopyLink(idx, e)} onTouchEnd={(e) => { e.preventDefault(); handleCopyLink(idx, e); }} className="flex-1 py-2 rounded-lg text-xs font-bold text-[var(--app-text)] transition-all flex items-center justify-center gap-2 touch-manipulation border border-[var(--app-border)] hover:bg-[var(--app-hover)]"
+                                        style={{ backdropFilter: 'blur(24px)' }}
                                 >
                                     <Icons.Link className="w-4 h-4" /> {t('COPY_LINK', 'Copy Link')}
                                 </button>
@@ -226,15 +212,14 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                         >
                             <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
                                  style={{
-                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-                                     border: '1px solid rgba(255,255,255,0.15)',
-                                     boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)'
+                                     background: 'var(--app-hover, rgba(128,128,128,0.06))',
+                                     border: '1px solid var(--app-border, rgba(255,255,255,0.15))',
                                  }}
                             >
-                                <Icons.Plus className="w-8 h-8 text-white/50 group-hover:text-white transition-colors" />
+                                <Icons.Plus className="w-8 h-8 text-[var(--app-secondary)] group-hover:text-[var(--app-text)] transition-colors" />
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-1">{t('CREATE_NEW_WEBSITE', 'Create New Website')}</h3>
-                            <p className="text-sm text-gray-500">{t('CREATE_LIMIT_MSG', 'You can create up to {{count}} more').replace('{{count}}', 2 - websites.length)}</p>
+                            <h3 className="text-lg font-bold text-[var(--app-text)] mb-1">{t('CREATE_NEW_WEBSITE', 'Create New Website')}</h3>
+                            <p className="text-sm text-[var(--app-secondary)]">{t('CREATE_LIMIT_MSG', 'You can create up to {{count}} more').replace('{{count}}', 2 - websites.length)}</p>
                         </button>
                     )}
                 </div>
@@ -248,7 +233,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[6000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+                        className="fixed inset-0 z-[6000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
                         onClick={() => setWebsiteToDelete(null)}
                     >
                         <motion.div
@@ -256,7 +241,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.95, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-[#0a0a0c] border border-red-500/30 rounded-3xl w-full max-w-sm p-6 sm:p-8 flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.15)] relative overflow-hidden text-center"
+                            className="bg-[var(--app-bg)] border border-red-500/30 rounded-3xl w-full max-w-sm p-6 sm:p-8 flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.15)] relative overflow-hidden text-center"
                         >
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
                             
@@ -264,8 +249,8 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                                 <Icons.AlertTriangle className="w-8 h-8 text-red-500" />
                             </div>
 
-                            <h3 className="text-xl font-black text-white uppercase tracking-widest mb-2">Delete Website?</h3>
-                            <p className="text-sm text-gray-400 font-bold mb-8">
+                            <h3 className="text-xl font-black text-[var(--app-text)] uppercase tracking-widest mb-2">Delete Website?</h3>
+                            <p className="text-sm text-[var(--app-secondary)] font-bold mb-8">
                                 This action is permanent and cannot be undone. Are you absolutely sure?
                             </p>
 

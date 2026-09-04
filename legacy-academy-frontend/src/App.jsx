@@ -712,7 +712,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 )}
             </div>
             
-            <span className="text-xs sm:text-[13px] font-bold text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-150 truncate leading-none">
+            <span className="min-w-0 text-xs sm:text-[13px] font-bold text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-150 truncate leading-none">
                 @{normalizedUsername}
             </span>
         </div>
@@ -7410,14 +7410,19 @@ const ProfileModal = ({
                                         <VerifiedBadge isFounder={isFounderProfile} isUser={!isFounderProfile} className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 flex-shrink-0 drop-shadow-xl" user={displayUser} />
                                         {getActiveStreak(displayUser) > 0 && <span className="text-orange-500 font-bold text-lg sm:text-xl shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(displayUser)}</span>}
                                     </div>
-                                    {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (
-                                        <div className="mt-3 flex justify-center">
-                                            <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-xl transition-all duration-300 ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}>
-                                                <SelectedProfileDescriptorIcon className="w-3.5 h-3.5 shrink-0" />
-                                                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                    {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (() => {
+                                        const isFounder = displayUser?.role?.toLowerCase() === 'founder';
+                                        return (
+                                            <div className="mt-3 flex justify-center">
+                                                <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border backdrop-blur-xl transition-all duration-300 ${isFounder ? 'px-5 py-2' : 'px-4 py-1.5'} ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}
+                                                    style={isFounder ? { boxShadow: '0 0 18px 2px rgba(212,175,55,0.18), 0 2px 8px rgba(212,175,55,0.10)' } : undefined}
+                                                >
+                                                    <SelectedProfileDescriptorIcon className={`shrink-0 ${isFounder ? 'w-4 h-4' : 'w-3.5 h-3.5'}`} />
+                                                    <span className={`font-black uppercase tracking-[0.2em] ${isFounder ? 'text-[11px] sm:text-[13px]' : 'text-[10px] sm:text-[11px]'}`}>{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        );
+                                    })()}
                                     {displayFounderAffiliation && (
                                         <div className="mt-2">
                                             <FounderAffiliationBadge username={displayFounderAffiliation} size="sm" maxTextWidth="max-w-none" className="max-w-full" />
