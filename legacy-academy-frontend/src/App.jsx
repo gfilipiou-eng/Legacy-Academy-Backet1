@@ -606,12 +606,14 @@ const fetchFounderAffiliationUser = async (username) => {
     }
 
     const request = axios
-        .get(`/users/username/${encodeURIComponent(normalizedUsername)}?minimal=true`, { timeout: 3000 })
+        .get(`/users/username/${encodeURIComponent(normalizedUsername)}?minimal=true`, { timeout: 12000 })
         .then((res) => {
             const user = res.data || null;
-            founderAffiliationUserCache.set(normalizedUsername, user);
-            // Cache for 10 minutes
-            setTimeout(() => founderAffiliationUserCache.delete(normalizedUsername), 10 * 60 * 1000);
+            if (user && (user._id || user.profilePic || user.username)) {
+                founderAffiliationUserCache.set(normalizedUsername, user);
+                // Cache for 10 minutes
+                setTimeout(() => founderAffiliationUserCache.delete(normalizedUsername), 10 * 60 * 1000);
+            }
             return user;
         })
         .catch(() => null)
@@ -626,7 +628,11 @@ const fetchFounderAffiliationUser = async (username) => {
 const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth, iconOnly = false }) => {
     const normalizedUsername = sanitizeAffiliation(username);
 
-    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => linkedUser || (normalizedUsername ? founderAffiliationUserCache.get(normalizedUsername) : null) || null);
+    const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => {
+        if (linkedUser?.profilePic || linkedUser?.username) return linkedUser;
+        if (!normalizedUsername) return null;
+        return founderAffiliationUserCache.get(normalizedUsername) || null;
+    });
     const [isLoading, setIsLoading] = useState(() => !resolvedLinkedUser && !!normalizedUsername);
     const [imgError, setImgError] = useState(false);
 
@@ -641,7 +647,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         }
 
         const cachedUser = founderAffiliationUserCache.get(normalizedUsername);
-        if (cachedUser) {
+        if (cachedUser && (cachedUser.profilePic || cachedUser.username)) {
             setResolvedLinkedUser(cachedUser);
             setIsLoading(false);
             return () => { };
@@ -651,13 +657,14 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         fetchFounderAffiliationUser(normalizedUsername)
             .then((user) => {
                 if (!cancelled) {
-                    setResolvedLinkedUser(user || null);
+                    if (user) {
+                        setResolvedLinkedUser(user);
+                    }
                     setIsLoading(false);
                 }
             })
             .catch(() => {
                 if (!cancelled) {
-                    setResolvedLinkedUser(null);
                     setIsLoading(false);
                 }
             });
@@ -1035,7 +1042,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
 
     let baseClass = 'w-full h-full object-cover rounded-full';
     if (className) {
-        const cleanedClassName = className.replace(/w-full|h-full|object-cover|rounded-full/g, '').trim();
+        const cleanedClassName = className.replace(/w-full|h-full|object-cover|rounded-full|opacity-\d+/g, '').trim();
         baseClass = `${baseClass} ${cleanedClassName}`.trim();
     }
     const finalClassName = baseClass.replace(/rounded-none/g, '');
@@ -1070,7 +1077,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     }
 
     return (
-        <div className={`relative w-full h-full overflow-hidden ${finalClassName}`}>
+        <div className={`relative w-full h-full overflow-hidden bg-neutral-900 ${finalClassName}`}>
             {!imgLoaded && (
                 <div className="absolute inset-0 z-10 animate-pulse">
                     <DefaultAvatar name={name} size={size} />
@@ -1079,7 +1086,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
             <img
                 ref={imgRef}
                 src={flatMediaUrl}
-                className={`${finalClassName} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`${finalClassName.replace(/opacity-\d+/g, '')} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onClick={onClick}
                 loading={priority ? 'eager' : 'lazy'}
                 fetchPriority={priority ? 'high' : undefined}
@@ -1371,13 +1378,13 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                 {/* Header: Name + Badge + Handle + Dot + Time */}
                 <div className="x-comment__header flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
                     <span
-                        className="x-comment__username font-bold text-[14px] text-white hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
+                        className="x-comment__username font-bold text-[14px] text-[var(--app-text,#ffffff)] hover:underline cursor-pointer truncate max-w-[120px] sm:max-w-[160px] shrink-0"
                         onClick={() => onViewProfile && onViewProfile(commentAuthor)}
                     >
                         {commentAuthor?.username || 'User'}
                     </span>
                     <VerifiedBadge isFounder={isFounder} isUser={!isFounder && showBadge} className="w-3.5 h-3.5 shrink-0" user={commentAuthor} forceGold={isFounder && !commentAuthor?.settings?.badgeColor} />
-                    <span className="text-[13px] text-white/40 truncate max-w-[100px] sm:max-w-none shrink">
+                    <span className="text-[13px] text-[var(--app-secondary,#71767b)] truncate max-w-[100px] sm:max-w-none shrink">
                         {`@${String(commentAuthor?.username || 'user').toLowerCase().replace(/\s+/g, '')}`}
                     </span>
                     <span className="x-comment__dot">·</span>
@@ -1391,18 +1398,18 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             autoFocus
                             value={editText}
                             onChange={e => setEditText(e.target.value)}
-                            className="w-full bg-transparent border border-white/15 rounded-xl px-3 py-2.5 text-[15px] text-white outline-none mb-2 focus:border-white/35 min-h-[72px] resize-none leading-relaxed"
+                            className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-[15px] text-[var(--app-text,#ffffff)] outline-none mb-2 focus:border-[var(--gold-primary)] min-h-[72px] resize-none leading-relaxed"
                         />
                         <div className="flex gap-2 justify-end">
                             <button
                                 onClick={() => setIsEditing(false)}
-                                className="px-4 py-1.5 rounded-full border border-white/15 text-[12px] font-bold text-white/60 hover:text-white hover:border-white/30 active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
+                                className="px-4 py-1.5 rounded-full border border-[var(--app-border)] text-[12px] font-bold text-[var(--app-secondary)] hover:text-[var(--app-text)] active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
                             >
                                 {t('CANCEL')}
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="px-4 py-1.5 rounded-full bg-white text-[12px] font-bold text-black hover:bg-gray-200 active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
+                                className="px-4 py-1.5 rounded-full bg-[var(--gold-primary,#1D9BF0)] text-[12px] font-bold text-black active:scale-95 uppercase tracking-wide transition-all cursor-pointer"
                             >
                                 {t('SAVE')}
                             </button>
@@ -1449,7 +1456,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                     </>
                 )}
             {/* Action Bar (X Style) */}
-            <div className="flex items-center gap-6 mt-1.5 text-gray-500">
+            <div className="flex items-center gap-6 mt-1.5 text-[var(--app-secondary,#71767b)]">
                 <button 
                     type="button" 
                     onClick={(e) => { e.stopPropagation(); onReply && onReply(commentAuthor?.username); }} 
@@ -1471,7 +1478,7 @@ const CommentItem = memo(({ comment, post, user, allUsers, onEdit, onDelete, t =
                             e.stopPropagation();
                             setMenuOpen(!menuOpen);
                         }}
-                        className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 text-white/70 hover:text-white shadow-sm active:scale-95 transition-all cursor-pointer touch-manipulation"
+                        className="p-1.5 rounded-full bg-[var(--app-hover)] hover:bg-[var(--app-border)] backdrop-blur-[24px] border border-[var(--app-border)] text-[var(--app-secondary)] hover:text-[var(--app-text)] shadow-sm active:scale-95 transition-all cursor-pointer touch-manipulation"
                         aria-label="Comment actions"
                     >
                         <Icons.MoreHorizontal className="w-4 h-4" />
@@ -1691,39 +1698,39 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
         <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[#0a0a0a] md:rounded-[32px] rounded-t-[24px] border-t md:border border-white/10 flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border,rgba(255,255,255,0.1))] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
                 
                 {/* Visual Drag Handle (Mobile Only) */}
                 <div className="w-full flex justify-center pt-3 pb-1 md:hidden absolute top-0 z-[60] bg-transparent pointer-events-none">
-                    <div className="w-12 h-1.5 bg-white/20 rounded-full"></div>
+                    <div className="w-12 h-1.5 bg-[var(--app-secondary,#71767b)]/40 rounded-full"></div>
                 </div>
 
                 {/* Glassmorphic Header */}
-                <div className="pt-6 md:pt-4 pb-3 px-4 border-b border-white/5 flex items-center justify-between bg-[#0a0a0a]/80 backdrop-blur-2xl shrink-0 sticky top-0 z-50">
+                <div className="pt-6 md:pt-4 pb-3 px-4 border-b border-[var(--app-border,rgba(255,255,255,0.08))] flex items-center justify-between bg-[var(--app-bg,#0a0a0a)]/90 backdrop-blur-2xl shrink-0 sticky top-0 z-50">
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <Icons.ArrowLeft className="w-6 h-6 text-white cursor-pointer hover:bg-white/10 rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
+                        <Icons.ArrowLeft className="w-6 h-6 text-[var(--app-text,#ffffff)] cursor-pointer hover:bg-[var(--app-hover)] rounded-full p-1 transition-colors md:hidden" onClick={onClose} />
                         <div className="w-10 h-10 relative group shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="w-full h-full object-cover rounded-full" />
                         </div>
                         <div className="flex flex-col min-w-0 flex-1" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <div className="flex items-center gap-1">
-                                <span className="font-bold text-[16px] text-white truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
+                                <span className="font-bold text-[16px] text-[var(--app-text,#ffffff)] truncate cursor-pointer hover:underline">{author?.username || 'User'}</span>
                                 <VerifiedBadge isFounder={isAuthorFounder} isUser={!isAuthorFounder && authorShowBadge} className="w-4 h-4 shrink-0" user={author} />
                             </div>
-                            <span className="text-[13px] text-gray-500 font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
+                            <span className="text-[13px] text-[var(--app-secondary,#71767b)] font-medium tracking-wide">@{String(author?.username || 'user').toLowerCase().replace(/\s+/g, '')}</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
                         {isOwner && (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); }} className="p-2.5 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors active:scale-95">
                                 <Icons.Edit className="w-5 h-5" />
                             </button>
                         )}
                         <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEdit} onDelete={onDelete} t={t} />
-                        <button onClick={onClose} className="hidden md:flex p-2.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95 bg-white/5">
+                        <button onClick={onClose} className="hidden md:flex p-2.5 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors active:scale-95 bg-[var(--app-hover)]">
                             <Icons.X className="w-5 h-5" />
                         </button>
                     </div>
@@ -1736,7 +1743,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 >
                     {/* Post Content */}
                     <div className="px-5 py-4 bg-transparent z-10 relative">
-                        <p className="text-[16px] sm:text-[17px] text-white/95 leading-relaxed whitespace-pre-wrap break-words font-medium">
+                        <p className="text-[16px] sm:text-[17px] text-[var(--app-text,#ffffff)] leading-relaxed whitespace-pre-wrap break-words font-medium">
                             {parseText((translatedText || post.desc) && (translatedText || post.desc).length > 800 && !isExpanded ? (translatedText || post.desc).slice(0, 800) + '...' : (translatedText || post.desc), (tag) => {
                                 onClose();
                                 if (onHashtagClick) onHashtagClick(tag);
@@ -1765,7 +1772,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
 
                     {/* Image/Video/Audio Section */}
                     {postHasMedia(post) && (
-                        <div className="w-full bg-[#050505] flex items-center justify-center relative overflow-hidden shrink-0 mt-2">
+                        <div className="w-full bg-black flex items-center justify-center relative overflow-hidden shrink-0 mt-2">
                             {isPostMediaPath(post.audioUrl) ? (
                                 <div className="w-full p-4">
                                     <AudioPlayer audioUrl={resolveMediaUrl(post.audioUrl)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
@@ -1791,7 +1798,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         alt="Post media"
                                     />
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center p-10 text-gray-500 bg-white/5 w-full aspect-video">
+                                    <div className="flex flex-col items-center justify-center p-10 text-[var(--app-secondary)] bg-[var(--app-hover)] w-full aspect-video">
                                         <Icons.Image className="w-16 h-16 opacity-20 mb-4" />
                                         <span className="text-[11px] font-black uppercase tracking-widest opacity-50">Media Expired</span>
                                     </div>
@@ -1801,37 +1808,70 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     )}
 
                     {/* Meta & Stats */}
-                    <div className="px-5 py-4 border-b border-white/5 flex items-center gap-2 text-gray-500 text-[14px] font-medium">
+                    <div className="px-5 py-4 border-b border-[var(--app-border,rgba(255,255,255,0.08))] flex items-center gap-2 text-[var(--app-secondary,#71767b)] text-[14px] font-medium">
                         <span>{new Date(post.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         <span>·</span>
                         <span>{new Date(post.createdAt || Date.now()).toLocaleDateString()}</span>
                     </div>
 
-                    {/* Action Bar */}
-                    <div className="px-3 py-2 border-b border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent">
-                        <div className="flex items-center justify-around w-full max-w-md mx-auto">
+                    {/* Action Bar (Modern Twitter Style) */}
+                    <div className="px-4 py-1.5 border-b border-[var(--app-border,rgba(255,255,255,0.08))]">
+                        <div className="flex items-center justify-between w-full max-w-[420px] mx-auto text-[var(--app-secondary)]">
+                            {/* COMMENTS */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); setDetailCommentPop(v => v + 1); document.getElementById(`comment-input-${post._id}`)?.focus(); }}
-                                className="flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none text-gray-400 hover:bg-[#1D9BF0]/10 hover:text-[#1D9BF0] action-btn-comment"
+                                className="group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none text-[var(--app-secondary)] hover:text-[#1D9BF0]"
+                                title="Reply"
                             >
-                                <Icons.MessageSquare key={`dcmt-${detailCommentPop}`} className={`w-5 h-5 ${detailCommentPop > 0 ? 'tweet-chip-pop' : ''}`} />
-                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.comments?.length || 0}</span>
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setDetailRepostPop(v => v + 1); onRepost?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#17BF63]' : 'text-gray-400 hover:bg-[#17BF63]/10 hover:text-[#17BF63]'}`}
-                            >
-                                <Icons.RefreshCcw key={`drp-${detailRepostPop}`} className={`w-5 h-5 ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${detailRepostPop > 0 ? 'tweet-chip-pop' : ''}`} />
-                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.reposts?.length || 0}</span>
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setDetailLikePop(v => v + 1); onLike?.(post._id); }}
-                                className={`flex items-center justify-center gap-2 p-3 rounded-full transition-colors active:scale-95 touch-manipulation cursor-pointer select-none action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#E0245E]' : 'text-gray-400 hover:bg-[#E0245E]/10 hover:text-[#E0245E]'}`}
-                            >
-                                <Icons.Heart key={`dlk-${detailLikePop}`} className={`w-5 h-5 ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${detailLikePop > 0 ? 'tweet-heart-pop' : ''}`} />
-                                <span className="text-[14px] font-bold tabular-nums tracking-wide">{post.likes?.length || 0}</span>
+                                <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
+                                    <Icons.MessageSquare key={`dcmt-${detailCommentPop}`} className="w-[18px] h-[18px]" />
+                                </div>
+                                <span className="tabular-nums pr-2">{post.comments?.length || 0}</span>
                             </button>
 
+                            {/* REPOSTS */}
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setDetailRepostPop(v => v + 1); onRepost?.(post._id); }}
+                                className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-[var(--app-secondary)] hover:text-[#00BA7C]'}`}
+                                title="Repost"
+                            >
+                                <div className="p-2 rounded-full group-hover:bg-[#00BA7C]/10 transition-colors">
+                                    <Icons.RefreshCcw key={`drp-${detailRepostPop}`} className={`w-[18px] h-[18px] ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                </div>
+                                <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
+                            </button>
+
+                            {/* LIKE */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const isLiked = post.likes?.some(id => isSameId(id, user?._id));
+                                    setDetailLikePop(v => v + 1);
+                                    playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
+                                    onLike?.(post._id);
+                                }}
+                                className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-[var(--app-secondary)] hover:text-[#F91880]'}`}
+                                title="Like"
+                            >
+                                <div className="p-2 rounded-full group-hover:bg-[#F91880]/10 transition-colors">
+                                    <Icons.Heart key={`dlk-${detailLikePop}`} className={`w-[18px] h-[18px] ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                </div>
+                                <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
+                            </button>
+
+                            {/* SHARE */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onShare && onShare(post);
+                                }}
+                                className="group flex items-center gap-1 text-[13px] font-normal text-[var(--app-secondary)] hover:text-[#1D9BF0] transition-colors cursor-pointer select-none"
+                                title="Share"
+                            >
+                                <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
+                                    <Icons.Share className="w-[18px] h-[18px]" />
+                                </div>
+                            </button>
                         </div>
                     </div>
 
@@ -1839,11 +1879,11 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                     <div className="w-full pb-6">
                         {!post.comments?.length ? (
                             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-white/20">
+                                <div className="w-16 h-16 rounded-full bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center mb-4 text-[var(--app-secondary)]">
                                     <Icons.MessageSquare className="w-8 h-8" />
                                 </div>
-                                <h3 className="text-white font-bold text-lg mb-1">No Comments Yet</h3>
-                                <p className="text-gray-500 text-[15px]">Be the first to share your thoughts!</p>
+                                <h3 className="text-[var(--app-text,#ffffff)] font-bold text-lg mb-1">No Comments Yet</h3>
+                                <p className="text-[var(--app-secondary,#71767b)] text-[15px]">Be the first to share your thoughts!</p>
                             </div>
                         ) : (
                             <div className="px-1 py-1">
@@ -1867,9 +1907,9 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 </div>
 
                 {/* Sleek Bottom Input Area */}
-                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[#0a0a0a]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-white/5" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
+                <div className="px-3 sm:px-4 py-3 sm:py-4 bg-[var(--app-bg,#0a0a0a)]/95 backdrop-blur-2xl shrink-0 z-[100] border-t border-[var(--app-border,rgba(255,255,255,0.08))]" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}>
                     <div className="flex items-end gap-3 w-full max-w-4xl mx-auto">
-                        <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-white/10 mb-0.5 hidden sm:block">
+                        <div className="w-10 h-10 shrink-0 rounded-full overflow-hidden border border-[var(--app-border,rgba(255,255,255,0.1))] mb-0.5 hidden sm:block">
                             <ProfileAvatar user={user} />
                         </div>
                         {isRecordingComment ? (
@@ -1879,27 +1919,27 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     RECORDING...
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button onClick={() => stopRecording(true)} className="p-1 text-gray-400 hover:text-white transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
+                                    <button onClick={() => stopRecording(true)} className="p-1 text-[var(--app-secondary)] hover:text-red-500 transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
                                     <button onClick={() => stopRecording(false)} className="px-4 py-1.5 bg-red-500 text-white font-bold text-[13px] rounded-full shadow-lg shadow-red-500/20 active:scale-95 transition-all">STOP</button>
                                 </div>
                             </div>
                         ) : commentAudio ? (
-                            <div className="flex-1 bg-[#1D9BF0]/10 border border-[#1D9BF0]/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-[#1D9BF0] text-[14px] font-bold">
+                            <div className="flex-1 bg-[var(--gold-primary,#1D9BF0)]/10 border border-[var(--gold-primary,#1D9BF0)]/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-[var(--gold-primary,#1D9BF0)] text-[14px] font-bold">
                                     <Icons.Play className="w-5 h-5 fill-current" />
                                     VOICE NOTE READY
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <button onClick={() => setCommentAudio(null)} className="p-1 text-gray-400 hover:text-white transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
+                                    <button onClick={() => setCommentAudio(null)} className="p-1 text-[var(--app-secondary)] hover:text-red-500 transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
                                     <button onClick={() => {
                                         const fd = new FormData(); fd.append('file', commentAudio, 'voice.webm');
                                         if (commentText.trim()) fd.append('text', commentText.trim());
                                         onComment(post._id, fd); setCommentAudio(null); setCommentText('');
-                                    }} className="px-5 py-1.5 bg-[#1D9BF0] text-white font-bold text-[13px] rounded-full shadow-lg shadow-[#1D9BF0]/20 active:scale-95 transition-all">SEND</button>
+                                    }} className="px-5 py-1.5 bg-[var(--gold-primary,#1D9BF0)] text-black font-bold text-[13px] rounded-full shadow-lg shadow-[var(--gold-primary)]/20 active:scale-95 transition-all">SEND</button>
                                 </div>
                             </div>
                         ) : (
-                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col bg-white/5 border border-white/10 rounded-[24px] overflow-hidden focus-within:bg-white/10 focus-within:border-white/20 transition-all duration-300 touch-manipulation">
+                            <form onSubmit={(e) => { e.preventDefault(); if (commentText.trim()) { onComment(post._id, commentText); setCommentText(''); } }} className="flex-1 flex flex-col bg-[var(--app-hover)] border border-[var(--app-border)] rounded-[24px] overflow-hidden focus-within:border-[var(--gold-primary)] transition-all duration-300 touch-manipulation">
                                 <textarea
                                     id={`comment-input-${post._id}`}
                                     placeholder="Add a comment..."
@@ -1909,14 +1949,14 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                         e.target.style.height = 'inherit';
                                         e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
                                     }}
-                                    className="w-full bg-transparent py-3 px-4 text-[15px] sm:text-[16px] text-white outline-none placeholder-white/40 resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed"
+                                    className="w-full bg-transparent py-3 px-4 text-[15px] sm:text-[16px] text-[var(--app-text,#ffffff)] outline-none placeholder:text-[var(--app-secondary,#71767b)] resize-none min-h-[48px] max-h-[120px] custom-scrollbar leading-relaxed"
                                     rows="1"
                                 />
-                                <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-white/5">
-                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95">
+                                <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-[var(--app-border,rgba(255,255,255,0.05))]">
+                                    <button type="button" onClick={toggleCommentRecording} className="p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors active:scale-95">
                                         <Icons.Mic className="w-5 h-5" />
                                     </button>
-                                    <button type="submit" disabled={!commentText.trim()} className="px-4 py-1.5 bg-white text-black font-bold text-[13px] sm:text-[14px] rounded-full disabled:opacity-25 disabled:bg-white/20 disabled:text-white/50 hover:bg-gray-100 transition-all active:scale-95 flex items-center gap-1.5 uppercase tracking-wide">
+                                    <button type="submit" disabled={!commentText.trim()} className="px-4 py-1.5 bg-[var(--gold-primary,#1D9BF0)] text-black font-bold text-[13px] sm:text-[14px] rounded-full disabled:opacity-30 hover:opacity-90 transition-all active:scale-95 flex items-center gap-1.5 uppercase tracking-wide">
                                         Post <Icons.Send className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
@@ -3522,14 +3562,14 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             </div>
                         </div>
                         <div className="relative">
-                            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--app-secondary)]" />
                             <input
                                 id="chat-search"
                                 name="chat-search"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder={t('SEARCH_USERS_PH')}
-                                className="w-full bg-white/5  text-white rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)]  placeholder:text-gray-600"
+                                className="w-full bg-[var(--app-hover)] text-[var(--app-text)] border border-[var(--app-border)] rounded-xl py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--gold-primary)] placeholder:text-[var(--app-secondary)]"
                             />
                         </div>
                     </div>
@@ -7361,7 +7401,7 @@ const ProfileModal = ({
                                 <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
                                     <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0 shadow-md rounded-full">
                                         <div className="w-full h-full rounded-full overflow-hidden">
-                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="opacity-90 w-full h-full object-cover" />
+                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="w-full h-full object-cover" />
                                         </div>
                                     </div>
                                 </div>
@@ -8610,7 +8650,12 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     <span className="profile-headline text-xs text-[var(--app-secondary,#71767b)] font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
-                            <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" maxTextWidth="max-w-none" />
+                            <FounderAffiliationBadge 
+                                username={publicFounderAffiliation} 
+                                linkedUser={(user && (sanitizeAffiliation(user.username).toLowerCase() === sanitizeAffiliation(publicFounderAffiliation).toLowerCase() || sanitizeAffiliation(user.username).toLowerCase().replace(/\s+/g, '') === sanitizeAffiliation(publicFounderAffiliation).toLowerCase().replace(/\s+/g, ''))) ? user : null}
+                                size="sm" 
+                                maxTextWidth="max-w-none" 
+                            />
                         </div>
                     )}
                 </div>
@@ -11885,8 +11930,8 @@ const App = () => {
                                         {activeTab === 'search' && (
                                             <div className="mb-8 space-y-4 animate-fade-in">
                                                 <div className="relative">
-                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white z-10 pointer-events-none drop-shadow-[0_1px_6px_rgba(255,255,255,0.18)]" />
-                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl py-4 pl-12 pr-4 font-black tracking-wider outline-none focus:ring-2 focus:ring-[var(--gold-primary)] text-white placeholder:text-white/40 shadow-[0_0_20px_rgba(255,255,255,0.05)] focus:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300 touch-manipulation" />
+                                                    <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--app-secondary)] z-10 pointer-events-none" />
+                                                    <input id="main-search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t('SEARCH_PH')} className="w-full bg-[var(--app-card-bg,var(--app-hover))] backdrop-blur-xl border border-[var(--app-border)] hover:border-[var(--gold-primary)] rounded-2xl py-4 pl-12 pr-4 font-black tracking-wider outline-none focus:ring-2 focus:ring-[var(--gold-primary)] text-[var(--app-text)] placeholder:text-[var(--app-secondary)] shadow-sm transition-all duration-300 touch-manipulation" />
                                                 </div>
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center justify-between px-1">
@@ -12029,7 +12074,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} onMediaClick={(post) => setLightboxPost(post)} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} onMediaClick={(post) => setSelectedPost(post)} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
                                                                         </div>
                                                                     ))}
                                                                 </>
@@ -12092,7 +12137,7 @@ const App = () => {
                         loadingActions={loadingActions}
                         deletingPostIds={deletingPostIds}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
-                        onMediaClick={(post) => setLightboxPost(post)}
+                        onMediaClick={(post) => setSelectedPost(post)}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 

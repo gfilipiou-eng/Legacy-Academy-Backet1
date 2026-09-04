@@ -186,7 +186,9 @@ router.get("/username/:username", async (req, res) => {
     try {
         const usernameParam = decodeURIComponent(req.params.username).trim();
         const safeRegex = new RegExp("^" + usernameParam.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
-        const query = { $or: [{ username: { $regex: safeRegex } }] };
+        const noSpaces = usernameParam.replace(/[\s_]+/g, '');
+        const flexibleRegex = new RegExp("^" + noSpaces.split('').map(c => c.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('[\\s_]*') + "$", "i");
+        const query = { $or: [{ username: { $regex: safeRegex } }, { username: { $regex: flexibleRegex } }] };
         if (usernameParam.match(/^[0-9a-fA-F]{24}$/)) query.$or.push({ _id: usernameParam });
         
         const user = await User.findOne(query).select('-password').lean();

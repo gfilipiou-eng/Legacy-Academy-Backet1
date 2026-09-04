@@ -220,7 +220,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
 
   const shell = (content) => createPortal(
     <div
-      className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[#0a0a0a] text-white touch-manipulation"
+      className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] touch-manipulation"
       style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)' }}
     >
       {content}
@@ -242,9 +242,9 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
     return shell(
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
         <Icons.XCircle className="w-16 h-16 text-red-500 mb-4" />
-        <h2 className="text-white font-black text-xl mb-2">{t('POST_NOT_FOUND', 'Post not found')}</h2>
-        <p className="text-gray-500 text-sm max-w-xs">{errorMsg || t('POST_NOT_FOUND')}</p>
-        <button type="button" onClick={onClose} className="mt-8 px-6 py-3 rounded-full bg-white text-black font-black uppercase tracking-widest text-sm touch-manipulation">{t('BACK_TO_HQ', 'Back')}</button>
+        <h2 className="text-[var(--app-text,#ffffff)] font-black text-xl mb-2">{t('POST_NOT_FOUND', 'Post not found')}</h2>
+        <p className="text-[var(--app-secondary,#71767b)] text-sm max-w-xs">{errorMsg || t('POST_NOT_FOUND')}</p>
+        <button type="button" onClick={onClose} className="mt-8 px-6 py-3 rounded-full bg-[var(--gold-primary,#1D9BF0)] text-black font-black uppercase tracking-widest text-sm touch-manipulation">{t('BACK_TO_HQ', 'Back')}</button>
       </div>
     );
   }
@@ -260,30 +260,30 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
 
   return shell(
     <>
-      <header className="shrink-0 border-b border-white/10 bg-[#0a0a0a]/95 flex items-center justify-between px-3 sm:px-4 py-3 z-50">
+      <header className="shrink-0 border-b border-[var(--app-border,rgba(255,255,255,0.1))] bg-[var(--app-bg,#0a0a0a)]/95 flex items-center justify-between px-3 sm:px-4 py-3 z-50">
         <div className="flex items-center gap-2 min-w-0">
-          <button type="button" onClick={onClose} className="p-2.5 rounded-full hover:bg-white/10 active:scale-95 transition-all touch-manipulation" aria-label="Back">
-            <Icons.Back className="w-6 h-6 text-white" />
+          <button type="button" onClick={onClose} className="p-2.5 rounded-full hover:bg-[var(--app-hover)] active:scale-95 transition-all touch-manipulation" aria-label="Back">
+            <Icons.Back className="w-6 h-6 text-[var(--app-text,#ffffff)]" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-sm font-black text-white uppercase tracking-widest">{t('COMMENTS')}</h1>
-            <p className="text-[10px] text-gray-500 font-bold tracking-tighter truncate">{post.authorName || post.author?.username || 'Post'}</p>
+            <h1 className="text-sm font-black text-[var(--app-text,#ffffff)] uppercase tracking-widest">{t('COMMENTS')}</h1>
+            <p className="text-[10px] text-[var(--app-secondary,#71767b)] font-bold tracking-tighter truncate">{post.authorName || post.author?.username || 'Post'}</p>
           </div>
         </div>
-        <div className="text-[11px] font-bold text-gray-400 tabular-nums shrink-0">{post.comments?.length || 0}</div>
+        <div className="text-[11px] font-bold text-[var(--app-secondary,#71767b)] tabular-nums shrink-0">{post.comments?.length || 0}</div>
       </header>
 
       <div
         className="flex-1 min-h-0 overflow-y-auto overscroll-contain custom-scrollbar"
         style={{ WebkitOverflowScrolling: 'touch', paddingBottom: 'max(6rem, calc(env(safe-area-inset-bottom, 0px) + 5rem))' }}
       >
-        <div className="px-4 py-4 border-b border-white/10">
+        <div className="px-4 py-4 border-b border-[var(--app-border,rgba(255,255,255,0.1))]">
           <div className="flex gap-3">
             <div
               className="relative w-11 h-11 shrink-0 cursor-pointer"
               onClick={() => onViewProfile && onViewProfile(mergedPostAuthor)}
             >
-              <div className="w-full h-full rounded-full overflow-hidden border border-white/15">
+              <div className="w-full h-full rounded-full overflow-hidden border border-[var(--app-border,rgba(255,255,255,0.15))]">
                 <ProfileAvatar user={mergedPostAuthor} />
               </div>
             </div>
@@ -291,7 +291,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mb-2">
                 <button
                   type="button"
-                  className="font-bold text-white text-[15px] text-left hover:underline touch-manipulation"
+                  className="font-bold text-[var(--app-text,#ffffff)] text-[15px] text-left hover:underline touch-manipulation"
                   onClick={() => onViewProfile && onViewProfile(mergedPostAuthor)}
                 >
                   {mergedPostAuthor.username || post.authorName}
@@ -302,11 +302,11 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                   className="w-3.5 h-3.5 shrink-0"
                   user={mergedPostAuthor}
                 />
-                <span className="text-gray-500 text-[13px] break-all">{`@${String(mergedPostAuthor.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
-                <span className="text-gray-600 text-[13px]">·</span>
-                <span className="text-[11px] font-bold text-gray-500 whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
+                <span className="text-[var(--app-secondary,#71767b)] text-[13px] break-all">{`@${String(mergedPostAuthor.username || post.authorName || 'agent').toLowerCase().replace(/\s+/g, '')}`}</span>
+                <span className="text-[var(--app-secondary,#71767b)] text-[13px]">·</span>
+                <span className="text-[11px] font-bold text-[var(--app-secondary,#71767b)] whitespace-nowrap">{formatDate(post.createdAt, t, lang)}</span>
               </div>
-              <p className="text-white text-[15px] font-medium leading-relaxed whitespace-pre-wrap break-words">
+              <p className="text-[var(--app-text,#ffffff)] text-[15px] font-medium leading-relaxed whitespace-pre-wrap break-words">
                 {post.desc || post.text || 'No description provided.'}
               </p>
               {(post.image || post.videoUrl) && (
@@ -477,10 +477,10 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
       </div>
 
       <div
-        className="shrink-0 px-4 py-4 border-t border-white/10 bg-[#0a0a0a]/95 text-center"
+        className="shrink-0 px-4 py-4 border-t border-[var(--app-border,rgba(255,255,255,0.1))] bg-[var(--app-bg,#0a0a0a)]/95 text-center"
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
       >
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 bg-white/5 py-3 px-4 border border-white/10 rounded-xl">
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] bg-[var(--app-hover)] py-3 px-4 border border-[var(--app-border)] rounded-xl">
           {t('COMMENTS_DISABLED', 'Comments are read-only for shared links')}
         </div>
       </div>
