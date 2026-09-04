@@ -33,8 +33,8 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1595590424283-b8f1784cb2c2?q=80&w=1080&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
             <div className="fixed inset-0 pointer-events-none opacity-20 z-0 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="w-full h-full flex flex-col relative z-10 pt-safe mt-[80px] sm:mt-0">
-            <div className="px-4 py-4 flex justify-between items-center sticky top-0 bg-[var(--app-bg)] z-20 border-b border-white/5">
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-widest flex items-center gap-2">
+            <div className="px-4 py-4 flex justify-between items-center sticky top-0 bg-[var(--app-bg)] z-20 border-b border-[var(--app-border)]">
+                <h1 className="text-xl sm:text-2xl font-black text-[var(--app-text)] tracking-widest flex items-center gap-2">
                     <span className="text-[var(--gold-primary)] text-2xl">◆</span>
                     {t('CARTELS_TITLE', 'The Cartels')}
                 </h1>
@@ -45,11 +45,11 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
 
             <div className="px-4 py-3">
                 <div className="relative">
-                    <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                    <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--app-secondary)]" />
                     <input
                         type="text"
                         placeholder={t('CARTELS_SEARCH', 'Search cartels...')}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-white/40 focus:outline-none focus:border-[var(--gold-primary)] transition-colors"
+                        className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-xl py-3 pl-10 pr-4 text-[var(--app-text)] placeholder-[var(--app-secondary)] focus:outline-none focus:border-[var(--gold-primary)] transition-colors"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -60,22 +60,22 @@ export const CartelsExplore = ({ user, onViewCartel, t }) => {
                 {loading ? (
                     <div className="flex justify-center py-10"><Icons.Loader className="animate-spin text-[var(--gold-primary)] w-8 h-8" /></div>
                 ) : filtered.length === 0 ? (
-                    <div className="text-center text-white/40 py-10 font-bold  tracking-widest text-sm">{t('CARTELS_NO_FOUND', 'No cartels found')}</div>
+                    <div className="text-center text-[var(--app-secondary)] py-10 font-bold tracking-widest text-sm">{t('CARTELS_NO_FOUND', 'No cartels found')}</div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {filtered.map(cartel => (
-                            <div key={cartel._id} onClick={() => onViewCartel(cartel)} className="bg-white/5 border border-white/10 rounded-2xl p-4 cursor-pointer hover:bg-white/10 transition-colors group">
+                            <div key={cartel._id} onClick={() => onViewCartel(cartel)} className="bg-[var(--app-card-bg,rgba(255,255,255,0.05))] border border-[var(--app-border)] rounded-2xl p-4 cursor-pointer hover:bg-[var(--app-hover)] transition-colors group">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-xl bg-black/50 overflow-hidden shrink-0 border border-white/10 group-hover:border-[var(--gold-primary)] transition-colors">
+                                    <div className="w-16 h-16 rounded-xl bg-[var(--app-hover)] overflow-hidden shrink-0 border border-[var(--app-border)] group-hover:border-[var(--gold-primary)] transition-colors">
                                         {cartel.image ? (
                                             <img src={cartel.image} alt={cartel.name} className="w-full h-full object-cover object-center bg-black" />
                                         ) : (
-                                            <Icons.Users className="w-8 h-8 m-4 text-white/20" />
+                                            <Icons.Users className="w-8 h-8 m-4 text-[var(--app-secondary)]/40" />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="text-white font-bold text-lg truncate tracking-widest">{cartel.name}</h3>
-                                        <p className="text-white/50 text-xs truncate mt-1">{cartel.description || 'No description'}</p>
+                                        <h3 className="text-[var(--app-text)] font-bold text-lg truncate tracking-widest">{cartel.name}</h3>
+                                        <p className="text-[var(--app-secondary)] text-xs truncate mt-1">{cartel.description || 'No description'}</p>
                                         <div className="text-[var(--gold-primary)] text-xs font-bold mt-2 tracking-wider">
                                             {cartel.members?.length || 0} {t('CARTELS_MEMBERS', 'Members')}
                                         </div>
@@ -151,7 +151,7 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 animate={{ y: 0 }} 
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="relative w-full sm:max-w-md bg-[#0f0f0f] border-t border-white/10 sm:border sm:rounded-3xl rounded-t-3xl flex flex-col overflow-hidden shadow-2xl"
+                className="relative w-full sm:max-w-md bg-[var(--app-bg)] border-t border-[var(--app-border)] sm:border sm:rounded-3xl rounded-t-3xl flex flex-col overflow-hidden shadow-2xl"
                 style={{
                     maxHeight: 'min(85dvh, 700px)',
                     paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 4px))',
@@ -159,18 +159,18 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 }}
             >
                 {/* Drag handle indicator */}
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-white/20 sm:hidden" />
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-[var(--app-secondary)]/30 sm:hidden" />
 
                 {/* Header */}
-                <div className="flex-none flex items-center justify-between px-5 pb-3 border-b border-white/5 mb-2">
-                    <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors">
+                <div className="flex-none flex items-center justify-between px-5 pb-3 border-b border-[var(--app-border)] mb-2">
+                    <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-[var(--app-secondary)] hover:text-[var(--app-text)] transition-colors">
                         {t('CANCEL', 'Cancel')}
                     </button>
-                    <h2 className="text-base sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
+                    <h2 className="text-base sm:text-xl font-black italic text-[var(--app-text)] uppercase tracking-tighter">{t('CARTELS_ESTABLISH', 'Establish Cartel')}</h2>
                     <button type="button" disabled={loading} onClick={handleSubmit} className="sm:hidden px-3 py-1.5 bg-[var(--gold-primary)] hover:opacity-90 disabled:opacity-50 text-black font-black text-xs uppercase tracking-normal rounded-full shadow-md transition-all whitespace-nowrap shrink-0">
                         {loading ? '...' : t('CARTELS_ESTABLISH', 'Establish')}
                     </button>
-                    <button type="button" onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors">
+                    <button type="button" onClick={onClose} className="hidden sm:flex p-1.5 rounded-full bg-[var(--app-hover)] border border-[var(--app-border)] text-[var(--app-secondary)] hover:text-[var(--app-text)] transition-colors">
                         <Icons.X className="w-5 h-5" />
                     </button>
                 </div>
@@ -179,17 +179,17 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                 <div className="flex-1 overflow-y-auto px-5 pb-4 flex flex-col gap-4 min-h-0">
                     <form onSubmit={handleSubmit} id="cartelForm" className="flex flex-col gap-4 pt-2">
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
-                            <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. The Syndicate" />
+                            <label className="text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pl-1">{t('CARTELS_NAME', 'Cartel Name')}</label>
+                            <input type="text" required value={name} onChange={e=>setName(e.target.value)} className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-2xl p-4 text-[15px] text-[var(--app-text)] placeholder-[var(--app-secondary)] focus:border-[var(--gold-primary)] outline-none" placeholder="e.g. The Syndicate" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_DESC', 'Description')}</label>
-                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none min-h-[80px] resize-none custom-scrollbar" placeholder="What is this cartel about?" />
+                            <label className="text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pl-1">{t('CARTELS_DESC', 'Description')}</label>
+                            <textarea value={desc} onChange={e=>setDesc(e.target.value)} className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-[1.5rem] p-4 text-[15px] text-[var(--app-text)] placeholder-[var(--app-secondary)] focus:border-[var(--gold-primary)] outline-none min-h-[80px] resize-none custom-scrollbar" placeholder="What is this cartel about?" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Cover Image')}</label>
+                            <label className="text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pl-1">{t('CARTELS_IMAGE', 'Cover Image')}</label>
                             {(imageFile || imageUrl) && (
-                                <div className="relative w-full rounded-2xl overflow-hidden bg-black border border-white/10 mb-1">
+                                <div className="relative w-full rounded-2xl overflow-hidden bg-black border border-[var(--app-border)] mb-1">
                                     <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-md" />
                                     <img src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} className="relative z-10 w-full max-h-40 object-contain" />
                                     <button type="button" onClick={() => { setImageFile(null); setImageUrl(''); }} className="absolute top-2 right-2 z-20 p-2 bg-black/80 rounded-full hover:bg-red-500 transition-colors">
@@ -199,24 +199,24 @@ const CreateCartelModal = ({ onClose, onCreated, t }) => {
                             )}
                             <div className="flex gap-2">
                                 <input type="file" accept="image/*" ref={fileInputRef} onChange={e => { if(e.target.files[0]) { setImageFile(e.target.files[0]); setImageUrl(''); } }} className="hidden" />
-                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-black/50 border border-dashed border-white/20 rounded-2xl p-3.5 text-white hover:border-[var(--gold-primary)] transition-all text-sm flex justify-center items-center gap-2 font-bold">
+                                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 bg-[var(--app-hover)] border border-dashed border-[var(--app-border)] rounded-2xl p-3.5 text-[var(--app-text)] hover:border-[var(--gold-primary)] transition-all text-sm flex justify-center items-center gap-2 font-bold">
                                     <Icons.Image className="w-5 h-5 text-[var(--gold-primary)]" />
                                     {imageFile ? imageFile.name : t('CARTELS_UPLOAD_IMG', 'Upload Image')}
                                 </button>
                             </div>
                             {!imageFile && !imageUrl && (
-                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none" placeholder="Or paste image URL..." />
+                                <input type="text" value={imageUrl} onChange={e=>setImageUrl(e.target.value)} className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-2xl p-4 text-[15px] text-[var(--app-text)] placeholder-[var(--app-secondary)] focus:border-[var(--gold-primary)] outline-none" placeholder="Or paste image URL..." />
                             )}
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center justify-between pl-1">
-                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{t('CARTELS_PIN_TOGGLE', 'Enable PIN Access')}</label>
-                                <button type="button" onClick={() => { setEnablePin(!enablePin); if(enablePin) setPin(''); }} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${enablePin ? 'bg-[var(--gold-primary)]' : 'bg-white/20'}`}>
+                                <label className="text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest">{t('CARTELS_PIN_TOGGLE', 'Enable PIN Access')}</label>
+                                <button type="button" onClick={() => { setEnablePin(!enablePin); if(enablePin) setPin(''); }} className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${enablePin ? 'bg-[var(--gold-primary)]' : 'bg-[var(--app-secondary)]/30'}`}>
                                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enablePin ? 'translate-x-4' : 'translate-x-1'}`} />
                                 </button>
                             </div>
                             {enablePin && (
-                                <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-[15px] text-white focus:border-[var(--gold-primary)] outline-none mt-1" placeholder="Enter Secret Code..." />
+                                <input type="text" value={pin} onChange={e=>setPin(e.target.value)} className="w-full bg-[var(--app-hover)] border border-[var(--app-border)] rounded-2xl p-4 text-[15px] text-[var(--app-text)] placeholder-[var(--app-secondary)] focus:border-[var(--gold-primary)] outline-none mt-1" placeholder="Enter Secret Code..." />
                             )}
                         </div>
                         <button disabled={loading} type="submit" form="cartelForm" className="w-full bg-[var(--gold-primary)] text-black font-black uppercase tracking-widest py-4 rounded-xl active:scale-95 transition-transform disabled:opacity-50 mt-2">

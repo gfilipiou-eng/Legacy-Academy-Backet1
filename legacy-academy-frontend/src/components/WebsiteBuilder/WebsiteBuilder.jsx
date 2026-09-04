@@ -362,7 +362,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
             </div>
 
             {/* LEFT SIDEBAR - Form Inputs */}
-            <div className={`w-full md:w-[400px] flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}
+            <div className={`website-builder-panel w-full md:w-[400px] flex-1 min-h-0 flex-col z-20 shadow-[10px_0_30px_rgba(0,0,0,0.5)] shrink-0 ${mobileTab === 'preview' ? 'hidden md:flex' : 'flex'}`}
                  style={{
                      background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(9,9,11,0.95)',
                      backdropFilter: 'blur(28px) saturate(180%)',

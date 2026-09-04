@@ -31,10 +31,10 @@ const ScrollToTop = ({ mainScrollRef, onScrollToTop }) => {
                 }
                 if (onScrollToTop) onScrollToTop();
             }}
-            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 shrink-0 flex-none backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[var(--glass-bg,rgba(0,0,0,0.6))] shrink-0 flex-none backdrop-blur-xl border border-[var(--app-border,rgba(255,255,255,0.12))] shadow-[0_8px_32px_rgba(0,0,0,0.25)] flex items-center justify-center text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover)] hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
             aria-label="Scroll to top"
         >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 text-white">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 text-[var(--app-text,#ffffff)]">
                 <path d="M12 19V5"></path>
                 <path d="m5 12 7-7 7 7"></path>
             </svg>

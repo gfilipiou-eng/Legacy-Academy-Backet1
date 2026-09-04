@@ -2571,7 +2571,9 @@ button:active,
   100% { background-position: 300% 50%; }
 }
 
-.descriptor-founder-entrepreneur {
+.descriptor-founder-entrepreneur,
+.descriptor-founder-prestige,
+[class*="descriptor-founder-"] {
   position: relative !important;
   overflow: hidden !important;
   background:
@@ -2595,7 +2597,9 @@ button:active,
 }
 
 /* Animated gold border via ::before pseudo-element */
-.descriptor-founder-entrepreneur::before {
+.descriptor-founder-entrepreneur::before,
+.descriptor-founder-prestige::before,
+[class*="descriptor-founder-"]::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -2623,12 +2627,16 @@ button:active,
   filter: none !important;
 }
 
-.descriptor-founder-entrepreneur svg {
+.descriptor-founder-entrepreneur svg,
+.descriptor-founder-prestige svg,
+[class*="descriptor-founder-"] svg {
   color: #FCF6BA !important;
   filter: drop-shadow(0 0 0 transparent) !important;
 }
 
-.descriptor-founder-entrepreneur span {
+.descriptor-founder-entrepreneur span,
+.descriptor-founder-prestige span,
+[class*="descriptor-founder-"] span {
   background: linear-gradient(
     -45deg,
     #8a6417 0%,
@@ -2650,7 +2658,9 @@ button:active,
 }
 
 @media (hover: hover) {
-  .descriptor-founder-entrepreneur:hover {
+  .descriptor-founder-entrepreneur:hover,
+  .descriptor-founder-prestige:hover,
+  [class*="descriptor-founder-"]:hover {
     transform: translateY(-0.5px) scale(1.01) !important;
   }
 }
@@ -3632,28 +3642,68 @@ body.liquid-glass-aesthetic .match-widget-container {
 }
 
 /* Light mode text & border adjustments */
-body.bg-light input,
-body.bg-light textarea,
-body.bg-light select {
+body.bg-light input:not(.bubble-input):not(.dark-input):not(.website-builder-panel input),
+body.bg-light textarea:not(.dark-textarea):not(.website-builder-panel textarea),
+body.bg-light select:not(.website-builder-panel select) {
   color: #0f1419;
 }
 
-body.bg-light .text-white {
+body.bg-light .text-white:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *):not(.descriptor-founder-entrepreneur *):not(.descriptor-founder-prestige *) {
   color: #0f1419;
 }
 
-body.bg-light .text-white\/95,
-body.bg-light .text-white\/90,
-body.bg-light .text-white\/80 {
+body.bg-light .text-white\/95:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/90:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/80:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *) {
   color: #0f1419;
 }
 
-body.bg-light .text-white\/70,
-body.bg-light .text-white\/60,
-body.bg-light .text-white\/50,
-body.bg-light .text-white\/45,
-body.bg-light .text-white\/40 {
+body.bg-light .text-white\/70:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/60:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/50:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/45:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *),
+body.bg-light .text-white\/40:not(.bubble-space-overlay *):not(.website-builder-panel *):not(.liquid-image-card *):not(.keep-white):not([data-dark-surface] *):not(.bg-black *):not(.bg-neutral-900 *) {
   color: #536471;
+}
+
+body.bg-light .bubble-space-overlay,
+body.bg-light .bubble-space-overlay * {
+  color: #ffffff;
+}
+body.bg-light input.bubble-input {
+  color: #ffffff !important;
+  background-color: #111318 !important;
+}
+body.bg-light input.bubble-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+body.bg-light .bubble-content,
+body.bg-light .bubble-text,
+body.bg-light .bubble-username {
+  color: #ffffff !important;
+}
+
+body.bg-light .website-builder-panel,
+body.bg-light .website-builder-panel * {
+  color: #ffffff;
+}
+body.bg-light .website-builder-panel input,
+body.bg-light .website-builder-panel textarea,
+body.bg-light .website-builder-panel select {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+body.bg-light .website-builder-panel input::placeholder,
+body.bg-light .website-builder-panel textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+body.bg-light .liquid-image-card .text-white,
+body.bg-light .liquid-image-card .text-white\/90,
+body.bg-light .liquid-image-card p,
+body.bg-light .liquid-image-card span {
+  color: #ffffff !important;
 }
 
 body.bg-light .border-white\/10,

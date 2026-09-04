@@ -152,8 +152,8 @@ const BottomNavbar = memo(({
     }, []);
 
     const navItemBaseClass = 'relative h-[48px] sm:h-[52px] w-full max-w-[80px] sm:max-w-[92px] flex items-center justify-center rounded-2xl overflow-hidden transition-all duration-200 select-none cursor-pointer';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.06))]' : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#0f1419)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'}`;
-    const iconClass = (isActive) => `relative z-10 transition-transform duration-200 w-6 h-6 sm:w-[26px] sm:h-[26px] ${isActive ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]' : 'text-[var(--app-secondary,#71767b)] group-hover:text-[var(--app-text,#0f1419)]'}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover)]' : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)]'}`;
+    const iconClass = (isActive) => `relative z-10 transition-transform duration-200 w-6 h-6 sm:w-[26px] sm:h-[26px] ${isActive ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]' : 'text-[var(--app-secondary,#71767b)] group-hover:text-[var(--app-text)]'}`;
 
     return (
         <nav 
@@ -197,7 +197,7 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group cursor-pointer"
                 >
                     <div 
-                        className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-95 transition-all duration-200 shadow-md ring-2 ring-[var(--app-bg,#000000)]"
+                        className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-95 transition-all duration-200 shadow-md ring-2 ring-[var(--app-bg)]"
                         style={{ background: 'linear-gradient(135deg, var(--gold-primary, #1D9BF0), var(--gold-secondary, #1a8cd8))' }}
                     >
                         <Icons.Plus className="w-6 h-6 sm:w-6 sm:h-6 stroke-[3] text-black" stroke="currentColor" shapeRendering="geometricPrecision" />
@@ -214,7 +214,7 @@ const BottomNavbar = memo(({
                     <div className={navItemClass(activeTab === 'alerts')}>
                         <Icons.Bell className={iconClass(activeTab === 'alerts')} fill={activeTab === 'alerts' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'alerts' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
                         {unreadCount > 0 && (
-                            <div className="absolute top-[8px] right-[20%] sm:right-[24%] min-w-[17px] h-[17px] px-1 bg-[#F91880] rounded-full flex items-center justify-center border border-[var(--app-bg,#000000)] shadow-sm z-20">
+                            <div className="absolute top-[8px] right-[20%] sm:right-[24%] min-w-[17px] h-[17px] px-1 bg-[#F91880] rounded-full flex items-center justify-center border border-[var(--app-bg)] shadow-sm z-20">
                                 <span className="text-[9px] font-extrabold text-white leading-none">
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
@@ -231,7 +231,7 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(isProfileActive)}>
-                        <div className={`relative z-10 overflow-hidden bg-neutral-800 transition-all duration-200 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-[var(--app-bg,#000000)] scale-105' : 'border border-[var(--app-border,#2f3336)]'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-neutral-800 transition-all duration-200 w-7 h-7 sm:w-8 sm:h-8 rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-[var(--app-bg)] scale-105' : 'border border-[var(--app-border)]'}`}>
                             <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
                         </div>
                     </div>

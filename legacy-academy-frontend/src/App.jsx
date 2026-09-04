@@ -540,8 +540,9 @@ const PROFILE_DESCRIPTOR_OPTIONS = [
 ];
 const PROFILE_DESCRIPTOR_MAP = Object.fromEntries(PROFILE_DESCRIPTOR_OPTIONS.map(option => [option.value, option]));
 const getDescriptorAccentClass = (descriptor, role) => {
-    if (descriptor === 'entrepreneur' && role && role.toLowerCase() === 'founder') {
-        return 'descriptor-founder-entrepreneur';
+    const isFounder = role && role.toLowerCase() === 'founder';
+    if (isFounder) {
+        return 'descriptor-founder-entrepreneur descriptor-founder-prestige';
     }
     return PROFILE_DESCRIPTOR_MAP[descriptor]?.accentClass || '';
 };
@@ -6272,10 +6273,10 @@ const MissionsLeaderboardModal = ({ isOpen, onClose, t, currentUser }) => {
                                     scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
                                 }
                             }}
-                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ffffff]/10 shrink-0 flex-none backdrop-blur-2xl border border-[#ffffff]/20 flex items-center justify-center text-[#ffffff] hover:scale-105 active:scale-95 transition-all duration-500 ease-out"
+                            className="fixed bottom-[calc(158px+env(safe-area-inset-bottom))] right-20 sm:right-32 z-[950] w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[var(--glass-bg,rgba(0,0,0,0.6))] shrink-0 flex-none backdrop-blur-xl border border-[var(--app-border,rgba(255,255,255,0.12))] shadow-[0_8px_32px_rgba(0,0,0,0.25)] flex items-center justify-center text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover)] hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
                             aria-label="Scroll to top"
                         >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 text-[#1D9BF0]">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 sm:w-10 sm:h-10 text-[var(--gold-primary,#1D9BF0)]">
                                 <path d="M12 19V5"></path>
                                 <path d="m5 12 7-7 7 7"></path>
                             </svg>
@@ -8281,7 +8282,6 @@ const applyTheme = (color) => {
     document.documentElement.style.setProperty('--gold-hover', hover);
     document.documentElement.style.setProperty('--gold-glow', glow);
     document.documentElement.style.setProperty('--gold-glow-soft', glowSoft);
-    document.documentElement.style.setProperty('--app-text', '#e7e9ea');
     document.documentElement.style.setProperty('--f1-red', color);
     document.documentElement.style.setProperty('--f1-primary', color);
     if (rgb) {
@@ -8536,8 +8536,17 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
         <div
             ref={profileScrollRef}
             tabIndex={-1}
-            className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-white flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
-            style={{ '--gold-primary': themeColor || '#e80000', backgroundColor: publicBackground.color, '--app-bg': publicBackground.color }}
+            className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-[var(--app-text)] flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
+            style={{
+                '--gold-primary': themeColor || '#e80000',
+                backgroundColor: publicBackground.color,
+                '--app-bg': publicBackground.color,
+                '--app-text': publicBackground.textColor,
+                '--app-secondary': publicBackground.value === 'light' ? '#536471' : (publicBackground.value === 'dim' ? '#8b98a5' : '#71767b'),
+                '--app-border': publicBackground.borderColor,
+                '--app-hover': publicBackground.value === 'light' ? 'rgba(15, 20, 25, 0.05)' : 'rgba(255, 255, 255, 0.05)',
+                color: publicBackground.textColor
+            }}
         >
 
             {resolvedPublicCoverPic && (
@@ -8560,7 +8569,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
             <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-20 pb-24">
                 {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full text-white hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-lg z-50">
+                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-[var(--app-card-bg,rgba(255,255,255,0.05))] backdrop-blur-xl border border-[var(--app-border)] rounded-full text-[var(--app-text)] hover:bg-[var(--app-hover)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-lg z-50">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
@@ -8588,7 +8597,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
 
                     <div className="text-center space-y-1 w-full">
                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                        <h1 className="profile-headline text-lg sm:text-xl font-black text-[var(--app-text,#ffffff)] tracking-[0.1em]">{publicUser.username}</h1>
+                        <h1 className="profile-headline text-lg sm:text-xl font-black text-[var(--app-text)] tracking-[0.1em]">{publicUser.username}</h1>
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(publicUser)}</span>}
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
@@ -8598,7 +8607,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             </div>
                         )}
                     </div>
-                    <span className="profile-headline text-xs text-gray-500 font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
+                    <span className="profile-headline text-xs text-[var(--app-secondary,#71767b)] font-bold tracking-widest mt-1">@{publicUser.username?.toLowerCase().replace(/\s+/g, '')}</span>
                     {publicFounderAffiliation && (
                         <div className="mt-2 flex justify-center">
                             <FounderAffiliationBadge username={publicFounderAffiliation} size="sm" maxTextWidth="max-w-none" />
@@ -8615,7 +8624,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
                             </div>
-                            <p className="text-xs sm:text-sm text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words">
+                            <p className="text-xs sm:text-sm text-[var(--app-text)] font-medium select-text whitespace-pre-wrap break-words">
                                 {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
                             </p>
                         </div>
@@ -8625,7 +8634,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 <div className="grid grid-cols-4 gap-2 w-full mt-6">
                     {/* POSTS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
-                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
+                        <span className="font-black text-[var(--app-text)] text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
                                 return (publicPosts || []).filter(p =>
@@ -8638,7 +8647,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
  
                     {/* REPOSTS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
-                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
+                        <span className="font-black text-[var(--app-text)] text-base leading-none tabular-nums">
                             {(() => {
                                 const uid = safeId(publicUser);
                                 return (publicPosts || []).filter(p =>
@@ -8651,7 +8660,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
  
                     {/* FOLLOWERS */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
-                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
+                        <span className="font-black text-[var(--app-text)] text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.followers)}
                         </span>
                         <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">
@@ -8661,7 +8670,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
  
                     {/* FOLLOWING */}
                     <div className="flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border border-[var(--app-border,#eff3f4)] bg-[var(--app-hover,rgba(255,255,255,0.03))] shadow-sm select-none">
-                        <span className="font-black text-[var(--app-text,#ffffff)] text-base leading-none tabular-nums">
+                        <span className="font-black text-[var(--app-text)] text-base leading-none tabular-nums">
                             {getUniqueCount(publicUser.following)}
                         </span>
                         <span className="text-[var(--app-secondary,#71767b)] text-[7.5px] font-black uppercase tracking-wider mt-0.5 truncate w-full text-center px-1">{t('FOLLOWING')}</span>
@@ -8695,14 +8704,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* POST SHOWCASE SECTION TITLE */}
                 <div className="w-full flex items-center gap-3 mt-10 mb-6">
                     <div className="w-1 h-5 bg-[var(--gold-primary)] rounded-full shrink-0" />
-                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">{t('POSTS', 'POSTS')}</span>
-                    <div className="h-[1px] flex-1 bg-white/20" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[var(--app-text)]">{t('POSTS', 'POSTS')}</span>
+                    <div className="h-[1px] flex-1 bg-[var(--app-border)]" />
                 </div>
 
                 {/* Posts with same style as regular profile */}
                 <div className="w-full space-y-6 pb-20">
                     {loadingPosts || !postsReady ? (
-                        <div className="border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                        <div className="border border-dashed border-[var(--app-border)] rounded-2xl bg-[var(--app-hover)]">
                             <PlatformLoadingPanel label={t('LOADING_ARCHIVES', 'LOADING ARCHIVES...')} compact />
                         </div>
                     ) : (() => {
@@ -8712,7 +8721,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                             return isSameId(p.author, uid) || (p.isRepost && isSameId(p.repostedBy, uid));
                         });
                         return displayPosts.length === 0 ? (
-                            <div className="p-12 text-center text-xs text-gray-600 font-bold uppercase tracking-widest border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                            <div className="p-12 text-center text-xs text-[var(--app-secondary)] font-bold uppercase tracking-widest border border-dashed border-[var(--app-border)] rounded-2xl bg-[var(--app-hover)]">
                                 {t('NO_ARCHIVES_DISPATCHED_YET', 'NO ARCHIVES DISPATCHED YET')}
                             </div>
                         ) : (
