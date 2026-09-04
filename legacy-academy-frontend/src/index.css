@@ -2184,27 +2184,27 @@ input, textarea {
 
 /* Liquid Glass Refinement */
 .liquid-glass-video-panel {
-  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  background: var(--dynamic-glass-bg, color-mix(in srgb, var(--app-bg, #000000) 75%, transparent)) !important;
   backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
   -webkit-backdrop-filter: blur(var(--dynamic-blur, 50px)) saturate(var(--dynamic-saturate, 200%)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 0 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.03) !important;
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.15)) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-border, rgba(255,255,255,0.15)) 50%, transparent) !important;
+  border-right: 1px solid color-mix(in srgb, var(--app-border, rgba(255,255,255,0.15)) 50%, transparent) !important;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--app-bg, #000000) 60%, transparent), inset 0 0 20px rgba(255,255,255,0.03) !important;
 }
 
 .liquid-glass-control {
-  background: var(--dynamic-glass-bg, rgba(0, 0, 0, 0.65)) !important;
+  background: var(--dynamic-glass-bg, color-mix(in srgb, var(--app-bg, #000000) 70%, transparent)) !important;
   backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
   -webkit-backdrop-filter: blur(var(--dynamic-blur, 40px)) saturate(var(--dynamic-saturate, 180%)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.2)) !important;
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--app-bg, #000000) 50%, transparent), inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .liquid-glass-control:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.08) !important;
+  background: color-mix(in srgb, var(--app-hover, rgba(255,255,255,0.1)) 200%, transparent) !important;
+  border-color: color-mix(in srgb, var(--gold-primary, rgba(255,215,0,1)) 50%, var(--app-border, rgba(255, 255, 255, 0.4))) !important;
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--app-bg, #000000) 60%, transparent), inset 0 0 15px rgba(255, 255, 255, 0.08) !important;
 }
 .action-btn-dislike:active, .action-btn-dislike:focus {
   color: #3b82f6 !important;
@@ -2407,22 +2407,27 @@ button:active,
   overflow: hidden !important;
   background:
     linear-gradient(135deg,
-      rgba(22, 15, 0, 0.92) 0%,
-      rgba(55, 40, 5, 0.90) 35%,
-      rgba(80, 58, 10, 0.92) 50%,
-      rgba(55, 40, 5, 0.90) 65%,
-      rgba(22, 15, 0, 0.92) 100%
-    ) !important;
-  background-size: 300% 100% !important;
+      rgba(22, 15, 0, 0.55) 0%,
+      rgba(55, 40, 5, 0.42) 35%,
+      rgba(80, 58, 10, 0.50) 50%,
+      rgba(55, 40, 5, 0.42) 65%,
+      rgba(22, 15, 0, 0.55) 100%
+    ),
+    linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)) !important;
+  background-size: 300% 100%, 100% 100% !important;
   animation: liveGoldSweep 4.5s ease-in-out infinite !important;
-  border: 1px solid transparent !important;
+  border: 1px solid rgba(252, 246, 186, 0.28) !important;
   background-clip: padding-box !important;
-  transition: transform 0.3s ease, opacity 0.3s ease !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  box-shadow: none !important;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease !important;
+  backdrop-filter: blur(40px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(190%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.25),
+    0 2px 10px rgba(191, 149, 63, 0.15) !important;
   text-shadow: none !important;
   filter: none !important;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 /* Animated gold border via ::before pseudo-element */
@@ -2453,6 +2458,27 @@ button:active,
   animation: liveGoldSweep 3.2s linear infinite !important;
   pointer-events: none !important;
   box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Liquid Glass top sheen highlight */
+.descriptor-founder-entrepreneur::after,
+.descriptor-founder-prestige::after,
+[class*="descriptor-founder-"]::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 28%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
+  pointer-events: none !important;
+  mix-blend-mode: screen !important;
+  opacity: 0.85 !important;
   filter: none !important;
 }
 

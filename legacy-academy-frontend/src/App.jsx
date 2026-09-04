@@ -1129,7 +1129,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
 
     return (
         <div className="relative shrink-0 z-30">
-            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 backdrop-blur-[24px] border border-white/10 text-white/70 hover:text-white rounded-full transition-all active:scale-95 shadow-sm touch-manipulation">
+            <button ref={btnRef} onClick={toggle} className="p-1.5 sm:p-2 bg-[var(--app-hover,rgba(255,255,255,0.05))] hover:brightness-110 backdrop-blur-[40px] border border-[var(--app-border,rgba(255,255,255,0.1))] text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] rounded-full transition-all active:scale-95 touch-manipulation select-none">
                 <Icons.MoreHorizontal className="w-5 h-5" />
             </button>
             {showMenu && createPortal(
@@ -1145,7 +1145,7 @@ const DropdownMenu = ({ post, user, onShare, onEdit, onDelete, t }) => {
                         className="w-[180px] liquid-glass-video-panel rounded-2xl overflow-hidden flex flex-col gap-1 p-2 animate-fade-in"
                     >
                         {isOwner && (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-white/10 active:scale-95">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); onEdit(post); setShowMenu(false); }} className="flex items-center gap-3 p-3 rounded-xl w-full text-left group/item transition-all hover:bg-[var(--app-hover,rgba(255,255,255,0.1))] active:scale-95">
                                 <Icons.Edit className="w-5 h-5 text-blue-400 group-hover/item:scale-110" />
                                 <span className="text-xs font-black text-blue-400 uppercase tracking-widest">{t('EDIT')}</span>
                             </button>
@@ -2893,11 +2893,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     >
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
-                <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in pointer-events-none">
+                <div className="absolute inset-0 z-50 bg-[var(--app-bg,#000000)]/85 backdrop-blur-md flex flex-col items-center justify-center animate-fade-in pointer-events-none border border-[var(--app-border)] rounded-2xl">
                     <div className="w-12 h-12 text-[#1D9BF0] mb-3">
                         <Icons.Loader />
                     </div>
-                    <div className="text-white font-bold text-sm">
+                    <div className="text-[var(--app-text,#ffffff)] font-bold text-sm">
                         {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
                     </div>
                 </div>
@@ -2930,7 +2930,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
                                 {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(author)}</span>}
                                 {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
-                                    <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(author.profileDescriptor, author?.role).replace(/rounded-none/g, "")}`}>
+                                    <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 backdrop-blur-[32px] transition-all duration-300 -translate-z-0 text-[9px] font-bold uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(author.profileDescriptor, author?.role).replace(/rounded-none/g, "")}`}>
                                         {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
                                         <span className="text-[9px] font-bold">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                     </div>
@@ -2989,7 +2989,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                             {/* MEDIA OR TWITTER LINK PREVIEW CARD */}
                             {postHasMedia(post) ? (
-                                <div className="rounded-2xl border border-[var(--app-border)] overflow-hidden bg-black relative shadow-none mt-2.5">
+                                <div className="rounded-2xl border border-[var(--app-border)] overflow-hidden bg-[var(--app-bg,#000000)] relative shadow-none mt-2.5">
                                     <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
                                         {isPostMediaPath(post.audioUrl) ? (
                                             <AudioPlayer audioUrl={resolveMediaUrl(post.audioUrl)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
@@ -2998,7 +2998,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         ) : post.image && (
                                             imgError ? (
                                                 <div 
-                                                    className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-400 gap-2 cursor-pointer hover:bg-white/10 transition-colors duration-300"
+                                                    className="w-full h-40 flex flex-col items-center justify-center bg-[var(--app-hover)] text-[var(--app-secondary)] gap-2 cursor-pointer hover:brightness-110 transition-all duration-300 rounded-2xl"
                                                     onClick={(e) => { e.stopPropagation(); setImgError(false); setImgRetryKey(Date.now()); }}
                                                 >
                                                     {imgRetryCount < 8 ? (
@@ -3008,8 +3008,8 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Icons.Image className="w-8 h-8 opacity-40" />
-                                                            <span className="text-[11px] font-bold opacity-60">Tap to retry</span>
+                                                            <Icons.Image className="w-8 h-8 opacity-60" />
+                                                            <span className="text-[11px] font-bold opacity-80">Tap to retry</span>
                                                         </>
                                                     )}
                                                 </div>
@@ -3017,7 +3017,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 <img
                                                     src={`${resolveMediaUrl(post.image)}${resolveMediaUrl(post.image).includes('?') ? '&' : '?'}retry=${imgRetryKey}`}
                                                     alt="Media"
-                                                    className="w-full h-auto max-h-[60vh] object-contain bg-black"
+                                                    className="w-full h-auto max-h-[60vh] object-contain bg-[var(--app-bg,#000000)]"
                                                     loading="lazy"
                                                     decoding="async"
                                                     onClick={(e) => { e.stopPropagation(); onMediaClick ? onMediaClick(post) : onOpenDetail(post); }}
@@ -3030,12 +3030,12 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         )}
                                     </div>
                                     {shouldBlur && (
-                                        <div onClick={handleRevealClick} className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-black/90" style={{ touchAction: 'manipulation' }}>
-                                            <div className="w-12 h-12 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-red-400 mb-2 pointer-events-auto">
+                                        <div onClick={handleRevealClick} className="absolute inset-0 z-20 bg-[var(--app-bg,#000000)]/85 backdrop-blur-md flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-[var(--app-bg,#000000)]/95" style={{ touchAction: 'manipulation' }}>
+                                            <div className="w-12 h-12 rounded-full bg-[var(--app-bg,#000000)]/70 backdrop-blur-sm border border-[var(--app-border)] flex items-center justify-center text-red-400 mb-2 pointer-events-auto">
                                                 <Icons.EyeOff className="w-6 h-6" />
                                             </div>
                                             <span className="text-sm font-bold text-red-400 uppercase tracking-wider">{t('NSFW_MEDIA_LOCKED')}</span>
-                                            <span className="text-xs text-gray-400 font-medium mt-1">{t('REVEAL_MEDIA')}</span>
+                                            <span className="text-xs text-[var(--app-secondary)] font-medium mt-1">{t('REVEAL_MEDIA')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -7414,7 +7414,7 @@ const ProfileModal = ({
                                         const isFounder = displayUser?.role?.toLowerCase() === 'founder';
                                         return (
                                             <div className="mt-2 flex justify-center">
-                                                <div className={`profile-descriptor-badge inline-flex items-center gap-1.5 rounded-full border backdrop-blur-xl transition-all duration-300 px-3 py-1 ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}>
+                                                <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border backdrop-blur-[40px] transition-all duration-300 px-3.5 py-1.5 -translate-z-0 ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}>
                                                     <SelectedProfileDescriptorIcon className="w-3 h-3 shrink-0" />
                                                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.22em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                                 </div>
@@ -8641,7 +8641,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                         <VerifiedBadge isFounder={isFounder} isUser={!isFounder} className="w-5 h-5 shrink-0" user={publicUser} />
                         {getActiveStreak(publicUser) > 0 && <span className="text-orange-500 font-bold text-base sm:text-lg shrink-0 flex items-center gap-1"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(publicUser)}</span>}
                         {publicUser.profileDescriptor && PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor] && (
-                            <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-102 ${getDescriptorAccentClass(publicUser.profileDescriptor, publicUser?.role).replace(/rounded-none/g, "")}`}>
+                            <div className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 backdrop-blur-[40px] transition-all duration-300 hover:scale-105 -translate-z-0 ${getDescriptorAccentClass(publicUser.profileDescriptor, publicUser?.role).replace(/rounded-none/g, "")}`}>
                                 {React.createElement(PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].Icon, { className: "w-3.5 h-3.5" })}
                                 <span className="text-[10px] font-black uppercase tracking-[0.18em]">{t(`DESC_${publicUser.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[publicUser.profileDescriptor].label)}</span>
                             </div>
