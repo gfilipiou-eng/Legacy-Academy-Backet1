@@ -712,7 +712,7 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 )}
             </div>
             
-            <span className="min-w-0 text-xs sm:text-[13px] font-bold text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-150 truncate leading-none">
+            <span className="min-w-0 text-xs sm:text-[13px] font-bold text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-150 truncate leading-normal py-0.5">
                 @{normalizedUsername}
             </span>
         </div>
