@@ -311,30 +311,26 @@ const formatDisplayUrl = (rawUrl) => {
 };
 
 const BACKGROUND_MODES = [
-    { value: 'dark', labelKey: 'DARK_MODE', color: '#000000', className: 'bg-dark' },
-    { value: 'dark-blue', labelKey: 'DARK_BLUE_MODE', color: '#050a14', className: 'bg-dark-blue' },
-    { value: 'midnight', labelKey: 'MIDNIGHT_MODE', color: '#0a0a12', className: 'bg-midnight' },
-    { value: 'purple-night', labelKey: 'PURPLE_NIGHT_MODE', color: '#0d0818', className: 'bg-purple-night' },
-    { value: 'forest', labelKey: 'FOREST_MODE', color: '#051208', className: 'bg-forest' },
-    { value: 'crimson', labelKey: 'CRIMSON_MODE', color: '#120508', className: 'bg-crimson' },
-    { value: 'slate', labelKey: 'SLATE_MODE', color: '#0f1115', className: 'bg-slate' },
-    { value: 'ocean', labelKey: 'OCEAN_MODE', color: '#041018', className: 'bg-ocean' },
-    { value: 'obsidian', labelKey: 'OBSIDIAN_MODE', color: '#09090b', className: 'bg-obsidian' },
-    { value: 'pink-aesthetic', labelKey: 'PINK_AESTHETIC_MODE', color: '#2a0919', className: 'bg-pink-aesthetic' },
-    { value: 'razer-green', labelKey: 'RAZER_GREEN_MODE', color: '#041a08', className: 'bg-razer-green' },
-    { value: 'f1-ferrari', labelKey: 'F1_FERRARI_MODE', color: '#150000', className: 'bg-f1-ferrari' },
-    { value: 'f1-mercedes', labelKey: 'F1_MERCEDES_MODE', color: '#001214', className: 'bg-f1-mercedes' },
-    { value: 'f1-mclaren', labelKey: 'F1_MCLAREN_MODE', color: '#1a0800', className: 'bg-f1-mclaren' },
-    { value: 'f1-redbull', labelKey: 'F1_REDBULL_MODE', color: '#00061a', className: 'bg-f1-redbull' },
-    { value: 'f1-aston', labelKey: 'F1_ASTON_MODE', color: '#001408', className: 'bg-f1-aston' },
-    { value: 'royal-gold', labelKey: 'ROYAL_GOLD_MODE', color: '#141005', className: 'bg-royal-gold' },
-    { value: 'void-black', labelKey: 'VOID_BLACK_MODE', color: '#020202', className: 'bg-void-black' },
-    { value: 'blood-red', labelKey: 'BLOOD_RED_MODE', color: '#1a0505', className: 'bg-blood-red' },
+    { value: 'light', labelKey: 'LIGHT_MODE', label: 'Default', color: '#ffffff', textColor: '#0f1419', borderColor: '#eff3f4', className: 'bg-light' },
+    { value: 'dim', labelKey: 'DIM_MODE', label: 'Dim', color: '#15202b', textColor: '#ffffff', borderColor: '#38444d', className: 'bg-dim' },
+    { value: 'dark', labelKey: 'DARK_MODE', label: 'Lights out', color: '#000000', textColor: '#ffffff', borderColor: '#2f3336', className: 'bg-dark' },
 ];
 
-const getBackgroundMode = (user) => user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
+const normalizeBackgroundMode = (mode) => {
+    if (mode === 'light' || mode === 'dim' || mode === 'dark') return mode;
+    if (mode === 'dark-blue') return 'dim';
+    return 'dark';
+};
 
-const getBackgroundEntry = (mode) => BACKGROUND_MODES.find((entry) => entry.value === mode) || BACKGROUND_MODES.find((entry) => entry.value === 'dark-blue') || BACKGROUND_MODES[0];
+const getBackgroundMode = (user) => {
+    const raw = user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark';
+    return normalizeBackgroundMode(raw);
+};
+
+const getBackgroundEntry = (mode) => {
+    const normalized = normalizeBackgroundMode(mode);
+    return BACKGROUND_MODES.find((entry) => entry.value === normalized) || BACKGROUND_MODES[2];
+};
 
 
 
@@ -367,6 +363,63 @@ const postHasMedia = (post) => {
     return isPostMediaPath(post.image) || isPostMediaPath(post.videoUrl) || isPostMediaPath(post.thumbnailUrl) || isPostMediaPath(post.audioUrl);
 };
 
+const extractFirstUrl = (text) => {
+    if (!text) return null;
+    const match = String(text).match(/(https?:\/\/[^\s]+|www\.[^\s]+)/i);
+    if (!match) return null;
+    let url = match[0];
+    if (!url.startsWith('http')) url = 'https://' + url;
+    return url;
+};
+
+const TwitterLinkPreviewCard = ({ url }) => {
+    if (!url) return null;
+    let domain = '';
+    try {
+        const u = new URL(url.startsWith('http') ? url : `https://${url}`);
+        domain = u.hostname.replace(/^www\./i, '');
+    } catch {
+        domain = url;
+    }
+
+    const isYT = isYouTubeUrl(url);
+    const ytId = isYT ? getYouTubeId(url) : null;
+    const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null;
+
+    return (
+        <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="twitter-link-card group block select-none"
+        >
+            {ytThumb && (
+                <div className="twitter-link-card-image-wrap relative group/play">
+                    <img src={ytThumb} alt="YouTube thumbnail" className="twitter-link-card-image" loading="lazy" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 group-hover/play:bg-black/15 transition-colors">
+                        <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
+                            <Icons.Play className="w-5 h-5 fill-current translate-x-0.5" />
+                        </div>
+                    </div>
+                </div>
+            )}
+            <div className="twitter-link-card-content">
+                <div className="twitter-link-card-domain">
+                    <Icons.Link className="w-3.5 h-3.5 opacity-70 shrink-0" />
+                    <span>{domain}</span>
+                </div>
+                <div className="twitter-link-card-title">
+                    {isYT ? 'Watch on YouTube' : domain}
+                </div>
+                <div className="twitter-link-card-desc">
+                    {url}
+                </div>
+            </div>
+        </a>
+    );
+};
+
 const parseText = (text, onHashtagClick, onMentionClick) => {
     if (!text) return [];
     
@@ -384,12 +437,11 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-link-chip text-link-chip--url"
+                    className="text-[#1D9BF0] hover:underline cursor-pointer font-normal break-all inline"
                     onClick={(e) => e.stopPropagation()}
                     title={href}
                 >
-                    <Icons.Link className="w-3.5 h-3.5 shrink-0 opacity-80" />
-                    <span className="truncate max-w-[240px] sm:max-w-[300px]">{displayUrl}</span>
+                    {displayUrl}
                 </a>
             );
         }
@@ -407,7 +459,7 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                             e.stopPropagation(); 
                             if (onHashtagClick) onHashtagClick(subPart);
                         }} 
-                        className="text-link-chip text-link-chip--tag"
+                        className="text-[#1D9BF0] hover:underline cursor-pointer font-normal"
                     >
                         {subPart}
                     </span>
@@ -420,7 +472,7 @@ const parseText = (text, onHashtagClick, onMentionClick) => {
                             e.stopPropagation(); 
                             if (onMentionClick) onMentionClick(subPart.slice(1));
                         }} 
-                        className="text-link-chip text-link-chip--mention"
+                        className="text-[#1D9BF0] hover:underline cursor-pointer font-normal"
                     >
                         {subPart}
                     </span>
@@ -435,15 +487,12 @@ const formatUserHandle = (username) =>
     '@' + String(username || 'agent').toLowerCase().replace(/\s+/g, '');
 
 const THEME_PALETTE = [
-    { value: '#cc0000', labelKey: 'COLOR_RED' },
-    { value: '#ffd700', labelKey: 'COLOR_GOLD' },
-    { value: '#b8860b', labelKey: 'COLOR_DARK_GOLD' },
-    { value: '#39ff14', labelKey: 'COLOR_NEON_GREEN' },
-    { value: '#3b82f6', labelKey: 'COLOR_BLUE' },
-    { value: '#0ea5e9', labelKey: 'COLOR_WATER' },
-    { value: '#10b981', labelKey: 'COLOR_GREEN' },
-    { value: '#ff5500', labelKey: 'COLOR_ORANGE' },
-    { value: '#a855f7', labelKey: 'COLOR_PURPLE' },
+    { value: '#1D9BF0', labelKey: 'COLOR_BLUE', label: 'Blue' },
+    { value: '#FFD400', labelKey: 'COLOR_GOLD', label: 'Yellow' },
+    { value: '#F91880', labelKey: 'COLOR_PINK', label: 'Pink' },
+    { value: '#7856FF', labelKey: 'COLOR_PURPLE', label: 'Purple' },
+    { value: '#FF7A00', labelKey: 'COLOR_ORANGE', label: 'Orange' },
+    { value: '#00BA7C', labelKey: 'COLOR_GREEN', label: 'Green' },
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [
     {
@@ -2749,18 +2798,11 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
         e.stopPropagation();
         setRevealed(true);
     };
-    const cardSpacingClass = compact ? 'p-2.5 sm:p-3.5 mb-3 sm:mb-3.5' : 'p-3 sm:p-4 mb-4 sm:mb-4';
-    const headerGapClass = compact ? 'gap-2.5 sm:gap-4' : 'gap-3 sm:gap-4';
-    const metaGapClass = compact ? 'gap-1.5 sm:gap-2' : 'gap-2';
-    const nameClass = compact ? 'font-bold text-white text-[13px] sm:text-[15px] leading-snug hover:underline cursor-pointer truncate shrink min-w-0 max-w-[50%]' : 'font-bold text-white text-[13px] sm:text-[15px] leading-tight hover:underline cursor-pointer truncate shrink min-w-0 max-w-[50%]';
-    const handleClass = compact ? 'text-sky-100/80 text-[11px] sm:text-[13px] leading-snug break-words min-w-0 max-w-full' : 'text-sky-200/70 text-[12px] sm:text-[13px] leading-tight break-words min-w-0 max-w-full';
-    const bodyTextClass = compact ? 'post-card-body-text text-[13px] sm:text-[14px] text-white/95 leading-[1.5] font-normal whitespace-pre-wrap break-words pb-0.5' : 'post-card-body-text text-[15px] sm:text-[16px] text-white/95 leading-relaxed font-normal whitespace-pre-wrap break-words pr-1 pb-1';
-    const actionBarClass = compact ? 'flex items-center justify-between mt-3 w-full border-t border-white/10 pt-3 gap-1.5 sm:gap-2 px-0' : 'flex items-center justify-between mt-4 w-full border-t border-white/10 pt-4 px-2';
-    const actionButtonBaseClass = compact ? 'flex min-w-0 flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 py-2 sm:px-3 rounded-full transition-colors active:scale-95 touch-manipulation select-none cursor-pointer' : 'flex min-w-0 flex-1 items-center justify-center gap-2 px-2 sm:px-4 py-2 rounded-full transition-colors active:scale-95 touch-manipulation select-none cursor-pointer';
-    const actionIconClass = compact ? 'w-[18px] h-[18px] sm:w-5 sm:h-5' : 'w-5 h-5';
-    const actionCountClass = compact ? 'text-[11px] sm:text-[12px] font-bold tabular-nums tracking-wide' : 'text-[12px] font-bold tabular-nums tracking-wide';
-    const mediaWrapClass = compact ? 'rounded-[18px] overflow-hidden bg-transparent relative shadow-none h-auto min-h-[100px] mt-3 liquid-glass-video-panel' : 'rounded-none overflow-hidden bg-[#050505] relative shadow-none h-auto min-h-[100px] mt-3';
-    const mediaClass = compact ? 'w-full h-auto max-h-[65vh] object-contain bg-transparent' : 'w-full h-auto object-contain bg-[#050505]';
+    const cardSpacingClass = compact ? 'p-2.5 sm:p-3' : 'p-3 sm:p-4';
+    const headerGapClass = 'gap-3';
+    const nameClass = 'font-bold text-[15px] text-[var(--app-text)] hover:underline cursor-pointer truncate shrink min-w-0';
+    const handleClass = 'text-[14px] text-[var(--app-secondary)] truncate shrink';
+    const bodyTextClass = 'text-[15px] text-[var(--app-text)] leading-normal font-normal whitespace-pre-wrap break-words pr-1 pb-1';
 
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
@@ -2779,9 +2821,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
     };
 
     const [showComments, setShowComments] = useState(false);
-      const [showMenu, setShowMenu] = useState(false);
-
-
+    const [showMenu, setShowMenu] = useState(false);
 
     return (
     <div
@@ -2793,81 +2833,72 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
         filter: isDeleting ? 'blur(10px)' : 'none'
       }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={`premium-post-card group relative ${cardSpacingClass} transition-all duration-300 will-change-transform overflow-visible transform-gpu touch-manipulation w-full max-w-full`}
-      style={{ overflow: 'visible' }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className={`group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] transition-colors select-text ${cardSpacingClass}`}
     >
-            {/* Subtle Ancient Greek Meander Top Border */}
-            <div className="hidden" />
-            <div className="hidden" />
-
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
-                <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-none animate-fade-in pointer-events-none">
-                    <div className="w-16 h-16 text-[var(--gold-primary)] mb-4">
+                <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in pointer-events-none">
+                    <div className="w-12 h-12 text-[#1D9BF0] mb-3">
                         <Icons.Loader />
                     </div>
-                    <div className="text-white font-black uppercase tracking-[0.2em]  text-lg drop-shadow-none">
+                    <div className="text-white font-bold text-sm">
                         {t('TRANSMITTING_PERCENT', { percent: post.uploadProgress || 0 })}
                     </div>
-                    <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">{t('ENCRYPTING_DATA')}</div>
                 </div>
             )}
 
             {/* CARD CONTENT */}
-            <div className="relative z-10 flex flex-col w-full max-w-full overflow-visible">
+            <div className="relative z-10 flex flex-col w-full max-w-full">
                 {resolvedReposter && (
-                    <div className="flex items-center gap-2 mb-3 px-1 text-green-500/80">
-                        <Icons.RefreshCcw className="w-3.5 h-3.5" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                            {(resolvedReposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'YOU REPOSTED') : `${resolvedReposter?.username || 'Agent'} ${t('REPOSTED', 'REPOSTED')}`}
+                    <div className="flex items-center gap-2 mb-1.5 pl-11 sm:pl-12 text-[var(--app-secondary)] text-[12px] font-bold">
+                        <Icons.RefreshCcw className="w-3.5 h-3.5 text-[#00BA7C]" />
+                        <span>
+                            {(resolvedReposter?.username || 'Agent') === user?.username ? t('YOU_REPOSTED', 'You Reposted') : `${resolvedReposter?.username || 'Agent'} ${t('REPOSTED', 'reposted')}`}
                         </span>
                     </div>
                 )}
-                <div className={`flex ${headerGapClass} w-full max-w-full overflow-visible`}>
+                <div className={`flex ${headerGapClass} w-full max-w-full`}>
                     {/* LEFT COL: AVATAR */}
-                    <div className="post-card-avatar-col shrink-0 flex flex-col items-center">
-                        <div className={`post-card-avatar ${compact ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-14 h-14 sm:w-16 sm:h-16'} relative group cursor-pointer rounded-full border border-white/20 overflow-hidden bg-neutral-900 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]`} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
+                    <div className="shrink-0 flex flex-col items-center pt-0.5">
+                        <div className="w-10 h-10 sm:w-11 sm:h-11 relative cursor-pointer rounded-full overflow-hidden bg-neutral-800 shrink-0 border border-[var(--app-border)] hover:opacity-90 transition-opacity" onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>
                             <ProfileAvatar user={author} className="object-cover w-full h-full" cacheKey={cacheKey} />
                         </div>
                     </div>
 
                     {/* RIGHT COL: CONTENT */}
-                    <div className="flex-1 flex flex-col min-w-0 w-full max-w-full overflow-visible">
-                        {/* Header */}
-                        <div className="flex items-center justify-between gap-2 mb-2.5 min-w-0 w-full max-w-full dynamic-glass-panel border border-white/10 rounded-2xl p-2.5 sm:p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
-                            <div className="min-w-0 flex-1 pr-1 w-full max-w-full">
-                                <div className={`flex flex-col ${metaGapClass} min-w-0 w-full max-w-full`}>
-                                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 min-w-0 w-full max-w-full">
-                                        <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
-                                        <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
-                                        {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(author)}</span>}
-                                        {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
-                                            <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 backdrop-blur-xl text-[9px] font-black uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(author.profileDescriptor, author?.role).replace(/rounded-none/g, "")}`}>
-                                                {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
-                                                <span className="text-[9px] font-black uppercase tracking-[0.12em]">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
-                                            </div>
-                                        )}
-                                        <span className={handleClass}>{formatUserHandle(author?.username)}</span>
+                    <div className="flex-1 flex flex-col min-w-0 w-full max-w-full">
+                        {/* Header Row */}
+                        <div className="flex items-center justify-between gap-1 mb-1 min-w-0 w-full">
+                            <div className="min-w-0 flex-1 pr-1 flex items-center gap-1.5 flex-wrap">
+                                <span className={nameClass} onClick={(e) => { e.stopPropagation(); onViewProfile(author); }}>{author?.username}</span>
+                                <VerifiedBadge isFounder={isFounder} isUser={!isFounder && (author?.settings?.showBadge !== false)} className="w-4 h-4 shrink-0 flex-shrink-0" user={author} hideFootball={true} />
+                                {getActiveStreak(author) > 0 && <span className="text-orange-500 font-bold text-[11px] sm:text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em]" />{getActiveStreak(author)}</span>}
+                                {author?.profileDescriptor && PROFILE_DESCRIPTOR_MAP[author.profileDescriptor] && (
+                                    <div className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shrink-0 ${getDescriptorAccentClass(author.profileDescriptor, author?.role).replace(/rounded-none/g, "")}`}>
+                                        {React.createElement(PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].Icon, { className: "w-2.5 h-2.5 shrink-0" })}
+                                        <span className="text-[9px] font-bold">{t(`DESC_${author.profileDescriptor.toUpperCase()}`, PROFILE_DESCRIPTOR_MAP[author.profileDescriptor].label)}</span>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <CyberDate date={post.createdAt} t={t} lang={lang} />
-                                    </div>
+                                )}
+                                <span className={handleClass}>{formatUserHandle(author?.username)}</span>
+                                <span className="text-[14px] text-[var(--app-secondary)] select-none">·</span>
+                                <div className="text-[14px] text-[var(--app-secondary)] hover:underline">
+                                    <CyberDate date={post.createdAt} t={t} lang={lang} />
                                 </div>
                             </div>
 
                             {!isReadOnly && <DropdownMenu post={post} user={user} onShare={onShare} onEdit={onEditPost} onDelete={onDelete} t={t} />}
                         </div>
 
-                        <div className="space-y-3 mt-1">
+                        <div className="mt-0.5 space-y-2.5">
                             {post.desc && (
                                 <div className="space-y-2">
                                     {shouldBlur ? (
                                         <div className="flex items-center gap-2.5 p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl cursor-pointer" onClick={(e) => { e.stopPropagation(); handleRevealClick(e); }}>
                                             <Icons.Lock className="w-4 h-4 text-red-500 shrink-0" />
                                             <div className="text-left">
-                                                <span className="text-xs font-black text-red-500 uppercase tracking-widest block">{t('NSFW_CONTENT_LOCKED')}</span>
-                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mt-0.5">{t('REVEAL_CONTENT')}</span>
+                                                <span className="text-xs font-bold text-red-500 uppercase tracking-wider block">{t('NSFW_CONTENT_LOCKED')}</span>
+                                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider block mt-0.5">{t('REVEAL_CONTENT')}</span>
                                             </div>
                                         </div>
                                     ) : (
@@ -2884,10 +2915,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); handleTranslate(e); }}
                                                         disabled={isTranslating}
-                                                        className="text-[10px] sm:text-[11px] font-black text-white uppercase tracking-widest hover:underline flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
+                                                        className="text-[11px] font-bold text-[var(--app-secondary)] hover:text-[#1D9BF0] hover:underline flex items-center gap-1.5 transition-colors"
                                                     >
                                                         <Icons.Translate className={`w-3.5 h-3.5 ${isTranslating ? 'animate-spin' : ''}`} />
-                                                        {isTranslating ? t('DECRYPTING', 'DECRYPTING...') : (translatedText ? t('SHOW_ORIGINAL', 'SHOW ORIGINAL') : t('SEE_TRANSLATION', 'SEE TRANSLATION'))}
+                                                        {isTranslating ? t('DECRYPTING', 'Translating...') : (translatedText ? t('SHOW_ORIGINAL', 'Show original') : t('SEE_TRANSLATION', 'Translate'))}
                                                     </button>
                                                     {localStorage.getItem('neuralNarrator') === 'true' && (
                                                         <div onClick={(e) => e.stopPropagation()}>
@@ -2901,28 +2932,29 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                 </div>
                             )}
 
-                            {postHasMedia(post) && (
-                                <div className={`${mediaWrapClass} relative overflow-hidden group/media`}>
+                            {/* MEDIA OR TWITTER LINK PREVIEW CARD */}
+                            {postHasMedia(post) ? (
+                                <div className="rounded-2xl border border-[var(--app-border)] overflow-hidden bg-black relative shadow-none mt-2.5">
                                     <div className={shouldBlur ? 'blur-2xl pointer-events-none select-none transition-all duration-300' : 'transition-all duration-300'}>
                                         {isPostMediaPath(post.audioUrl) ? (
                                             <AudioPlayer audioUrl={resolveMediaUrl(post.audioUrl)} trackName={post.desc ? post.desc.split('\n')[0] : 'Audio Track'} />
                                         ) : (post.videoUrl || (post.image && post.image.match(/\.(mp4|mov|webm)$/i))) ? (
-                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className={compact ? 'w-full h-auto max-h-[62vh] liquid-glass-video-panel rounded-2xl' : 'w-full h-auto'} onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
+                                            <NeuralVideoPlayer src={resolveMediaUrl(post.videoUrl || post.image)} poster={resolveMediaUrl(post.thumbnailUrl || post.videoUrl || post.image, null, false, true)} className="w-full h-auto max-h-[62vh] object-contain" onExpand={() => onMediaClick ? onMediaClick(post) : onOpenDetail(post)} forcePause={forcePause || shouldBlur} />
                                         ) : post.image && (
                                             imgError ? (
                                                 <div 
-                                                    className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-600 gap-2 cursor-pointer hover:bg-white/10 transition-colors duration-300"
+                                                    className="w-full h-40 flex flex-col items-center justify-center bg-white/5 text-gray-400 gap-2 cursor-pointer hover:bg-white/10 transition-colors duration-300"
                                                     onClick={(e) => { e.stopPropagation(); setImgError(false); setImgRetryKey(Date.now()); }}
                                                 >
                                                     {imgRetryCount < 8 ? (
                                                         <>
-                                                            <div className="w-8 h-8 border-2 border-[var(--gold-primary)]/50 border-t-[var(--gold-primary)] rounded-full animate-spin"></div>
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-[var(--gold-primary)]/80">Processing Image... ({imgRetryCount}/8)</span>
+                                                            <div className="w-8 h-8 border-2 border-[#1D9BF0]/50 border-t-[#1D9BF0] rounded-full animate-spin"></div>
+                                                            <span className="text-[11px] font-bold text-[#1D9BF0]">Loading media... ({imgRetryCount}/8)</span>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Icons.Image className="w-8 h-8 opacity-20" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Image Expired (Tap to Retry)</span>
+                                                            <Icons.Image className="w-8 h-8 opacity-40" />
+                                                            <span className="text-[11px] font-bold opacity-60">Tap to retry</span>
                                                         </>
                                                     )}
                                                 </div>
@@ -2930,7 +2962,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                                 <img
                                                     src={`${resolveMediaUrl(post.image)}${resolveMediaUrl(post.image).includes('?') ? '&' : '?'}retry=${imgRetryKey}`}
                                                     alt="Media"
-                                                    className={mediaClass}
+                                                    className="w-full h-auto max-h-[60vh] object-contain bg-black"
                                                     loading="lazy"
                                                     decoding="async"
                                                     onClick={(e) => { e.stopPropagation(); onMediaClick ? onMediaClick(post) : onOpenDetail(post); }}
@@ -2944,20 +2976,24 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     </div>
                                     {shouldBlur && (
                                         <div onClick={handleRevealClick} className="absolute inset-0 z-20 bg-black/80 flex flex-col items-center justify-center cursor-pointer p-4 transition-all hover:bg-black/90" style={{ touchAction: 'manipulation' }}>
-                                            <div className="w-14 h-14 rounded-full liquid-glass-control flex items-center justify-center text-red-400 mb-3 pointer-events-auto">
-                                                <Icons.EyeOff className="w-7 h-7" />
+                                            <div className="w-12 h-12 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-red-400 mb-2 pointer-events-auto">
+                                                <Icons.EyeOff className="w-6 h-6" />
                                             </div>
-                                            <span className="text-sm font-bold text-red-400 uppercase tracking-widest">{t('NSFW_MEDIA_LOCKED')}</span>
-                                            <span className="text-xs text-gray-300 font-bold uppercase tracking-wider mt-2">{t('REVEAL_MEDIA')}</span>
+                                            <span className="text-sm font-bold text-red-400 uppercase tracking-wider">{t('NSFW_MEDIA_LOCKED')}</span>
+                                            <span className="text-xs text-gray-400 font-medium mt-1">{t('REVEAL_MEDIA')}</span>
                                         </div>
                                     )}
                                 </div>
+                            ) : (
+                                extractFirstUrl(post.desc) && (
+                                    <TwitterLinkPreviewCard url={extractFirstUrl(post.desc)} />
+                                )
                             )}
                         </div>
 
-                        {/* ── POST ACTIONS/STATS BAR ── */}
+                        {/* ── POST ACTIONS/STATS BAR (100% Old School Twitter) ── */}
                         {!isReadOnly ? (
-                            <div className={actionBarClass}>
+                            <div className="flex items-center justify-between mt-2.5 max-w-[420px] text-[var(--app-secondary)]">
                                 {/* COMMENTS */}
                                 <button
                                     onClick={(e) => {
@@ -2969,10 +3005,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                             setShowComments(!showComments);
                                         }
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-comment ${showComments ? 'text-[#1D9BF0]' : 'text-gray-500 md:hover:bg-[#1D9BF0]/12 md:hover:text-[#1D9BF0] active:bg-[#1D9BF0]/18 active:text-[#1D9BF0]'}`}
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
+                                        showComments ? 'text-[#1D9BF0]' : 'text-[var(--app-secondary)] hover:text-[#1D9BF0]'
+                                    }`}
+                                    title="Reply"
                                 >
-                                    <Icons.MessageSquare key={`cmt-${tweetCommentPop}`} className={`${actionIconClass} ${tweetCommentPop > 0 ? 'tweet-chip-pop' : ''}`} />
-                                    <span className={actionCountClass}>{post.comments?.length || 0}</span>
+                                    <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
+                                        <Icons.MessageSquare key={`cmt-${tweetCommentPop}`} className="w-[18px] h-[18px]" />
+                                    </div>
+                                    <span className="tabular-nums pr-2">{post.comments?.length || 0}</span>
                                 </button>
 
                                 {/* REPOSTS */}
@@ -2982,10 +3023,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         setTweetRepostPop(v => v + 1);
                                         onRepost && onRepost(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-repost ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#17BF63]' : 'text-gray-500 md:hover:bg-[#17BF63]/12 md:hover:text-[#17BF63] active:bg-[#17BF63]/18 active:text-[#17BF63]'}`}
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
+                                        post.reposts?.some(id => isSameId(id, user?._id)) ? 'text-[#00BA7C]' : 'text-[var(--app-secondary)] hover:text-[#00BA7C]'
+                                    }`}
+                                    title="Repost"
                                 >
-                                    <Icons.RefreshCcw key={`rp-${tweetRepostPop}`} className={`${actionIconClass} ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetRepostPop > 0 ? 'tweet-chip-pop' : ''}`} />
-                                    <span className={actionCountClass}>{post.reposts?.length || 0}</span>
+                                    <div className="p-2 rounded-full group-hover:bg-[#00BA7C]/10 transition-colors">
+                                        <Icons.RefreshCcw key={`rp-${tweetRepostPop}`} className={`w-[18px] h-[18px] ${post.reposts?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
                                 </button>
 
                                 {/* LIKE */}
@@ -2997,10 +3043,15 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isLiked ? 'cyber_unlike' : 'cyber_like');
                                         onLike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-like ${post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#E0245E]' : 'text-gray-500 md:hover:bg-[#E0245E]/12 md:hover:text-[#E0245E] active:bg-[#E0245E]/18 active:text-[#E0245E]'}`}
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
+                                        post.likes?.some(id => isSameId(id, user?._id)) ? 'text-[#F91880]' : 'text-[var(--app-secondary)] hover:text-[#F91880]'
+                                    }`}
+                                    title="Like"
                                 >
-                                        <Icons.Heart key={`lk-${tweetLikePop}`} className={`${actionIconClass} ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetLikePop > 0 ? 'tweet-heart-pop' : ''}`} />
-                                    <span className={actionCountClass}>{post.likes?.length || 0}</span>
+                                    <div className="p-2 rounded-full group-hover:bg-[#F91880]/10 transition-colors">
+                                        <Icons.Heart key={`lk-${tweetLikePop}`} className={`w-[18px] h-[18px] ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
                                 </button>
 
                                 {/* DISLIKE */}
@@ -3012,46 +3063,57 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         playSound(isDisliked ? 'cyber_unlike' : 'cyber_like');
                                         onDislike(post._id);
                                     }}
-                                    className={`${actionButtonBaseClass} action-btn-dislike ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#536471]' : 'text-gray-500 md:hover:bg-[#536471]/14 md:hover:text-[#536471] active:bg-[#536471]/20 active:text-[#536471]'}`}
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${
+                                        post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#536471]' : 'text-[var(--app-secondary)] hover:text-[#536471]'
+                                    }`}
+                                    title="Dislike"
                                 >
-                                    <Icons.ThumbsDown key={`dl-${tweetDislikePop}`} className={`${actionIconClass} ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''} ${tweetDislikePop > 0 ? 'tweet-chip-pop' : ''}`} />
-                                    <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
+                                    <div className="p-2 rounded-full group-hover:bg-gray-500/10 transition-colors">
+                                        <Icons.ThumbsDown key={`dl-${tweetDislikePop}`} className={`w-[18px] h-[18px] ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="tabular-nums pr-2">{post.dislikes?.length || 0}</span>
+                                </button>
+
+                                {/* SHARE */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onShare && onShare(post);
+                                    }}
+                                    className="group flex items-center gap-1 text-[13px] font-normal text-[var(--app-secondary)] hover:text-[#1D9BF0] transition-colors cursor-pointer select-none"
+                                    title="Share"
+                                >
+                                    <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
+                                        <Icons.Share className="w-[18px] h-[18px]" />
+                                    </div>
                                 </button>
                             </div>
                         ) : (
-                            <div className={actionBarClass}>
-                                {/* REPOSTS (read-only) */}
-                                <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.RefreshCcw className={`${actionIconClass} ${post.reposts?.length ? 'text-[#17BF63]' : ''}`} />
-                                    <span className={actionCountClass}>{post.reposts?.length || 0}</span>
+                            <div className="flex items-center justify-between mt-2.5 max-w-[320px] text-[var(--app-secondary)]">
+                                <div className="flex items-center gap-1.5 text-[var(--app-secondary)]">
+                                    <Icons.RefreshCcw className="w-[18px] h-[18px]" />
+                                    <span className="text-[13px] tabular-nums">{post.reposts?.length || 0}</span>
                                 </div>
-
-                                {/* LIKES (read-only) */}
-                                <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.Heart className={`${actionIconClass} ${post.likes?.length ? 'text-[#E0245E] fill-current' : ''}`} />
-                                    <span className={actionCountClass}>{post.likes?.length || 0}</span>
+                                <div className="flex items-center gap-1.5 text-[var(--app-secondary)]">
+                                    <Icons.Heart className="w-[18px] h-[18px]" />
+                                    <span className="text-[13px] tabular-nums">{post.likes?.length || 0}</span>
                                 </div>
-
-                                {/* DISLIKES (read-only) */}
-                                <div className={`${compact ? 'flex min-w-0 flex-1 items-center justify-center gap-1.5 px-2.5 py-2 text-gray-400' : 'flex items-center justify-center gap-2 px-4 py-2 text-gray-400'}`}>
-                                    <Icons.ThumbsDown className={`${actionIconClass} ${post.dislikes?.length ? 'text-[#536471] fill-current' : ''}`} />
-                                    <span className={actionCountClass}>{post.dislikes?.length || 0}</span>
+                                <div className="flex items-center gap-1.5 text-[var(--app-secondary)]">
+                                    <Icons.ThumbsDown className="w-[18px] h-[18px]" />
+                                    <span className="text-[13px] tabular-nums">{post.dislikes?.length || 0}</span>
                                 </div>
-
-                                {/* Filler to balance */}
-                                <div className={compact ? 'hidden' : 'w-12'}></div>
                             </div>
                         )}
 
                         {showComments && !isReadOnly && (
-                            <div className="mt-4 pt-4 border-t border-white/5 space-y-4 animate-fade-in relative z-20">
+                            <div className="mt-3 pt-3 border-t border-[var(--app-border)] space-y-3 animate-fade-in relative z-20">
                                 <PostCommentInput ref={commentInputRef} post={post} user={user} t={t} onComment={onComment} />
-                                <div className="border-t border-white/[0.06] mt-4">
+                                <div className="border-t border-[var(--app-border)] mt-3">
                                     {(post.comments || []).slice().reverse().map(c => (
                                         <CommentItem key={c._id} comment={c} post={post} user={user} allUsers={allUsers} onEdit={onEditComment} onDelete={(cid) => onDeleteComment(post._id, cid)} t={t} lang={lang} onViewProfile={onViewProfile} userBadgeKey={`${user?.settings?.badgeColor}-${user?.settings?.showBadge}`}
-    onReply={(username) => {
-        if (commentInputRef.current) commentInputRef.current.addMention(username);
-    }} />
+                                            onReply={(username) => {
+                                                if (commentInputRef.current) commentInputRef.current.addMention(username);
+                                            }} />
                                     ))}
                                 </div>
                             </div>
@@ -3762,33 +3824,23 @@ const PlatformLoadingPanel = ({ label, compact = false }) => (
     </div>
 );
 
-const Toggle = ({ active, onToggle, color = 'green' }) => {
-    let trackActive = 'bg-white border-white';
-    let knobActive = 'bg-[#0a0a0a]';
-
-    if (color === 'blue') {
-        trackActive = 'bg-[#0A84FF] border-[#0A84FF]'; // iOS blue
-        knobActive = 'bg-white';
-    } else if (color === 'green') {
-        trackActive = 'bg-[#34C759] border-[#34C759]'; // iOS green
-        knobActive = 'bg-white';
-    }
-
+const Toggle = ({ active, onToggle, color = 'blue' }) => {
     return (
         <button
             type="button"
             role="switch"
             aria-checked={active}
             onClick={() => { playCyberSFX('click'); onToggle(); }}
-            className={`settings-toggle relative w-[58px] h-[34px] sm:w-[52px] sm:h-[30px] rounded-full border transition-all duration-300 ease-out shrink-0 touch-manipulation outline-none ${
-                active ? trackActive : 'bg-white/[0.12] border-white/15'
-            } cursor-pointer active:scale-[0.96]`}
+            className={`settings-toggle relative w-[48px] h-[28px] rounded-full border transition-all duration-200 ease-out shrink-0 touch-manipulation outline-none cursor-pointer active:scale-[0.96] ${
+                active ? 'border-transparent' : 'bg-transparent border-[var(--app-secondary,#71767b)]'
+            }`}
+            style={{
+                backgroundColor: active ? (color === 'gold' ? '#FFD400' : color === 'red' ? '#F4212E' : 'var(--gold-primary, #1D9BF0)') : undefined
+            }}
         >
             <span
-                className={`settings-toggle-knob absolute top-[3px] left-[3px] w-[26px] h-[26px] sm:w-[22px] sm:h-[22px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-                    active
-                        ? `translate-x-[24px] sm:translate-x-[22px] ${knobActive} shadow-[0_2px_8px_rgba(0,0,0,0.35)]`
-                        : 'translate-x-0 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.4)]'
+                className={`settings-toggle-knob absolute top-[2px] left-[2px] w-[22px] h-[22px] rounded-full transition-all duration-200 shadow-sm ${
+                    active ? 'translate-x-[20px] bg-white' : 'translate-x-0 bg-[var(--app-secondary,#71767b)]'
                 }`}
             />
         </button>
@@ -3797,41 +3849,41 @@ const Toggle = ({ active, onToggle, color = 'green' }) => {
 
 const ShareSettingLabel = ({ t }) => (
     <div className="flex items-center gap-2.5 min-w-0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white/80 shrink-0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[var(--app-secondary,#71767b)] shrink-0">
             <circle cx="18" cy="5" r="3" />
             <circle cx="6" cy="12" r="3" />
             <circle cx="18" cy="19" r="3" />
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
         </svg>
-        <span className="text-[16px] sm:text-[15px] font-normal text-white leading-snug">{t('SHARE_PROFILE_BUTTON', 'Share Button')}</span>
+        <span className="text-[15px] font-normal text-[var(--app-text,#ffffff)] leading-snug">{t('SHARE_PROFILE_BUTTON', 'Share Button')}</span>
     </div>
 );
 
 const SectionHeader = ({ label }) => (
-    <h3 className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-[0.14em] mb-2 mt-8 px-4 first:mt-0 leading-none">{label}</h3>
+    <h3 className="text-[12px] font-bold text-[var(--app-secondary,#71767b)] uppercase tracking-[0.12em] mb-2.5 mt-5 px-1 first:mt-0 leading-none">{label}</h3>
 );
 
 const SettingsGroup = ({ children, className = '' }) => (
-    <div className={`rounded-[20px] overflow-hidden bg-white/[0.04] backdrop-blur-xl mx-4 settings-group border border-white/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.12)] ${className}`}>
+    <div className={`rounded-[18px] overflow-hidden bg-[var(--app-hover,rgba(255,255,255,0.03))] settings-group border border-[var(--app-border,#2f3336)] shadow-sm ${className}`}>
         {children}
     </div>
 );
 
 const SettingRow = ({ label, desc, children, hasChevron = false, onClick }) => (
     <div
-        className={`settings-row flex items-center justify-between gap-4 px-4 sm:px-5 py-[15px] sm:py-4 min-h-[56px] sm:min-h-[54px] hover:bg-white/[0.04] transition-colors active:bg-white/[0.08] border-b border-white/[0.05] last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
+        className={`settings-row flex items-center justify-between gap-4 px-4 sm:px-5 py-[14px] sm:py-3.5 min-h-[54px] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))] transition-colors active:bg-[var(--app-active,rgba(255,255,255,0.08))] border-b border-[var(--app-border,#2f3336)] last:border-b-0 ${onClick ? 'cursor-pointer' : ''}`}
         onClick={onClick}
     >
         <div className="flex-1 min-w-0 pr-2 flex items-center gap-3">
             <div className="flex-1 min-w-0">
-                {typeof label === 'string' ? <div className="text-[16px] sm:text-[15px] font-normal text-white leading-tight">{label}</div> : label}
-                {desc && <div className="text-[13px] text-[#98989D] mt-1 leading-snug">{desc}</div>}
+                {typeof label === 'string' ? <div className="text-[15px] font-normal text-[var(--app-text,#ffffff)] leading-tight">{label}</div> : label}
+                {desc && <div className="text-[13px] text-[var(--app-secondary,#71767b)] mt-1 leading-snug">{desc}</div>}
             </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
             {hasChevron && (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] text-[#8E8E93]/70 -mr-0.5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] text-[var(--app-secondary,#71767b)] -mr-0.5">
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
             )}
@@ -3842,20 +3894,13 @@ const SettingRow = ({ label, desc, children, hasChevron = false, onClick }) => (
 
 const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const { t, i18n, lang } = useTranslation(user);
+    const [activeTab, setActiveTab] = useState('display');
     const [saving, setSaving] = useState(false);
     const [isPrivate, setIsPrivate] = useState(user?.isPrivate || false);
     const [isFollowersOnly, setIsFollowersOnly] = useState(user?.isFollowersOnly || false);
     const [showProfileShareButton, setShowProfileShareButton] = useState(user?.settings?.showProfileShareButton !== false);
     const [showBadge, setShowBadge] = useState(user?.settings?.showBadge === true);
     const [badgeColor, setBadgeColor] = useState(user?.settings?.badgeColor || (user?.role === 'Founder' ? 'gold' : 'blue'));
-    const [footballTeam, setFootballTeam] = useState(user?.settings?.footballTeam || null);
-    const [favoritePlayer, setFavoritePlayer] = useState(user?.settings?.favoritePlayer || '');
-    const [teamSearchQuery, setTeamSearchQuery] = useState('');
-    const [teamSearchResults, setTeamSearchResults] = useState([]);
-    const [isSearchingTeam, setIsSearchingTeam] = useState(false);
-    const [playerSearchQuery, setPlayerSearchQuery] = useState('');
-    const [playerSearchResults, setPlayerSearchResults] = useState([]);
-    const [isSearchingPlayer, setIsSearchingPlayer] = useState(false);
     const [blur18Plus, setBlur18Plus] = useState(user?.settings?.blur18Plus !== false);
     const [is18PlusProfile, setIs18PlusProfile] = useState(user?.settings?.is18PlusProfile === true);
     const [profileDescriptor, setProfileDescriptor] = useState(user?.profileDescriptor || '');
@@ -3865,11 +3910,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
     const [enableProfileZoom, setEnableProfileZoom] = useState(user?.settings?.enableProfileZoom === true);
-    const [themeCategory, setThemeCategory] = useState('primary');
-    const [showAllThemes, setShowAllThemes] = useState(false);
-    const [showAllBackgrounds, setShowAllBackgrounds] = useState(false);
     const pendingShareToggleRef = useRef(null);
-    const playerSearchTimeoutRef = useRef(null);
     const latestUserRef = useRef(user);
     const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
     const activeLanguage = normalizeLanguageCode(lang || i18n.resolvedLanguage || i18n.language || user?.settings?.language || localStorage.getItem('language') || 'en');
@@ -3883,13 +3924,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             )
         )
     );
-    const [enableGlow, setEnableGlow] = useState(
-        user?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true'
-    );
-    const [liquidGlassIntensity, setLiquidGlassIntensity] = useState(
-        user?.settings?.liquidGlassIntensity ?? parseFloat(localStorage.getItem('liquidGlassIntensity') || '1.0')
-    );
-useEffect(() => {
+
+    useEffect(() => {
         latestUserRef.current = user;
     }, [user]);
 
@@ -3912,8 +3948,6 @@ useEffect(() => {
             );
             setShowBadge(user.settings?.showBadge === true);
             setBadgeColor(user.settings?.badgeColor || (user.role === 'Founder' ? 'gold' : 'blue'));
-            setFootballTeam(user.settings?.footballTeam || null);
-            setFavoritePlayer(user.settings?.favoritePlayer || '');
             setBlur18Plus(user.settings?.blur18Plus !== false);
             setIs18PlusProfile(user.settings?.is18PlusProfile === true);
             setProfileDescriptor(user.profileDescriptor || '');
@@ -3929,7 +3963,6 @@ useEffect(() => {
         setPendingLanguage(activeLanguage);
     }, [activeLanguage]);
 
-
     const handleSave = async (key, val) => {
         setSaving(true);
         try {
@@ -3938,7 +3971,6 @@ useEffect(() => {
                 onUpdateUser(res.data);
                 if (key === 'isPrivate') setIsPrivate(val);
                 if (key === 'isFollowersOnly') setIsFollowersOnly(val);
-
                 setSaving(false);
                 return;
             }
@@ -3979,25 +4011,17 @@ useEffect(() => {
                     }
                 });
             }
-
-            if (key === 'displayMode') payload = { settings: { displayMode: val } };
             if (key === 'zoom') payload = { settings: { zoom: val } };
             if (key === 'showProfileShareButton') payload = { settings: { showProfileShareButton: Boolean(val) } };
             if (key === 'showBadge') payload = { settings: { showBadge: Boolean(val) } };
             if (key === 'badgeColor') payload = { settings: { badgeColor: String(val) } };
-            if (key === 'footballTeam') payload = { settings: { footballTeam: val } };
-            if (key === 'favoritePlayer') payload = { settings: { favoritePlayer: val } };
             if (key === 'blur18Plus') payload = { settings: { blur18Plus: Boolean(val) } };
             if (key === 'is18PlusProfile') payload = { settings: { is18PlusProfile: Boolean(val) } };
             if (key === 'enableProfileZoom') {
                 payload = { settings: { enableProfileZoom: Boolean(val) } };
                 setEnableProfileZoom(Boolean(val));
             }
-            if (key === 'liquidGlassIntensity') {
-                payload = { settings: { liquidGlassIntensity: Number(val) } };
-                localStorage.setItem('liquidGlassIntensity', String(val));
-            }
-            
+
             // OPTIMISTIC UPDATE FOR ALL SETTINGS
             if (payload && payload.settings) {
                 const baseUserForOptimistic = latestUserRef.current || user || {};
@@ -4035,14 +4059,11 @@ useEffect(() => {
             if (key === 'showProfileShareButton') setShowProfileShareButton(Boolean(val));
             if (key === 'showBadge') setShowBadge(Boolean(val));
             if (key === 'badgeColor') setBadgeColor(String(val));
-            if (key === 'footballTeam') setFootballTeam(val);
-            if (key === 'favoritePlayer') setFavoritePlayer(val);
             if (key === 'blur18Plus') setBlur18Plus(Boolean(val));
             if (key === 'is18PlusProfile') setIs18PlusProfile(Boolean(val));
             if (key === 'batterySaver') setBatterySaver(Boolean(val));
             if (key === 'cyberSFX') setCyberSFX(Boolean(val));
             if (key === 'neuralNarrator') setNeuralNarrator(Boolean(val));
-
         } catch (e) {
             console.error("Settings update failed", e);
             if (key === 'isPrivate') setIsPrivate(!val);
@@ -4067,16 +4088,14 @@ useEffect(() => {
         localStorage.setItem('language', normalizedLanguage);
         setPendingLanguage(normalizedLanguage);
         playCyberSFX('success');
-        onClose(); // Close modal immediately to prevent UI blocking
+        onClose();
 
-        // Do the rest asynchronously
         setTimeout(async () => {
             try {
                 if (normalizeLanguageCode(i18n.resolvedLanguage || i18n.language) !== normalizedLanguage) {
                     await i18n.changeLanguage(normalizedLanguage);
                 }
                 await handleSave('language', normalizedLanguage);
-                // Immediately reload so all components grab the new language
                 setTimeout(() => window.location.reload(), 200);
             } catch (error) {
                 console.error("Language change error:", error);
@@ -4086,6 +4105,10 @@ useEffect(() => {
     };
 
     if (!isOpen) return null;
+
+    const activeThemeColor = user?.settings?.theme || localStorage.getItem('themeColor') || '#1D9BF0';
+    const currentBgMode = getBackgroundMode(user);
+
     const languageOptions = [
         { id: 'en', flag: '🇺🇸', labelKey: 'LANG_EN' },
         { id: 'el', flag: '🇬🇷', labelKey: 'LANG_EL' },
@@ -4097,404 +4120,568 @@ useEffect(() => {
         { id: 'fr', flag: '🇫🇷', labelKey: 'LANG_FR' },
         { id: 'ro', flag: '🇷🇴', labelKey: 'LANG_RO' },
     ];
+
+    const tabs = [
+        { id: 'display', label: t('DISPLAY', 'Display') },
+        { id: 'privacy', label: t('PRIVACY', 'Privacy') },
+        { id: 'preferences', label: t('PREFERENCES', 'Preferences') },
+        { id: 'account', label: t('ACCOUNT', 'Account') },
+    ];
+
     return (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 sm:p-4">
             <div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/75" onClick={onClose}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                onClick={onClose}
             />
 
             <div
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                className="settings-modal-shell relative w-[97%] max-w-[460px] sm:max-w-[520px] md:max-w-[540px] max-h-[92dvh] sm:max-h-[90vh] rounded-[22px] sm:rounded-[26px] overflow-hidden flex flex-col bg-[#000000]/70 backdrop-blur-[40px] shadow-[0_20px_80px_rgba(0,0,0,0.8)] border border-white/[0.05]"
+                className="settings-modal-shell relative w-[97%] max-w-[580px] max-h-[90vh] rounded-[22px] overflow-hidden flex flex-col shadow-2xl border transition-colors"
+                style={{
+                    backgroundColor: 'var(--app-bg, #000000)',
+                    borderColor: 'var(--app-border, #2f3336)',
+                    color: 'var(--app-text, #ffffff)'
+                }}
             >
                 {/* HEADER */}
-                <div className="px-5 sm:px-6 py-4 border-b border-white/[0.07] flex items-center justify-between shrink-0 relative z-20">
-                    <div className="w-16"></div> {/* Left spacer */}
-                    <div className="flex-1 text-center">
-                        <h2 className="font-semibold text-[18px] sm:text-[17px] text-white tracking-tight">{t('SETTINGS')}</h2>
+                <div
+                    className="px-5 py-3.5 border-b flex items-center justify-between shrink-0 relative z-20"
+                    style={{ borderColor: 'var(--app-border, #2f3336)' }}
+                >
+                    <div className="w-9 h-9 flex items-center justify-center">
+                        <Icons.TwitterBird className="w-7 h-7" style={{ color: activeThemeColor }} />
                     </div>
-                    <button type="button" onClick={onClose} aria-label={t('CLOSE')} className="w-16 flex items-center justify-end group active:scale-95 transition-all relative z-30">
-                        <div className="w-9 h-9 rounded-full bg-white/[0.06] group-hover:bg-white/[0.12] flex items-center justify-center transition-colors">
-                            <Icons.X className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" />
-                        </div>
+                    <span className="font-extrabold text-[17px] text-[var(--app-text,#ffffff)]">
+                        {t('SETTINGS', 'Settings')}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label={t('CLOSE', 'Close')}
+                        className="w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:opacity-80"
+                        style={{ backgroundColor: 'var(--app-hover, rgba(255,255,255,0.08))' }}
+                    >
+                        <Icons.X className="w-5 h-5 text-[var(--app-text,#ffffff)]" />
                     </button>
                 </div>
 
+                {/* TABS */}
+                <div
+                    className="flex border-b shrink-0 overflow-x-auto no-scrollbar"
+                    style={{ borderColor: 'var(--app-border, #2f3336)' }}
+                >
+                    {tabs.map((tab) => {
+                        const isCurrent = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                type="button"
+                                onClick={() => setActiveTab(tab.id)}
+                                className="flex-1 py-3 px-3 text-[14px] sm:text-[15px] font-bold text-center transition-colors relative cursor-pointer whitespace-nowrap outline-none"
+                                style={{
+                                    color: isCurrent ? 'var(--app-text, #ffffff)' : 'var(--app-secondary, #71767b)'
+                                }}
+                            >
+                                {tab.label}
+                                {isCurrent && (
+                                    <span
+                                        className="absolute bottom-0 left-4 right-4 h-[3.5px] rounded-full transition-all"
+                                        style={{ backgroundColor: activeThemeColor }}
+                                    />
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+
                 {/* CONTENT */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar py-3 sm:py-4 space-y-0 relative z-10" style={{ maxHeight: '80vh', WebkitOverflowScrolling: 'touch' }}>
-
-                    {/* ── PRIVACY ── */}
-                    <section>
-                        <SectionHeader label={t('PRIVACY')} />
-                        <SettingsGroup>
-                            <SettingRow label={t('PRIVATE_TITLE')} desc={t('PRIVATE_DESC_SHORT')}>
-                                <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
-                            </SettingRow>
-                            <SettingRow label={t('GUARD_TITLE')} desc={t('GUARD_DESC_SHORT')}>
-                                <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
-                            </SettingRow>
-                            <SettingRow label={<ShareSettingLabel t={t} />} desc={t('SHARE_PROFILE_DESC')}>
-                                <Toggle
-                                    active={showProfileShareButton}
-                                    onToggle={() => {
-                                        const v = !showProfileShareButton;
-                                        setShowProfileShareButton(v);
-                                        handleSave('showProfileShareButton', v);
-                                    }}
-                                    saving={saving}
-                                    color="blue"
-                                />
-                            </SettingRow>
-                        </SettingsGroup>
-                    </section>
-
-                    {/* ── AESTHETICS ── */}
-                    <section>
-                        <SectionHeader label={t('AESTHETICS')} />
-                        <SettingsGroup className="mb-4">
-                            <div className="px-5 sm:px-6 py-5">
-                                <div className="flex items-center justify-between mb-4">
-                                    <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('UI_ZOOM')}</span>
-                                    <span className="text-[15px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(zoomLevel * 100)}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0.95"
-                                    max="1"
-                                    step="0.01"
-                                    value={zoomLevel}
-                                    onChange={(e) => {
-                                        const val = parseFloat(e.target.value);
-                                        setZoomLevel(val);
-                                        applyZoom(val);
-                                    }}
-                                    onPointerUp={() => handleSave('zoom', zoomLevel)}
-                                    onKeyUp={() => handleSave('zoom', zoomLevel)}
-                                    className="settings-range w-full h-2 accent-[#1D9BF0]"
-                                    style={{
-                                        '--progress-width': `${((zoomLevel - 0.95) / 0.05) * 100}%`
-                                    }}
-                                />
+                <div
+                    className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-5 space-y-6"
+                    style={{ maxHeight: 'calc(90vh - 120px)', WebkitOverflowScrolling: 'touch' }}
+                >
+                    {/* TAB: DISPLAY (CUSTOMIZE YOUR VIEW) */}
+                    {activeTab === 'display' && (
+                        <div className="space-y-6">
+                            <div className="text-center">
+                                <h3 className="text-[19px] sm:text-[21px] font-extrabold text-[var(--app-text,#ffffff)]">
+                                    {t('CUSTOMIZE_VIEW', 'Customize your view')}
+                                </h3>
+                                <p className="text-[13.5px] text-[var(--app-secondary,#71767b)] mt-1 max-w-sm mx-auto leading-normal">
+                                    {t('CUSTOMIZE_VIEW_SUBTITLE', 'Manage your font size, color, and background. These settings affect all your accounts on this browser.')}
+                                </p>
                             </div>
-                        </SettingsGroup>
 
-                        <div className="px-4 sm:px-4 space-y-6">
-                            <div>
-                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 px-1 leading-none">{t('THEME')}</div>
-                                <div className="theme-swatch-grid settings-theme-grid">
-                                    {(showAllThemes ? THEME_PALETTE : THEME_PALETTE.slice(0, 5)).map(({ value, labelKey }) => {
-                                        const active = (user?.settings?.theme || localStorage.getItem('themeColor') || '#cc0000') === value;
+                            {/* Live Tweet Preview */}
+                            <div
+                                className="p-4 rounded-2xl border transition-all select-none"
+                                style={{
+                                    backgroundColor: currentBgMode === 'light' ? '#ffffff' : currentBgMode === 'dim' ? '#15202b' : '#000000',
+                                    borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336',
+                                    color: currentBgMode === 'light' ? '#0f1419' : '#ffffff'
+                                }}
+                            >
+                                <div className="flex gap-3">
+                                    <div
+                                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm"
+                                        style={{ backgroundColor: activeThemeColor }}
+                                    >
+                                        <Icons.TwitterBird className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 text-left">
+                                        <div className="flex items-center gap-1.5 flex-wrap leading-tight">
+                                            <span className="font-bold text-[15px]">Twitter</span>
+                                            <Icons.Verified className="w-4 h-4 shrink-0" style={{ color: activeThemeColor }} />
+                                            <span
+                                                className="text-[14px]"
+                                                style={{ color: currentBgMode === 'light' ? '#536471' : '#71767b' }}
+                                            >
+                                                @Twitter · 26m
+                                            </span>
+                                        </div>
+                                        <div className="text-[14px] sm:text-[15px] mt-1.5 leading-snug">
+                                            At the heart of Twitter are short messages — called Tweets — just like this one — which can include photos, videos, links, text, and{' '}
+                                            <span className="cursor-pointer hover:underline font-medium" style={{ color: activeThemeColor }}>
+                                                #hashtags
+                                            </span>!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Font Size */}
+                            <div className="space-y-2">
+                                <span className="text-[13px] font-bold text-[var(--app-secondary,#71767b)]">
+                                    {t('FONT_SIZE', 'Font size')}
+                                </span>
+                                <div
+                                    className="flex items-center gap-4 px-4 py-3.5 rounded-2xl border"
+                                    style={{
+                                        backgroundColor: currentBgMode === 'light' ? '#f7f9f9' : currentBgMode === 'dim' ? '#1e2732' : '#16181c',
+                                        borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336'
+                                    }}
+                                >
+                                    <span className="text-xs font-bold text-[var(--app-secondary,#71767b)] select-none">Aa</span>
+                                    <input
+                                        type="range"
+                                        min="0.95"
+                                        max="1"
+                                        step="0.01"
+                                        value={zoomLevel}
+                                        onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            setZoomLevel(val);
+                                            applyZoom(val);
+                                        }}
+                                        onPointerUp={() => handleSave('zoom', zoomLevel)}
+                                        onKeyUp={() => handleSave('zoom', zoomLevel)}
+                                        className="settings-range flex-1 h-1.5 cursor-pointer"
+                                        style={{
+                                            accentColor: activeThemeColor,
+                                            '--progress-width': `${((zoomLevel - 0.95) / 0.05) * 100}%`
+                                        }}
+                                    />
+                                    <span className="text-xl font-bold text-[var(--app-text,#ffffff)] select-none">Aa</span>
+                                </div>
+                            </div>
+
+                            {/* Color */}
+                            <div className="space-y-2">
+                                <span className="text-[13px] font-bold text-[var(--app-secondary,#71767b)]">
+                                    {t('COLOR', 'Color')}
+                                </span>
+                                <div
+                                    className="flex items-center justify-between px-3 py-3 rounded-2xl border gap-2"
+                                    style={{
+                                        backgroundColor: currentBgMode === 'light' ? '#f7f9f9' : currentBgMode === 'dim' ? '#1e2732' : '#16181c',
+                                        borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336'
+                                    }}
+                                >
+                                    {THEME_PALETTE.map(({ value, label }) => {
+                                        const isSelected = activeThemeColor === value;
                                         return (
                                             <button
                                                 key={value}
                                                 type="button"
+                                                aria-label={label}
                                                 onClick={() => {
                                                     applyTheme(value);
                                                     handleSave('theme', value);
                                                 }}
-                                                className="theme-swatch-btn settings-tile-btn flex flex-col items-center gap-2 py-2"
+                                                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-sm relative focus:outline-none cursor-pointer"
+                                                style={{ backgroundColor: value }}
                                             >
-                                                <span
-                                                    className={`theme-swatch-dot block w-11 h-11 sm:w-10 sm:h-10 rounded-full border-[2.5px] transition-all duration-200 ${active ? 'border-white scale-105' : 'border-white/25'}`}
-                                                    style={{ backgroundColor: value }}
-                                                />
-                                                <span className={`text-[12px] font-medium text-center leading-tight px-1 ${active ? 'text-white' : 'text-gray-400'}`}>
-                                                    {t(labelKey)}
-                                                </span>
+                                                {isSelected && (
+                                                    <Icons.Check className="w-5 h-5 text-white" strokeWidth={3} />
+                                                )}
                                             </button>
                                         );
                                     })}
                                 </div>
-                                {THEME_PALETTE.length > 5 && (
-                                    <button 
-                                        type="button"
-                                        onClick={() => setShowAllThemes(!showAllThemes)}
-                                        className="w-full mt-3 py-2.5 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-[14px] transition-all bg-white/[0.02]"
-                                    >
-                                        {showAllThemes ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
-                                    </button>
-                                )}
                             </div>
 
-                            <div>
-                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 px-1 leading-none">{t('BACKGROUND')}</div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-                                    {(showAllBackgrounds ? BACKGROUND_MODES : BACKGROUND_MODES.slice(0, 8)).map(({ value, labelKey, color, className }) => {
-                                        const active = getBackgroundMode(user) === value;
+                            {/* Background */}
+                            <div className="space-y-2">
+                                <span className="text-[13px] font-bold text-[var(--app-secondary,#71767b)]">
+                                    {t('BACKGROUND', 'Background')}
+                                </span>
+                                <div
+                                    className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl border"
+                                    style={{
+                                        backgroundColor: currentBgMode === 'light' ? '#f7f9f9' : currentBgMode === 'dim' ? '#1e2732' : '#16181c',
+                                        borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336'
+                                    }}
+                                >
+                                    {BACKGROUND_MODES.map((mode) => {
+                                        const isSelected = currentBgMode === mode.value;
                                         return (
                                             <button
-                                                key={value}
-                                                type="button"
-                                                onClick={() => handleSave('background', value)}
-                                                className={`settings-tile-btn relative overflow-hidden flex flex-col rounded-[14px] border transition-all duration-200 min-h-[80px] h-full ${
-                                                    active ? 'border-[#1D9BF0] ring-1 ring-[#1D9BF0]/30' : 'border-white/10 hover:border-white/20'
-                                                }`}
-                                            >
-                                                <div className={`w-full h-14 shrink-0 relative ${className}`} style={{ backgroundColor: color }} />
-                                                <div className={`flex-1 flex items-center justify-center px-2 py-2.5 text-center w-full ${active ? 'text-white' : 'text-gray-400'}`}>
-                                                    <div className="text-[12px] font-medium leading-snug">{t(labelKey)}</div>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                {BACKGROUND_MODES.length > 8 && (
-                                    <button 
-                                        type="button"
-                                        onClick={() => setShowAllBackgrounds(!showAllBackgrounds)}
-                                        className="w-full mt-3 py-2.5 text-[13px] font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-[14px] transition-all bg-white/[0.02]"
-                                    >
-                                        {showAllBackgrounds ? t('SHOW_LESS', 'Show Less') : t('SHOW_MORE', 'Show More')}
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="mt-5">
-                            <SettingsGroup>
-                                <SettingRow label={t('ENABLE_GLOW')} desc={t('GLOW_EFFECT_DESC')}>
-                                    <Toggle active={enableGlow} onToggle={() => {
-                                        const v = !enableGlow;
-                                        setEnableGlow(v);
-                                        applyGlow(v);
-                                        handleSave('enableGlow', v);
-                                    }} saving={saving} color="blue" />
-                                </SettingRow>
-
-                                <div className="px-5 sm:px-6 py-5 border-t border-white/5">
-                                  <div className="flex items-center justify-between mb-4">
-                                      <span className="text-[16px] sm:text-[15px] font-normal text-white">{t('LIQUID_GLASS_INTENSITY', 'Liquid Glass Intensity')}</span>
-                                      <span className="text-[15px] font-semibold text-[#1D9BF0] tabular-nums">{Math.round(liquidGlassIntensity * 100)}%</span>
-                                  </div>
-                                  <input
-                                      type="range"
-                                      min="0"
-                                      max="1"
-                                      step="0.05"
-                                      value={liquidGlassIntensity}
-                                      onChange={(e) => {
-                                          const val = parseFloat(e.target.value);
-                                          setLiquidGlassIntensity(val);
-                                          applyLiquidGlass(val);
-                                      }}
-                                      onPointerUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
-                                      onKeyUp={() => handleSave('liquidGlassIntensity', liquidGlassIntensity)}
-                                      className="settings-range w-full h-2 accent-[#1D9BF0]"
-                                      style={{
-                                          '--progress-width': `${(liquidGlassIntensity) * 100}%`
-                                      }}
-                                  />
-                                  <p className="text-[#8E8E93] text-sm mt-3">{t('LIQUID_GLASS_DESC', 'Adjust the blur and glass effect strength on cards.')}</p>
-                              </div>
-
-                                <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations and background effects to save battery')}>
-                                    <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
-                                </SettingRow>
-
-                                <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom your profile picture on click')}>
-                                    <Toggle active={enableProfileZoom} onToggle={() => handleSave('enableProfileZoom', !enableProfileZoom)} saving={saving} color="blue" />
-                                </SettingRow>
-                            </SettingsGroup>
-                        </div>
-
-                    </section>
-
-                    {/* ── BADGES & CONTENT ── */}
-                    <section>
-                        <SectionHeader label={t('BADGE_SETTINGS')} />
-                        <SettingsGroup>
-                            <SettingRow label={t('SHOW_BADGE')} desc={t('SHOW_BADGE_DESC')}>
-                                <Toggle active={showBadge} onToggle={() => { const v = !showBadge; setShowBadge(v); handleSave('showBadge', v); }} saving={saving} color="blue" />
-                            </SettingRow>
-                            {showBadge && (
-                                <>
-                                    <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
-                                        <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-4 leading-none">{t('BADGE_STYLE')}</div>
-                                        {user?.role === 'Founder' ? (
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-3">
-                                                {[
-                                                    { id: 'live-gold',   label: t('BADGE_DYNAMIC_GOLD', 'Dynamic') },
-                                                    { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid') },
-                                                    { id: 'ig_gold',     label: t('BADGE_EMBER_GOLD', 'Ember') },
-                                                    { id: 'x_gold',      label: t('BADGE_SOLAR_GOLD', 'Solar') },
-                                                    { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon') },
-                                                    { id: 'holographic', label: t('BADGE_HOLO', 'Holo') },
-                                                    { id: 'ig_blue',     label: t('BADGE_PRISM_BLUE', 'Prism') },
-                                                    { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Onyx') },
-                                                    { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'Pearl') },
-                                                ].map(b => {
-                                                    const isSelected = badgeColor === b.id;
-                                                    return (
-                                                        <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                            className={`badge-swatch-card relative p-4 pt-5 pb-4 rounded-2xl border bg-white/[0.02] flex flex-col items-center justify-center gap-2.5 select-none active:opacity-80 transition-all duration-150 ${isSelected ? 'border-[#1D9BF0] bg-[#1D9BF0]/[0.06] shadow-[0_0_0_1px_rgba(29,155,240,0.25)]' : 'border-white/[0.09] hover:border-white/[0.15] hover:bg-white/[0.035]'}`}>
-                                                            {isSelected && (<div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#1D9BF0] flex items-center justify-center shadow-[0_1px_6px_rgba(29,155,240,0.35)]"><svg viewBox="0 0 12 12" className="w-3 h-3"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
-                                                            <VerifiedBadge isFounder={true} className="w-10 h-10 sm:w-9 sm:h-9" badgeColor={b.id} user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }} />
-                                                            <span className={`text-[10px] sm:text-[10.5px] font-bold uppercase tracking-[0.08em] text-center leading-tight ${isSelected ? 'text-white' : 'text-white/45'}`}>{b.label}</span>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        ) : (
-                                            <div className="grid grid-cols-3 gap-3 sm:gap-3.5">
-                                                {[
-                                                    { id: 'x_blue',  label: t('BADGE_COBALT', 'Cobalt') },
-                                                    { id: 'blue',    label: t('BADGE_NOVA', 'Nova') },
-                                                    { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism') },
-                                                ].map(b => {
-                                                    const isSelected = badgeColor === b.id;
-                                                    return (
-                                                        <button key={b.id} type="button" onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
-                                                            className={`badge-swatch-card relative p-4 pt-5 pb-4 rounded-2xl border bg-white/[0.02] flex flex-col items-center justify-center gap-2.5 select-none active:opacity-80 transition-all duration-150 ${isSelected ? 'border-[#1D9BF0] bg-[#1D9BF0]/[0.06] shadow-[0_0_0_1px_rgba(29,155,240,0.25)]' : 'border-white/[0.09] hover:border-white/[0.15] hover:bg-white/[0.035]'}`}>
-                                                            {isSelected && (<div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#1D9BF0] flex items-center justify-center shadow-[0_1px_6px_rgba(29,155,240,0.35)]"><svg viewBox="0 0 12 12" className="w-3 h-3"><polyline points="2,6 5,9 10,3" fill="none" stroke="#fff" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" /></svg></div>)}
-                                                            <VerifiedBadge isFounder={false} isUser={true} className="w-10 h-10 sm:w-9 sm:h-9" badgeColor={b.id} user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }} />
-                                                            <span className={`text-[10px] sm:text-[10.5px] font-bold uppercase tracking-[0.08em] text-center leading-tight ${isSelected ? 'text-white' : 'text-white/45'}`}>{b.label}</span>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                            )}
-                            <SettingRow label={t('BLUR_18_PLUS')} desc={t('BLUR_18_PLUS_DESC')}>
-                                <Toggle active={blur18Plus} onToggle={() => { const v = !blur18Plus; setBlur18Plus(v); handleSave('blur18Plus', v); }} saving={saving} color="blue" />
-                            </SettingRow>
-                            <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
-                                <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
-                            </SettingRow>
-                            <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
-                                <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 leading-none">{t('PROFILE_DESCRIPTOR', 'Identity Descriptor')}</div>
-                                <div className="grid grid-cols-2 gap-2.5">
-                                    {PROFILE_DESCRIPTOR_OPTIONS.map((option) => {
-                                        const isSelected = profileDescriptor === option.value;
-                                        const OptionIcon = option.Icon;
-                                        return (
-                                            <button
-                                                key={option.value}
+                                                key={mode.value}
                                                 type="button"
                                                 onClick={() => {
-                                                    const val = isSelected ? '' : option.value;
-                                                    setProfileDescriptor(val);
-                                                    handleSave('profileDescriptor', val);
+                                                    applyBackground(mode.value);
+                                                    handleSave('background', mode.value);
                                                 }}
-                                                className={`settings-tile-btn p-3 rounded-[14px] border flex items-center gap-2.5 transition-all text-left ${
-                                                    isSelected ? `${option.accentClass} border-current bg-current/10` : 'border-white/10 bg-white/[0.02] text-white/70 hover:border-white/20 hover:bg-white/[0.04]'
-                                                }`}
+                                                className="flex items-center gap-3 p-3.5 rounded-xl border font-bold text-[15px] transition-all cursor-pointer select-none"
+                                                style={{
+                                                    backgroundColor: mode.color,
+                                                    color: mode.textColor,
+                                                    borderColor: isSelected ? activeThemeColor : mode.borderColor,
+                                                    boxShadow: isSelected ? `0 0 0 2px ${activeThemeColor}` : 'none'
+                                                }}
                                             >
-                                                <OptionIcon className="w-4 h-4 shrink-0" />
-                                                <span className="text-[11px] font-bold uppercase tracking-wider truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</span>
+                                                <span
+                                                    className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+                                                    style={{
+                                                        borderColor: isSelected ? activeThemeColor : (mode.value === 'light' ? '#8899a6' : '#5b7083'),
+                                                        backgroundColor: isSelected ? activeThemeColor : 'transparent'
+                                                    }}
+                                                >
+                                                    {isSelected && (
+                                                        <span className="w-2 h-2 rounded-full bg-white" />
+                                                    )}
+                                                </span>
+                                                <span className="truncate">{t(mode.labelKey, mode.label)}</span>
                                             </button>
                                         );
                                     })}
                                 </div>
                             </div>
-                            {user?.role === 'Founder' && (
-                                <div className="px-5 sm:px-6 py-5 border-t border-white/[0.06] text-left">
-                                    <div className="settings-group-inner-label text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.14em] mb-3.5 leading-none">{t('FOUNDER_AFFILIATION', 'Founder Affiliation')}</div>
-                                    <div className="relative">
-                                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--gold-primary)] font-black text-sm">@</div>
-                                        <input
-                                            type="text"
-                                            value={founderAffiliation}
-                                            onChange={(e) => setFounderAffiliation(sanitizeAffiliation(e.target.value))}
-                                            onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
-                                            onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
-                                            placeholder="affiliated_username"
-                                            className="w-full bg-[#0F0F11] border border-white/10 rounded-[14px] py-3.5 pl-10 pr-4 text-white text-[14px] font-semibold placeholder:text-white/20 outline-none focus:border-[var(--gold-primary)] transition-colors"
-                                        />
-                                    </div>
-                                    <div className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-wide leading-relaxed pl-1">
-                                        {t('FOUNDER_AFFILIATION_DESC', 'Links your profile to a founder page (shows founder badge next to username).')}
-                                    </div>
-                                </div>
-                            )}
-                        </SettingsGroup>
-                    </section>
 
-                    {/* ── NEURAL UPGRADES ── */}
-                    <section>
-                        <SectionHeader label={t('NEURAL_UPGRADES', 'NEURAL UPGRADES')} />
-                        <SettingsGroup>
-                            <SettingRow label={t('CYBER_SFX', 'INTERFACE AUDIO')} desc={t('CYBER_SFX_DESC', 'Synthesize real-time cybernetic sound effects on action')}>
-                                <Toggle active={cyberSFX} onToggle={() => { const v = !cyberSFX; setCyberSFX(v); handleSave('cyberSFX', v); }} saving={saving} color="blue" />
-                            </SettingRow>
-                            <SettingRow label={t('NEURAL_NARRATOR', 'NEURAL NARRATOR')} desc={t('NEURAL_NARRATOR_DESC', 'Enable Text-To-Speech reader button next to translate button')}>
-                                <Toggle active={neuralNarrator} onToggle={() => { const v = !neuralNarrator; setNeuralNarrator(v); handleSave('neuralNarrator', v); }} saving={saving} color="blue" />
-                            </SettingRow>
-                        </SettingsGroup>
-                    </section>
+                            {/* Optional Enhancements */}
+                            <div className="space-y-2 pt-1">
+                                <SettingsGroup>
+                                    <SettingRow label={t('BATTERY_SAVER', 'Battery Saver')} desc={t('BATTERY_SAVER_DESC', 'Disable heavy animations to save battery')}>
+                                        <Toggle active={batterySaver} onToggle={() => handleSave('batterySaver', !batterySaver)} saving={saving} color="blue" />
+                                    </SettingRow>
+                                    <SettingRow label={t('ENABLE_PROFILE_ZOOM', 'Enable Profile Zoom')} desc={t('ENABLE_PROFILE_ZOOM_DESC', 'Allow visitors to zoom profile pictures on click')}>
+                                        <Toggle active={enableProfileZoom} onToggle={() => handleSave('enableProfileZoom', !enableProfileZoom)} saving={saving} color="blue" />
+                                    </SettingRow>
+                                </SettingsGroup>
+                            </div>
 
-                    {/* ── LANGUAGE ── */}
-                    <section>
-                        <SectionHeader label={t('COGNITION')} />
-                        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-                            {languageOptions.map(l => (
+                            {/* Done Button */}
+                            <div className="pt-2 flex justify-center">
                                 <button
-                                    key={l.id}
                                     type="button"
-                                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                                    disabled={pendingLanguage === l.id}
-                                    onClick={() => { void handleLanguageSelect(l.id); }}
-                                    className={`settings-lang-btn settings-tile-btn min-h-[60px] sm:min-h-[56px] px-4 sm:px-5 py-4 rounded-[14px] border flex items-center gap-4 transition-all duration-200 cursor-pointer touch-manipulation ${
-                                        pendingLanguage === l.id
-                                            ? 'border-[#1D9BF0] bg-[#1D9BF0]/12 shadow-[0_0_0_1px_rgba(29,155,240,0.2)]'
-                                            : 'border-white/10 bg-[#1C1C1E] hover:border-white/20 active:bg-white/[0.06]'
-                                    }`}
+                                    onClick={onClose}
+                                    className="rounded-full px-9 py-2.5 font-extrabold text-[15px] text-white shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                                    style={{ backgroundColor: activeThemeColor }}
                                 >
-                                    <span className="text-[30px] sm:text-2xl leading-none shrink-0">{l.flag}</span>
-                                    <span className={`text-[15px] font-medium text-left leading-snug flex-1 ${pendingLanguage === l.id ? 'text-white' : 'text-gray-200'}`}>
-                                        {t(l.labelKey)}
-                                    </span>
-                                    {pendingLanguage === l.id && (
-                                        <Icons.Check className="w-5 h-5 text-[#1D9BF0] shrink-0" strokeWidth={3} />
-                                    )}
+                                    {t('DONE', 'Done')}
                                 </button>
-                            ))}
+                            </div>
                         </div>
-                    </section>
+                    )}
 
-                    {/* ── OPERATIONS ── */}
-                    <section>
-                        <SectionHeader label={t('OPERATIONS')} />
-                        <SettingsGroup>
-                            {showDanger ? (
-                                <div className="p-6 border-b last:border-b-0">
-                                    <div className="text-[13px] font-semibold text-red-400 mb-5 text-center uppercase tracking-wider">{t('DANGER_ZONE')}</div>
-                                    <button onClick={async () => { if (confirm(t('DELETE_ACCOUNT_CONFIRM'))) { try { await axios.delete(`/users/${user._id}`); logout(); } catch (e) { } } }}
-                                        className="w-full py-3.5 bg-red-600 hover:bg-red-500 text-white rounded-[14px] font-semibold text-[15px] active:scale-[0.98] transition-all">
-                                        {t('DELETE_FOREVER')}
-                                    </button>
-                                    <button onClick={() => setShowDanger(false)} className="w-full mt-4 py-3 text-[14px] font-medium text-gray-400 hover:text-white transition-colors">{t('CANCEL')}</button>
-                                </div>
-                            ) : (
-                                <SettingRow label={t('UNCOVER_RESTRICTED_OPS')} hasChevron onClick={() => setShowDanger(true)}>
-                                    <span className="text-[13px] text-red-400 font-semibold mr-1">⚠️</span>
-                                </SettingRow>
-                            )}
+                    {/* TAB: PRIVACY */}
+                    {activeTab === 'privacy' && (
+                        <div className="space-y-6">
+                            <section>
+                                <SectionHeader label={t('PRIVACY', 'Privacy')} />
+                                <SettingsGroup>
+                                    <SettingRow label={t('PRIVATE_TITLE', 'Private Account')} desc={t('PRIVATE_DESC_SHORT', 'Only approved followers can view your posts')}>
+                                        <Toggle active={isPrivate} onToggle={() => { const v = !isPrivate; setIsPrivate(v); handleSave('isPrivate', v); }} saving={saving} color="gold" />
+                                    </SettingRow>
+                                    <SettingRow label={t('GUARD_TITLE', 'Protected Mode')} desc={t('GUARD_DESC_SHORT', 'Block unsolicited interactions')}>
+                                        <Toggle active={isFollowersOnly} onToggle={() => { const v = !isFollowersOnly; setIsFollowersOnly(v); handleSave('isFollowersOnly', v); }} saving={saving} color="blue" />
+                                    </SettingRow>
+                                    <SettingRow label={<ShareSettingLabel t={t} />} desc={t('SHARE_PROFILE_DESC', 'Allow one-click profile link sharing')}>
+                                        <Toggle
+                                            active={showProfileShareButton}
+                                            onToggle={() => {
+                                                const v = !showProfileShareButton;
+                                                setShowProfileShareButton(v);
+                                                handleSave('showProfileShareButton', v);
+                                            }}
+                                            saving={saving}
+                                            color="blue"
+                                        />
+                                    </SettingRow>
+                                </SettingsGroup>
+                            </section>
 
-                            <SettingRow
-                                label={
-                                    <div className="flex items-center gap-3">
-                                        <Icons.Logout className="w-5 h-5 text-red-400 shrink-0" />
-                                        <span className="text-[16px] font-medium text-red-400">{t('LOGOUT')}</span>
+                            <section>
+                                <SectionHeader label={t('BADGE_SETTINGS', 'Verified Badge & Identity')} />
+                                <SettingsGroup>
+                                    <SettingRow label={t('SHOW_BADGE', 'Show Badge')} desc={t('SHOW_BADGE_DESC', 'Display verification badge next to your handle')}>
+                                        <Toggle active={showBadge} onToggle={() => { const v = !showBadge; setShowBadge(v); handleSave('showBadge', v); }} saving={saving} color="blue" />
+                                    </SettingRow>
+
+                                    {showBadge && (
+                                        <div className="px-4 py-4 border-t" style={{ borderColor: 'var(--app-border, #2f3336)' }}>
+                                            <div className="text-[11px] font-bold text-[var(--app-secondary,#71767b)] uppercase tracking-[0.14em] mb-3 leading-none">{t('BADGE_STYLE', 'Badge Style')}</div>
+                                            {user?.role === 'Founder' ? (
+                                                <div className="grid grid-cols-3 gap-2.5">
+                                                    {[
+                                                        { id: 'live-gold', label: t('BADGE_DYNAMIC_GOLD', 'Dynamic') },
+                                                        { id: 'liquid-gold', label: t('BADGE_LIQUID_GOLD', 'Liquid') },
+                                                        { id: 'ig_gold', label: t('BADGE_EMBER_GOLD', 'Ember') },
+                                                        { id: 'x_gold', label: t('BADGE_SOLAR_GOLD', 'Solar') },
+                                                        { id: 'neon-purple', label: t('BADGE_PURPLE', 'Neon') },
+                                                        { id: 'holographic', label: t('BADGE_HOLO', 'Holo') },
+                                                        { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism') },
+                                                        { id: 'black_white', label: t('BADGE_BLACK_WHITE', 'Onyx') },
+                                                        { id: 'white_black', label: t('BADGE_WHITE_BLACK', 'Pearl') },
+                                                    ].map(b => {
+                                                        const isSelected = badgeColor === b.id;
+                                                        return (
+                                                            <button
+                                                                key={b.id}
+                                                                type="button"
+                                                                onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                                className="relative p-3 rounded-xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all"
+                                                                style={{
+                                                                    borderColor: isSelected ? activeThemeColor : 'var(--app-border, #2f3336)',
+                                                                    backgroundColor: isSelected ? 'var(--app-hover, rgba(29,155,240,0.08))' : 'transparent'
+                                                                }}
+                                                            >
+                                                                {isSelected && (
+                                                                    <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: activeThemeColor }}>
+                                                                        <Icons.Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                                                                    </div>
+                                                                )}
+                                                                <VerifiedBadge isFounder={true} className="w-7 h-7" badgeColor={b.id} user={{ role: 'Founder', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                                <span className="text-[10px] font-bold uppercase tracking-wider text-center truncate w-full" style={{ color: isSelected ? 'var(--app-text,#ffffff)' : 'var(--app-secondary,#71767b)' }}>
+                                                                    {b.label}
+                                                                </span>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <div className="grid grid-cols-3 gap-2.5">
+                                                    {[
+                                                        { id: 'x_blue', label: t('BADGE_COBALT', 'Cobalt') },
+                                                        { id: 'blue', label: t('BADGE_NOVA', 'Nova') },
+                                                        { id: 'ig_blue', label: t('BADGE_PRISM_BLUE', 'Prism') },
+                                                    ].map(b => {
+                                                        const isSelected = badgeColor === b.id;
+                                                        return (
+                                                            <button
+                                                                key={b.id}
+                                                                type="button"
+                                                                onClick={() => { setBadgeColor(b.id); handleSave('badgeColor', b.id); }}
+                                                                className="relative p-3 rounded-xl border flex flex-col items-center justify-center gap-2 cursor-pointer transition-all"
+                                                                style={{
+                                                                    borderColor: isSelected ? activeThemeColor : 'var(--app-border, #2f3336)',
+                                                                    backgroundColor: isSelected ? 'var(--app-hover, rgba(29,155,240,0.08))' : 'transparent'
+                                                                }}
+                                                            >
+                                                                {isSelected && (
+                                                                    <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: activeThemeColor }}>
+                                                                        <Icons.Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                                                                    </div>
+                                                                )}
+                                                                <VerifiedBadge isFounder={false} isUser={true} className="w-7 h-7" badgeColor={b.id} user={{ role: 'User', settings: { showBadge: true, badgeColor: b.id } }} />
+                                                                <span className="text-[10px] font-bold uppercase tracking-wider text-center truncate w-full" style={{ color: isSelected ? 'var(--app-text,#ffffff)' : 'var(--app-secondary,#71767b)' }}>
+                                                                    {b.label}
+                                                                </span>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    <SettingRow label={t('BLUR_18_PLUS', 'Blur sensitive content')} desc={t('BLUR_18_PLUS_DESC', 'Require click to view sensitive media')}>
+                                        <Toggle active={blur18Plus} onToggle={() => { const v = !blur18Plus; setBlur18Plus(v); handleSave('blur18Plus', v); }} saving={saving} color="blue" />
+                                    </SettingRow>
+                                    <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
+                                        <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
+                                    </SettingRow>
+
+                                    <div className="px-4 py-4 border-t" style={{ borderColor: 'var(--app-border, #2f3336)' }}>
+                                        <div className="text-[11px] font-bold text-[var(--app-secondary,#71767b)] uppercase tracking-[0.14em] mb-3 leading-none">
+                                            {t('PROFILE_DESCRIPTOR', 'Identity Descriptor')}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {PROFILE_DESCRIPTOR_OPTIONS.map((option) => {
+                                                const isSelected = profileDescriptor === option.value;
+                                                const OptionIcon = option.Icon;
+                                                return (
+                                                    <button
+                                                        key={option.value}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const val = isSelected ? '' : option.value;
+                                                            setProfileDescriptor(val);
+                                                            handleSave('profileDescriptor', val);
+                                                        }}
+                                                        className="p-2.5 rounded-xl border flex items-center gap-2 transition-all text-left cursor-pointer"
+                                                        style={{
+                                                            borderColor: isSelected ? activeThemeColor : 'var(--app-border, #2f3336)',
+                                                            backgroundColor: isSelected ? 'var(--app-hover, rgba(29,155,240,0.08))' : 'transparent',
+                                                            color: isSelected ? 'var(--app-text,#ffffff)' : 'var(--app-secondary,#71767b)'
+                                                        }}
+                                                    >
+                                                        <OptionIcon className="w-4 h-4 shrink-0" />
+                                                        <span className="text-[11px] font-bold uppercase tracking-wider truncate">
+                                                            {t(`DESC_${option.value.toUpperCase()}`, option.label)}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                }
-                                hasChevron onClick={logout}
-                            />
-                        </SettingsGroup>
-                    </section>
 
+                                    {user?.role === 'Founder' && (
+                                        <div className="px-4 py-4 border-t" style={{ borderColor: 'var(--app-border, #2f3336)' }}>
+                                            <div className="text-[11px] font-bold text-[var(--app-secondary,#71767b)] uppercase tracking-[0.14em] mb-3 leading-none">
+                                                {t('FOUNDER_AFFILIATION', 'Founder Affiliation')}
+                                            </div>
+                                            <div className="relative">
+                                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-sm" style={{ color: activeThemeColor }}>@</div>
+                                                <input
+                                                    type="text"
+                                                    value={founderAffiliation}
+                                                    onChange={(e) => setFounderAffiliation(sanitizeAffiliation(e.target.value))}
+                                                    onBlur={() => handleSave('founderAffiliation', founderAffiliation)}
+                                                    onKeyDown={(e) => { if (e.key === 'Enter') handleSave('founderAffiliation', founderAffiliation); }}
+                                                    placeholder="affiliated_username"
+                                                    className="w-full rounded-xl py-2.5 pl-9 pr-4 text-[14px] font-semibold outline-none border transition-colors"
+                                                    style={{
+                                                        backgroundColor: 'var(--app-bg, #000000)',
+                                                        borderColor: 'var(--app-border, #2f3336)',
+                                                        color: 'var(--app-text, #ffffff)'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </SettingsGroup>
+                            </section>
+                        </div>
+                    )}
+
+                    {/* TAB: PREFERENCES & LANGUAGE */}
+                    {activeTab === 'preferences' && (
+                        <div className="space-y-6">
+                            <section>
+                                <SectionHeader label={t('LANGUAGE', 'Language')} />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    {languageOptions.map((l) => (
+                                        <button
+                                            key={l.id}
+                                            type="button"
+                                            disabled={pendingLanguage === l.id}
+                                            onClick={() => { void handleLanguageSelect(l.id); }}
+                                            className="px-4 py-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer select-none"
+                                            style={{
+                                                borderColor: pendingLanguage === l.id ? activeThemeColor : 'var(--app-border, #2f3336)',
+                                                backgroundColor: pendingLanguage === l.id ? 'var(--app-hover, rgba(29,155,240,0.08))' : 'var(--app-hover, rgba(255,255,255,0.02))'
+                                            }}
+                                        >
+                                            <span className="text-2xl leading-none shrink-0">{l.flag}</span>
+                                            <span className="text-[14.5px] font-medium text-left leading-snug flex-1" style={{ color: pendingLanguage === l.id ? 'var(--app-text,#ffffff)' : 'var(--app-secondary,#71767b)' }}>
+                                                {t(l.labelKey)}
+                                            </span>
+                                            {pendingLanguage === l.id && (
+                                                <Icons.Check className="w-4 h-4 shrink-0" strokeWidth={3} style={{ color: activeThemeColor }} />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
+
+                            <section>
+                                <SectionHeader label={t('NEURAL_UPGRADES', 'Interface & Audio')} />
+                                <SettingsGroup>
+                                    <SettingRow label={t('CYBER_SFX', 'Sound Effects')} desc={t('CYBER_SFX_DESC', 'Play sound effects on interaction')}>
+                                        <Toggle active={cyberSFX} onToggle={() => { const v = !cyberSFX; setCyberSFX(v); handleSave('cyberSFX', v); }} saving={saving} color="blue" />
+                                    </SettingRow>
+                                    <SettingRow label={t('NEURAL_NARRATOR', 'Voice Reader')} desc={t('NEURAL_NARRATOR_DESC', 'Enable Text-To-Speech reader button next to translate button')}>
+                                        <Toggle active={neuralNarrator} onToggle={() => { const v = !neuralNarrator; setNeuralNarrator(v); handleSave('neuralNarrator', v); }} saving={saving} color="blue" />
+                                    </SettingRow>
+                                </SettingsGroup>
+                            </section>
+                        </div>
+                    )}
+
+                    {/* TAB: ACCOUNT */}
+                    {activeTab === 'account' && (
+                        <div className="space-y-6">
+                            <section>
+                                <SectionHeader label={t('ACCOUNT', 'Account')} />
+                                <SettingsGroup>
+                                    <SettingRow
+                                        label={
+                                            <div className="flex items-center gap-3">
+                                                <Icons.Logout className="w-5 h-5 text-red-500 shrink-0" />
+                                                <span className="text-[15px] font-medium text-red-500">{t('LOGOUT', 'Log Out')}</span>
+                                            </div>
+                                        }
+                                        hasChevron
+                                        onClick={logout}
+                                    />
+
+                                    {showDanger ? (
+                                        <div className="p-5 border-t border-[var(--app-border,#2f3336)]">
+                                            <div className="text-[13px] font-bold text-red-500 mb-3 text-center uppercase tracking-wider">
+                                                {t('DANGER_ZONE', 'Danger Zone')}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    if (confirm(t('DELETE_ACCOUNT_CONFIRM', 'Are you sure you want to permanently delete your account?'))) {
+                                                        try {
+                                                            await axios.delete(`/users/${user._id}`);
+                                                            logout();
+                                                        } catch (e) {
+                                                            console.error(e);
+                                                        }
+                                                    }
+                                                }}
+                                                className="w-full py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-[14px] active:scale-[0.98] transition-all cursor-pointer"
+                                            >
+                                                {t('DELETE_FOREVER', 'Delete Account Permanently')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowDanger(false)}
+                                                className="w-full mt-3 py-2 text-[13px] font-medium text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer"
+                                            >
+                                                {t('CANCEL', 'Cancel')}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <SettingRow label={t('UNCOVER_RESTRICTED_OPS', 'Restricted Operations')} hasChevron onClick={() => setShowDanger(true)}>
+                                            <span className="text-[13px] text-red-400 font-semibold mr-1">⚠️</span>
+                                        </SettingRow>
+                                    )}
+                                </SettingsGroup>
+                            </section>
+                        </div>
+                    )}
                 </div>
 
                 {saving && (
                     <div className="absolute top-3 right-14 pointer-events-none">
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10">
-                            <div className="w-1.5 h-1.5 bg-[var(--gold-primary)] rounded-full " />
-                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{t('SYNCING')}</span>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--app-hover,rgba(255,255,255,0.06))] border border-[var(--app-border,#2f3336)]">
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: activeThemeColor }} />
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-secondary,#71767b)]">
+                                {t('SYNCING', 'Saving...')}
+                            </span>
                         </div>
                     </div>
                 )}
@@ -5769,7 +5956,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(75vw,250px)] sm:w-[240px]
+                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(85vw,300px)] sm:w-[280px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}>
@@ -5787,40 +5974,40 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
                 <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
                     <div
-                        className="mx-3 mt-4 p-3 rounded-[1.2rem] cursor-pointer transition-all duration-200 hover:bg-white/[0.05] active:scale-[0.98] touch-manipulation"
+                        className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-white/[0.05] active:scale-[0.98] touch-manipulation"
                         onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
                     >
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 shrink-0">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" />
                             </div>
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
-                                    <span className="font-bold text-[14px] text-white leading-tight truncate">{user?.username}</span>
-                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={user} />
-                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-3.5 h-3.5 shrink-0" />{getActiveStreak(user)}</span>}
+                                    <span className="font-bold text-[16px] text-white leading-tight truncate">{user?.username}</span>
+                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
+                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-sm shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-4 h-4 shrink-0" />{getActiveStreak(user)}</span>}
                                 </div>
-                                <span className="text-[12px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                                <span className="text-[13px] text-gray-500 leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4 mt-3 pt-2 border-t border-white/10">
+                        <div className="flex items-center gap-5 mt-4 pt-3 border-t border-white/10">
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[12px] tabular-nums">
+                                <span className="font-bold text-white text-[13px] tabular-nums">
                                     {getUniqueCount(user?.followers)}
                                 </span>
-                                <span className="text-[11px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
+                                <span className="text-[12px] text-gray-500">{t('FOLLOWERS') || 'Followers'}</span>
                             </div>
                             <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-white text-[12px] tabular-nums">
+                                <span className="font-bold text-white text-[13px] tabular-nums">
                                     {getUniqueCount(user?.following)}
                                 </span>
-                                <span className="text-[11px] text-gray-500">{t('FOLLOWING')}</span>
+                                <span className="text-[12px] text-gray-500">{t('FOLLOWING')}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-0.5 px-2 py-3 relative z-10">
+                    <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') },
 
@@ -5842,7 +6029,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     if (item.action) { item.action(); }
                                     else { onNavigate(item.id); }
                                 }}
-                                className={`nav-drawer-item w-full px-3 py-2 flex items-center gap-3 rounded-[1rem] transition-all duration-300 menu-item-slide group touch-manipulation ${
+                                className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation ${
                                     isActive
                                         ? 'text-[#1D9BF0]'
                                         : 'text-gray-500 hover:text-[#1D9BF0]/70 hover:bg-white/[0.04]'
@@ -5850,13 +6037,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 style={{ animationDelay: `${index * 0.04}s` }}
                             >
                                 <item.icon
-                                    className={`w-6 h-6 shrink-0 transition-all duration-300 pointer-events-none ${isActive ? 'scale-105' : ''}`}
-                                    {...(item.highlight 
-                                        ? { stroke: "url(#bubbleGradient)", fill: "url(#bubbleGradient)", fillOpacity: 0.1 } 
-                                        : { fill: isActive ? 'currentColor' : 'none', strokeWidth: isActive ? '2.5' : '2' }
-                                    )}
+                                    className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${isActive ? 'scale-105' : ''}`}
+                                    {...(item.highlight ? { stroke: "url(#bubbleGradient)", fill: "none" } : { fill: isActive ? 'currentColor' : 'none', strokeWidth: isActive ? '2.5' : '2' })}
                                 />
-                                <span className={`text-[14px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`}>{item.label}</span>
+                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-white'}`}>{item.label}</span>
 
                                 {item.isSubscription && (
                                     <div className="ml-auto shrink-0 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
@@ -8149,37 +8333,40 @@ const applyTheme = (color) => {
 
 const applyBackground = (mode) => {
     const entry = getBackgroundEntry(mode);
-    document.body.classList.remove(...BACKGROUND_MODES.map((item) => item.className));
+    const allBgClasses = [
+        'bg-light', 'bg-dark', 'bg-dim', 'bg-dark-blue', 'bg-midnight', 'bg-slate', 'bg-ocean', 
+        'bg-obsidian', 'bg-void-black', 'bg-purple-night', 'bg-forest', 'bg-crimson', 
+        'bg-pink-aesthetic', 'bg-razer-green', 'bg-f1-ferrari', 'bg-f1-mercedes', 'bg-f1-mclaren', 
+        'bg-f1-redbull', 'bg-f1-aston', 'bg-royal-gold', 'bg-blood-red'
+    ];
+    document.body.classList.remove(...allBgClasses);
     document.body.classList.add(entry.className);
-    document.documentElement.style.setProperty('--app-bg', entry.color);
+
+    const isLight = entry.value === 'light';
+    const isDim = entry.value === 'dim';
+    const bg = isLight ? '#ffffff' : (isDim ? '#15202b' : '#000000');
+    const text = isLight ? '#0f1419' : (isDim ? '#f7f9f9' : '#e7e9ea');
+    const border = isLight ? '#eff3f4' : (isDim ? '#38444d' : '#2f3336');
+    const secondary = isLight ? '#536471' : (isDim ? '#8b98a5' : '#71767b');
+    const glassBg = isLight ? 'rgba(255, 255, 255, 0.95)' : (isDim ? 'rgba(21, 32, 43, 0.94)' : 'rgba(0, 0, 0, 0.92)');
+
+    document.documentElement.style.setProperty('--app-bg', bg);
+    document.documentElement.style.setProperty('--app-text', text);
+    document.documentElement.style.setProperty('--app-secondary', secondary);
+    document.documentElement.style.setProperty('--app-border', border);
+    document.documentElement.style.setProperty('--glass-bg', glassBg);
+    document.documentElement.style.setProperty('--glass-border', border);
+
+    document.body.classList.remove('light-mode', 'dark-mode', 'dim-mode', 'blue-dark-mode');
+    if (isLight) document.body.classList.add('light-mode');
+    else if (isDim) document.body.classList.add('dim-mode', 'blue-dark-mode');
+    else document.body.classList.add('dark-mode');
+
     localStorage.setItem('backgroundMode', entry.value);
 };
 
 const applyDisplayMode = (mode) => {
-    if (mode === 'light') {
-        mode = 'dark';
-    }
-    const isBlueDark = mode === 'blue-dark';
-
-    const bg = isBlueDark ? '#15202b' : '#000000';
-    const text = '#e7e9ea';
-    const glassBg = isBlueDark ? 'rgba(21,32,43,0.96)' : 'rgba(0,0,0,0.9)';
-    const glassBorder = isBlueDark ? '#38444d' : '#2f3336';
-
-    document.documentElement.style.setProperty('--app-bg', bg);
-    document.documentElement.style.setProperty('--app-text', text);
-    document.documentElement.style.setProperty('--glass-bg', glassBg);
-    document.documentElement.style.setProperty('--glass-border', glassBorder);
-    document.documentElement.style.setProperty(
-        '--f1-primary',
-        isBlueDark ? 'var(--twitter-blue)' : 'var(--gold-primary)'
-    );
-
-    document.body.classList.remove('dark-mode', 'blue-dark-mode');
-    if (isBlueDark) document.body.classList.add('blue-dark-mode');
-    else document.body.classList.add('dark-mode');
-
-    localStorage.setItem('displayMode', mode);
+    applyBackground(mode);
 };
 
 const applyGlow = (enabled) => {
@@ -9485,10 +9672,9 @@ const App = () => {
         const userSettings = userData;
         const savedTheme = userSettings?.settings?.theme || localStorage.getItem('themeColor');
         if (savedTheme) applyTheme(savedTheme);
-        const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark-blue';
+        const savedBackground = userSettings?.settings?.background || localStorage.getItem('backgroundMode') || 'dark';
         applyBackground(savedBackground);
 
-        applyDisplayMode('dark');
         const savedZoom = userSettings?.settings?.zoom || parseFloat(localStorage.getItem('uiZoom') || '1') || 1;
         applyZoom(savedZoom);
         const savedGlow = userSettings?.settings?.enableGlow ?? localStorage.getItem('enableGlow') === 'true';
@@ -9536,10 +9722,10 @@ const App = () => {
         }
     }, [user?.settings?.background]);
 
-
-
     useEffect(() => {
-        applyDisplayMode('dark');
+        if (user?.settings?.displayMode) {
+            applyBackground(user.settings.displayMode);
+        }
     }, [user?.settings?.displayMode]);
 
     useEffect(() => {
