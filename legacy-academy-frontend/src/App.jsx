@@ -7413,12 +7413,10 @@ const ProfileModal = ({
                                     {selectedProfileDescriptor && SelectedProfileDescriptorIcon && (() => {
                                         const isFounder = displayUser?.role?.toLowerCase() === 'founder';
                                         return (
-                                            <div className="mt-3 flex justify-center">
-                                                <div className={`profile-descriptor-badge inline-flex items-center gap-2 rounded-full border backdrop-blur-xl transition-all duration-300 ${isFounder ? 'px-5 py-2' : 'px-4 py-1.5'} ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}
-                                                    style={isFounder ? { boxShadow: '0 0 18px 2px rgba(212,175,55,0.18), 0 2px 8px rgba(212,175,55,0.10)' } : undefined}
-                                                >
-                                                    <SelectedProfileDescriptorIcon className={`shrink-0 ${isFounder ? 'w-4 h-4' : 'w-3.5 h-3.5'}`} />
-                                                    <span className={`font-black uppercase tracking-[0.2em] ${isFounder ? 'text-[11px] sm:text-[13px]' : 'text-[10px] sm:text-[11px]'}`}>{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
+                                            <div className="mt-2 flex justify-center">
+                                                <div className={`profile-descriptor-badge inline-flex items-center gap-1.5 rounded-full border backdrop-blur-xl transition-all duration-300 px-3 py-1 ${getDescriptorAccentClass(displayUser.profileDescriptor, displayUser?.role).replace(/rounded-none/g, '')}`}>
+                                                    <SelectedProfileDescriptorIcon className="w-3 h-3 shrink-0" />
+                                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.22em]">{t(`DESC_${displayUser.profileDescriptor?.toUpperCase()}`, selectedProfileDescriptor.label)}</span>
                                                 </div>
                                             </div>
                                         );
