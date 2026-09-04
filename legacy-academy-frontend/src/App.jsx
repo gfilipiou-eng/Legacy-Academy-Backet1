@@ -685,39 +685,36 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
                 e.stopPropagation();
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
-            className={`founder-affiliation-badge group inline-flex items-center rounded-full cursor-pointer select-none max-w-full ${className}`}
+            className={`founder-affiliation-badge group inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--app-border,#2f3336)] bg-[var(--app-hover,rgba(255,255,255,0.04))] hover:border-[var(--gold-primary,#1D9BF0)]/50 active:scale-95 transition-all duration-200 cursor-pointer select-none max-w-full shadow-sm ${className}`}
             title={`Affiliated with @${normalizedUsername}`}
         >
-            <div className="flex items-center gap-3 pr-0.5">
-                
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full shrink-0 overflow-hidden">
-                    {isLoading ? (
-                        <div className="w-full h-full flex items-center justify-center bg-white/90">
-                            <Icons.Loader className="w-3.5 h-3.5 text-[#1D9BF0] animate-spin" />
-                        </div>
-                    ) : resolvedProfilePic && !imgError ? (
-                        <img 
-                            src={resolvedProfilePic} 
-                            alt="" 
-                            className="w-full h-full object-cover" 
-                            loading="lazy" 
-                            decoding="async"
-                            onError={() => setImgError(true)}
-                            draggable={false}
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-[#1D9BF0]/10">
-                            <span className="text-[13px] sm:text-[14px] font-bold italic text-[#1D9BF0] tracking-tight">
-                                {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
-                            </span>
-                        </div>
-                    )}
-                </div>
-                
-                <span className="text-[7.5px] sm:text-[8px] font-medium text-[#71767B] leading-none group-hover:text-[#1D9BF0] transition-colors duration-150 whitespace-nowrap">
-                    @{normalizedUsername}
-                </span>
+            <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full shrink-0 overflow-hidden border border-[var(--app-border,rgba(255,255,255,0.15))] bg-neutral-900 shadow-sm">
+                {isLoading ? (
+                    <div className="w-full h-full flex items-center justify-center bg-[var(--app-hover)]">
+                        <Icons.Loader className="w-3 h-3 text-[var(--gold-primary,#1D9BF0)] animate-spin" />
+                    </div>
+                ) : resolvedProfilePic && !imgError ? (
+                    <img 
+                        src={resolvedProfilePic} 
+                        alt="" 
+                        className="w-full h-full object-cover rounded-full" 
+                        loading="lazy" 
+                        decoding="async"
+                        onError={() => setImgError(true)}
+                        draggable={false}
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-[var(--gold-primary,#1D9BF0)]/15">
+                        <span className="text-[11px] sm:text-xs font-bold text-[var(--gold-primary,#1D9BF0)]">
+                            {(resolvedLinkedUser?.username || normalizedUsername)[0]?.toUpperCase() || '@'}
+                        </span>
+                    </div>
+                )}
             </div>
+            
+            <span className="text-xs sm:text-[13px] font-bold text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-150 truncate leading-none">
+                @{normalizedUsername}
+            </span>
         </div>
     );
 };
@@ -8578,9 +8575,10 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
             tabIndex={-1}
             className={`profile-page-scroll app-main-scroll custom-scrollbar fixed inset-0 text-[var(--app-text)] flex flex-col items-center select-text profile-page-bg ${publicBackground.className}`}
             style={{
-                '--gold-primary': themeColor || '#e80000',
+                '--gold-primary': themeColor || '#ffd700',
                 backgroundColor: publicBackground.color,
                 '--app-bg': publicBackground.color,
+                '--app-card-bg': publicBackground.value === 'light' ? '#ffffff' : (publicBackground.value === 'dim' ? '#192734' : '#000000'),
                 '--app-text': publicBackground.textColor,
                 '--app-secondary': publicBackground.value === 'light' ? '#536471' : (publicBackground.value === 'dim' ? '#8b98a5' : '#71767b'),
                 '--app-border': publicBackground.borderColor,
@@ -8724,22 +8722,22 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
  
                 {/* LINKTREE STYLE INVITATION CARD */}
                 <div className="w-full mt-6 p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem] group shadow-lg relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="w-full h-full bg-[#080808] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="w-full h-full bg-[var(--app-card-bg,var(--app-bg))] border border-[var(--app-border)] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden shadow-sm">
                         <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
                             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                                 <span className="px-2 py-0.5 rounded border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
                                     {t('MEMBERSHIP', 'MEMBERSHIP')}
                                 </span>
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-white leading-tight">
+                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-[var(--app-text)] leading-tight">
                                 {t('JOIN_ELITE', 'ENTER THE LEGACY')}
                             </h3>
-                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em]">
+                            <p className="text-[11px] text-[var(--app-secondary,#71767b)] font-bold uppercase tracking-[0.2em]">
                                 {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
                             </p>
                         </div>
-                        <div onClick={(e) => { e.stopPropagation(); window.location.href = '/?paywall=true'; }} className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-3 rounded-xl bg-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/20 cursor-pointer">
+                        <div onClick={(e) => { e.stopPropagation(); window.location.href = '/?paywall=true'; }} className="w-full sm:w-auto mt-2 sm:mt-0 px-7 py-3.5 rounded-2xl bg-[var(--gold-primary,#1D9BF0)] hover:brightness-110 active:scale-95 text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-[var(--gold-primary)]/25 cursor-pointer shrink-0">
                             {t('UNLOCK_ACCESS', 'UNLOCK ACCESS')}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </div>
