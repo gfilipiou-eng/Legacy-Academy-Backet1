@@ -13,9 +13,9 @@ const FOOTBALL_IDS = ['paok', 'olympiacos', 'aek', 'panathinaikos', 'aris'];
 
 // Render a simple Instagram-star-shape badge with solid/gradient fill + tick color
 const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, gradientDef }) => (
-    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
         {gradientDef && <defs>{gradientDef}</defs>}
-        <circle cx="20" cy="20" r="11" fill={tickFill} />
+        <circle cx="20" cy="20" r="10.2" fill={tickFill} />
         <path fill={gradientId ? `url(#${gradientId})` : fill} d={INSTA_BADGE_PATH} fillRule="evenodd" />
     </svg>
 );
@@ -24,25 +24,18 @@ const SimpleInstaBadge = ({ className, fill, tickFill = '#000', gradientId, grad
 
 // ── MASONIC SYMBOL (Premium Seal) ──
 const MasonicSymbol = ({ className }) => (
-    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0 drop-shadow-md`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+    <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
         <defs>
             <linearGradient id="vb_masonicGold" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF2A8" />
                 <stop offset="40%" stopColor="#D4AF37" />
                 <stop offset="100%" stopColor="#8A6517" />
             </linearGradient>
-            <filter id="vb_glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#D4AF37" floodOpacity="0.5" />
-            </filter>
         </defs>
         
-        {/* The Square and Compasses - 100% Accurate Representation, Scaled up to fill the badge */}
-        <g transform="translate(1.5, 1.5) scale(1.1)" filter="url(#vb_glow)">
-            {/* The Compasses */}
+        <g transform="translate(1.5, 1.5) scale(1.1)">
             <path d="M15.4 1.5 C15.4 0.7 16 0.1 16.8 0.1 C17.6 0.1 18.2 0.7 18.2 1.5 C18.2 1.8 18.1 2.1 17.9 2.3 L25.5 22.5 L23.5 24 L16.8 6 L10.1 24 L8.1 22.5 L15.7 2.3 C15.5 2.1 15.4 1.8 15.4 1.5 Z" fill="url(#vb_masonicGold)" />
-            {/* The Square */}
             <path d="M2.5 16 L5 14 L16.8 28.5 L28.6 14 L31.1 16 L16.8 33.5 Z" fill="url(#vb_masonicGold)" />
-            {/* The 'G' */}
             <text x="17" y="20.5" textAnchor="middle" fill="url(#vb_masonicGold)" fontSize="11" fontWeight="900" fontFamily="Times New Roman, serif">G</text>
         </g>
     </svg>
@@ -69,7 +62,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── PRISM BLUE (Live Water / Sea Style) ──
     if (effectiveBadgeColor === 'ig_blue' || effectiveBadgeColor === 'prism_blue') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_prismWater" tickFill="#000"
+            <SimpleInstaBadge className={className} gradientId="vb_prismWater" tickFill="var(--app-bg, #000)"
                 gradientDef={
                     <linearGradient id="vb_prismWater" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#00FFFF">
@@ -92,8 +85,8 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
         let fillColor = '#1D9BF0';
         if (effectiveBadgeColor === 'blue') fillColor = '#2F80ED';
         return (
-            <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
-                <circle cx="11" cy="11" r="6" fill="#000" />
+            <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="5.6" fill="var(--app-bg, #000)" />
                 <path fill={fillColor} d={OLD_BADGE_PATH} />
             </svg>
         );
@@ -102,7 +95,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── SOLAR GOLD — old X-style badge (Founder) ──
     if (effectiveBadgeColor === 'x_gold') {
         return (
-            <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+            <svg viewBox="0 0 22 22" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_solarGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFE566" />
@@ -110,7 +103,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#FF8C00" />
                     </linearGradient>
                 </defs>
-                <circle cx="11" cy="11" r="6" fill="#000" />
+                <circle cx="11" cy="11" r="5.6" fill="var(--app-bg, #000)" />
                 <path fill="url(#vb_solarGoldGrad)" d={OLD_BADGE_PATH} />
             </svg>
         );
@@ -119,7 +112,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── EMBER GOLD (ig_gold) ──
     if (effectiveBadgeColor === 'ig_gold' || effectiveBadgeColor === 'founder_gold') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_emberGold" tickFill="#000"
+            <SimpleInstaBadge className={className} gradientId="vb_emberGold" tickFill="var(--app-bg, #000)"
                 gradientDef={
                     <linearGradient id="vb_emberGold" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFF7D6" />
@@ -136,7 +129,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── DYNAMIC GOLD (live-gold) — animated ──
     if (effectiveBadgeColor === 'live-gold') {
         return (
-            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_dynGold" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFD700">
@@ -153,7 +146,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         </stop>
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="11" fill="#000" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000)" />
                 <path fill="url(#vb_dynGold)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                 <g fill="white">
                     <circle cx="6" cy="8" r="1.2"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" /><animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" /></circle>
@@ -168,7 +161,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── LIQUID GLASS GOLD (liquid-gold) ──
     if (effectiveBadgeColor === 'liquid-gold') {
         return (
-            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_liquidGlass" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFF9C4" />
@@ -183,7 +176,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="11" fill="#000" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000)" />
                 <path fill="url(#vb_liquidGlass)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                 <path fill="url(#vb_glassSheen)" d={INSTA_BADGE_PATH} fillRule="evenodd" style={{ mixBlendMode: 'screen' }} />
             </svg>
@@ -193,7 +186,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── NEON PURPLE ──
     if (effectiveBadgeColor === 'neon-purple') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_neonPurple" tickFill="#000"
+            <SimpleInstaBadge className={className} gradientId="vb_neonPurple" tickFill="var(--app-bg, #000)"
                 gradientDef={
                     <linearGradient id="vb_neonPurple" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#E879F9" />
@@ -208,7 +201,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── HOLOGRAPHIC — animated rainbow + sparkle stars ──
     if (effectiveBadgeColor === 'holographic') {
         return (
-            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'visible', display: 'inline-flex', flexShrink: 0 }}>
+            <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
                 <defs>
                     <linearGradient id="vb_holoInsta" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FF0080"><animate attributeName="stopColor" values="#FF0080;#FFD700;#00FF94;#00C8FF;#A855F7;#FF0080" dur="3s" repeatCount="indefinite" /></stop>
@@ -219,7 +212,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#A855F7"><animate attributeName="stopColor" values="#A855F7;#FF8C00;#FFD700;#00FF94;#00C8FF;#A855F7" dur="3s" repeatCount="indefinite" /></stop>
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="11" fill="#000" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000)" />
                 <path fill="url(#vb_holoInsta)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                 <g fill="white">
                     <circle cx="6" cy="8" r="1.2"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" /><animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" /></circle>

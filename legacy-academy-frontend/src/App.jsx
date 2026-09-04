@@ -8007,7 +8007,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                     <button onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
                         {t('CANCEL')}
                     </button>
-                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
+                    <h2 className="text-lg sm:text-xl font-black italic text-[var(--app-text)] uppercase tracking-tighter">{t('UPLOAD_TITLE')}</h2>
                     <button 
                         disabled={isSubmitting} 
                         onClick={handleSubmit} 
@@ -8041,9 +8041,9 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 onChange={(e) => setDesc(e.target.value)}
                                 maxLength={300}
                                 placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                                className="relative w-full bg-black/50 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[120px] resize-none placeholder-gray-600 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
+                                className="relative w-full bg-[var(--app-hover,rgba(0,0,0,0.5))] border border-[var(--app-border)] rounded-[1.5rem] px-5 py-4 text-[15px] text-[var(--app-text)] outline-none min-h-[120px] resize-none placeholder:text-[var(--app-secondary)] transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
                             />
-                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
+                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pointer-events-none">
                                 {desc.length} / 300
                             </div>
                         </div>
@@ -8051,7 +8051,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
 
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group mt-2">
                         {preview ? (
-                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-white/20 flex items-center justify-center">
+                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-gradient-to-br from-amber-950/20 via-slate-950/90 to-slate-900 border border-[var(--app-border)] flex items-center justify-center">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
                                 ) : isAudio ? (
@@ -8066,13 +8066,13 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-white/20 bg-white/5 rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-white/60 cursor-pointer">
-                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-[var(--app-border)] bg-[var(--app-hover,rgba(255,255,255,0.05))] rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-[var(--app-secondary)] cursor-pointer">
+                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-[var(--app-hover,rgba(255,255,255,0.1))] flex items-center justify-center border border-[var(--app-border)]">
                                     <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
-                                    <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
+                                    <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-[var(--app-text)]">{t('UPLOAD_MEDIA')}</span>
+                                    <span className="text-[10px] text-[var(--app-secondary)] font-bold uppercase tracking-wider">Image, Video, or Audio</span>
                                 </div>
                             </div>
                         )}
@@ -8218,7 +8218,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     <button onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200">
                         {t('CANCEL')}
                     </button>
-                    <h2 className="text-lg sm:text-xl font-black italic text-white uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
+                    <h2 className="text-lg sm:text-xl font-black italic text-[var(--app-text)] uppercase tracking-tighter">{t('EDIT_INTEL')}</h2>
                     <button 
                         disabled={saving} 
                         onClick={handleSave} 
@@ -8242,9 +8242,9 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                             onChange={e => setDesc(e.target.value)}
                             maxLength={300}
                             placeholder={t('DECRYPT_PH') || "Decrypt your thoughts..."}
-                            className="w-full bg-black/50 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[120px] resize-none placeholder-gray-600 focus:border-[var(--gold-primary)]/50 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
+                            className="w-full bg-[var(--app-hover,rgba(0,0,0,0.5))] border border-[var(--app-border)] rounded-[1.5rem] px-5 py-4 text-[15px] text-[var(--app-text)] outline-none min-h-[120px] resize-none placeholder:text-[var(--app-secondary)] focus:border-[var(--gold-primary)]/50 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap"
                         />
-                        <div className="text-right text-[10px] font-black text-gray-500 uppercase tracking-widest pr-1">
+                        <div className="text-right text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pr-1">
                             {desc.length} / 300
                         </div>
                     </div>
@@ -8252,7 +8252,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                     {/* Media Upload & Preview */}
                     <div onClick={() => fileRef.current.click()} className="cursor-pointer mb-2 group mt-2">
                         {preview ? (
-                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-[#111] border border-white/10 flex items-center justify-center">
+                            <div className="w-full min-h-[170px] sm:min-h-[220px] rounded-[1.8rem] overflow-hidden relative bg-[var(--app-hover,rgba(0,0,0,0.7))] border border-[var(--app-border)] flex items-center justify-center">
                                 {isVideo ? (
                                     <video src={preview} className="w-full h-full object-contain max-h-[220px]" controls playsInline />
                                 ) : isAudio ? (
@@ -8267,13 +8267,13 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-white/20 bg-white/[0.02] rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-white/50 cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/50 hover:bg-white/[0.05] hover:text-[var(--gold-primary)]">
-                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8" />
+                            <div className="w-full py-10 sm:py-12 border-2 border-dashed border-[var(--app-border)] bg-[var(--app-hover,rgba(255,255,255,0.05))] rounded-[1.8rem] flex flex-col items-center justify-center gap-4 text-[var(--app-secondary)] cursor-pointer transition-all duration-300 hover:border-[var(--gold-primary)]/50 hover:bg-[var(--app-hover,rgba(255,255,255,0.08))] hover:text-[var(--gold-primary)]">
+                                <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-[var(--app-hover,rgba(255,255,255,0.1))] flex items-center justify-center border border-[var(--app-border)]">
+                                    <Icons.Upload className="w-7 h-7 sm:w-8 sm:h-8 text-[var(--gold-primary)]" />
                                 </div>
                                 <div className="flex flex-col items-center text-center gap-1">
-                                    <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-white/90">{t('UPLOAD_MEDIA')}</span>
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Image, Video, or Audio</span>
+                                    <span className="text-sm sm:text-base font-bold uppercase tracking-widest text-[var(--app-text)]">{t('UPLOAD_MEDIA')}</span>
+                                    <span className="text-[10px] text-[var(--app-secondary)] font-bold uppercase tracking-wider">Image, Video, or Audio</span>
                                 </div>
                             </div>
                         )}
