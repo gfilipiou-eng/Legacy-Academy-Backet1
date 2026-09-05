@@ -3443,9 +3443,9 @@ body.bg-light .post-detail-modal__sheet .x-comment__time {
 }
 
 /* Light mode text & border adjustments */
-body.bg-light input:not(.bubble-input):not(.dark-input):not(.website-builder-panel input),
-body.bg-light textarea:not(.dark-textarea):not(.website-builder-panel textarea),
-body.bg-light select:not(.website-builder-panel select) {
+body.bg-light input:not(.bubble-input):not(.dark-input):not(.website-builder-panel input):not([data-dark-surface] *),
+body.bg-light textarea:not(.dark-textarea):not(.website-builder-panel textarea):not([data-dark-surface] *),
+body.bg-light select:not(.website-builder-panel select):not([data-dark-surface] *) {
   color: #0f1419;
 }
 
