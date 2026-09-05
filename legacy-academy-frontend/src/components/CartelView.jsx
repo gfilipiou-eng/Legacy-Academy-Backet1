@@ -54,6 +54,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                data-dark-surface="true"
                 style={{
                     paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))',
                     paddingBottom: '1.25rem',
@@ -214,6 +215,7 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
+                data-dark-surface="true"
                 style={{
                     paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))',
                     paddingBottom: '1.25rem',

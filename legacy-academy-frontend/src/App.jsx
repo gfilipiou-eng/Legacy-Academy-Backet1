@@ -7986,6 +7986,7 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                data-dark-surface="true"
                 style={{
                     '--app-bg': '#000000',
                     '--app-text': '#e7e9ea',
@@ -8207,6 +8208,7 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                data-dark-surface="true"
                 style={{
                     '--app-bg': '#000000',
                     '--app-text': '#e7e9ea',
