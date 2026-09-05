@@ -11208,21 +11208,21 @@ const App = () => {
         <div className={`app-container ${batterySaver ? 'battery-saver-mode' : ''}`}>
             {!user ? (
                 <>
-                    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+                    <div className="min-h-screen bg-[var(--app-bg)] flex items-center justify-center relative overflow-hidden" data-dark-surface="true">
                     {/* CINEMATIC ANCIENT GREEK BACKGROUND */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black z-0">
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[var(--app-bg)]">
                         {/* High-res Parthenon Image with slow zoom (Ken Burns) */}
                         <img 
                             src="https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=2000&q=80"
-                            className="absolute inset-0 w-full h-full object-cover object-top opacity-70"
+                            className="absolute inset-0 w-full h-full object-cover object-top opacity-80"
                             style={{ 
                                 animation: 'kenburns 40s infinite alternate ease-in-out',
                                 transformOrigin: 'top center'
                             }}
                             alt="Ancient Greece Background"
                         />
-                        {/* Light overlays so the image is fully visible but text is readable */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60" />
+                        {/* Adaptive overlays — heavy dark tint preserves the cinematic Parthenon vibe over any bg */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/75" />
                         
                         {/* Animated Orbs for magical ancient vibe */}
                         <div className="login-greek-orb top-[-10%] left-[-5%] w-[400px] h-[400px] bg-[var(--gold-primary)]/30" style={{ animationDuration: '8s' }} />
