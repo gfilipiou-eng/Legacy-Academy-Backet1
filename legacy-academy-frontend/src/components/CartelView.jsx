@@ -110,9 +110,9 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                                 onChange={(e) => setDesc(e.target.value)}
                                 maxLength={300}
                                 placeholder={t('DECRYPT_PH', 'Decrypt your thoughts...')}
-                                className="w-full bg-[var(--app-hover,rgba(0,0,0,0.5))] border border-[var(--app-border)] rounded-[1.5rem] px-5 py-4 text-[15px] text-[var(--app-text)] outline-none min-h-[140px] resize-none placeholder:text-[var(--app-secondary)] transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap focus:border-[var(--gold-primary)]"
+                                className="w-full bg-black/40 border border-white/10 rounded-[1.5rem] px-5 py-4 text-[15px] text-white outline-none min-h-[140px] resize-none placeholder:text-gray-500 transition-all duration-300 custom-scrollbar font-bold break-words whitespace-pre-wrap focus:border-[var(--gold-primary)]"
                             />
-                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-[var(--app-secondary)] uppercase tracking-widest pointer-events-none">
+                            <div className="absolute bottom-3 right-4 text-[10px] font-black text-gray-500 uppercase tracking-widest pointer-events-none">
                                 {desc.length} / 300
                             </div>
                         </div>
@@ -120,7 +120,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
 
                     {/* Image preview */}
                     {imagePreview && (
-                        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--app-hover,rgba(0,0,0,0.8))] border border-[var(--app-border)]">
+                        <div className="relative w-full rounded-2xl overflow-hidden bg-black/70 border border-white/10">
                             <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover opacity-20 blur-md" alt="" />
                             <img src={imagePreview} className="relative z-10 w-full max-h-72 object-contain" alt="preview" />
                             <button
@@ -142,7 +142,7 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                         <button
                             type="button"
                             onClick={() => fileRef.current?.click()}
-                            className="w-full bg-[var(--app-hover,rgba(0,0,0,0.5))] border border-dashed border-[var(--app-border)] rounded-2xl p-4 text-[var(--app-text)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] hover:border-[var(--gold-primary)] transition-all text-sm flex justify-center items-center gap-2 font-bold"
+                            className="w-full bg-black/40 border border-dashed border-white/10 rounded-2xl p-4 text-white hover:bg-white/5 hover:border-[var(--gold-primary)] transition-all text-sm flex justify-center items-center gap-2 font-bold"
                         >
                             <Icons.Image className="w-5 h-5 text-[var(--gold-primary)]" />
                             {imageFile ? imageFile.name : t('UPLOAD_MEDIA', 'Upload Image / Video')}
