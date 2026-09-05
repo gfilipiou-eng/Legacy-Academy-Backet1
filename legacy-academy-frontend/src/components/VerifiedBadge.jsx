@@ -12,7 +12,7 @@ const INSTA_STAR_PATH = "M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 
 const FOOTBALL_IDS = ['paok', 'olympiacos', 'aek', 'panathinaikos', 'aris'];
 
 // Render a simple Instagram-star-shape badge with solid/gradient fill + tick color
-const SimpleInstaBadge = ({ className, fill, tickFill = '#ffffff', gradientId, gradientDef }) => (
+const SimpleInstaBadge = ({ className, fill, tickFill = 'var(--app-bg, #000000)', gradientId, gradientDef }) => (
     <svg viewBox="0 0 40 40" className={`${className} shrink-0 flex-shrink-0`} style={{ overflow: 'hidden', display: 'inline-flex', flexShrink: 0 }}>
         {gradientDef && <defs>{gradientDef}</defs>}
         <circle cx="20" cy="20" r="10.2" fill={tickFill} />
@@ -62,7 +62,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── PRISM BLUE (Live Water / Sea Style) ──
     if (effectiveBadgeColor === 'ig_blue' || effectiveBadgeColor === 'prism_blue') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_prismWater" tickFill="#ffffff"
+            <SimpleInstaBadge className={className} gradientId="vb_prismWater" tickFill="var(--app-bg, #000000)"
                 gradientDef={
                     <linearGradient id="vb_prismWater" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#00FFFF">
@@ -103,7 +103,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#FF8C00" />
                     </linearGradient>
                 </defs>
-                <circle cx="11" cy="11" r="5.6" fill="#ffffff" />
+                <circle cx="11" cy="11" r="5.6" fill="var(--app-bg, #000000)" />
                 <path fill="url(#vb_solarGoldGrad)" d={OLD_BADGE_PATH} />
             </svg>
         );
@@ -112,7 +112,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── EMBER GOLD (ig_gold) ──
     if (effectiveBadgeColor === 'ig_gold' || effectiveBadgeColor === 'founder_gold') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_emberGold" tickFill="#ffffff"
+            <SimpleInstaBadge className={className} gradientId="vb_emberGold" tickFill="var(--app-bg, #000000)"
                 gradientDef={
                     <linearGradient id="vb_emberGold" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FFF7D6" />
@@ -146,7 +146,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         </stop>
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="10.2" fill="#ffffff" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000000)" />
                 <path fill="url(#vb_dynGold)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                 <g fill="white">
                     <circle cx="6" cy="8" r="1.2"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" /><animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" /></circle>
@@ -176,9 +176,9 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="10.2" fill="#ffffff" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000000)" />
                 <path fill="url(#vb_liquidGlass)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
-                <path fill="url(#vb_glassSheen)" d={INSTA_BADGE_PATH} fillRule="evenodd" style={{ opacity: 0.92 }} />
+                <path fill="url(#vb_glassSheen)" d={INSTA_BADGE_PATH} fillRule="evenodd" style={{ mixBlendMode: 'screen' }} />
             </svg>
         );
     }
@@ -186,7 +186,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     // ── NEON PURPLE ──
     if (effectiveBadgeColor === 'neon-purple') {
         return (
-            <SimpleInstaBadge className={className} gradientId="vb_neonPurple" tickFill="#ffffff"
+            <SimpleInstaBadge className={className} gradientId="vb_neonPurple" tickFill="var(--app-bg, #000000)"
                 gradientDef={
                     <linearGradient id="vb_neonPurple" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#E879F9" />
@@ -212,7 +212,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
                         <stop offset="100%" stopColor="#A855F7"><animate attributeName="stopColor" values="#A855F7;#FF8C00;#FFD700;#00FF94;#00C8FF;#A855F7" dur="3s" repeatCount="indefinite" /></stop>
                     </linearGradient>
                 </defs>
-                <circle cx="20" cy="20" r="10.2" fill="#ffffff" />
+                <circle cx="20" cy="20" r="10.2" fill="var(--app-bg, #000000)" />
                 <path fill="url(#vb_holoInsta)" d={INSTA_BADGE_PATH} fillRule="evenodd" />
                 <g fill="white">
                     <circle cx="6" cy="8" r="1.2"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0s" repeatCount="indefinite" /><animate attributeName="r" values="0.5;1.4;0.5" dur="1.5s" begin="0s" repeatCount="indefinite" /></circle>
@@ -236,7 +236,7 @@ const VerifiedBadge = ({ isFounder, className = "w-4 h-4", forceGold = false, is
     }
 
     // ── Fallback: Ember Gold ──
-        return <SimpleInstaBadge className={className} fill="#EAB308" tickFill="#ffffff" />;
+        return <SimpleInstaBadge className={className} fill="#EAB308" tickFill="var(--app-bg, #000000)" />;
     };
 
     return renderMainBadge();
