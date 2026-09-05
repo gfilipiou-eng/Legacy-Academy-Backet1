@@ -2889,7 +2889,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] active:bg-[var(--app-hover)] transition-colors cursor-pointer select-text ${cardSpacingClass}`}
+      className={`post-card-root group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] transition-colors cursor-pointer select-text ${cardSpacingClass}`}
     >
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
@@ -7986,6 +7986,16 @@ const CreateModal = ({ isOpen, onClose, onCreatePost, user, forceStory = false }
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                style={{
+                    '--app-bg': '#000000',
+                    '--app-text': '#e7e9ea',
+                    '--app-secondary': '#71767b',
+                    '--app-border': '#2f3336',
+                    '--app-hover': 'rgba(231, 233, 234, 0.05)',
+                    '--app-active': 'rgba(231, 233, 234, 0.1)',
+                    '--glass-bg': 'rgba(0, 0, 0, 0.92)',
+                    '--glass-border': '#2f3336',
+                }}
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -8197,6 +8207,16 @@ const EditPostModal = ({ isOpen, onClose, onSuccess, post, user }) => {
                 initial={{ scale: 0.95, y: 100 }} 
                 animate={{ scale: 1, y: 0 }} 
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] border border-white/10 shadow-2xl p-5 sm:p-6 rounded-t-3xl sm:rounded-3xl flex flex-col h-[80dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden mt-auto sm:mt-0"
+                style={{
+                    '--app-bg': '#000000',
+                    '--app-text': '#e7e9ea',
+                    '--app-secondary': '#71767b',
+                    '--app-border': '#2f3336',
+                    '--app-hover': 'rgba(231, 233, 234, 0.05)',
+                    '--app-active': 'rgba(231, 233, 234, 0.1)',
+                    '--glass-bg': 'rgba(0, 0, 0, 0.92)',
+                    '--glass-border': '#2f3336',
+                }}
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -8498,7 +8518,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     if (loadingUser && !publicUser) {
         return (
             <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor || '#e80000' }}>
-                <PlatformLoadingPanel label="GATHERING INTEL..." />
+                <div className="w-12 h-12 flex items-center justify-center">
+                    <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)] animate-spin" />
+                </div>
             </div>
         );
     }
@@ -8508,7 +8530,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
         if (loadingUser) {
             return (
                 <div className="min-h-screen bg-black text-white flex items-center justify-center" style={{ '--gold-primary': themeColor || '#e80000' }}>
-                    <PlatformLoadingPanel label="GATHERING INTEL..." />
+                    <div className="w-12 h-12 flex items-center justify-center">
+                        <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)] animate-spin" />
+                    </div>
                 </div>
             );
         }

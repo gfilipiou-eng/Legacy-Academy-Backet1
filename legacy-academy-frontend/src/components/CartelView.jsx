@@ -54,7 +54,18 @@ const CartelPostModal = ({ cartel, user, t, onClose, onPosted, editPost = null }
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
+                style={{
+                    paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))',
+                    paddingBottom: '1.25rem',
+                    '--app-bg': '#000000',
+                    '--app-text': '#e7e9ea',
+                    '--app-secondary': '#71767b',
+                    '--app-border': '#2f3336',
+                    '--app-hover': 'rgba(231, 233, 234, 0.05)',
+                    '--app-active': 'rgba(231, 233, 234, 0.1)',
+                    '--glass-bg': 'rgba(0, 0, 0, 0.92)',
+                    '--glass-border': '#2f3336',
+                }}
             >
                 {/* Header */}
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
@@ -203,7 +214,18 @@ const EditCartelModal = ({ onClose, onUpdated, cartel, t }) => {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 100 }}
                 className="relative w-full max-w-full sm:max-w-md bg-[#0a0a0a] sm:bg-[#111] border-0 sm:border border-white/10 shadow-2xl px-5 sm:px-6 rounded-none sm:rounded-3xl flex flex-col h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden"
-                style={{ paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))', paddingBottom: '1.25rem' }}
+                style={{
+                    paddingTop: 'max(1.25rem, calc(env(safe-area-inset-top, 0px) + 8px))',
+                    paddingBottom: '1.25rem',
+                    '--app-bg': '#000000',
+                    '--app-text': '#e7e9ea',
+                    '--app-secondary': '#71767b',
+                    '--app-border': '#2f3336',
+                    '--app-hover': 'rgba(231, 233, 234, 0.05)',
+                    '--app-active': 'rgba(231, 233, 234, 0.1)',
+                    '--glass-bg': 'rgba(0, 0, 0, 0.92)',
+                    '--glass-border': '#2f3336',
+                }}
             >
                 <div className="flex-none flex items-center justify-between pb-3 border-b border-white/5 mb-4">
                     <button type="button" onClick={onClose} className="sm:hidden text-sm font-semibold text-gray-400 hover:text-white transition-colors">

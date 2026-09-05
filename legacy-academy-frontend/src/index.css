@@ -1661,9 +1661,9 @@ html, body {
   }
 
   /* X/Bluesky style: only active state (while pressed) */
-  button:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge),
-  .cursor-pointer:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge),
-  .sturdy-active:active {
+  button:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.post-card-root),
+  .cursor-pointer:active:not(.profile-descriptor-btn):not(.profile-descriptor-badge):not(.post-card-root),
+  .sturdy-active:active:not(.post-card-root) {
     transform: scale(0.96) !important;
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
@@ -2585,6 +2585,92 @@ button:active,
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
   border-color: rgba(245, 158, 11, 0.35) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* === Post Card: zero active/touch effects === */
+.post-card-root,
+.post-card-root * {
+  -webkit-tap-highlight-color: transparent !important;
+}
+.post-card-root:active {
+  transform: none !important;
+  background-color: inherit !important;
+  transition: none !important;
+}
+
+/* === Light (White) Mode: Founder Profile Descriptor Badges === */
+body.bg-light .descriptor-founder-entrepreneur,
+body.bg-light .descriptor-founder-prestige,
+body.bg-light [class*="descriptor-founder-"] {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 248, 225, 0.85) 0%,
+      rgba(252, 240, 195, 0.75) 35%,
+      rgba(249, 232, 165, 0.80) 50%,
+      rgba(252, 240, 195, 0.75) 65%,
+      rgba(255, 248, 225, 0.85) 100%
+    ),
+    linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3)) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border: 1px solid rgba(191, 149, 63, 0.35) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(191, 149, 63, 0.12),
+    0 2px 12px rgba(191, 149, 63, 0.12) !important;
+}
+
+body.bg-light .descriptor-founder-entrepreneur svg,
+body.bg-light .descriptor-founder-prestige svg,
+body.bg-light [class*="descriptor-founder-"] svg {
+  color: #8a6417 !important;
+}
+
+body.bg-light .descriptor-founder-entrepreneur span,
+body.bg-light .descriptor-founder-prestige span,
+body.bg-light [class*="descriptor-founder-"] span {
+  background: linear-gradient(
+    -45deg,
+    #6b4e0e 0%,
+    #8a6417 15%,
+    #BF953F 35%,
+    #AA771C 50%,
+    #BF953F 65%,
+    #8a6417 85%,
+    #6b4e0e 100%
+  ) !important;
+  background-size: 280% 100% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+body.bg-light .descriptor-founder-entrepreneur::before,
+body.bg-light .descriptor-founder-prestige::before,
+body.bg-light [class*="descriptor-founder-"]::before {
+  background: linear-gradient(
+    -70deg,
+    #d4af37 0%,
+    #BF953F 18%,
+    #e8d38a 38%,
+    #B38728 50%,
+    #e8d38a 62%,
+    #AA771C 82%,
+    #d4af37 100%
+  ) !important;
+  background-size: 300% 100% !important;
+}
+
+body.bg-light .descriptor-founder-entrepreneur::after,
+body.bg-light .descriptor-founder-prestige::after,
+body.bg-light [class*="descriptor-founder-"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.25) 28%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
 }
 
 /* Micro-animations and Highlight on Hover */
