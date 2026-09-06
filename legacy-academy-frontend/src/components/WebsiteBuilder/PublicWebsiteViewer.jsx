@@ -105,7 +105,7 @@ export const PublicWebsiteViewer = ({ config }) => {
         };
 
         const desc = config.description || config.slogan || siteName;
-        const logo = config.logoImage || '/Applogo.png?v=20260829c';
+        const logo = config.logoImage || 'https://legacy-academy.vercel.app/og-image.png?v=20260906a';
         const fullUrl = window.location.href;
 
         setMeta('meta[property="og:title"]', 'content', siteName);
