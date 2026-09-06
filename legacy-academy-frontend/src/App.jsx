@@ -11499,7 +11499,7 @@ const App = () => {
                                             <div className="text-left">
                                                 <div className="text-[11px] font-black text-white/95 tracking-wide flex items-center gap-1.5">
                                                     ADD TO HOME SCREEN
-                                                    <span className="px-1.5 py-0.2 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iOS / Android</span>
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iOS</span>
                                                 </div>
                                                 <div className="text-[9.5px] text-white/50 font-medium">Tap for 3-step installation instructions</div>
                                             </div>
