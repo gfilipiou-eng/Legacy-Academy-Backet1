@@ -487,12 +487,18 @@ const formatUserHandle = (username) =>
     '@' + String(username || 'agent').toLowerCase().replace(/\s+/g, '');
 
 const THEME_PALETTE = [
-    { value: '#1D9BF0', labelKey: 'COLOR_BLUE', label: 'Blue' },
-    { value: '#FFD400', labelKey: 'COLOR_GOLD', label: 'Yellow' },
-    { value: '#F91880', labelKey: 'COLOR_PINK', label: 'Pink' },
-    { value: '#7856FF', labelKey: 'COLOR_PURPLE', label: 'Purple' },
-    { value: '#FF7A00', labelKey: 'COLOR_ORANGE', label: 'Orange' },
-    { value: '#00BA7C', labelKey: 'COLOR_GREEN', label: 'Green' },
+    { value: '#1D9BF0', labelKey: 'COLOR_BLUE',    label: 'Blue' },
+    { value: '#FFD400', labelKey: 'COLOR_GOLD',    label: 'Yellow' },
+    { value: '#F91880', labelKey: 'COLOR_PINK',    label: 'Pink' },
+    { value: '#7856FF', labelKey: 'COLOR_PURPLE',  label: 'Purple' },
+    { value: '#FF7A00', labelKey: 'COLOR_ORANGE',  label: 'Orange' },
+    { value: '#00BA7C', labelKey: 'COLOR_GREEN',   label: 'Green' },
+    { value: '#E02020', labelKey: 'COLOR_RED',     label: 'Red' },
+    { value: '#00C9C9', labelKey: 'COLOR_TEAL',    label: 'Teal' },
+    { value: '#84CC16', labelKey: 'COLOR_LIME',    label: 'Lime' },
+    { value: '#FF4466', labelKey: 'COLOR_CORAL',   label: 'Coral' },
+    { value: '#A855F7', labelKey: 'COLOR_VIOLET',  label: 'Violet' },
+    { value: '#FFFFFF', labelKey: 'COLOR_WHITE',   label: 'White' },
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [
     {
@@ -4002,7 +4008,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     }, [activeLanguage]);
 
     const handleSave = async (key, val) => {
-        setSaving(true);
+        // For visual-only settings, save silently in background — no spinner
+        const silentKeys = ['zoom', 'theme', 'badgeColor'];
+        const isSilent = silentKeys.includes(key);
+        if (!isSilent) setSaving(true);
         try {
             if (key === 'isPrivate' || key === 'isFollowersOnly') {
                 const res = await axios.put(`/users/${user._id || user.userId}`, { [key]: val });
@@ -4120,7 +4129,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'neuralNarrator') setNeuralNarrator(!Boolean(val));
         } finally {
             if (key === 'showProfileShareButton') pendingShareToggleRef.current = null;
-            setSaving(false);
+            if (!isSilent) setSaving(false);
         }
     };
 
@@ -4273,8 +4282,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                             setZoomLevel(val);
                                             applyZoom(val);
                                         }}
-                                        onPointerUp={() => handleSave('zoom', zoomLevel)}
-                                        onKeyUp={() => handleSave('zoom', zoomLevel)}
+                                        onPointerUp={() => { handleSave('zoom', zoomLevel); }}
+                                        onKeyUp={() => { handleSave('zoom', zoomLevel); }}
                                         className="settings-range flex-1 h-1.5 cursor-pointer"
                                         style={{
                                             accentColor: activeThemeColor,
@@ -4291,7 +4300,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     {t('COLOR', 'Color')}
                                 </span>
                                 <div
-                                    className="flex items-center justify-between px-3 py-3 rounded-2xl border gap-2"
+                                    className="grid grid-cols-6 gap-2.5 px-3 py-3.5 rounded-2xl border"
                                     style={{
                                         backgroundColor: currentBgMode === 'light' ? '#f7f9f9' : currentBgMode === 'dim' ? '#1e2732' : '#16181c',
                                         borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336'
@@ -4308,8 +4317,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                                     applyTheme(value);
                                                     handleSave('theme', value);
                                                 }}
-                                                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-sm relative focus:outline-none cursor-pointer"
-                                                style={{ backgroundColor: value }}
+                                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-transform hover:scale-110 active:scale-95 shadow-md relative focus:outline-none cursor-pointer border-2"
+                                                style={{
+                                                    backgroundColor: value,
+                                                    borderColor: isSelected ? '#fff' : 'transparent',
+                                                    boxShadow: isSelected ? `0 0 0 2px ${value}` : undefined
+                                                }}
                                             >
                                                 {isSelected && (
                                                     <Icons.Check className="w-5 h-5 text-white" strokeWidth={3} />

@@ -40,8 +40,14 @@
   <link rel="manifest" href="/manifest.json?v=20260906a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://legacy-academy-backet1.onrender.com" crossorigin>
+  <link rel="dns-prefetch" href="https://legacy-academy-backet1.onrender.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Permanent+Marker&family=Sedgwick+Ave+Display&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
   <title>Legacy</title>
+  <!-- Critical CSS: black bg instantly before JS loads, prevents white flash -->
+  <style>html,body,#root{background:#000;color:#fff;margin:0;padding:0;min-height:100dvh;font-family:Inter,system-ui,sans-serif}*{box-sizing:border-box}</style>
 
   <script>
     if ('serviceWorker' in navigator) {
