@@ -182,10 +182,11 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         const objectUrl = URL.createObjectURL(file);
         updateConfig(key, objectUrl);
 
-        compressImageFile(file, maxWidth, 0.8).then(dataUrl => {
+        compressImageFile(file, maxWidth, 0.85).then(dataUrl => {
             updateConfig(key, dataUrl);
             if (e && e.target) e.target.value = '';
-            URL.revokeObjectURL(objectUrl);
+            // Delay revoke so any in-flight renders using the blob URL finish first
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
         }).catch(() => {
             // On error keep the objectUrl preview — not ideal but won't crash
         });
@@ -618,7 +619,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                                     )}
                                     <label className="cursor-pointer text-[var(--builder-primary)] hover:underline flex items-center gap-1">
                                         <Icons.Upload className="w-3 h-3" /> Upload
-                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'coverImage', 1000)} />
+                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, 'coverImage', 1400)} />
                                     </label>
                                 </div>
                             </label>

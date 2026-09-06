@@ -3048,7 +3048,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
 
                         {/* ── POST ACTIONS/STATS BAR (100% Old School Twitter) ── */}
                         {!isReadOnly ? (
-                            <div className="flex items-center gap-6 mt-2.5 max-w-[420px] text-[var(--app-secondary)]">
+                            <div className="flex items-center justify-between w-full max-w-[360px] mt-2.5 text-[var(--app-secondary)]">
                                 {/* COMMENTS */}
                                 <button
                                     onClick={(e) => {
@@ -3065,10 +3065,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }`}
                                     title="Reply"
                                 >
-                                    <div className="p-2 rounded-full">
+                                    <div className="p-1.5 rounded-full">
                                         <Icons.MessageSquare key={`cmt-${tweetCommentPop}`} className="w-[18px] h-[18px]" />
                                     </div>
-                                    <span className="tabular-nums pr-2">{post.comments?.length || 0}</span>
+                                    <span className="tabular-nums">{post.comments?.length || 0}</span>
                                 </button>
 
                                 {/* REPOSTS */}
@@ -3083,10 +3083,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }`}
                                     title="Repost"
                                 >
-                                    <div className="p-2 rounded-full">
+                                    <div className="p-1.5 rounded-full">
                                         <Icons.Repost key={`rp-${tweetRepostPop}`} className="w-[18px] h-[18px] transition-transform duration-200" />
                                     </div>
-                                    <span className="tabular-nums pr-2">{post.reposts?.length || 0}</span>
+                                    <span className="tabular-nums">{post.reposts?.length || 0}</span>
                                 </button>
 
                                 {/* LIKE */}
@@ -3103,10 +3103,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }`}
                                     title="Like"
                                 >
-                                    <div className="p-2 rounded-full">
+                                    <div className="p-1.5 rounded-full">
                                         <Icons.Heart key={`lk-${tweetLikePop}`} className={`w-[18px] h-[18px] ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
-                                    <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
+                                    <span className="tabular-nums">{post.likes?.length || 0}</span>
                                 </button>
 
                                 {/* DISLIKE */}
@@ -3121,10 +3121,10 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     }`}
                                     title="Dislike"
                                 >
-                                    <div className="p-2 rounded-full">
+                                    <div className="p-1.5 rounded-full">
                                         <Icons.ThumbsDown key={`dk-${tweetDislikePop}`} className={`w-[18px] h-[18px] ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
-                                    <span className="tabular-nums pr-2">{post.dislikes?.length || 0}</span>
+                                    <span className="tabular-nums">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
                         ) : (
