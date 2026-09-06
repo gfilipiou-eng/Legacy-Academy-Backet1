@@ -2593,9 +2593,10 @@ button:active,
 .post-card-root * {
   -webkit-tap-highlight-color: transparent !important;
 }
-.post-card-root:active {
+.post-card-root:active,
+.post-card-root:hover {
   transform: none !important;
-  background-color: inherit !important;
+  background-color: transparent !important;
   transition: none !important;
 }
 

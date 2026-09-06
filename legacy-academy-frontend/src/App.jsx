@@ -264,6 +264,12 @@ if (typeof document !== 'undefined') {
                 border-left: 1px solid #222;
                 border-right: 1px solid #222;
             }
+            .post-card-root:active,
+            .post-card-root:hover {
+                transform: none !important;
+                background-color: transparent !important;
+                transition: none !important;
+            }
             body {
                 background-color: #050505; /* Dark background for empty space */
             }
@@ -2883,7 +2889,7 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
       }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`post-card-root group relative w-full max-w-full border-b border-[var(--app-border)] hover:bg-[var(--app-hover)] transition-colors cursor-pointer select-text ${cardSpacingClass}`}
+      className={`post-card-root group relative w-full max-w-full border-b border-[var(--app-border)] transition-colors cursor-pointer select-text ${cardSpacingClass}`}
     >
             {/* UPLOADING OVERLAY */}
             {post.isUploading && (
