@@ -46,7 +46,7 @@ import IosInstallModal from './components/IosInstallModal';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
-const APP_ASSET_VERSION = '20260722a';
+const APP_ASSET_VERSION = '20260906a';
 const ASSET_PATHS = {
     favicon: `/favicon.png?v=${APP_ASSET_VERSION}`,
     applogo: `/Applogo.png?v=${APP_ASSET_VERSION}`,
@@ -3107,6 +3107,24 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                         <Icons.Heart key={`lk-${tweetLikePop}`} className={`w-[18px] h-[18px] ${post.likes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                     </div>
                                     <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
+                                </button>
+
+                                {/* DISLIKE */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setTweetDislikePop(v => v + 1);
+                                        onDislike && onDislike(post._id);
+                                    }}
+                                    className={`group flex items-center gap-1 text-[13px] font-normal transition-colors select-none pointer-events-auto ${
+                                        post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#F97316]' : 'text-[var(--app-secondary)]'
+                                    }`}
+                                    title="Dislike"
+                                >
+                                    <div className="p-2 rounded-full">
+                                        <Icons.ThumbsDown key={`dk-${tweetDislikePop}`} className={`w-[18px] h-[18px] ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
+                                    </div>
+                                    <span className="tabular-nums pr-2">{post.dislikes?.length || 0}</span>
                                 </button>
                             </div>
                         ) : (
@@ -11533,7 +11551,7 @@ const App = () => {
                                             <div className="text-left">
                                                 <div className="text-[11px] font-black text-white/95 tracking-wide flex items-center gap-1.5">
                                                     ADD TO HOME SCREEN
-                                                    <span className="px-1.5 py-0.2 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iPhone iOS</span>
+                                                    <span className="px-1.5 py-0.2 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iOS / Android</span>
                                                 </div>
                                                 <div className="text-[9.5px] text-white/50 font-medium">Tap for 3-step installation instructions</div>
                                             </div>
