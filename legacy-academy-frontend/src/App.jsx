@@ -497,8 +497,7 @@ const THEME_PALETTE = [
     { value: '#00C9C9', labelKey: 'COLOR_TEAL',    label: 'Teal' },
     { value: '#84CC16', labelKey: 'COLOR_LIME',    label: 'Lime' },
     { value: '#FF4466', labelKey: 'COLOR_CORAL',   label: 'Coral' },
-    { value: '#A855F7', labelKey: 'COLOR_VIOLET',  label: 'Violet' },
-    { value: '#FFFFFF', labelKey: 'COLOR_WHITE',   label: 'White' },
+    { value: '#A855F7', labelKey: 'COLOR_VIOLET',  label: 'Violet' }
 ];
 const PROFILE_DESCRIPTOR_OPTIONS = [
     {
@@ -6002,8 +6001,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 }}
                                 className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation cursor-pointer ${
                                     isActive
-                                        ? 'text-[#1D9BF0]'
-                                        : 'text-[var(--app-secondary,#71767b)] hover:text-[#1D9BF0] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
+                                        ? 'text-[var(--gold-primary,#1D9BF0)]'
+                                        : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--gold-primary,#1D9BF0)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
                                 }`}
                                 style={{ animationDelay: `${index * 0.04}s` }}
                             >
@@ -6011,7 +6010,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${isActive ? 'scale-105' : ''}`}
                                     {...(item.highlight ? { stroke: "url(#bubbleGradient)", fill: "none" } : { fill: isActive ? 'currentColor' : 'none', strokeWidth: isActive ? '2.5' : '2' })}
                                 />
-                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[#1D9BF0]' : 'text-[var(--app-text,#ffffff)]'}`}>{item.label}</span>
+                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[var(--gold-primary,#1D9BF0)]' : 'text-[var(--app-text,#ffffff)]'}`}>{item.label}</span>
 
                                 {item.isSubscription && (
                                     <div className="ml-auto shrink-0 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
@@ -11636,10 +11635,10 @@ const App = () => {
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { playCyberSFX('click'); setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent active:scale-95 transition-all duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent transition-colors duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
                                         aria-label="Open menu"
-                                        scaleDown={0.95}
-                                        duration={150}
+                                        scaleDown={1}
+                                        duration={0}
                                     >
                                         <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-[var(--app-text,#0f1419)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-300 pointer-events-none">
                                             <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>

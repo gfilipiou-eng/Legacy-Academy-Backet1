@@ -1272,7 +1272,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                         )}
 
                         {/* Footer */}
-                        <footer className={`w-full px-4 sm:px-6 md:px-12 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${resolvedPalette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
+                        <footer className={`relative z-10 w-full px-4 sm:px-6 md:px-12 py-8 sm:py-12 flex flex-col md:flex-row items-center justify-between gap-4 ${resolvedPalette === 'light' ? 'border-t border-black/5' : 'border-t border-white/5'}`}>
                             <div className={`text-xs sm:text-sm font-bold opacity-50 text-center md:text-left`}>© {new Date().getFullYear()} {config.businessName}. All rights reserved.</div>
                             <div className={`flex flex-wrap items-center justify-center gap-2 sm:gap-4 opacity-75`}>
                                 {config.socialX && (

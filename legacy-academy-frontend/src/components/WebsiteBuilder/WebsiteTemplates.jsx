@@ -4,27 +4,25 @@ import * as Icons from 'lucide-react';
 const renderFeatures = (features, activeTheme, setZoomImage) => {
     if (!features || features.length === 0) return null;
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
             {features.map((feat, idx) => (
                 <div 
                     key={idx} 
-                    className="p-6 md:p-7 rounded-[22px] flex flex-col gap-4 transition-all duration-400 hover:-translate-y-2 overflow-hidden relative group border shadow-2xl backdrop-blur-xl" 
+                    className="p-6 md:p-7 rounded-[24px] flex flex-col gap-4 transition-all duration-500 hover:-translate-y-2 overflow-hidden relative group backdrop-blur-xl" 
                     style={{ 
-                        backgroundColor: activeTheme.card, 
-                        borderColor: 'rgba(255,255,255,0.08)',
-                        boxShadow: `0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 40px -12px rgba(0,0,0,0.6)`
+                        backgroundColor: activeTheme.card,
+                        boxShadow: `0 0 0 1px ${activeTheme.primary}18, 0 4px 32px -8px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.06) inset`
                     }}
                 >
                     {/* Accent glow in corner */}
                     <div 
-                        className="absolute -top-16 -right-16 w-44 h-44 rounded-full opacity-20 blur-[60px] pointer-events-none group-hover:opacity-40 transition-opacity duration-700"
+                        className="absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-[0.18] blur-[70px] pointer-events-none group-hover:opacity-[0.38] transition-opacity duration-700"
                         style={{ backgroundColor: activeTheme.primary }}
                     />
                     {feat.badge && (
-                        <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-xl border"
+                        <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-xl"
                             style={{ 
                                 backgroundColor: `${activeTheme.primary}22`, 
-                                borderColor: `${activeTheme.primary}55`,
                                 color: activeTheme.primary
                             }}>
                             {feat.badge}
@@ -44,22 +42,24 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
                     )}
                     <div className="relative z-10 flex flex-col gap-2.5">
                         <div className="flex items-center gap-2.5">
-                            <span className="w-1 h-5 rounded-full shrink-0" style={{ backgroundColor: activeTheme.primary }} />
-                            <h4 className="text-[19px] md:text-xl font-black tracking-tight leading-tight">{feat.title}</h4>
+                            <span className="w-7 h-7 rounded-xl shrink-0 flex items-center justify-center text-[14px]"
+                                style={{ backgroundColor: `${activeTheme.primary}22`, color: activeTheme.primary }}>
+                                ✦
+                            </span>
+                            <h4 className="text-[18px] md:text-[19px] font-black tracking-tight leading-tight">{feat.title}</h4>
                         </div>
-                        <p className="opacity-70 text-[14.5px] leading-relaxed">{feat.desc}</p>
+                        <p className="opacity-65 text-[14px] leading-relaxed pl-[36px]">{feat.desc}</p>
                     </div>
                     {feat.link && feat.link.trim() !== '' && (
                         <a 
                             href={feat.link.startsWith('http') ? feat.link : `https://${feat.link}`} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="relative z-10 mt-1 group/btn px-5 py-3 rounded-[16px] font-black text-[12px] md:text-[13px] uppercase tracking-[0.14em] text-center transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2.5 self-start w-full sm:w-auto border" 
+                            className="relative z-10 mt-1 group/btn px-5 py-3 rounded-[16px] font-black text-[12px] md:text-[13px] uppercase tracking-[0.14em] text-center transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2.5 self-start w-full sm:w-auto" 
                             style={{ 
                                 backgroundColor: activeTheme.primary, 
                                 color: '#000',
-                                borderColor: `${activeTheme.primary}cc`,
-                                boxShadow: `0 10px 30px -10px ${activeTheme.primary}99`
+                                boxShadow: `0 10px 30px -10px ${activeTheme.primary}80`
                             }}
                         >
                             <span>{feat.linkText || 'Learn More'}</span>
@@ -437,6 +437,7 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
         <div className="absolute bottom-0 right-0 w-[26rem] h-[26rem] rounded-full opacity-[0.1] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
 
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center relative z-10">
+            {config.businessName && (
             <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.16em] mb-7 border backdrop-blur-2xl"
                 style={{
                     backgroundColor: `${activeTheme.primary}0f`,
@@ -445,8 +446,9 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
                 }}
             >
                 <Icons.Zap className="w-3.5 h-3.5" />
-                {null || 'AI Powered Platform'}
+                {config.businessName}
             </div>
+            )}
             <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[1.02] mb-7 max-w-5xl w-full"
                 style={{
                     background: `linear-gradient(180deg, #fff 0%, #fff 55%, rgba(255,255,255,0.68) 100%)`,
