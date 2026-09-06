@@ -311,16 +311,10 @@ const formatDisplayUrl = (rawUrl) => {
 };
 
 const BACKGROUND_MODES = [
-    { value: 'light', labelKey: 'LIGHT_MODE', label: 'Default', color: '#ffffff', textColor: '#0f1419', borderColor: '#eff3f4', className: 'bg-light' },
-    { value: 'dim', labelKey: 'DIM_MODE', label: 'Dim', color: '#15202b', textColor: '#ffffff', borderColor: '#38444d', className: 'bg-dim' },
     { value: 'dark', labelKey: 'DARK_MODE', label: 'Lights out', color: '#000000', textColor: '#ffffff', borderColor: '#2f3336', className: 'bg-dark' },
 ];
 
-const normalizeBackgroundMode = (mode) => {
-    if (mode === 'light' || mode === 'dim' || mode === 'dark') return mode;
-    if (mode === 'dark-blue') return 'dim';
-    return 'dark';
-};
+const normalizeBackgroundMode = (_mode) => 'dark';
 
 const getBackgroundMode = (user) => {
     const raw = user?.settings?.background || localStorage.getItem('backgroundMode') || 'dark';
@@ -4320,53 +4314,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                 </div>
                             </div>
 
-                            {/* Background */}
-                            <div className="space-y-2">
-                                <span className="text-[13px] font-bold text-[var(--app-secondary,#71767b)]">
-                                    {t('BACKGROUND', 'Background')}
-                                </span>
-                                <div
-                                    className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-2xl border"
-                                    style={{
-                                        backgroundColor: currentBgMode === 'light' ? '#f7f9f9' : currentBgMode === 'dim' ? '#1e2732' : '#16181c',
-                                        borderColor: currentBgMode === 'light' ? '#eff3f4' : currentBgMode === 'dim' ? '#38444d' : '#2f3336'
-                                    }}
-                                >
-                                    {BACKGROUND_MODES.map((mode) => {
-                                        const isSelected = currentBgMode === mode.value;
-                                        return (
-                                            <button
-                                                key={mode.value}
-                                                type="button"
-                                                onClick={() => {
-                                                    applyBackground(mode.value);
-                                                    handleSave('background', mode.value);
-                                                }}
-                                                className="flex items-center gap-3 p-3.5 rounded-xl border font-bold text-[15px] transition-all cursor-pointer select-none"
-                                                style={{
-                                                    backgroundColor: mode.color,
-                                                    color: mode.textColor,
-                                                    borderColor: isSelected ? activeThemeColor : mode.borderColor,
-                                                    boxShadow: isSelected ? `0 0 0 2px ${activeThemeColor}` : 'none'
-                                                }}
-                                            >
-                                                <span
-                                                    className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
-                                                    style={{
-                                                        borderColor: isSelected ? activeThemeColor : (mode.value === 'light' ? '#8899a6' : '#5b7083'),
-                                                        backgroundColor: isSelected ? activeThemeColor : 'transparent'
-                                                    }}
-                                                >
-                                                    {isSelected && (
-                                                        <span className="w-2 h-2 rounded-full bg-white" />
-                                                    )}
-                                                </span>
-                                                <span className="truncate">{t(mode.labelKey, mode.label)}</span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                            {/* Background — Lights Out only, no selector needed */}
 
                             {/* Optional Enhancements */}
                             <div className="space-y-2 pt-1">
