@@ -83,11 +83,9 @@ const getCtx = () => {
     return audioCtx;
 };
 
-export const playSound = (type) => {
-    if (typeof window === 'undefined' || !window.SOUND_ENABLED) return;
-
-    const ctx = getCtx();
-    if (!ctx) return;
+export const playSound = () => {
+    // Sound effects disabled
+    return;
 
     if (type === 'cyber_nav') {
         // High-end Cybernetic "Glass/Titanium Click"
