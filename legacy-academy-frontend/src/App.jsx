@@ -11559,10 +11559,10 @@ const App = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowIosInstallModal(true)}
-                                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-[#ffd700]/40 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                                        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-[14px] bg-[#111113] hover:bg-[#1a1a1d] border border-white/10 hover:border-white/20 transition-all duration-300 group cursor-pointer"
                                     >
                                         <div className="flex items-center gap-2.5">
-                                            <div className="w-8 h-8 rounded-xl bg-white/10 group-hover:bg-[#ffd700]/20 group-hover:text-[#ffd700] text-white flex items-center justify-center transition-all duration-300 shrink-0">
+                                            <div className="w-8 h-8 rounded-[10px] bg-white/5 border border-white/10 group-hover:bg-white/10 text-white flex items-center justify-center transition-all duration-300 shrink-0">
                                                 {/* Plus Icon */}
                                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                                     <line x1="12" y1="5" x2="12" y2="19" />
@@ -11570,14 +11570,14 @@ const App = () => {
                                                 </svg>
                                             </div>
                                             <div className="text-left">
-                                                <div className="text-[11px] font-black text-white/95 tracking-wide flex items-center gap-1.5">
+                                                <div className="text-[11px] font-bold text-white tracking-wide flex items-center gap-2">
                                                     ADD TO HOME SCREEN
-                                                    <span className="px-1.5 py-0.5 rounded-md bg-[#ffd700]/20 text-[#ffd700] text-[8px] font-black tracking-normal border border-[#ffd700]/30 uppercase">iOS &amp; Android</span>
+                                                    <span className="px-1.5 py-0.5 rounded-[4px] bg-white/10 text-white/70 text-[8px] font-bold tracking-widest uppercase">iOS / ANDROID</span>
                                                 </div>
-                                                <div className="text-[9.5px] text-white/50 font-medium">Tap for 3-step installation instructions</div>
+                                                <div className="text-[9.5px] text-white/40 font-medium mt-0.5">Tap for 3-step installation instructions</div>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-1 text-[10px] font-black text-[#ffd700] group-hover:translate-x-0.5 transition-transform">
+                                        <div className="flex items-center gap-1 text-[10px] font-bold text-white/50 group-hover:text-white/90 group-hover:translate-x-0.5 transition-all">
                                             <span>Guide</span>
                                             <Icons.ChevronRight className="w-3.5 h-3.5" />
                                         </div>
