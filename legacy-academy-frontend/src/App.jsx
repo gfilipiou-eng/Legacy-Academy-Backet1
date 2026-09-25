@@ -43,6 +43,7 @@ import BubbleSpace from './components/Bubbles/BubbleSpace';
 import { CartelsExplore } from './components/Cartels';
 import { CartelView } from './components/CartelView';
 import IosInstallModal from './components/IosInstallModal';
+import DynamicIslandNotification from './components/DynamicIslandNotification';
 // --- CONFIG ---
 const API_URL = axios.defaults.baseURL;
 const BASE_URL = API_URL.replace('/api', '');
@@ -9185,11 +9186,18 @@ const App = () => {
 
     const [uploadProgress, setUploadProgress] = useState(0);
     const [toasts, setToasts] = useState([]);
-    const addToast = (text, type = 'info') => {
-        const id = Date.now();
-        setToasts(prev => [...prev, { id, text, type }]);
-        setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
-    };
+    const addToast = useCallback((payload, fallbackType = 'info') => {
+        const id = Date.now() + Math.random().toString(36).substr(2, 4);
+        let item;
+        if (typeof payload === 'string') {
+            item = { id, text: payload, type: fallbackType };
+        } else if (payload && typeof payload === 'object') {
+            item = { id, ...payload, type: payload.type || fallbackType };
+        } else {
+            item = { id, text: String(payload), type: fallbackType };
+        }
+        setToasts(prev => [item, ...prev.slice(0, 4)]);
+    }, []);
 
     const [showPassword, setShowPassword] = useState(false);
     const [authLoading, setAuthLoading] = useState(false);
@@ -9823,11 +9831,41 @@ const App = () => {
             // Το Toast δείχνει αμέσως την ειδοποίηση (μόνο αν δεν είναι μήνυμα, γιατί τα μηνύματα έχουν δικό τους toast)
             if (data.type !== 'message') {
                 let toastMsg = data.text || "New Notification";
-                if (data.type === 'follow') toastMsg = `${data.fromUsername} ${t('NOTIF_FOLLOW', 'started following you')}`;
-                if (data.type === 'like') toastMsg = `${data.fromUsername} ${t('NOTIF_LIKE', 'liked your post')}`;
-                if (data.type === 'comment') toastMsg = `${data.fromUsername} ${t('NOTIF_COMMENT', 'commented on your post')}`;
+                let notifTitle = 'ALERT';
+                let notifType = data.type || 'info';
+                const notifAvatar = resolveMediaUrl(data.fromProfilePic || data.fromAvatar || data.sender?.profilePic, 120);
+
+                if (data.type === 'follow') {
+                    notifTitle = t('NEW_FOLLOWER', 'NEW FOLLOWER');
+                    notifType = 'follow';
+                    toastMsg = `${data.fromUsername || 'Someone'} ${t('NOTIF_FOLLOW', 'started following you')}`;
+                } else if (data.type === 'like') {
+                    notifTitle = t('POST_LIKED', 'POST LIKED');
+                    notifType = 'like';
+                    toastMsg = `${data.fromUsername || 'Someone'} ${t('NOTIF_LIKE', 'liked your archive')}`;
+                } else if (data.type === 'comment') {
+                    notifTitle = t('NEW_COMMENT', 'NEW COMMENT');
+                    notifType = 'comment';
+                    toastMsg = `${data.fromUsername || 'Someone'}: "${data.commentText || data.text || t('NOTIF_COMMENT', 'commented on your post')}"`;
+                } else if (data.type === 'repost') {
+                    notifTitle = t('REPOSTED', 'REPOSTED');
+                    notifType = 'repost';
+                    toastMsg = `${data.fromUsername || 'Someone'} ${t('NOTIF_REPOST', 'reposted your archive')}`;
+                }
                 
-                addToast(toastMsg, 'info');
+                addToast({
+                    title: notifTitle,
+                    text: toastMsg,
+                    type: notifType,
+                    avatar: notifAvatar,
+                    onClick: () => {
+                        if (data.fromUsername && (data.type === 'follow' || !data.postId)) {
+                            viewProfile(data.fromUsername);
+                        } else if (data.postId) {
+                            setSelectedPost({ _id: data.postId });
+                        }
+                    }
+                });
 
                 // Trigger browser notification
                 if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
@@ -9851,8 +9889,24 @@ const App = () => {
             // Only play sound if the message is for US and from someone else
             if (user && String(msg.recipient) === String(user._id) && String(msg.sender) !== String(user._id)) {
                 console.log("📨 [SOCKET] Live message sound trigger");
+                playCyberSFX('notification');
                 
-                const messageText = `${t('NOTIF_MESSAGE', 'New message from')} ${msg.senderName || 'Agent'}`;
+                const senderName = msg.senderName || 'Agent';
+                const snippet = msg.text || (msg.mediaUrl ? 'Sent a media attachment' : 'Sent a voice whisper');
+                const messageText = `${senderName}: "${snippet}"`;
+                const senderAvatar = resolveMediaUrl(msg.senderProfilePic || msg.senderAvatar, 120);
+
+                if (!isChatOpen) {
+                    addToast({
+                        title: t('NEW_WHISPER', 'NEW WHISPER'),
+                        text: messageText,
+                        type: 'message',
+                        avatar: senderAvatar,
+                        onClick: () => {
+                            handleOpenChat({ _id: msg.sender, username: senderName, profilePic: msg.senderProfilePic });
+                        }
+                    });
+                }
 
                 // Trigger browser notification
                 if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
@@ -12564,36 +12618,11 @@ const App = () => {
                 </div>
             )}
 
-            {/* <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> PREMIUM TOAST NOTIFICATIONS <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> */}
-            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-[400px] px-4">
-                {toasts.map((toast) => (
-                    <div 
-                        key={toast.id} 
-                        className={`pointer-events-auto overflow-hidden relative rounded-[20px] backdrop-blur-2xl border p-4 shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-5 duration-300 ${
-                            toast.type === 'error' 
-                                ? 'bg-red-950/40 border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.15)]' 
-                                : toast.type === 'success'
-                                    ? 'bg-green-950/40 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.15)]'
-                                    : 'bg-black/60 border-[var(--gold-primary)]/30 shadow-[0_0_30px_rgba(212,175,55,0.15)]'
-                        }`}
-                    >
-                        <div className={`absolute inset-0 opacity-20 pointer-events-none ${
-                            toast.type === 'error' ? 'bg-gradient-to-r from-red-500 to-transparent' :
-                            toast.type === 'success' ? 'bg-gradient-to-r from-green-500 to-transparent' :
-                            'bg-gradient-to-r from-[var(--gold-primary)] to-transparent'
-                        }`} />
-                        
-                        <div className="shrink-0 relative z-10">
-                            {toast.type === 'error' && <Icons.AlertCircle className="w-6 h-6 text-red-500" />}
-                            {toast.type === 'success' && <Icons.CheckCircle className="w-6 h-6 text-green-500" />}
-                            {toast.type === 'info' && <Icons.Bell className="w-6 h-6 text-[var(--gold-primary)]" />}
-                        </div>
-                        <div className="flex-1 text-sm font-semibold text-white tracking-wide relative z-10 break-words">
-                            {toast.text}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {/* Dynamic Island In-App Notification System */}
+            <DynamicIslandNotification 
+                notifications={toasts} 
+                onDismiss={(id) => setToasts(prev => prev.filter(t => t.id !== id))} 
+            />
         </div>
     );
 };
