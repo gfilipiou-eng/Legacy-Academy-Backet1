@@ -9866,18 +9866,6 @@ const App = () => {
                         }
                     }
                 });
-
-                // Trigger browser OS notification ONLY if the app is in the background
-                if (document.visibilityState !== 'visible' && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-                    try {
-                        new Notification("Legacy Alert", {
-                            body: toastMsg,
-                            icon: '/favicon.ico'
-                        });
-                    } catch (e) {
-                        console.error("Browser notification fail", e);
-                    }
-                }
             }
 
             // Trigger browser notification handled above
@@ -9891,10 +9879,11 @@ const App = () => {
                 console.log("📨 [SOCKET] Live message sound trigger");
                 playCyberSFX('notification');
                 
-                const senderName = msg.senderName || 'Agent';
+                // Get the real name if possible, fallback to Someone (never "Agent")
+                const senderName = msg.senderName || msg.senderObj?.username || msg.senderUsername || 'Someone';
                 const snippet = msg.text || (msg.mediaUrl ? 'Sent a media attachment' : 'Sent a voice whisper');
                 const messageText = `${senderName}: "${snippet}"`;
-                const senderAvatar = resolveMediaUrl(msg.senderProfilePic || msg.senderAvatar, 120);
+                const senderAvatar = resolveMediaUrl(msg.senderProfilePic || msg.senderAvatar || msg.senderObj?.profilePic, 120);
 
                 if (!isChatOpen) {
                     addToast({
@@ -9903,21 +9892,9 @@ const App = () => {
                         type: 'message',
                         avatar: senderAvatar,
                         onClick: () => {
-                            handleOpenChat({ _id: msg.sender, username: senderName, profilePic: msg.senderProfilePic });
+                            handleOpenChat({ _id: msg.sender, username: senderName, profilePic: msg.senderProfilePic || msg.senderAvatar });
                         }
                     });
-                }
-
-                // Trigger browser OS notification ONLY if the app is in the background
-                if (document.visibilityState !== 'visible' && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-                    try {
-                        new Notification("Legacy Chat", {
-                            body: msg.text || messageText,
-                            icon: '/favicon.ico'
-                        });
-                    } catch (e) {
-                        console.error("Browser chat notification fail", e);
-                    }
                 }
             }
         };
