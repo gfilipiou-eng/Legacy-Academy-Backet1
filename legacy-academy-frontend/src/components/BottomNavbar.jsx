@@ -87,7 +87,7 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className="fixed bottom-0 pb-[calc(20px+env(safe-area-inset-bottom))] sm:pb-[calc(28px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-3 sm:px-4"
+            className="absolute bottom-0 pb-[calc(20px+env(safe-area-inset-bottom))] sm:pb-[calc(28px+env(safe-area-inset-bottom))] left-0 right-0 z-[100] pointer-events-none px-3 sm:px-4"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
