@@ -9867,8 +9867,8 @@ const App = () => {
                     }
                 });
 
-                // Trigger browser notification
-                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                // Trigger browser OS notification ONLY if the app is in the background
+                if (document.visibilityState !== 'visible' && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
                     try {
                         new Notification("Legacy Alert", {
                             body: toastMsg,
@@ -9908,8 +9908,8 @@ const App = () => {
                     });
                 }
 
-                // Trigger browser notification
-                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+                // Trigger browser OS notification ONLY if the app is in the background
+                if (document.visibilityState !== 'visible' && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
                     try {
                         new Notification("Legacy Chat", {
                             body: msg.text || messageText,
