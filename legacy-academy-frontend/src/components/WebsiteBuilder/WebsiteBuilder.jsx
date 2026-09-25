@@ -4,25 +4,7 @@ import * as Icons from 'lucide-react';
 import { useTranslation } from '../../translations';
 import axios from '../../api';
 import { simulateAIGeneration } from './aiSimulator';
-import { 
-    ClassicTemplate, 
-    EcommerceTemplate, 
-    AgencyTemplate, 
-    LuxuryTemplate, 
-    SaasTemplate, 
-    NewspaperTemplate, 
-    RestaurantTemplate, 
-    TechnologyTemplate, 
-    FootballTemplate, 
-    BettingTemplate, 
-    CorporateTemplate, 
-    CreativeTemplate, 
-    FitnessTemplate, 
-    PortfolioTemplate, 
-    RealEstateTemplate, 
-    GamingTemplate,
-    MafiaTemplate
-} from './WebsiteTemplates';
+import { ClassicTemplate } from './WebsiteTemplates';
 
 const XIcon = ({ className }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -1058,20 +1040,7 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                     <div className="space-y-6">
                         <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2 pt-4 border-t border-white/10"><Icons.Palette className="w-3 h-3" /> Aesthetics</div>
                         
-                        <div>
-                            <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Website Template</label>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">
-                                {['classic', 'ecommerce', 'agency', 'luxury', 'saas', 'corporate', 'creative', 'fitness', 'newspaper', 'restaurant', 'technology', 'football', 'betting', 'portfolio', 'realestate', 'gaming', 'mafia'].map(tmpl => (
-                                    <button
-                                        key={tmpl}
-                                        onClick={() => updateConfig('template', tmpl)}
-                                        className={`w-full text-center px-2 py-3 rounded-xl border transition-all text-[10px] sm:text-[11px] font-black uppercase tracking-wider ${config.template === tmpl ? 'border-[var(--builder-primary)] bg-[var(--builder-primary)]/10 text-white' : 'border-white/10 bg-white/5 hover:border-white/30 text-white/50 hover:bg-white/5'}`}
-                                    >
-                                        {tmpl}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+
                         
                         <div>
                             <label className="text-[11px] text-white/60 font-bold uppercase tracking-wide mb-3 block">Color Theme</label>
@@ -1156,30 +1125,10 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
                             </div>
                         </nav>
 
-                        {/* Render Template Body based on config.template */}
+                        {/* Always Classic Template */}
                         {(() => {
                             const tmplProps = { config, activeTheme, setZoomImage, resolvedPalette };
-                            switch (config.template) {
-                                case 'ecommerce': return <EcommerceTemplate {...tmplProps} />;
-                                case 'agency': return <AgencyTemplate {...tmplProps} />;
-                                case 'luxury': return <LuxuryTemplate {...tmplProps} />;
-                                case 'saas': return <SaasTemplate {...tmplProps} />;
-                                case 'newspaper': return <NewspaperTemplate {...tmplProps} />;
-                                case 'restaurant': return <RestaurantTemplate {...tmplProps} />;
-                                case 'technology': return <TechnologyTemplate {...tmplProps} />;
-                                case 'football': return <FootballTemplate {...tmplProps} />;
-                                case 'betting': return <BettingTemplate {...tmplProps} />;
-                                case 'corporate': return <CorporateTemplate {...tmplProps} />;
-                                case 'creative': return <CreativeTemplate {...tmplProps} />;
-                                case 'fitness': return <FitnessTemplate {...tmplProps} />;
-                                case 'portfolio': return <PortfolioTemplate {...tmplProps} />;
-                                case 'realestate': return <RealEstateTemplate {...tmplProps} />;
-                                case 'gaming': return <GamingTemplate {...tmplProps} />;
-                                case 'mafia': return <MafiaTemplate {...tmplProps} />;
-                                case 'classic':
-                                default:
-                                    return <ClassicTemplate {...tmplProps} />;
-                            }
+                            return <ClassicTemplate {...tmplProps} />;
                         })()}
 
                         {/* Shop Section is globally available below any template if products exist */}
