@@ -8380,32 +8380,15 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
     const profileScrollRef = useRef(null);
 
     useEffect(() => {
-        const scrollY = window.scrollY;
         const prevHtmlOverflow = document.documentElement.style.overflow;
         const prevBodyOverflow = document.body.style.overflow;
-        const prevBodyPosition = document.body.style.position;
-        const prevBodyTop = document.body.style.top;
-        const prevBodyLeft = document.body.style.left;
-        const prevBodyRight = document.body.style.right;
-        const prevBodyWidth = document.body.style.width;
 
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollY}px`;
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
 
         return () => {
             document.documentElement.style.overflow = prevHtmlOverflow;
             document.body.style.overflow = prevBodyOverflow;
-            document.body.style.position = prevBodyPosition;
-            document.body.style.top = prevBodyTop;
-            document.body.style.left = prevBodyLeft;
-            document.body.style.right = prevBodyRight;
-            document.body.style.width = prevBodyWidth;
-            window.scrollTo(0, scrollY);
         };
     }, []);
 
@@ -10342,47 +10325,21 @@ const App = () => {
     useEffect(() => {
         if (publicProfileUsername || viewPostId || publicSiteUsername) return undefined;
         const mainContainer = document.querySelector('main.app-main-scroll');
-        const scrollY = window.scrollY;
 
         if (isAnyModalOpen) {
+            // Simple overflow lock — no position:fixed tricks that break iOS scroll
+            document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.width = '100%';
-            if (mainContainer) {
-                mainContainer.style.overflow = 'hidden';
-            }
+            if (mainContainer) mainContainer.style.overflow = 'hidden';
         } else {
-            const top = document.body.style.top;
+            document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.width = '';
-            if (top) {
-                window.scrollTo(0, parseInt(top || '0', 10) * -1);
-            }
-            if (mainContainer) {
-                mainContainer.style.overflow = 'auto';
-            }
+            if (mainContainer) mainContainer.style.overflow = '';
         }
         return () => {
-            const top = document.body.style.top;
+            document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.width = '';
-            if (top) {
-                window.scrollTo(0, parseInt(top || '0', 10) * -1);
-            }
-            if (mainContainer) {
-                mainContainer.style.overflow = 'auto';
-            }
+            if (mainContainer) mainContainer.style.overflow = '';
         };
     }, [isAnyModalOpen, publicProfileUsername, viewPostId, publicSiteUsername]);
 
