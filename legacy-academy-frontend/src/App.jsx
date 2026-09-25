@@ -6720,7 +6720,6 @@ const ProfileModal = ({
             fetchSpecificUser?.(displayUser?._id);
             setActiveList(null);
             setIsEditing(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             if (addToast) addToast(t('PROFILE_UPDATED') || "Profile updated!", 'success');
         } catch (e) {
             console.error(e);
@@ -9385,7 +9384,6 @@ const App = () => {
                     mainScrollRef.current.scrollTo(0, 0);
                     mainScrollRef.current.scrollTop = 0;
                 }
-                window.scrollTo(0, 0);
             }, 50);
         }
     }, [user?._id, activeTab]);
@@ -9393,9 +9391,7 @@ const App = () => {
     useEffect(() => {
         if (!user && mainScrollRef.current) {
             mainScrollRef.current.scrollTo({ top: 0, behavior: 'auto' });
-            
         }
-        window.scrollTo(0, 0);
     }, [authMode, user]);
 
     const toggleDate = (dateKey) => {
