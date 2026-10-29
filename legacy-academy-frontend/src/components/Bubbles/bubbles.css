@@ -303,13 +303,12 @@
   transform: scale(0.94);
 }
 
-/* ======= BLOW BUBBLE BUTTON — Smooth press effect ======= */
+/* ======= BLOW BUBBLE BUTTON — Clean solid design without glow ======= */
 .bubble-blow-btn {
   flex-shrink: 0;
   min-width: 140px;
-  background: linear-gradient(135deg, #7ab8ff 0%, #9f7cff 50%, #ff8cc8 100%);
-  background-size: 200% 200%;
-  border: none;
+  background: #1d9bf0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
   padding: 13px 22px;
   color: white;
@@ -317,71 +316,34 @@
   font-size: 14px;
   letter-spacing: 0.2px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s ease;
   white-space: nowrap;
   text-transform: none;
-  box-shadow:
-    0 2px 10px rgba(159, 124, 255, 0.35),
-    0 0 0 1px rgba(255,255,255,0.1) inset;
+  box-shadow: none !important;
   position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  animation: gradientFlow 4s ease infinite;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Bubble sparkle icon inside */
-.bubble-blow-btn::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: -40%;
-  width: 60%;
-  height: 220%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.25),
-    transparent
-  );
-  transform: rotate(20deg);
-  animation: bubbleBtnShine 3.5s ease-in-out infinite;
-}
-
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes bubbleBtnShine {
-  0%, 70% { left: -40%; opacity: 0; }
-  75%, 90% { left: 120%; opacity: 1; }
-  100% { left: 120%; opacity: 0; }
-}
-
 .bubble-blow-btn:hover:not(:disabled) {
-  transform: translateY(-1.5px);
-  box-shadow:
-    0 6px 20px rgba(159, 124, 255, 0.45),
-    0 0 0 1px rgba(255,255,255,0.15) inset;
+  background: #1a8cd8;
+  box-shadow: none !important;
 }
 
 .bubble-blow-btn:active:not(:disabled) {
-  transform: translateY(1px) scale(0.97);
-  box-shadow:
-    0 1px 5px rgba(159, 124, 255, 0.3),
-    0 0 0 1px rgba(255,255,255,0.1) inset;
+  transform: scale(0.97);
+  box-shadow: none !important;
 }
 
 .bubble-blow-btn:disabled {
   opacity: 0.38;
   cursor: not-allowed;
   filter: saturate(0.5);
-  animation: none;
+  box-shadow: none !important;
 }
 
 .bubble-character-count {

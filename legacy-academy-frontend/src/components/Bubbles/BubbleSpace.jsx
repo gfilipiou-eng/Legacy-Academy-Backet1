@@ -193,9 +193,10 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
           className="bubble-close-btn min-w-[44px] min-h-[44px] touch-manipulation active:scale-95 transition-transform" 
           style={{
             position: 'static', 
-            background: deleteMode ? 'rgba(255, 50, 50, 0.9)' : 'rgba(255, 255, 255, 0.1)',
-            boxShadow: deleteMode ? '0 0 20px rgba(255, 0, 0, 0.6)' : 'none',
-            color: deleteMode ? 'white' : 'white'
+            background: deleteMode ? '#dc2626' : 'rgba(255, 255, 255, 0.1)',
+            border: deleteMode ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: 'none',
+            color: 'white'
           }} 
           onClick={() => setDeleteMode(!deleteMode)}
           title="Delete Mode"

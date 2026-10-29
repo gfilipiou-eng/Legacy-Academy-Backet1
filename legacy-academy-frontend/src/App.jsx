@@ -3166,7 +3166,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             setMountClickLock(true);
             const timer = setTimeout(() => {
                 setMountClickLock(false);
-            }, 200);
+            }, 450);
             return () => clearTimeout(timer);
         }
     }, [isOpen]);
@@ -5892,7 +5892,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
         onClose();
         setTimeout(() => {
             if (fn) fn();
-        }, 50);
+        }, 300);
     };
 
     return (
@@ -5972,7 +5972,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
                 </div>
 
-                {/* 2. NAV ITEMS (MATCHING BOTTOM-NAV-GLASS ICON STYLING) */}
+                {/* 2. NAV ITEMS — CLEAN SOLID STYLING WITHOUT STICKY TRANSPARENT TOUCH HIGHLIGHT */}
                 <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="flex flex-col gap-1 px-3">
                         {[
@@ -5996,20 +5996,24 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 <button
                                     key={item.id}
                                     type="button"
-                                    onClick={item.action}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        item.action();
+                                    }}
                                     style={{
                                         outline: 'none',
                                         WebkitTapHighlightColor: 'transparent',
                                         touchAction: 'manipulation'
                                     }}
-                                    className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group transition-all duration-150 select-none cursor-pointer ${
+                                    className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group select-none cursor-pointer bg-transparent transition-colors duration-150 ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.08))] shadow-sm'
-                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] font-black'
+                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)]'
                                     }`}
                                 >
                                     <IconComponent
-                                        className={`w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0 transition-transform duration-200 ${
+                                        className={`w-[24px] h-[24px] sm:w-6 sm:h-6 shrink-0 transition-transform duration-200 ${
                                             isActive
                                                 ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]'
                                                 : 'text-[var(--app-secondary,#71767b)] group-hover:text-[var(--app-text,#ffffff)]'
