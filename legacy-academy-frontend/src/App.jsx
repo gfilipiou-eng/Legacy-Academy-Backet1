@@ -5892,28 +5892,23 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
             <div className={`
                 nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(88vw,340px)] sm:w-[335px]
-                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-[24px_0_60px_rgba(0,0,0,0.85)] border-r border-white/[0.10]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-[var(--app-border,#2f3336)]
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
             style={{
                 color: 'var(--app-text, #ffffff)'
             }}>
-                {/* Subtle ambient luxury glows */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--gold-primary,#1D9BF0)]/[0.05] rounded-full blur-3xl pointer-events-none z-0" />
-                <div className="absolute bottom-16 left-0 w-48 h-48 bg-purple-500/[0.04] rounded-full blur-3xl pointer-events-none z-0" />
-
-                {/* 1. LUXURY USER IDENTITY CARD */}
-                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4.5 border-b border-white/[0.08] select-none bg-gradient-to-b from-white/[0.03] to-transparent">
+                {/* 1. USER IDENTITY CARD */}
+                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
                     <div className="flex items-center justify-between mb-3.5">
                         <div 
                             onClick={() => handleModalOpen(() => onViewProfile(user))}
                             className="relative group/avatar cursor-pointer"
                             title={t('VIEW_PROFILE') || 'View profile'}
                         >
-                            <div className="w-13 h-13 rounded-full overflow-hidden border border-white/20 ring-2 ring-[var(--gold-primary,#1D9BF0)]/25 group-hover/avatar:ring-[var(--gold-primary,#1D9BF0)]/60 transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
-                                <ProfileAvatar user={user} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-300" />
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 shadow-sm">
+                                <ProfileAvatar user={user} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-200" />
                             </div>
-                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#08080a] shadow-sm" />
                         </div>
 
                         <button
@@ -5945,27 +5940,27 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 </span>
                             )}
                         </div>
-                        <span className="text-[13px] text-white/50 font-medium leading-none truncate block mt-1 tracking-wide">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                        <span className="text-[13px] text-[var(--app-secondary,#71767b)] font-medium leading-none truncate block mt-1 tracking-wide">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                     </div>
 
                     <div 
                         onClick={() => handleModalOpen(() => onViewProfile(user))}
-                        className="flex items-center gap-2.5 mt-3.5 pt-3 border-t border-white/[0.06] cursor-pointer"
+                        className="flex items-center gap-2.5 mt-3.5 pt-3 border-t border-[var(--app-border,#2f3336)]/40 cursor-pointer"
                     >
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
                             <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.following)}</span>
-                            <span className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
+                            <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
                         </div>
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
                             <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.followers)}</span>
-                            <span className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">{t('FOLLOWERS') || 'Followers'}</span>
+                            <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWERS') || 'Followers'}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* 2. PREMIUM NAV ITEMS */}
+                {/* 2. NAV ITEMS (MATCHING BOTTOM-NAV-GLASS ICON STYLING) */}
                 <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    <div className="flex flex-col gap-1.5 px-3">
+                    <div className="flex flex-col gap-1 px-3">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') || 'Home', action: () => handleLink('home') },
                             { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels'), action: () => handleLink('cartels') },
@@ -5978,7 +5973,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         ].map((item, idx) => {
                             if (item.divider) {
                                 return (
-                                    <div key={`div-${idx}`} className="my-2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-2" />
+                                    <div key={`div-${idx}`} className="my-2 border-t border-[var(--app-border,#2f3336)]/40 mx-2" />
                                 );
                             }
                             const isActive = activeTab === item.id;
@@ -5987,36 +5982,39 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 <button
                                     key={item.id}
                                     type="button"
-                                    onClick={() => {
-                                        item.action();
-                                    }}
+                                    onClick={item.action}
                                     style={{
                                         outline: 'none',
                                         WebkitTapHighlightColor: 'transparent',
                                         touchAction: 'manipulation'
                                     }}
-                                    className={`group w-full px-3.5 py-2.5 flex items-center gap-3.5 rounded-2xl transition-all duration-200 touch-manipulation cursor-pointer select-none relative ${
+                                    className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group transition-all duration-150 select-none cursor-pointer ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-gradient-to-r from-[var(--gold-primary,#1D9BF0)]/[0.14] via-[var(--gold-primary,#1D9BF0)]/[0.06] to-transparent border border-[var(--gold-primary,#1D9BF0)]/30 shadow-[0_4px_16px_rgba(0,0,0,0.35)]'
-                                            : 'text-white/80 hover:text-white hover:bg-white/[0.05] active:bg-white/[0.08] active:scale-[0.99] border border-transparent'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.08))] shadow-sm'
+                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
                                     }`}
                                 >
-                                    {isActive && (
-                                        <div className="absolute left-1 top-2.5 bottom-2.5 w-1 bg-[var(--gold-primary,#1D9BF0)] rounded-full shadow-[0_0_8px_var(--gold-primary,#1D9BF0)]" />
-                                    )}
+                                    <IconComponent
+                                        className={`w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0 transition-transform duration-200 ${
+                                            isActive
+                                                ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]'
+                                                : 'text-[var(--app-secondary,#71767b)] group-hover:text-[var(--app-text,#ffffff)]'
+                                        }`}
+                                        fill={isActive ? 'currentColor' : 'none'}
+                                        stroke="currentColor"
+                                        strokeWidth={isActive ? '2.5' : '2.2'}
+                                        shapeRendering="geometricPrecision"
+                                    />
 
-                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
-                                        isActive
-                                            ? 'bg-[var(--gold-primary,#1D9BF0)]/20 text-[var(--gold-primary,#1D9BF0)] shadow-[0_0_12px_rgba(212,175,55,0.2)]'
-                                            : 'bg-white/[0.04] group-hover:bg-white/[0.08] text-white/70 group-hover:text-white border border-white/[0.05]'
+                                    <span className={`text-[16px] sm:text-[17px] font-bold tracking-tight text-left flex-1 truncate transition-colors ${
+                                        isActive ? 'text-[var(--gold-primary,#1D9BF0)] font-black' : 'text-[var(--app-text,#ffffff)]'
                                     }`}>
-                                        <IconComponent className="w-5 h-5" strokeWidth={2.2} />
-                                    </div>
+                                        {item.label}
+                                    </span>
 
-                                    <span className="text-[15px] sm:text-[16px] font-bold tracking-tight text-left flex-1 truncate">{item.label}</span>
                                     {item.badge > 0 && (
-                                        <div className="min-w-[20px] h-[20px] px-1.5 bg-gradient-to-r from-[var(--gold-primary,#1D9BF0)] to-amber-500 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(212,175,55,0.4)]">
-                                            <span className="text-[10px] font-black text-black leading-none">
+                                        <div className="min-w-[20px] h-[20px] px-1.5 bg-[#F91880] rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                                            <span className="text-[10px] font-black text-white leading-none">
                                                 {item.badge > 9 ? '9+' : item.badge}
                                             </span>
                                         </div>
@@ -6027,7 +6025,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-white/[0.08] flex flex-col gap-2 bg-gradient-to-t from-white/[0.02] to-transparent">
+                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-2">
                         <button
                             type="button"
                             onClick={() => { onLogout(); onClose(); }}
@@ -6036,15 +6034,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 WebkitTapHighlightColor: 'transparent',
                                 touchAction: 'manipulation'
                             }}
-                            className="w-full px-3.5 py-2.5 flex items-center gap-3.5 rounded-2xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 active:bg-rose-500/20 active:scale-[0.99] border border-transparent hover:border-rose-500/20 transition-all duration-150 cursor-pointer touch-manipulation select-none group"
+                            className="w-full px-4 py-3 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors duration-150 cursor-pointer touch-manipulation select-none"
                         >
-                            <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0 group-hover:bg-rose-500/20 transition-colors">
-                                <Icons.Logout className="w-5 h-5 text-rose-400 stroke-[2.2]" />
-                            </div>
-                            <span className="text-[14px] sm:text-[15px] font-bold">{t('LOGOUT')}</span>
+                            <Icons.Logout className="w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0 text-red-500" strokeWidth="2.2" stroke="currentColor" shapeRendering="geometricPrecision" />
+                            <span className="text-[15px] font-bold">{t('LOGOUT')}</span>
                         </button>
 
-                        <div className="flex items-center justify-between px-3.5 pt-1 text-[11px] text-white/40">
+                        <div className="flex items-center justify-between px-3.5 pt-1 text-[11px] text-[var(--app-secondary,#71767b)]">
                             <div className="flex items-center gap-2.5">
                                 <button onClick={() => { onOpenTerms(); handleClose(); }} className="hover:text-white transition-colors cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
                                 <span>·</span>
@@ -7039,11 +7035,11 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`profile-modal-shell relative w-[96%] max-w-full mx-auto my-auto sm:max-w-lg sm:mx-auto h-[85dvh] rounded-[32px] sm:h-[85vh] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${profileBackground.className}`}
-                style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: profileBackground.color, '--app-bg': profileBackground.color }}>
+                className={`profile-modal-shell relative w-[96%] max-w-full mx-auto my-auto sm:max-w-lg sm:mx-auto h-[85dvh] rounded-[32px] sm:h-[85vh] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${isEditing ? 'bg-black' : profileBackground.className}`}
+                style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: isEditing ? '#000000' : profileBackground.color, '--app-bg': isEditing ? '#000000' : profileBackground.color }}>
 
 
-                {displayUser?.coverPic && !coverPicError && (
+                {!isEditing && displayUser?.coverPic && !coverPicError && (
                     <div className="absolute top-0 left-0 right-0 h-[220px] z-0 pointer-events-none animate-fade-in overflow-hidden">
                         {displayUser.coverPic.match(/\.(mp4|webm|mov|m4v)(\?.*)?$/i) ? (
                             <video 
@@ -7125,16 +7121,7 @@ const ProfileModal = ({
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="relative p-5 sm:p-6 space-y-6 animate-fade-in w-full max-w-full box-border profile-edit-form pb-32">
-                            {/* Live animated luxury background */}
-                            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-                                <div className="profile-edit-live-bg absolute inset-0" />
-                                <div className="profile-edit-grid absolute inset-0" />
-                                <div className="profile-edit-orb orb-1" />
-                                <div className="profile-edit-orb orb-2" />
-                                <div className="profile-edit-orb orb-3" />
-                            </div>
-
+                        <div className="relative p-5 sm:p-6 space-y-6 animate-fade-in w-full max-w-full box-border profile-edit-form bg-black pb-16">
                             {/* Media & Photos Section */}
                             <div className="relative z-10 profile-link-glass p-5 rounded-3xl border border-white/10 flex flex-col items-center gap-5 shadow-md">
                                 <div className="relative group">
@@ -7402,26 +7389,6 @@ const ProfileModal = ({
                                         </div>
                                     </div>
                                 )}
-                            </div>
-
-                            {/* Bottom Save Action Bar */}
-                            <div className="relative z-10 pt-2 flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsEditing(false)}
-                                    className="flex-1 py-3 px-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 active:scale-98 text-white/80 font-bold text-xs uppercase tracking-wider transition-all select-none cursor-pointer"
-                                >
-                                    {t('CANCEL') || 'Cancel'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleProfileSave}
-                                    disabled={profileSaving}
-                                    className="flex-1 py-3 px-4 rounded-2xl bg-[var(--gold-primary,#1D9BF0)] hover:opacity-90 active:scale-98 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2 select-none cursor-pointer"
-                                >
-                                    {profileSaving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : <Icons.Check className="w-4 h-4" />}
-                                    <span>{profileSaving ? (t('SAVING') || 'Saving...') : (t('SAVE_CHANGES') || 'Save Changes')}</span>
-                                </button>
                             </div>
                         </div>
                     ) : (
@@ -7702,21 +7669,21 @@ const ProfileModal = ({
                                                         href={siteUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="profile-link-glass p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-white/25 active:scale-[0.99] transition-all select-none shadow-sm cursor-pointer"
+                                                        className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/50 bg-[#0c0c0e]/90 hover:bg-[#131317] active:scale-[0.99] transition-all select-none shadow-md cursor-pointer relative overflow-hidden"
                                                     >
-                                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                        <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
                                                             <div
                                                                 className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
                                                                     site.palette === 'gold' 
                                                                         ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
-                                                                        : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
+                                                                        : 'bg-[var(--gold-primary,#1D9BF0)]/15 border-[var(--gold-primary,#1D9BF0)]/30 text-[var(--gold-primary,#1D9BF0)]'
                                                                 }`}
                                                             >
                                                                 <Icons.Globe className="w-5 h-5" />
                                                             </div>
                                                             <div className="min-w-0 flex-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <h4 className="text-[14px] sm:text-[15px] font-black text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
+                                                                    <h4 className="text-[14px] sm:text-[15px] font-black text-white group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
                                                                         {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
                                                                     </h4>
                                                                     {site.isDraft ? (
@@ -7724,7 +7691,7 @@ const ProfileModal = ({
                                                                             {t('DRAFT', 'Draft')}
                                                                         </span>
                                                                     ) : (
-                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
+                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                                                                             <span className="relative flex h-1.5 w-1.5">
                                                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                                                                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
@@ -7733,13 +7700,13 @@ const ProfileModal = ({
                                                                         </span>
                                                                     )}
                                                                 </div>
-                                                                <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                                <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
                                                                     {site.slogan || `site/${displayUser?.username || ''}`}
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
-                                                            <Icons.ExternalLink className="w-4 h-4" />
+                                                        <div className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 shadow-sm relative z-10 group-hover:scale-105">
+                                                            <Icons.ExternalLink className="w-3.5 h-3.5" />
                                                         </div>
                                                     </a>
                                                 );
@@ -7750,23 +7717,23 @@ const ProfileModal = ({
                                                     href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="profile-link-glass p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-white/25 active:scale-[0.99] transition-all select-none shadow-sm cursor-pointer"
+                                                    className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/50 bg-[#0c0c0e]/90 hover:bg-[#131317] active:scale-[0.99] transition-all select-none shadow-md cursor-pointer relative overflow-hidden"
                                                 >
-                                                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                                                        <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
+                                                    <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
+                                                        <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
                                                             <Icons.Link className="w-5 h-5" />
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <h4 className="text-[14px] sm:text-[15px] font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
+                                                            <h4 className="text-[14px] sm:text-[15px] font-black text-white truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
                                                                 {t('OFFICIAL_LINK', 'Official Link')}
                                                             </h4>
-                                                            <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                            <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
                                                                 {externalUrl}
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
-                                                        <Icons.ExternalLink className="w-4 h-4" />
+                                                    <div className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 shadow-sm relative z-10 group-hover:scale-105">
+                                                        <Icons.ExternalLink className="w-3.5 h-3.5" />
                                                     </div>
                                                 </a>
                                             )}
@@ -8045,32 +8012,6 @@ const ProfileModal = ({
                         </div>
                     )}
                 </div>
-                {isEditing && !activeList && (
-                    <div className="flex-none p-4 bg-[#0a0a0a]/90 backdrop-blur-md border-t border-white/5 z-30 w-full box-border">
-                        <button
-                            type="button"
-                            disabled={profileSaving}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleProfileSave();
-                            }}
-                            className="profile-save-btn"
-                        >
-                            {profileSaving ? (
-                                <div className="flex items-center justify-center gap-2">
-                                    <Icons.Loader className="w-4 h-4 text-black" />
-                                    {t('SAVING') || 'SAVING...'}
-                                </div>
-                            ) : (
-                                <>
-                                    <Icons.Check className="w-4 h-4" />
-                                    {t('SAVE') || 'SAVE'}
-                                </>
-                            )}
-                        </button>
-                    </div>
-                )}
             </div>
         </div >
     );
