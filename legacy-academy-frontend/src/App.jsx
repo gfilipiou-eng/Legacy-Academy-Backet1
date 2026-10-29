@@ -3152,7 +3152,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             setMountClickLock(true);
             const timer = setTimeout(() => {
                 setMountClickLock(false);
-            }, 350);
+            }, 30);
             return () => clearTimeout(timer);
         }
     }, [isOpen]);
@@ -3552,7 +3552,8 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         if (mountClickLock) return;
                                         setActiveChat(u);
                                     }}
-                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent hover:bg-[var(--app-hover)] transition-colors active:bg-[var(--app-hover)]"
+                                    style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent hover:bg-[var(--app-hover)] transition-colors active:bg-[var(--app-hover)] select-none"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[var(--app-bg)] ${online ? 'bg-green-500' : 'bg-gray-400'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-[var(--app-text)] flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500' : 'text-[var(--app-secondary)]'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
@@ -5864,16 +5865,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
     const handleLink = (tab) => {
         playCyberSFX('menu');
-        onNavigate(tab);
-        handleClose();
+        if (tab === 'chat') {
+            if (onOpenChat) onOpenChat();
+        } else {
+            onNavigate(tab);
+        }
+        onClose();
     };
 
     const handleModalOpen = (fn) => {
         playCyberSFX('menu');
-        handleClose();
-        setTimeout(() => {
-            if (fn) fn();
-        }, 180);
+        if (fn) fn();
+        onClose();
     };
 
     return (
@@ -5959,10 +5962,15 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     onClick={() => {
                                         item.action();
                                     }}
-                                    className={`w-full px-3.5 py-3 flex items-center gap-4 rounded-2xl transition-all duration-150 touch-manipulation cursor-pointer active:scale-[0.98] ${
+                                    style={{
+                                        outline: 'none',
+                                        WebkitTapHighlightColor: 'transparent',
+                                        touchAction: 'manipulation'
+                                    }}
+                                    className={`w-full px-3.5 py-3 flex items-center gap-4 rounded-2xl transition-colors duration-100 touch-manipulation cursor-pointer select-none ${
                                         isActive
                                             ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.08))] shadow-sm'
-                                            : 'text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))]'
+                                            : 'text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] active:bg-[var(--app-hover,rgba(255,255,255,0.08))]'
                                     }`}
                                 >
                                     <IconComponent className="w-6 h-6 shrink-0" strokeWidth={2} />
@@ -5983,8 +5991,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     <div className="px-3 pt-3 pb-[max(16px,calc(12px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-1.5">
                         <button
                             type="button"
-                            onClick={() => { onLogout(); handleClose(); }}
-                            className="w-full px-3.5 py-2.5 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-all cursor-pointer touch-manipulation active:scale-[0.98]"
+                            onClick={() => { onLogout(); onClose(); }}
+                            style={{
+                                outline: 'none',
+                                WebkitTapHighlightColor: 'transparent',
+                                touchAction: 'manipulation'
+                            }}
+                            className="w-full px-3.5 py-2.5 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors duration-100 cursor-pointer touch-manipulation select-none"
                         >
                             <Icons.Logout className="w-5 h-5 shrink-0" strokeWidth={2} />
                             <span className="text-[15px] font-bold">{t('LOGOUT')}</span>
@@ -7027,6 +7040,20 @@ const ProfileModal = ({
                         >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
                         </button>
+                    ) : isEditing ? (
+                        <button
+                            type="button"
+                            onClick={handleProfileSave}
+                            disabled={profileSaving}
+                            className="px-3.5 py-1.5 rounded-full bg-[var(--gold-primary,#1D9BF0)] hover:opacity-90 active:scale-95 disabled:opacity-50 text-black font-black text-[11px] uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm cursor-pointer select-none"
+                        >
+                            {profileSaving ? (
+                                <Icons.Loader className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                                <Icons.Check className="w-3.5 h-3.5" />
+                            )}
+                            <span>{profileSaving ? (t('SAVING') || 'Saving') : (t('SAVE') || 'Save')}</span>
+                        </button>
                     ) : (
                         <div className="w-10" />
                     )}
@@ -7054,163 +7081,162 @@ const ProfileModal = ({
                             ))}
                         </div>
                     ) : isEditing ? (
-                        <div className="p-6 space-y-8 animate-fade-in w-full max-w-full box-border profile-edit-form pb-32">
-                            <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto rounded-full bg-gray-800 overflow-hidden border border-[#0a0a0a] relative shadow-none">
-                                {profileUploading ? (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                        <div className="w-8 h-8 text-white/50">
-                                            <Icons.Loader />
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} />
-                                )}
+                        <div className="relative p-5 sm:p-6 space-y-6 animate-fade-in w-full max-w-full box-border profile-edit-form pb-32">
+                            {/* Live animated luxury background */}
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                                <div className="profile-edit-live-bg absolute inset-0" />
+                                <div className="profile-edit-grid absolute inset-0" />
+                                <div className="profile-edit-orb orb-1" />
+                                <div className="profile-edit-orb orb-2" />
+                                <div className="profile-edit-orb orb-3" />
                             </div>
-                            <input type="file" id="profile-pic-input" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
-                                const file = e.target.files[0];
-                                if (file) {
-                                    if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
-                                    
-                                    setProfileUploading(true);
 
-                                    const fd = new FormData(); fd.append('image', file);
-                                    try {
-                                        const res = await axios.post('/users/profile-pic', fd);
-                                        const updatedUser = res.data;
+                            {/* Media & Photos Section */}
+                            <div className="relative z-10 profile-link-glass p-5 rounded-3xl border border-white/10 flex flex-col items-center gap-5 shadow-md">
+                                <div className="relative group">
+                                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-white/15 bg-black/40 relative shadow-lg">
+                                        {profileUploading ? (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10">
+                                                <div className="w-7 h-7 text-white/70 animate-spin">
+                                                    <Icons.Loader />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} />
+                                        )}
+                                    </div>
+                                    <label
+                                        htmlFor="profile-pic-input"
+                                        className="absolute bottom-0 right-0 p-2 rounded-full bg-[var(--gold-primary,#1D9BF0)] text-black cursor-pointer shadow-md hover:scale-105 active:scale-95 transition-transform"
+                                        title={t('CHANGE_PROFILE_PIC') || 'Change profile picture'}
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                                            <circle cx="12" cy="13" r="3"></circle>
+                                        </svg>
+                                    </label>
+                                </div>
 
-                                        localStorage.setItem('user', JSON.stringify(updatedUser));
-                                        if (onUpdateUser) onUpdateUser(updatedUser);
-                                        if (setImgKey) setImgKey(Date.now());
-                                        if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
-                                    } catch (e) { 
-                                        console.error("❌ Profile picture upload error:", e.response?.data || e.message);
-                                        alert("Failed to update profile picture: " + (e.response?.data?.message || e.message)); 
+                                <input type="file" id="profile-pic-input" ref={fileRef} hidden accept="image/*" onChange={async (e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        if (file.size > 90 * 1024 * 1024) { alert("File too large. Max 90MB"); return e.target.value = ''; }
+                                        
+                                        setProfileUploading(true);
+
+                                        const fd = new FormData(); fd.append('image', file);
+                                        try {
+                                            const res = await axios.post('/users/profile-pic', fd);
+                                            const updatedUser = res.data;
+
+                                            localStorage.setItem('user', JSON.stringify(updatedUser));
+                                            if (onUpdateUser) onUpdateUser(updatedUser);
+                                            if (setImgKey) setImgKey(Date.now());
+                                            if (addToast) addToast(t('PROFILE_UPDATED') || 'Profile picture updated!', 'success');
+                                        } catch (e) { 
+                                            console.error("❌ Profile picture upload error:", e.response?.data || e.message);
+                                            alert("Failed to update profile picture: " + (e.response?.data?.message || e.message)); 
+                                        }
+                                        finally { 
+                                            setProfileUploading(false); 
+                                            e.target.value = ''; 
+                                        }
                                     }
-                                    finally { 
-                                        setProfileUploading(false); 
-                                        e.target.value = ''; 
-                                    }
-                                }
-                            }} />
+                                }} />
 
-                            <div className="flex gap-3 w-full">
-                                <label
-                                    htmlFor="profile-pic-input"
-                                    className={`profile-upload-label${profileUploading ? ' disabled' : ''}`}
-                                    style={{ pointerEvents: profileUploading ? 'none' : 'auto' }}
-                                >
-                                    {profileUploading ? (
-                                        <>
-                                            <Icons.Loader className="w-4 h-4" />
-                                            {t('UPLOADING') || 'UPLOADING...'}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+                                    <div className="flex gap-2 w-full">
+                                        <label
+                                            htmlFor="profile-pic-input"
+                                            className={`flex-1 py-2.5 px-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all select-none ${profileUploading ? 'opacity-50 pointer-events-none' : ''}`}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[var(--gold-primary,#1D9BF0)]">
                                                 <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
                                                 <circle cx="12" cy="13" r="3"></circle>
                                             </svg>
-                                            {t('CHANGE_PROFILE_PIC') || 'CHANGE PROFILE PICTURE'}
-                                        </>
-                                    )}
-                                </label>
-                                {displayUser?.profilePic && (
-                                    <button onClick={async (e) => {
-                                        e.preventDefault();
-                                        setProfileUploading(true);
-                                        
-                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                            setUserData(prev => ({ ...prev, profilePic: null }));
-                                        }
-                                        
-                                        try {
-                                            const res = await axios.put(`/users/${displayUser?._id}`, { profilePic: "" });
-                                            const updatedUser = res.data;
-                                            if (updatedUser.profilePic) updatedUser.profilePic = "";
-                                            
-                                            try { await axios.delete('/users/profile-pic'); } catch (e) {}
+                                            <span>{profileUploading ? (t('UPLOADING') || 'Uploading...') : (t('CHANGE_AVATAR', 'Change Avatar'))}</span>
+                                        </label>
+                                        {displayUser?.profilePic && (
+                                            <button onClick={async (e) => {
+                                                e.preventDefault();
+                                                setProfileUploading(true);
+                                                if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                                    setUserData(prev => ({ ...prev, profilePic: null }));
+                                                }
+                                                try {
+                                                    const res = await axios.put(`/users/${displayUser?._id}`, { profilePic: "" });
+                                                    const updatedUser = res.data;
+                                                    if (updatedUser.profilePic) updatedUser.profilePic = "";
+                                                    try { await axios.delete('/users/profile-pic'); } catch (e) {}
+                                                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                                                    if (onUpdateUser) onUpdateUser(updatedUser);
+                                                    if (addToast) addToast('Profile picture removed', 'success');
+                                                } catch (err) { 
+                                                    console.error(err);
+                                                    alert("Failed to remove profile picture."); 
+                                                }
+                                                finally { setProfileUploading(false); }
+                                            }} disabled={profileUploading}
+                                                className="p-2.5 rounded-2xl bg-white/[0.04] hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
+                                                title="Remove avatar"
+                                            >
+                                                <Icons.X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
 
-                                            localStorage.setItem('user', JSON.stringify(updatedUser));
-                                            if (onUpdateUser) onUpdateUser(updatedUser);
-                                            if (addToast) addToast('Profile picture removed', 'success');
-                                        } catch (err) { 
-                                            console.error(err);
-                                            alert("Failed to remove profile picture."); 
-                                        }
-                                        finally { setProfileUploading(false); }
-                                    }} disabled={profileUploading}
-                                        className="w-[56px] h-[56px] shrink-0 bg-transparent text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
-                                        <Icons.X className="w-6 h-6" />
-                                    </button>
-                                )}
+                                    <div className="flex gap-2 w-full">
+                                        <label
+                                            htmlFor="cover-pic-input"
+                                            className={`flex-1 py-2.5 px-3 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all select-none ${coverUploading ? 'opacity-50 pointer-events-none' : ''}`}
+                                        >
+                                            <Icons.Image className="w-4 h-4 text-[var(--gold-primary,#1D9BF0)]" />
+                                            <span>{coverUploading ? (t('UPLOADING') || 'Uploading...') : (t('CHANGE_COVER') || 'Change Cover')}</span>
+                                        </label>
+                                        {displayUser?.coverPic && (
+                                            <button onClick={async (e) => {
+                                                e.preventDefault();
+                                                setCoverUploading(true);
+                                                if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
+                                                    setUserData(prev => ({ ...prev, coverPic: null }));
+                                                }
+                                                try {
+                                                    const res = await axios.put(`/users/${displayUser?._id}`, { coverPic: "" });
+                                                    const updatedUser = res.data;
+                                                    if (updatedUser.coverPic) updatedUser.coverPic = "";
+                                                    try { await axios.delete('/users/cover-pic'); } catch (e) {}
+                                                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                                                    if (onUpdateUser) onUpdateUser(updatedUser);
+                                                    if (addToast) addToast('Background removed', 'success');
+                                                } catch (err) { 
+                                                    console.error(err);
+                                                    alert("Failed to remove background."); 
+                                                }
+                                                finally { setCoverUploading(false); }
+                                            }} disabled={coverUploading}
+                                                className="p-2.5 rounded-2xl bg-white/[0.04] hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
+                                                title="Remove cover"
+                                            >
+                                                <Icons.X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="flex gap-3 w-full mt-4">
-                                <label
-                                    htmlFor="cover-pic-input"
-                                    className={`profile-upload-label${coverUploading ? ' disabled' : ''}`}
-                                    style={{ pointerEvents: coverUploading ? 'none' : 'auto' }}
-                                >
-                                    {coverUploading ? (
-                                        <>
-                                            <Icons.Loader className="w-4 h-4" />
-                                            {t('UPLOADING') || 'UPLOADING...'}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Icons.Image className="w-4 h-4" />
-                                            {t('CHANGE_COVER') || 'CHANGE BACKGROUND'}
-                                        </>
-                                    )}
-                                </label>
-                                {displayUser?.coverPic && (
-                                    <button onClick={async (e) => {
-                                        e.preventDefault();
-                                        setCoverUploading(true);
-                                        
-                                        if (currentUser && displayUser && isSameId(currentUser._id, displayUser._id)) {
-                                            setUserData(prev => ({ ...prev, coverPic: null }));
-                                        }
-                                        
-                                        try {
-                                            const res = await axios.put(`/users/${displayUser?._id}`, { coverPic: "" });
-                                            const updatedUser = res.data;
-                                            if (updatedUser.coverPic) updatedUser.coverPic = "";
-                                            
-                                            try { await axios.delete('/users/cover-pic'); } catch (e) {}
-
-                                            localStorage.setItem('user', JSON.stringify(updatedUser));
-                                            if (onUpdateUser) onUpdateUser(updatedUser);
-                                            if (addToast) addToast('Background removed', 'success');
-                                        } catch (err) { 
-                                            console.error(err);
-                                            alert("Failed to remove background."); 
-                                        }
-                                        finally { setCoverUploading(false); }
-                                    }} disabled={coverUploading}
-                                        className="w-[56px] h-[56px] shrink-0 bg-transparent text-gray-400 flex items-center justify-center duration-300 disabled:opacity-50 hover:bg-red-500/20 hover:text-red-400">
-                                        <Icons.X className="w-6 h-6" />
-                                    </button>
-                                )}
-                            </div>
                             <input type="file" id="cover-pic-input" ref={coverFileRef} hidden accept="image/*, video/*" onChange={async (e) => {
                                 const file = e.target.files[0];
                                 if (file) {
-                                    // Ο Founder έχει όριο 500MB, οι άλλοι έχουν 90MB
                                     const maxUploadSize = 50000 * 1024 * 1024;
-                                    
                                     if (file.size > maxUploadSize) { 
                                         alert('File too large. Please keep under 50GB'); 
                                         return e.target.value = ''; 
                                     }
-                                    
                                     setCoverUploading(true);
-
                                     const fd = new FormData(); fd.append('image', file);
                                     try {
                                         const res = await axios.post('/users/cover-pic', fd);
                                         const updatedUser = res.data;
-
                                         localStorage.setItem('user', JSON.stringify(updatedUser));
                                         if (onUpdateUser) onUpdateUser(updatedUser);
                                         if (setImgKey) setImgKey(Date.now());
@@ -7223,29 +7249,38 @@ const ProfileModal = ({
                                 }
                             }} />
 
-                            <div className="space-y-2 text-left w-full max-w-full box-border">
-                                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">{t('USERNAME')}</label>
-                                <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white font-bold outline-none transition-colors duration-200 touch-manipulation" placeholder={t('USERNAME_PH')} />
-                            </div>
-
-                            <div className="space-y-2 text-left w-full max-w-full box-border">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">{t('DESCRIPTION')}</label>
-                                <div className="w-full max-w-full box-border space-y-1.5">
-                                    <textarea
-                                        value={bio}
-                                        onChange={e => setBio(e.target.value)}
-                                        maxLength={500}
-                                        spellCheck={false}
-                                        className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none transition-colors duration-200 whitespace-pre-wrap touch-manipulation"
-                                        placeholder={t('BIO_PH')}
-                                    />
-                                    <div className="text-right text-[10px] font-black text-white/20 uppercase tracking-widest pr-1">{bio?.length || 0} / 500</div>
+                            {/* Username Card */}
+                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-2 text-left w-full max-w-full box-border">
+                                <div className="flex items-center justify-between px-1">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('USERNAME')}</label>
+                                    <span className="text-[10px] font-black text-white/30 tracking-wider">{editUsername?.length || 0}/19</span>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm">@</span>
+                                    <input type="text" id="edit-username" name="username" aria-label="Username" value={editUsername} maxLength={19} autoComplete="off" autoCorrect="off" spellCheck={false} inputMode="text" onChange={e => setEditUsername(e.target.value.substring(0, 19))} className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white font-bold outline-none pl-8 pr-4 py-3 bg-black/30 transition-colors duration-200 touch-manipulation" placeholder={t('USERNAME_PH')} />
                                 </div>
                             </div>
 
-                            <div className="space-y-3 text-left">
-                                <div className="flex items-start sm:items-center justify-between gap-3 pl-1">
-                                    <label className="flex-1 min-w-0 whitespace-normal text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
+                            {/* Bio / Description Card */}
+                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-2 text-left w-full max-w-full box-border">
+                                <div className="flex items-center justify-between px-1">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('DESCRIPTION')}</label>
+                                    <span className="text-[10px] font-black text-white/30 tracking-wider">{bio?.length || 0} / 500</span>
+                                </div>
+                                <textarea
+                                    value={bio}
+                                    onChange={e => setBio(e.target.value)}
+                                    maxLength={500}
+                                    spellCheck={false}
+                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none p-3.5 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[90px]"
+                                    placeholder={t('BIO_PH')}
+                                />
+                            </div>
+
+                            {/* Profile Descriptor Card */}
+                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-3 text-left">
+                                <div className="flex items-start sm:items-center justify-between gap-3 px-1">
+                                    <label className="flex-1 min-w-0 whitespace-normal text-[10px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
                                     {profileDescriptor && (
                                         <button
                                             type="button"
@@ -7253,7 +7288,7 @@ const ProfileModal = ({
                                                 e.stopPropagation();
                                                 setProfileDescriptor('');
                                             }}
-                                            className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[10px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] cursor-pointer touch-manipulation px-3 py-2 transition-all duration-200 active:scale-[0.97]"
+                                            className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[9px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] cursor-pointer touch-manipulation px-2.5 py-1.5 transition-all duration-200 active:scale-[0.97]"
                                         >
                                             {t('CLEAR', 'Clear')}
                                         </button>
@@ -7271,26 +7306,27 @@ const ProfileModal = ({
                                                     e.stopPropagation();
                                                     setProfileDescriptor(option.value);
                                                 }}
-                                                className={`profile-descriptor-btn w-full text-left px-4 py-4 relative z-10 flex items-center gap-3 min-h-[56px] border ${isSelected ? `profile-descriptor-btn-selected ${option.accentClass}` : 'bg-transparent text-white border-transparent'}`}
+                                                className={`profile-descriptor-btn w-full text-left px-4 py-3.5 relative z-10 flex items-center gap-3 min-h-[52px] border ${isSelected ? `profile-descriptor-btn-selected ${option.accentClass}` : 'bg-transparent text-white border-transparent'}`}
                                             >
-                                                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${option.accentClass} ${isSelected ? 'ring-1 ring-current/25' : 'opacity-75'}`}>
+                                                <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${option.accentClass} ${isSelected ? 'ring-1 ring-current/25' : 'opacity-75'}`}>
                                                     <OptionIcon className="w-4 h-4" />
                                                 </div>
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="font-semibold text-[15px] leading-tight truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
-                                                    <div className={`text-[13px] leading-snug mt-0.5 opacity-80 whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
+                                                    <div className="font-semibold text-[14px] leading-tight truncate">{t(`DESC_${option.value.toUpperCase()}`, option.label)}</div>
+                                                    <div className={`text-[12px] leading-snug mt-0.5 opacity-80 whitespace-normal line-clamp-2`}>{t(`DESC_${option.value.toUpperCase()}_SUB`, option.description)}</div>
                                                 </div>
                                                 {isSelected && (
-                                                    <Icons.Check className="w-5 h-5 shrink-0 opacity-90" />
+                                                    <Icons.Check className="w-4 h-4 shrink-0 opacity-90" />
                                                 )}
                                             </button>
                                         );
                                     })}
                                 </div>
+
                                 {isFounderProfile && (
-                                    <div className="profile-link-glass profile-affiliation-card mt-4 rounded-3xl p-4">
-                                        <div className="relative z-10 flex items-start sm:items-center justify-between gap-3 mb-3">
-                                            <label className="flex-1 min-w-0 whitespace-normal text-[10px] font-black text-[var(--gold-primary)] uppercase tracking-widest leading-relaxed">FOUNDER AFFILIATION</label>
+                                    <div className="profile-affiliation-card rounded-2xl p-3.5 mt-3 border border-white/10 bg-black/30">
+                                        <div className="relative z-10 flex items-start sm:items-center justify-between gap-3 mb-2.5">
+                                            <label className="flex-1 min-w-0 whitespace-normal text-[9px] font-black text-[var(--gold-primary)] uppercase tracking-widest leading-relaxed">FOUNDER AFFILIATION</label>
                                             {founderAffiliation && (
                                                 <button
                                                     type="button"
@@ -7298,14 +7334,14 @@ const ProfileModal = ({
                                                         e.stopPropagation();
                                                         setFounderAffiliation('');
                                                     }}
-                                                    className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[9px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] transition-all duration-200 px-3 py-2 active:scale-[0.97]"
+                                                    className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] text-[9px] font-black uppercase tracking-widest text-white/55 hover:text-white hover:bg-white/[0.08] transition-all duration-200 px-2.5 py-1 active:scale-[0.97]"
                                                 >
                                                     {t('CLEAR', 'Clear')}
                                                 </button>
                                             )}
                                         </div>
                                         <div className="relative z-10">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-2xl bg-white/8 border border-white/10 text-[var(--gold-primary)] font-black flex items-center justify-center">@</div>
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-white/8 border border-white/10 text-[var(--gold-primary)] font-black flex items-center justify-center text-xs">@</div>
                                             <input 
                                                 type="text" 
                                                 value={founderAffiliation}
@@ -7313,18 +7349,36 @@ const ProfileModal = ({
                                                     setFounderAffiliation(sanitizeAffiliation(e.target.value));
                                                 }}
                                                 placeholder="affiliated_username"
-                                                className="profile-edit-field w-full bg-black/25 border border-white/10 rounded-2xl py-3.5 pl-14 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 outline-none transition-colors duration-200"
+                                                className="profile-edit-field w-full bg-black/30 border border-white/10 rounded-xl py-3 pl-13 pr-4 text-white text-sm font-black tracking-wide placeholder:text-white/22 outline-none transition-colors duration-200"
                                             />
                                         </div>
-                                        <div className="relative z-10 mt-3 flex items-start gap-2 text-[9px] text-white/42 font-bold uppercase tracking-wider">
-                                            <Icons.Link className="w-3.5 h-3.5 text-[var(--gold-primary)] shrink-0" />
+                                        <div className="relative z-10 mt-2 flex items-start gap-1.5 text-[9px] text-white/42 font-bold uppercase tracking-wider">
+                                            <Icons.Link className="w-3 h-3 text-[var(--gold-primary)] shrink-0" />
                                             <span className="leading-relaxed whitespace-normal">Links to another profile, brand, or company page.</span>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
-
+                            {/* Bottom Save Action Bar */}
+                            <div className="relative z-10 pt-2 flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditing(false)}
+                                    className="flex-1 py-3 px-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 active:scale-98 text-white/80 font-bold text-xs uppercase tracking-wider transition-all select-none cursor-pointer"
+                                >
+                                    {t('CANCEL') || 'Cancel'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleProfileSave}
+                                    disabled={profileSaving}
+                                    className="flex-1 py-3 px-4 rounded-2xl bg-[var(--gold-primary,#1D9BF0)] hover:opacity-90 active:scale-98 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2 select-none cursor-pointer"
+                                >
+                                    {profileSaving ? <Icons.Loader className="w-4 h-4 animate-spin" /> : <Icons.Check className="w-4 h-4" />}
+                                    <span>{profileSaving ? (t('SAVING') || 'Saving...') : (t('SAVE_CHANGES') || 'Save Changes')}</span>
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
@@ -7472,10 +7526,11 @@ const ProfileModal = ({
                                             <button
                                                 onClick={() => {
                                                     onClose();
-                                                    setTimeout(() => onOpenChat(displayUser), 50);
+                                                    onOpenChat(displayUser);
                                                 }}
                                                 title={t('DM_SAFE_DESC')}
-                                                className="relative py-2.5 px-6 rounded-full text-[14px] font-bold transition-colors active:scale-[0.97] flex items-center justify-center bg-transparent border border-[var(--app-border,#eff3f4)] text-[var(--app-text,#ffffff)] active:bg-[var(--app-hover,rgba(255,255,255,0.06))] md:hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] shrink-0 touch-manipulation select-none cursor-pointer"
+                                                style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                                                className="relative py-2.5 px-6 rounded-full text-[14px] font-bold transition-colors active:bg-[var(--app-hover,rgba(255,255,255,0.06))] md:hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] flex items-center justify-center bg-transparent border border-[var(--app-border,#eff3f4)] text-[var(--app-text,#ffffff)] shrink-0 touch-manipulation select-none cursor-pointer"
                                             >
                                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                                     <Icons.MessageSquare className="w-4 h-4" />
@@ -7600,18 +7655,21 @@ const ProfileModal = ({
                                                 return (
                                                     <div
                                                         key={site.originalIndex}
-                                                        className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3 text-left relative group border border-[var(--app-border)] hover:border-[var(--app-border-hover)]"
+                                                        className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3.5 text-left relative group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
                                                     >
                                                         <div className="flex items-start justify-between gap-2">
-                                                            <div className="flex items-center gap-2.5 min-w-0">
+                                                            <div className="flex items-center gap-3 min-w-0">
                                                                 <div
-                                                                    className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs text-white shrink-0 shadow-sm"
-                                                                    style={{ backgroundColor: site.palette === 'gold' ? '#E5B842' : '#38bdf8' }}
+                                                                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
+                                                                        site.palette === 'gold' 
+                                                                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
+                                                                            : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
+                                                                    }`}
                                                                 >
                                                                     <Icons.Globe className="w-4 h-4" />
                                                                 </div>
                                                                 <div className="min-w-0">
-                                                                    <h4 className="text-sm font-black text-[var(--app-text)] truncate leading-tight">
+                                                                    <h4 className="text-[14px] font-black text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
                                                                         {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
                                                                     </h4>
                                                                     <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
@@ -7624,14 +7682,17 @@ const ProfileModal = ({
                                                                     {t('DRAFT', 'Draft')}
                                                                 </span>
                                                             ) : (
-                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1">
-                                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
+                                                                    <span className="relative flex h-1.5 w-1.5">
+                                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                                                                    </span>
                                                                     {t('LIVE', 'Live')}
                                                                 </span>
                                                             )}
                                                         </div>
 
-                                                        <div className="flex items-center gap-2 pt-2 border-t border-[var(--app-border)]">
+                                                        <div className="flex items-center gap-2 pt-2.5 border-t border-white/10">
                                                             <a
                                                                 href={siteUrl}
                                                                 target="_blank"
@@ -7639,10 +7700,10 @@ const ProfileModal = ({
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                 }}
-                                                                className="flex-1 py-2 px-3 rounded-xl bg-[var(--app-text)] text-[var(--app-bg)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                                                                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.16] border border-white/10 text-[var(--app-text,#ffffff)] text-xs font-bold tracking-wide flex items-center justify-center gap-1.5 transition-all select-none cursor-pointer"
                                                             >
-                                                                <Icons.ExternalLink className="w-3.5 h-3.5" />
-                                                                {t('VISIT_SITE', 'Visit Site')}
+                                                                <Icons.ExternalLink className="w-3.5 h-3.5 text-[var(--gold-primary,#1D9BF0)]" />
+                                                                <span>{t('VISIT_SITE', 'Visit Site')}</span>
                                                             </a>
                                                             <button
                                                                 type="button"
@@ -7660,10 +7721,10 @@ const ProfileModal = ({
                                                                     }
                                                                     addToast?.(t('LINK_COPIED', 'Website link copied to clipboard!'), 'success');
                                                                 }}
-                                                                className="p-2 rounded-xl border border-[var(--app-border)] hover:bg-[var(--app-hover)] text-[var(--app-text)] transition-colors active:scale-95 cursor-pointer"
+                                                                className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] active:bg-white/[0.14] border border-white/10 text-[var(--app-secondary,#71767b)] hover:text-white transition-all select-none cursor-pointer flex items-center justify-center shrink-0"
                                                                 title={t('COPY_LINK', 'Copy Link')}
                                                             >
-                                                                <Icons.Copy className="w-4 h-4" />
+                                                                <Icons.Copy className="w-3.5 h-3.5" />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -7671,13 +7732,13 @@ const ProfileModal = ({
                                             })}
 
                                             {hasExternalWebsite && (
-                                                <div className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3 text-left relative group border border-[var(--app-border)] hover:border-[var(--app-border-hover)]">
-                                                    <div className="flex items-center gap-2.5 min-w-0">
-                                                        <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-xs text-[var(--app-text)] shrink-0 shadow-sm">
+                                                <div className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3.5 text-left relative group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
                                                             <Icons.Link className="w-4 h-4" />
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <h4 className="text-sm font-black text-[var(--app-text)] truncate leading-tight">
+                                                            <h4 className="text-[14px] font-black text-[var(--app-text)] truncate leading-tight">
                                                                 {t('OFFICIAL_LINK', 'Official Link')}
                                                             </h4>
                                                             <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
@@ -7689,10 +7750,10 @@ const ProfileModal = ({
                                                         href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="w-full py-2 px-3 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[var(--app-active)] active:scale-95 transition-all cursor-pointer"
+                                                        className="w-full py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.16] border border-white/10 text-[var(--app-text,#ffffff)] text-xs font-bold tracking-wide flex items-center justify-center gap-1.5 transition-all select-none cursor-pointer"
                                                     >
-                                                        <Icons.ExternalLink className="w-3.5 h-3.5" />
-                                                        {t('OPEN_LINK', 'Open Link')}
+                                                        <Icons.ExternalLink className="w-3.5 h-3.5 text-[var(--gold-primary,#1D9BF0)]" />
+                                                        <span>{t('OPEN_LINK', 'Open Link')}</span>
                                                     </a>
                                                 </div>
                                             )}
@@ -8908,22 +8969,28 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         <a
                                             key={site.originalIndex}
                                             href={siteUrl}
-                                            className="profile-link-glass p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-[var(--app-border)] hover:border-[var(--app-border-hover)] transition-all active:scale-[0.98]"
+                                            className="profile-link-glass p-4 sm:p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
                                         >
                                             <div className="flex items-center gap-3.5 min-w-0">
                                                 <div
-                                                    className="w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm text-white shrink-0 shadow-sm"
-                                                    style={{ backgroundColor: site.palette === 'gold' ? '#E5B842' : '#38bdf8' }}
+                                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm border ${
+                                                        site.palette === 'gold' 
+                                                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
+                                                            : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
+                                                    }`}
                                                 >
                                                     <Icons.Globe className="w-5 h-5" />
                                                 </div>
                                                 <div className="min-w-0">
                                                     <div className="flex items-center gap-2">
-                                                        <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary)] transition-colors">
+                                                        <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
                                                             {site.businessName || 'Personal Website'}
                                                         </h4>
-                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
+                                                            <span className="relative flex h-1.5 w-1.5">
+                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                                                            </span>
                                                             {t('LIVE', 'Live')}
                                                         </span>
                                                     </div>
@@ -8932,7 +8999,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="w-9 h-9 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary)] group-hover:text-black transition-all shrink-0">
+                                            <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
                                                 <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                                             </div>
                                         </a>
@@ -8944,14 +9011,14 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="profile-link-glass p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-[var(--app-border)] hover:border-[var(--app-border-hover)] transition-all active:scale-[0.98]"
+                                        className="profile-link-glass p-4 sm:p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
                                     >
                                         <div className="flex items-center gap-3.5 min-w-0">
-                                            <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center font-black text-sm text-[var(--app-text)] shrink-0 shadow-sm">
+                                            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-sm text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
                                                 <Icons.Link className="w-5 h-5" />
                                             </div>
                                             <div className="min-w-0">
-                                                <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary)] transition-colors">
+                                                <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
                                                     {t('OFFICIAL_LINK', 'Official Link')}
                                                 </h4>
                                                 <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
@@ -8959,7 +9026,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="w-9 h-9 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary)] group-hover:text-black transition-all shrink-0">
+                                        <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
                                             <Icons.ExternalLink className="w-4 h-4" />
                                         </div>
                                     </a>
@@ -12442,7 +12509,7 @@ const App = () => {
                         onOpenBubbles={() => setIsBubbleSpaceOpen(true)}
                         onNavigate={(tab) => {
                             if (tab === 'chat') {
-                                setTimeout(() => setIsChatOpen(true), 150);
+                                handleOpenChat();
                             } else {
                                 setActiveTab(tab);
                             }
