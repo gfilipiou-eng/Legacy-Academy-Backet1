@@ -3484,14 +3484,23 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                     <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[100px]" />
                 </div>
                 <div className={`w-full sm:w-80 border-r border-[var(--app-border)] flex-col bg-[var(--app-bg)]/80 backdrop-blur-xl absolute inset-0 sm:relative sm:inset-auto z-10 sm:z-0 transition-none ${activeChat ? 'hidden sm:flex' : 'flex'}`}>
-                    <div className="p-4 border-b border-[var(--app-border)] space-y-4">
+                    <div className="px-4 pb-4 border-b border-[var(--app-border)] space-y-4"
+                         style={{ paddingTop: 'max(16px, env(safe-area-inset-top, 16px))' }}
+                    >
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-xl font-black italic flex items-center gap-2 text-[var(--app-text)]">
                                     <Icons.MessageSquare className="w-8 h-8 text-[var(--gold-primary)]" />
                                     {t('WHISPERS')}
                                 </h2>
-                                <button type="button" onClick={() => { onClose(); }} className="sm:hidden p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)]"><Icons.X className="w-6 h-6" /></button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => { onClose(); }} 
+                                    aria-label="Close whispers"
+                                    className="min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] active:scale-95 transition-all cursor-pointer touch-manipulation sm:hidden"
+                                >
+                                    <Icons.X className="w-6 h-6" />
+                                </button>
                             </div>
                         </div>
                         <div className="relative">
@@ -3529,10 +3538,13 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                 <div className={`flex-1 min-w-0 flex-col bg-transparent chat-shell absolute inset-0 sm:relative sm:inset-auto z-20 sm:z-0 transition-none overflow-hidden ${activeChat ? 'flex' : 'hidden sm:flex'}`}>
                     {activeChat ? (
                         <>
-                            <div className="p-3 border-b border-[var(--app-border)] flex items-center gap-3 bg-[var(--app-bg)]/90 backdrop-blur-xl shrink-0 z-10">
+                            <div className="px-3 pb-3 border-b border-[var(--app-border)] flex items-center gap-3 bg-[var(--app-bg)]/90 backdrop-blur-xl shrink-0 z-10"
+                                 style={{ paddingTop: 'max(14px, env(safe-area-inset-top, 14px))' }}
+                            >
                                 <button
                                     onClick={() => { setActiveChat(null); }}
-                                    className="sm:hidden p-2 -ml-2 text-[var(--app-secondary)] hover:text-[var(--app-text)]"
+                                    aria-label="Back to whispers list"
+                                    className="min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] active:scale-95 transition-all cursor-pointer touch-manipulation sm:hidden shrink-0"
                                 >
                                     <Icons.Back className="w-6 h-6" />
                                 </button>
@@ -3559,7 +3571,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         );
                                     })()}
                                 </div>
-                                <button onClick={() => { onClose(); }} className="hidden sm:block p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors"><Icons.X className="w-6 h-6" /></button>
+                                <button onClick={() => { onClose(); }} aria-label="Close whispers" className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] active:scale-95 rounded-full transition-all cursor-pointer touch-manipulation shrink-0"><Icons.X className="w-6 h-6" /></button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 <>
@@ -4103,7 +4115,12 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     ];
 
     return (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 sm:p-4">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 sm:p-4"
+             style={{
+                 paddingTop: 'max(16px, env(safe-area-inset-top, 16px))',
+                 paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))'
+             }}
+        >
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
@@ -4119,10 +4136,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             >
                 {/* HEADER */}
                 <div
-                    className="px-5 py-3.5 border-b flex items-center justify-between shrink-0 relative z-20"
+                    className="px-4 sm:px-5 py-3 sm:py-3.5 border-b flex items-center justify-between shrink-0 relative z-20"
                     style={{ borderColor: 'var(--app-border, #2f3336)' }}
                 >
-                    <div className="w-9 h-9 flex items-center justify-center">
+                    <div className="w-10 h-10 flex items-center justify-center">
                         <Icons.Settings className="w-6 h-6" style={{ color: activeThemeColor }} />
                     </div>
                     <span className="font-extrabold text-[17px] text-[var(--app-text,#ffffff)]">
@@ -4132,7 +4149,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                         type="button"
                         onClick={onClose}
                         aria-label={t('CLOSE', 'Close')}
-                        className="w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:opacity-80"
+                        className="min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center transition-all cursor-pointer hover:opacity-80 active:scale-95 touch-manipulation"
                         style={{ backgroundColor: 'var(--app-hover, rgba(255,255,255,0.08))' }}
                     >
                         <Icons.X className="w-5 h-5 text-[var(--app-text,#ffffff)]" />
@@ -5798,36 +5815,6 @@ const SubscriptionModal = ({ isOpen, onClose, user, onUpdateUser }) => {
 const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, onNavigate, onViewProfile, onOpenSettings, onOpenWebsiteBuilder, onOpenSubscription, onOpenTerms, onOpenPrivacy, onLogout, onOpenChat, onOpenBubbles, t }) => {
     const [isClosing, setIsClosing] = useState(false);
 
-    // Calculate remaining subscription time with smart display
-    const [remainingTime, setRemainingTime] = useState({ days: 0, hours: 0, totalMs: 0 });
-    
-    const calculateRemainingTime = () => {
-        if (!user?.subscriptionEndDate) return { days: null, hours: null, totalMs: 0 };
-        const end = new Date(user.subscriptionEndDate);
-        const now = new Date();
-        const diff = end - now;
-        if (diff <= 0) return { days: 0, hours: 0, totalMs: 0 };
-        
-        const totalDays = diff / (1000 * 60 * 60 * 24);
-        const days = Math.floor(totalDays);
-        const hours = Math.ceil((totalDays - days) * 24);
-        
-        return { days, hours, totalMs: diff };
-    };
-
-    // Live update subscription time
-    useEffect(() => {
-        if (!isOpen || !user?.subscriptionEndDate) return;
-        
-        const update = () => setRemainingTime(calculateRemainingTime());
-        update();
-        
-        const interval = setInterval(update, 60000); // Update every minute
-        return () => clearInterval(interval);
-    }, [isOpen, user?.subscriptionEndDate]);
-
-    const { days: remainingDays, hours: remainingHours, totalMs: remainingTotalMs } = calculateRemainingTime();
-
     if (!isOpen && !isClosing) return null;
 
     const handleClose = () => {
@@ -5835,7 +5822,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
         setTimeout(() => {
             onClose();
             setIsClosing(false);
-        }, 200);
+        }, 180);
     };
 
     const handleLink = (tab) => {
@@ -5847,133 +5834,116 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none overscroll-contain">
             <div
-                className={`absolute inset-0 bg-black/75 pointer-events-auto z-[100] backdrop-blur-sm ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
+                className={`absolute inset-0 bg-black/70 pointer-events-auto z-[100] backdrop-blur-sm ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
                 onClick={handleClose}
                 onTouchMove={(e) => e.preventDefault()}
                 style={{ touchAction: 'none' }}
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(85vw,300px)] sm:w-[280px]
-                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-white/10
+                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(82vw,290px)] sm:w-[280px]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-[var(--app-border,#2f3336)]
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
             style={{
                 backgroundColor: 'var(--app-bg, #000000)',
                 color: 'var(--app-text, #ffffff)'
             }}>
-                <div className="flex-none px-4 pt-[max(16px,calc(12px+env(safe-area-inset-top,0px)))] pb-3 flex items-center justify-between border-b border-[var(--app-border,#2f3336)]">
-                    <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--app-secondary,#71767b)]">Menu</span>
-                    <button
-                        type="button"
-                        onClick={handleClose}
-                        aria-label="Close menu"
-                        className="group min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-95 transition-all duration-300 touch-manipulation cursor-pointer"
-                    >
-                        <Icons.X className="w-6 h-6 text-red-500 group-hover:text-red-400 group-hover:rotate-90 transition-all duration-300 pointer-events-none" />
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    <div
-                        className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] active:scale-[0.98] touch-manipulation"
-                        onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] shrink-0">
-                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                    <span className="font-bold text-[16px] text-[var(--app-text,#ffffff)] leading-tight truncate">{user?.username}</span>
-                                    <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
-                                    {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-sm shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-4 h-4 shrink-0" />{getActiveStreak(user)}</span>}
-                                </div>
-                                <span className="text-[13px] text-[var(--app-secondary,#71767b)] leading-tight truncate block">@{user?.username?.toLowerCase().split(' ').join('')}</span>
-                            </div>
+                {/* 1. X-STYLE USER IDENTITY (Top Header) */}
+                <div 
+                    className="flex-none px-4 pt-[max(18px,calc(14px+env(safe-area-inset-top,0px)))] pb-3 border-b border-[var(--app-border,#2f3336)] cursor-pointer touch-manipulation select-none"
+                    onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
+                >
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="w-10 h-10 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] shrink-0 active:scale-95 transition-transform">
+                            <ProfileAvatar user={user} className="w-full h-full object-cover" />
                         </div>
-
-                        <div className="flex items-center gap-5 mt-4 pt-3 border-t border-[var(--app-border,#2f3336)]">
-                            <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-[var(--app-text,#ffffff)] text-[13px] tabular-nums">
-                                    {getUniqueCount(user?.followers)}
-                                </span>
-                                <span className="text-[12px] text-[var(--app-secondary,#71767b)]">{t('FOLLOWERS') || 'Followers'}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 cursor-pointer" onClick={(e) => { e.stopPropagation(); onViewProfile(user); }}>
-                                <span className="font-bold text-[var(--app-text,#ffffff)] text-[13px] tabular-nums">
-                                    {getUniqueCount(user?.following)}
-                                </span>
-                                <span className="text-[12px] text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-0.5 px-3 py-4 relative z-10">
-                        {[
-                            { id: 'home', icon: Icons.Home, label: t('HOME') },
-                            { id: 'search', icon: Icons.Search, label: t('EXPLORE') },
-                            { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels') },
-                            { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') },
-                            { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE'), badge: alerts?.filter(n => !n.read).length },
-                            { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: onOpenBubbles, highlight: true },
-                            { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: onOpenWebsiteBuilder, highlight: true },
-                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS'), action: onOpenSettings }
-                        ].map((item, index) => {
-                            const isActive = !item.action && activeTab === item.id;
-                            return (
-                            <button
-                                key={item.id}
-                                onClick={() => {
-                                    playCyberSFX('menu');
-                                    onClose();
-                                    if (item.action) { item.action(); }
-                                    else { onNavigate(item.id); }
-                                }}
-                                className={`nav-drawer-item w-full px-3 py-2.5 flex items-center gap-3.5 rounded-[1.35rem] transition-all duration-300 menu-item-slide group touch-manipulation cursor-pointer ${
-                                    isActive
-                                        ? 'text-[var(--gold-primary,#1D9BF0)]'
-                                        : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--gold-primary,#1D9BF0)] hover:bg-[var(--app-hover,rgba(255,255,255,0.04))]'
-                                }`}
-                                style={{ animationDelay: `${index * 0.04}s` }}
-                            >
-                                <item.icon
-                                    className={`w-7 h-7 shrink-0 transition-all duration-300 pointer-events-none ${isActive ? 'scale-105' : ''}`}
-                                    {...(item.highlight ? { stroke: "url(#bubbleGradient)", fill: "none" } : { fill: isActive ? 'currentColor' : 'none', strokeWidth: isActive ? '2.5' : '2' })}
-                                />
-                                <span className={`text-[15px] font-bold tracking-wide text-left flex-1 ${isActive ? 'text-[var(--gold-primary,#1D9BF0)]' : 'text-[var(--app-text,#ffffff)]'}`}>{item.label}</span>
-
-                                {item.isSubscription && (
-                                    <div className="ml-auto shrink-0 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
-                                        <span className="text-[10px] font-black text-green-400 uppercase tracking-wider">
-                                            {formatLEC(user?.sharesBalance, 2)}
-                                        </span>
-                                    </div>
-                                )}
-
-                                {item.badge > 0 && (
-                                    <div className="ml-auto min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 border-2 border-black">
-                                        <span className="text-[11px] font-black text-white leading-none">
-                                            {item.badge > 9 ? '9+' : item.badge}
-                                        </span>
-                                    </div>
-                                )}
-                            </button>
-                        );})}
-
                         <button
-                            onClick={() => { onLogout(); handleClose(); }}
-                            className="nav-drawer-item w-full px-3 py-2.5 mt-2 flex items-center gap-3.5 rounded-[1.35rem] hover:bg-red-500/10 transition-all duration-300 menu-item-slide group touch-manipulation active:scale-[0.98] cursor-pointer"
-                            style={{ animationDelay: '0.24s' }}
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleClose(); }}
+                            aria-label="Close menu"
+                            className="min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-90 transition-all cursor-pointer touch-manipulation"
                         >
-                            <Icons.Logout className="w-7 h-7 text-[var(--app-secondary,#71767b)] group-hover:text-red-400 transition-colors shrink-0 pointer-events-none" strokeWidth={2} />
-                            <span className="text-[15px] font-bold text-[var(--app-text,#ffffff)] tracking-wide group-hover:text-red-400 transition-colors">{t('LOGOUT')}</span>
+                            <Icons.X className="w-5 h-5" />
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-2 px-6 pt-2 pb-[max(24px,calc(14px+env(safe-area-inset-bottom,0px)))] mt-auto border-t border-[var(--app-border,#2f3336)]">
-                        <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
-                        <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('PRIVACY_POLICY')}</button>
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-extrabold text-[16px] text-[var(--app-text,#ffffff)] leading-snug truncate">{user?.username}</span>
+                            <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={user} />
+                            {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-3.5 h-3.5 shrink-0" />{getActiveStreak(user)}</span>}
+                        </div>
+                        <span className="text-[13px] text-[var(--app-secondary,#71767b)] leading-none truncate block mt-0.5">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                    </div>
+
+                    <div className="flex items-center gap-4 mt-2.5 text-[13px]">
+                        <div className="flex items-center gap-1">
+                            <span className="font-bold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.following)}</span>
+                            <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <span className="font-bold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.followers)}</span>
+                            <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWERS') || 'Followers'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 2. X-STYLE COMPACT NAV ITEMS (Fits whole screen without forced scroll) */}
+                <div className="flex-1 overflow-y-auto no-scrollbar py-2 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex flex-col gap-0.5 px-2">
+                        {[
+                            { id: 'profile', icon: Icons.User, label: t('PROFILE') || 'Profile', action: () => { onClose(); onViewProfile(user); } },
+                            { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels'), action: () => handleLink('cartels') },
+                            { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') || 'Whispers', action: () => { onClose(); onOpenChat(); } },
+                            { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: () => { onClose(); onOpenBubbles(); } },
+                            { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: () => { onClose(); onOpenWebsiteBuilder(); } },
+                            { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE') || 'Notifications', badge: alerts?.filter(n => !n.read).length, action: () => handleLink('alerts') },
+                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Settings and privacy'), action: () => { onClose(); onOpenSettings(); } }
+                        ].map((item) => {
+                            const isActive = activeTab === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => {
+                                        playCyberSFX('menu');
+                                        item.action();
+                                    }}
+                                    className={`w-full px-3 py-2.5 flex items-center gap-4 rounded-xl transition-colors duration-150 touch-manipulation cursor-pointer active:scale-[0.98] ${
+                                        isActive
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.06))]'
+                                            : 'text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))]'
+                                    }`}
+                                >
+                                    <item.icon className="w-5 h-5 shrink-0" strokeWidth={2} />
+                                    <span className="text-[15px] font-bold tracking-tight text-left flex-1 truncate">{item.label}</span>
+                                    {item.badge > 0 && (
+                                        <div className="min-w-[18px] h-[18px] px-1 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0">
+                                            <span className="text-[10px] font-black text-white leading-none">
+                                                {item.badge > 9 ? '9+' : item.badge}
+                                            </span>
+                                        </div>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* 3. LOGOUT & COMPACT FOOTER */}
+                    <div className="px-2 pt-2 pb-[max(14px,calc(10px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-1">
+                        <button
+                            onClick={() => { onLogout(); handleClose(); }}
+                            className="w-full px-3 py-2 flex items-center gap-4 rounded-xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors cursor-pointer touch-manipulation active:scale-[0.98]"
+                        >
+                            <Icons.Logout className="w-5 h-5 shrink-0" strokeWidth={2} />
+                            <span className="text-[14px] font-bold">{t('LOGOUT')}</span>
+                        </button>
+
+                        <div className="flex items-center gap-3 px-3 pt-1 text-[11px] text-[var(--app-secondary,#71767b)]">
+                            <button onClick={() => { onOpenTerms(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
+                            <span>·</span>
+                            <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('PRIVACY_POLICY')}</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -11805,17 +11775,25 @@ const App = () => {
                         <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[var(--app-text,#ffffff)] border-b border-[var(--app-border,#eff3f4)] shrink-0 pt-[env(safe-area-inset-top,0px)]">
                             <div className="w-full px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
-                                    <EnhancedButton
+                                    <button
+                                        type="button"
                                         onClick={() => { playCyberSFX('click'); setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent transition-colors duration-300 z-50 p-2.5 -ml-2 group touch-manipulation"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 rounded-full cursor-pointer touch-manipulation active:scale-95 transition-transform"
                                         aria-label="Open menu"
-                                        scaleDown={1}
-                                        duration={0}
                                     >
-                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-[var(--app-text,#0f1419)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-300 pointer-events-none">
-                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
-                                        </svg>
-                                    </EnhancedButton>
+                                        {user ? (
+                                            <div className="w-8 h-8 rounded-full overflow-hidden border border-[var(--app-border,#eff3f4)] ring-1 ring-white/10 shrink-0">
+                                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                                            </div>
+                                        ) : (
+                                            <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-[var(--app-text,#0f1419)] pointer-events-none">
+                                                <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
+                                            </svg>
+                                        )}
+                                        {alerts?.some(n => !n.read) && (
+                                            <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#1D9BF0] rounded-full border-2 border-[var(--app-bg,#000000)]" />
+                                        )}
+                                    </button>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
                                     <div className="relative flex items-center justify-center transition-transform duration-300 hover:scale-[1.02]">

@@ -1293,6 +1293,18 @@ body.theme-orange-black .theme-swatch-dot[style*="255, 85, 0"] {
   padding-bottom: env(safe-area-inset-bottom, 20px) !important;
 }
 
+.pt-safe {
+  padding-top: max(16px, env(safe-area-inset-top, 16px)) !important;
+}
+
+.pb-safe {
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+}
+
+.safe-top-inset {
+  padding-top: max(16px, env(safe-area-inset-top, 16px));
+}
+
 .liquid-glass-input {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(var(--dynamic-blur, 20px));
@@ -1938,15 +1950,15 @@ input, textarea {
 }
 
 .drawer-panel {
-  animation: drawer-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: drawer-slide-in 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .drawer-backdrop.closing {
-  animation: drawer-backdrop-fade-out 0.2s ease-in forwards;
+  animation: drawer-backdrop-fade-out 0.18s ease-in forwards;
 }
 
 .drawer-panel.closing {
-  animation: drawer-slide-out 0.3s cubic-bezier(0.32, 0, 0.67, 0) forwards;
+  animation: drawer-slide-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 @keyframes drawer-backdrop-fade-in {

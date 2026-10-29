@@ -176,12 +176,21 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
       className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md bubble-space-overlay"
       ref={containerRef}
     >
-      <div className="absolute top-5 right-5 z-[60] flex flex-col gap-3">
-        <button className="bubble-close-btn" style={{position: 'static'}} onClick={onClose} title="Close">
+      <div 
+        className="absolute right-4 sm:right-6 z-[60] flex flex-col gap-3"
+        style={{ top: 'max(16px, env(safe-area-inset-top, 16px))' }}
+      >
+        <button 
+          className="bubble-close-btn min-w-[44px] min-h-[44px] touch-manipulation active:scale-95 transition-transform" 
+          style={{ position: 'static' }} 
+          onClick={onClose} 
+          title="Close"
+          aria-label="Close"
+        >
           <Icons.X className="w-6 h-6 text-white" />
         </button>
         <button 
-          className="bubble-close-btn" 
+          className="bubble-close-btn min-w-[44px] min-h-[44px] touch-manipulation active:scale-95 transition-transform" 
           style={{
             position: 'static', 
             background: deleteMode ? 'rgba(255, 50, 50, 0.9)' : 'rgba(255, 255, 255, 0.1)',
@@ -190,12 +199,13 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
           }} 
           onClick={() => setDeleteMode(!deleteMode)}
           title="Delete Mode"
+          aria-label="Delete Mode"
         >
           <Icons.Trash className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="bubble-space-canvas">
+      <div className="bubble-space-canvas" style={{ paddingTop: 'max(70px, calc(env(safe-area-inset-top, 0px) + 65px))' }}>
         <AnimatePresence>
           {bubbles.map(bubble => (
             <Bubble 

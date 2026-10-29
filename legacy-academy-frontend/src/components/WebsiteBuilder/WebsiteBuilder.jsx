@@ -301,20 +301,31 @@ export const WebsiteBuilder = ({ initialConfig, websiteIndex, onExit, user, onUp
         <>
         <div className="fixed inset-0 z-[5000] bg-black flex flex-col md:flex-row font-sans w-full h-[100dvh] sm:h-screen overscroll-none touch-none select-none" style={{ '--builder-primary': activeTheme?.primary || '#E5B842' }}>
             
-            {/* MOBILE TABS (Only visible on small screens) */}
-            <div className="md:hidden flex border-b border-white/10 shrink-0 bg-[#09090b] z-30 pt-safe shadow-lg">
+            {/* MOBILE TOP BAR (With Back Button and Tabs, visible on small screens) */}
+            <div className="md:hidden flex items-center border-b border-white/10 shrink-0 bg-[#09090b] z-30 shadow-lg px-2"
+                 style={{ paddingTop: 'max(14px, env(safe-area-inset-top, 14px))' }}
+            >
                 <button 
-                    onClick={() => setMobileTab('form')}
-                    className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'form' ? 'text-[var(--builder-primary)] border-b-2 border-[var(--builder-primary)] bg-white/5' : 'text-gray-500'}`}
+                    onClick={onExit}
+                    aria-label="Exit website builder"
+                    className="min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all cursor-pointer touch-manipulation shrink-0"
                 >
-                    Edit Details
+                    <Icons.ArrowLeft className="w-5 h-5 text-white/90" />
                 </button>
-                <button 
-                    onClick={() => setMobileTab('preview')}
-                    className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${mobileTab === 'preview' ? 'text-[var(--builder-primary)] border-b-2 border-[var(--builder-primary)] bg-white/5' : 'text-gray-500'}`}
-                >
-                    Live Preview
-                </button>
+                <div className="flex-1 flex">
+                    <button 
+                        onClick={() => setMobileTab('form')}
+                        className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors cursor-pointer touch-manipulation ${mobileTab === 'form' ? 'text-[var(--builder-primary)] border-b-2 border-[var(--builder-primary)] bg-white/5' : 'text-gray-500'}`}
+                    >
+                        Edit Details
+                    </button>
+                    <button 
+                        onClick={() => setMobileTab('preview')}
+                        className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors cursor-pointer touch-manipulation ${mobileTab === 'preview' ? 'text-[var(--builder-primary)] border-b-2 border-[var(--builder-primary)] bg-white/5' : 'text-gray-500'}`}
+                    >
+                        Live Preview
+                    </button>
+                </div>
             </div>
 
             {/* ACTION BAR (Fixed at bottom for both PC and Mobile) */}

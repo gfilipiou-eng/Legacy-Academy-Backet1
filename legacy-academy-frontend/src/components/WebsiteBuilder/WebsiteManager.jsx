@@ -107,11 +107,16 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-[5000] bg-[var(--app-bg,#050505)] flex flex-col items-center justify-start overflow-y-auto pt-safe">
-            <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
-                <div className="flex items-center justify-between mb-12">
-                    <div className="flex items-center gap-4">
-                        <button onClick={onBack} className="w-10 h-10 shrink-0 rounded-full hover:bg-[var(--app-hover)] flex items-center justify-center transition-all"
+        <div className="fixed inset-0 z-[5000] bg-[var(--app-bg,#050505)] flex flex-col items-center justify-start overflow-y-auto pt-safe"
+             style={{
+                 paddingTop: 'max(20px, env(safe-area-inset-top, 20px))',
+                 paddingBottom: 'max(24px, env(safe-area-inset-bottom, 24px))'
+             }}
+        >
+            <div className="w-full max-w-4xl px-4 py-3 sm:p-6 md:p-12 relative z-10">
+                <div className="flex items-center justify-between mb-6 sm:mb-10">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <button onClick={onBack} aria-label="Back" className="min-w-[44px] min-h-[44px] shrink-0 rounded-full hover:bg-[var(--app-hover)] active:scale-95 flex items-center justify-center transition-all cursor-pointer touch-manipulation"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(128,128,128,0.12) 0%, rgba(128,128,128,0.04) 100%)',
                                     backdropFilter: 'blur(24px)',
@@ -122,9 +127,9 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                         >
                             <Icons.ArrowLeft className="w-5 h-5 text-[var(--app-text)]" />
                         </button>
-                        <h1 className="text-3xl font-black text-[var(--app-text)]">{t('MY_WEBSITES', 'My Websites')}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black text-[var(--app-text)]">{t('MY_WEBSITES', 'My Websites')}</h1>
                     </div>
-                    <div className="text-sm font-bold text-[var(--app-secondary)] px-4 py-2 rounded-full border border-[var(--app-border)]"
+                    <div className="text-xs sm:text-sm font-bold text-[var(--app-secondary)] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[var(--app-border)]"
                          style={{
                              background: 'var(--app-hover, rgba(128,128,128,0.06))',
                              backdropFilter: 'blur(24px)',
