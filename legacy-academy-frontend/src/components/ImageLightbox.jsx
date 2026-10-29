@@ -43,21 +43,6 @@ export const ImageLightbox = ({
             setLoaded(true);
         }
 
-        const scrollY = window.scrollY;
-        const prevOverflow = document.body.style.overflow;
-        const prevPosition = document.body.style.position;
-        const prevTop = document.body.style.top;
-        const prevLeft = document.body.style.left;
-        const prevRight = document.body.style.right;
-        const prevWidth = document.body.style.width;
-
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollY}px`;
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
-
         const onKeyDown = (e) => {
             if (e.key === 'Escape') onClose?.();
         };
@@ -65,13 +50,6 @@ export const ImageLightbox = ({
 
         return () => {
             window.removeEventListener('keydown', onKeyDown);
-            document.body.style.overflow = prevOverflow;
-            document.body.style.position = prevPosition;
-            document.body.style.top = prevTop;
-            document.body.style.left = prevLeft;
-            document.body.style.right = prevRight;
-            document.body.style.width = prevWidth;
-            window.scrollTo(0, scrollY);
         };
     }, [src, onClose]);
 
@@ -110,22 +88,25 @@ export const ImageLightbox = ({
 
     return createPortal(
         <div
-            className="image-lightbox fixed inset-0 z-[20000] flex flex-col items-center justify-between bg-black/95 backdrop-blur-md touch-manipulation select-none"
+            className="image-lightbox fixed inset-0 z-[20000] flex flex-col items-center justify-between bg-black/95 backdrop-blur-xl select-none overscroll-contain"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
             aria-label={alt}
+            style={{
+                touchAction: 'none'
+            }}
         >
             {/* TOP BAR */}
             <div 
-                className="w-full flex items-center justify-between px-4 py-3 z-50 bg-gradient-to-b from-black/80 to-transparent"
+                className="w-full flex items-center justify-between px-4 pt-[max(12px,env(safe-area-inset-top,12px))] pb-3 z-50 bg-gradient-to-b from-black/90 via-black/60 to-transparent shrink-0"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center gap-3">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full flex items-center justify-center bg-black/40 hover:bg-white/10 active:scale-95 text-white transition-all cursor-pointer"
+                        className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 active:scale-95 text-white transition-all cursor-pointer backdrop-blur-md"
                         aria-label="Close"
                     >
                         <Icons.X className="w-5 h-5 text-white" />
@@ -155,14 +136,17 @@ export const ImageLightbox = ({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="hidden sm:flex px-4 py-1.5 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                    className="hidden sm:flex px-4 py-1.5 rounded-full text-xs font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md"
                 >
                     Esc
                 </button>
             </div>
 
             {/* CENTER IMAGE */}
-            <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden px-2 sm:px-4">
+            <div 
+                className="relative flex-1 w-full flex items-center justify-center overflow-hidden px-2 sm:px-4 py-2 min-h-0"
+                style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
+            >
                 {!loaded && !failed && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <Icons.Loader className="w-10 h-10 text-white/60 animate-spin" />
@@ -180,7 +164,7 @@ export const ImageLightbox = ({
                         controls
                         autoPlay
                         playsInline
-                        className={`max-w-full max-h-[78vh] sm:max-h-[82vh] w-auto h-auto object-contain rounded-lg transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'}`}
+                        className={`max-w-[98vw] max-h-[calc(100dvh-150px)] sm:max-h-[82vh] w-auto h-auto object-contain rounded-xl shadow-2xl transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'}`}
                         onClick={(e) => e.stopPropagation()}
                         onLoadedData={() => setLoaded(true)}
                         onError={() => setFailed(true)}
@@ -190,7 +174,7 @@ export const ImageLightbox = ({
                         ref={imgRef}
                         src={src}
                         alt={alt}
-                        className={`max-w-full max-h-[78vh] sm:max-h-[82vh] w-auto h-auto object-contain transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'}`}
+                        className={`max-w-[98vw] max-h-[calc(100dvh-150px)] sm:max-h-[82vh] w-auto h-auto object-contain rounded-xl shadow-2xl transition-all duration-300 ${loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-98'}`}
                         onClick={(e) => e.stopPropagation()}
                         onLoad={() => setLoaded(true)}
                         onError={() => setFailed(true)}
@@ -201,19 +185,19 @@ export const ImageLightbox = ({
 
             {/* BOTTOM BAR / ACTIONS */}
             <div 
-                className="w-full bg-gradient-to-t from-black via-black/80 to-transparent pt-6 pb-6 px-4 z-50 flex flex-col items-center pointer-events-auto"
+                className="w-full bg-gradient-to-t from-black via-black/85 to-transparent pt-4 pb-[max(16px,env(safe-area-inset-bottom,16px))] px-4 z-50 flex flex-col items-center pointer-events-auto shrink-0"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Optional Post Caption */}
                 {post?.desc && (
-                    <p className="w-full max-w-xl text-center text-[14px] sm:text-[15px] text-white/90 leading-snug line-clamp-2 mb-3 select-text px-2">
+                    <p className="w-full max-w-xl text-center text-[13px] sm:text-[15px] text-white/90 leading-snug line-clamp-2 mb-2.5 select-text px-2">
                         {post.desc}
                     </p>
                 )}
 
-                {/* Twitter Action Bar */}
+                {/* Twitter / Instagram Action Bar */}
                 {post ? (
-                    <div className="flex items-center justify-between w-full max-w-md px-4 py-1 text-gray-400">
+                    <div className="flex items-center justify-between w-full max-w-md px-4 py-1.5 text-gray-400 bg-white/[0.06] backdrop-blur-md rounded-full border border-white/10 shadow-lg">
                         {/* REPLY */}
                         <button
                             type="button"
@@ -221,39 +205,39 @@ export const ImageLightbox = ({
                                 e.stopPropagation();
                                 onComment ? onComment(post) : onClose();
                             }}
-                            className="group flex items-center gap-2 text-[14px] font-medium text-gray-400 hover:text-[#1D9BF0] transition-colors cursor-pointer"
+                            className="group flex items-center gap-1.5 text-[14px] font-medium text-gray-300 hover:text-[#1D9BF0] transition-colors cursor-pointer px-2"
                             title="Reply"
                         >
-                            <div className="p-2.5 rounded-full group-hover:bg-[#1D9BF0]/15 transition-colors">
-                                <Icons.MessageSquare className="w-5 h-5 text-gray-400 group-hover:text-[#1D9BF0]" />
+                            <div className="p-1.5 rounded-full group-hover:bg-[#1D9BF0]/15 transition-colors">
+                                <Icons.MessageSquare className="w-5 h-5 text-gray-300 group-hover:text-[#1D9BF0]" />
                             </div>
-                            <span className="tabular-nums">{post.comments?.length || 0}</span>
+                            <span className="tabular-nums text-xs">{post.comments?.length || 0}</span>
                         </button>
 
                         {/* REPOST */}
                         <button
                             type="button"
                             onClick={handleRepostClick}
-                            className={`group flex items-center gap-2 text-[14px] font-medium transition-colors cursor-pointer ${isReposted ? 'text-[#00BA7C]' : 'text-gray-400 hover:text-[#00BA7C]'}`}
+                            className={`group flex items-center gap-1.5 text-[14px] font-medium transition-colors cursor-pointer px-2 ${isReposted ? 'text-[#00BA7C]' : 'text-gray-300 hover:text-[#00BA7C]'}`}
                             title="Repost"
                         >
-                            <div className="p-2.5 rounded-full group-hover:bg-[#00BA7C]/15 transition-colors">
-                                <Icons.RefreshCcw key={`rp-pop-${repostPop}`} className={`w-5 h-5 ${isReposted ? 'text-[#00BA7C] fill-current' : 'text-gray-400 group-hover:text-[#00BA7C]'}`} />
+                            <div className="p-1.5 rounded-full group-hover:bg-[#00BA7C]/15 transition-colors">
+                                <Icons.RefreshCcw key={`rp-pop-${repostPop}`} className={`w-5 h-5 ${isReposted ? 'text-[#00BA7C] fill-current' : 'text-gray-300 group-hover:text-[#00BA7C]'}`} />
                             </div>
-                            <span className="tabular-nums">{localReposts.length}</span>
+                            <span className="tabular-nums text-xs">{localReposts.length}</span>
                         </button>
 
                         {/* LIKE */}
                         <button
                             type="button"
                             onClick={handleLikeClick}
-                            className={`group flex items-center gap-2 text-[14px] font-medium transition-colors cursor-pointer ${isLiked ? 'text-[#F91880]' : 'text-gray-400 hover:text-[#F91880]'}`}
+                            className={`group flex items-center gap-1.5 text-[14px] font-medium transition-colors cursor-pointer px-2 ${isLiked ? 'text-[#F91880]' : 'text-gray-300 hover:text-[#F91880]'}`}
                             title="Like"
                         >
-                            <div className="p-2.5 rounded-full group-hover:bg-[#F91880]/15 transition-colors">
-                                <Icons.Heart key={`lk-pop-${likePop}`} className={`w-5 h-5 ${isLiked ? 'text-[#F91880] fill-current animate-pulse' : 'text-gray-400 group-hover:text-[#F91880]'}`} />
+                            <div className="p-1.5 rounded-full group-hover:bg-[#F91880]/15 transition-colors">
+                                <Icons.Heart key={`lk-pop-${likePop}`} className={`w-5 h-5 ${isLiked ? 'text-[#F91880] fill-current animate-pulse' : 'text-gray-300 group-hover:text-[#F91880]'}`} />
                             </div>
-                            <span className="tabular-nums">{localLikes.length}</span>
+                            <span className="tabular-nums text-xs">{localLikes.length}</span>
                         </button>
 
                         {/* SHARE */}
@@ -263,16 +247,16 @@ export const ImageLightbox = ({
                                 e.stopPropagation();
                                 onShare && onShare(post);
                             }}
-                            className="group flex items-center gap-2 text-[14px] font-medium text-gray-400 hover:text-[#1D9BF0] transition-colors cursor-pointer"
+                            className="group flex items-center gap-1.5 text-[14px] font-medium text-gray-300 hover:text-[#1D9BF0] transition-colors cursor-pointer px-2"
                             title="Share"
                         >
-                            <div className="p-2.5 rounded-full group-hover:bg-[#1D9BF0]/15 transition-colors">
-                                <Icons.Share className="w-5 h-5 text-gray-400 group-hover:text-[#1D9BF0]" />
+                            <div className="p-1.5 rounded-full group-hover:bg-[#1D9BF0]/15 transition-colors">
+                                <Icons.Share className="w-5 h-5 text-gray-300 group-hover:text-[#1D9BF0]" />
                             </div>
                         </button>
                     </div>
                 ) : (
-                    <div className="py-2"></div>
+                    <div className="py-1"></div>
                 )}
             </div>
         </div>,

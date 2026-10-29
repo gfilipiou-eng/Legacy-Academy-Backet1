@@ -220,8 +220,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
 
   const shell = (content) => createPortal(
     <div
-      className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] touch-manipulation"
-      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] touch-manipulation overscroll-contain"
+      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       {content}
       <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />

@@ -1,3 +1,20 @@
+self.addEventListener('install', function(event) {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', function(event) {
+    event.waitUntil(self.clients.claim());
+});
+
+// Satisfies PWA install criteria on Chrome/Android without locking stale bundles
+self.addEventListener('fetch', function(event) {
+    if (event.request.method === 'GET' && event.request.url.startsWith(self.location.origin)) {
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match(event.request))
+        );
+    }
+});
+
 self.addEventListener('push', function(event) {
     if (event.data) {
         const data = event.data.json();

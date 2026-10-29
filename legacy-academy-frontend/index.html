@@ -10,12 +10,14 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/Applogo.png?v=20260906a" />
   <link rel="apple-touch-icon" sizes="180x180" href="/Applogo-ios.png?v=20260906a" />
   <meta name="theme-color" content="#000000" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Legacy">
   <meta name="apple-mobile-web-app-title" content="Legacy">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -51,16 +53,10 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-          registration.unregister();
-        }
-      });
-    }
-    // Bust caches
-    if ('caches' in window) {
-      caches.keys().then((keyList) => {
-        return Promise.all(keyList.map((key) => caches.delete(key)));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((err) => {
+          console.warn('SW registration skipped:', err);
+        });
       });
     }
   </script>

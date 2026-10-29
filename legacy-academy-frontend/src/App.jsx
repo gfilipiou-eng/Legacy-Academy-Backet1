@@ -1626,12 +1626,12 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return createPortal(
-        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
+        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation overscroll-contain" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl" 
+                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl overscroll-contain" 
                 onClick={(e) => e.stopPropagation()}
-                style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+                style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
                 
                 {/* Visual Drag Handle (Mobile Only) */}
@@ -5845,22 +5845,24 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
     };
 
     return (
-        <div className="fixed inset-0 z-[2000] flex pointer-events-none">
+        <div className="fixed inset-0 z-[2000] flex pointer-events-none overscroll-contain">
             <div
-                className={`absolute inset-0 bg-black/70 pointer-events-auto z-[100] ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
+                className={`absolute inset-0 bg-black/75 pointer-events-auto z-[100] backdrop-blur-sm ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
                 onClick={handleClose}
+                onTouchMove={(e) => e.preventDefault()}
+                style={{ touchAction: 'none' }}
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 w-[min(85vw,300px)] sm:w-[280px]
-                flex flex-col pointer-events-auto z-[101] overflow-hidden
+                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(85vw,300px)] sm:w-[280px]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-white/10
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
             style={{
                 backgroundColor: 'var(--app-bg, #000000)',
                 color: 'var(--app-text, #ffffff)'
             }}>
-                <div className="flex-none px-4 pt-6 pb-3 flex items-center justify-between border-b border-[var(--app-border,#2f3336)]">
+                <div className="flex-none px-4 pt-[max(16px,calc(12px+env(safe-area-inset-top,0px)))] pb-3 flex items-center justify-between border-b border-[var(--app-border,#2f3336)]">
                     <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--app-secondary,#71767b)]">Menu</span>
                     <button
                         type="button"
@@ -5872,7 +5874,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col">
+                <div className="flex-1 overflow-y-auto no-scrollbar relative flex flex-col overscroll-y-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div
                         className="mx-4 mt-4 p-4 rounded-[1.35rem] cursor-pointer transition-all duration-200 hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] active:scale-[0.98] touch-manipulation"
                         onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
@@ -5969,7 +5971,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-2 px-6 pt-2 pb-8 mt-auto border-t border-[var(--app-border,#2f3336)]">
+                    <div className="flex flex-col gap-2 px-6 pt-2 pb-[max(24px,calc(14px+env(safe-area-inset-bottom,0px)))] mt-auto border-t border-[var(--app-border,#2f3336)]">
                         <button onClick={() => { onOpenTerms(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
                         <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="text-left text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] transition-colors font-medium text-[12px] cursor-pointer">{t('PRIVACY_POLICY')}</button>
                     </div>
@@ -11512,8 +11514,8 @@ const App = () => {
                     <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundColor: 'var(--app-bg)' }}></div>
                     <div id="app-content" className="flex-1 overflow-hidden relative flex flex-col min-h-0 w-full">
                         <main ref={mainScrollRef} className="flex-1 overflow-y-auto no-scrollbar app-main-scroll p-0 relative z-10 overscroll-y-contain min-h-0 h-full w-full" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
-                        <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[var(--app-text,#ffffff)] border-b border-[var(--app-border,#eff3f4)] shrink-0">
-                            <div className="w-full px-3 sm:px-6 py-6 sm:py-4 flex items-center justify-between">
+                        <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[var(--app-text,#ffffff)] border-b border-[var(--app-border,#eff3f4)] shrink-0 pt-[env(safe-area-inset-top,0px)]">
+                            <div className="w-full px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                     <EnhancedButton
                                         onClick={() => { playCyberSFX('click'); setIsDrawerOpen(true); }}
@@ -11542,7 +11544,7 @@ const App = () => {
                                 <div className="w-10"></div> {/* Spacer for symmetry */}
                             </div>
                         </header>
-                        <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pb-[158px]">
+                        <div id="zoomable-content" className="pt-0 sm:pt-4 max-w-2xl sm:max-w-xl md:max-w-2xl mx-auto pb-[calc(110px+env(safe-area-inset-bottom,16px))]">
                             {activeTab === 'exchange' ? (
                                 <div className="animate-fade-in p-4 sm:p-8">
                                     <div className="mb-6 px-2">
@@ -12023,7 +12025,6 @@ const App = () => {
                     )}
 
                     <BottomNavbar
-                        key={user?._id || 'guest'}
                         activeTab={activeTab}
                         onTabChange={(tab) => {
                             if (tab === 'exchange' && !is18PlusVerified) {
