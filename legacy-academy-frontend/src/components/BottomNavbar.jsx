@@ -151,11 +151,11 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center flex-1 min-w-0 group active:scale-95 transition-transform duration-150"
                 >
                     <div className={navItemClass(isProfileActive)}>
-                        <div className={`relative z-10 overflow-hidden bg-neutral-800 transition-all duration-200 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-[var(--app-bg,#000000)] scale-105' : 'border border-[var(--app-border,#2f3336)]'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-neutral-900 transition-all duration-200 w-7 h-7 xs:w-8 xs:h-8 sm:w-[34px] sm:h-[34px] rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-[var(--app-bg,#000000)] scale-105' : 'border border-[var(--app-border,#2f3336)]'}`}>
                             {ProfileAvatar ? (
-                                <ProfileAvatar user={user} className="w-full h-full object-cover" priority />
+                                <ProfileAvatar user={user} className="w-full h-full object-cover" priority cacheKey={user?.updatedAt || user?._id} />
                             ) : (
-                                <Icons.User className="w-full h-full p-1 text-gray-400" />
+                                <Icons.User className="w-full h-full p-1 text-white/80" />
                             )}
                         </div>
                     </div>

@@ -157,8 +157,8 @@ const resolveMediaUrl = (path, width = null, isAvatar = false, isPoster = false,
                     transform = `w_500,h_500,c_fill,so_0,eo_2,q_auto:best,f_webp,fl_animated`;
                     parts[1] = parts[1].replace(/\.(mp4|mov|webm|m4v)$/i, '.webp');
                 } else if (isAvatar) {
-                    // f_auto = let Cloudinary pick best format; g_auto centers subject reliably without face detection failures
-                    transform = `w_800,h_800,c_fill,g_auto,q_auto:best,f_auto`;
+                    // Reliable Cloudinary avatar crop without requiring g_auto add-on
+                    transform = `w_800,h_800,c_fill,q_auto:best,f_auto`;
                 } else if (width === 2000 || isCover) {
                     // Founder 4K Background / High-Res Cover
                     transform = `w_3000,c_limit,q_auto:best,${isVideo ? 'vc_auto' : 'f_auto'}`;
@@ -1003,9 +1003,16 @@ const CommentComposeModal = ({ isOpen, onClose, onSubmit, value, onChange, onAud
 };
 
 const DefaultAvatar = ({ name, size = "normal" }) => {
+    const initial = name ? String(name).trim().charAt(0).toUpperCase() : null;
     return (
-        <div className="w-full h-full rounded-full bg-[#0a0a0a] flex items-center justify-center text-white relative overflow-hidden">
-            {name ? <span className={`${size === "large" ? "text-3xl" : "text-sm"} font-black uppercase select-none text-white/50`}>{name.substring(0, 1)}</span> : <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} opacity-40 text-white`} />}
+        <div className="w-full h-full rounded-full bg-gradient-to-tr from-[#16171a] via-[#22252b] to-[#2d313a] border border-white/15 flex items-center justify-center text-white relative overflow-hidden select-none shadow-inner">
+            {initial ? (
+                <span className={`${size === "large" ? "text-3xl" : "text-[12px] sm:text-[13px]"} font-black uppercase text-white/90 tracking-wide`}>
+                    {initial}
+                </span>
+            ) : (
+                <Icons.User className={`${size === "large" ? "w-10 h-10" : "w-1/2 h-1/2"} text-white/80`} />
+            )}
         </div>
     );
 };
@@ -1017,7 +1024,7 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
     const imgRef = useRef(null);
 
     const rawUrl = user && typeof user === 'object' 
-        ? (user.profilePic || user.authorProfilePic || user.fromProfilePic || user.avatar || user.author?.profilePic) 
+        ? (user.profilePic || user.photoURL || user.avatar || user.avatarUrl || user.avatar_url || user.image || user.picture || user.profile_image || user.authorProfilePic || user.fromProfilePic || user.author?.profilePic || user.author?.avatar) 
         : (typeof user === 'string' ? user : null);
     const name = user && typeof user === 'object' 
         ? (user.username || user.fromUsername || user.author?.username || user.name) 
@@ -1052,7 +1059,14 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
         }
     }, [flatMediaUrl]);
 
-    if (!user || (!rawUrl && typeof user !== 'object')) return <DefaultAvatar size={size} />;
+    const handleImgRef = (node) => {
+        imgRef.current = node;
+        if (node && node.complete && node.naturalWidth > 0) {
+            setImgLoaded(true);
+        }
+    };
+
+    if (!user || (!rawUrl && typeof user !== 'object')) return <DefaultAvatar name={name} size={size} />;
 
     let baseClass = 'w-full h-full object-cover rounded-full';
     if (className) {
@@ -1098,9 +1112,9 @@ const ProfileAvatar = ({ user, size = "normal", className, onClick, priority = f
                 </div>
             )}
             <img
-                ref={imgRef}
+                ref={handleImgRef}
                 src={flatMediaUrl}
-                className={`${finalClassName.replace(/opacity-\d+/g, '')} absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`${finalClassName.replace(/opacity-\d+/g, '')} absolute inset-0 w-full h-full object-cover transition-opacity duration-200 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onClick={onClick}
                 loading={priority ? 'eager' : 'lazy'}
                 fetchPriority={priority ? 'high' : undefined}
@@ -5906,8 +5920,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             className="relative group/avatar cursor-pointer"
                             title={t('VIEW_PROFILE') || 'View profile'}
                         >
-                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 shadow-sm">
-                                <ProfileAvatar user={user} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-200" />
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 shadow-sm bg-neutral-900">
+                                <ProfileAvatar user={user} priority={true} cacheKey={user?.updatedAt || user?._id} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-200" />
                             </div>
                         </div>
 
@@ -5948,12 +5962,12 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         className="flex items-center gap-2.5 mt-3.5 pt-3 border-t border-[var(--app-border,#2f3336)]/40 cursor-pointer"
                     >
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
-                            <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.following)}</span>
-                            <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
                             <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.followers)}</span>
                             <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWERS') || 'Followers'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
+                            <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.following)}</span>
+                            <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
                         </div>
                     </div>
                 </div>
@@ -7669,14 +7683,16 @@ const ProfileModal = ({
                                                         href={siteUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/50 bg-[#0c0c0e]/90 hover:bg-[#131317] active:scale-[0.99] transition-all select-none shadow-md cursor-pointer relative overflow-hidden"
+                                                        className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/40 bg-[#0c0c0e]/95 hover:bg-[#131317] active:scale-[0.99] transition-all select-none cursor-pointer relative overflow-hidden"
                                                     >
                                                         <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
                                                             <div
                                                                 className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
                                                                     site.palette === 'gold' 
                                                                         ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
-                                                                        : 'bg-[var(--gold-primary,#1D9BF0)]/15 border-[var(--gold-primary,#1D9BF0)]/30 text-[var(--gold-primary,#1D9BF0)]'
+                                                                        : (site.palette === 'red' || site.palette === 'ranger')
+                                                                            ? 'bg-red-500/15 border-red-500/30 text-red-400'
+                                                                            : 'bg-[var(--gold-primary,#1D9BF0)]/15 border-[var(--gold-primary,#1D9BF0)]/30 text-[var(--gold-primary,#1D9BF0)]'
                                                                 }`}
                                                             >
                                                                 <Icons.Globe className="w-5 h-5" />
@@ -7691,11 +7707,8 @@ const ProfileModal = ({
                                                                             {t('DRAFT', 'Draft')}
                                                                         </span>
                                                                     ) : (
-                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                                                                            <span className="relative flex h-1.5 w-1.5">
-                                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
-                                                                            </span>
+                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
+                                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shrink-0" />
                                                                             {t('LIVE', 'Live')}
                                                                         </span>
                                                                     )}
@@ -7717,7 +7730,7 @@ const ProfileModal = ({
                                                     href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/50 bg-[#0c0c0e]/90 hover:bg-[#131317] active:scale-[0.99] transition-all select-none shadow-md cursor-pointer relative overflow-hidden"
+                                                    className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/40 bg-[#0c0c0e]/95 hover:bg-[#131317] active:scale-[0.99] transition-all select-none cursor-pointer relative overflow-hidden"
                                                 >
                                                     <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
                                                         <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">

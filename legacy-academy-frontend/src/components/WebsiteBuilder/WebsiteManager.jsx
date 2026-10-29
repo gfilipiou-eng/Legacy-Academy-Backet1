@@ -25,7 +25,8 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
         blue: { primary: '#38bdf8', bg: '#0c1a2e', card: '#132845', border: 'rgba(56,189,248,0.22)' },
         pink: { primary: '#f472b6', bg: '#241220', card: '#361b30', border: 'rgba(244,114,182,0.22)' },
         green: { primary: '#4ade80', bg: '#0d2218', card: '#153526', border: 'rgba(74,222,128,0.22)' },
-        red: { primary: '#f87171', bg: '#281116', card: '#3d1a21', border: 'rgba(248,113,113,0.22)' },
+        red: { primary: '#E50914', bg: '#140507', card: '#220b0f', border: 'rgba(229,9,20,0.3)' },
+        ranger: { primary: '#FF1E27', bg: '#160407', card: '#26080c', border: 'rgba(255,30,39,0.35)' },
         cyberpunk: { primary: '#facc15', bg: '#1c1038', card: '#2c1954', border: 'rgba(250,204,21,0.25)' },
         neon: { primary: '#22d3ee', bg: '#0a232b', card: '#103744', border: 'rgba(34,211,238,0.25)' },
         minimal: { primary: '#94a3b8', bg: '#1e2330', card: '#2c3345', border: 'rgba(148,163,184,0.2)' },
@@ -155,7 +156,7 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
                             }}
                         >
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: site.palette === 'gold' ? '#D4AF37' : '#1D9BF0' }}>
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr flex items-center justify-center font-black text-white text-xl" style={{ backgroundColor: themeColors[site.palette]?.primary || (site.palette === 'gold' ? '#D4AF37' : '#1D9BF0') }}>
                                     {site.businessName?.charAt(0) || 'W'}
                                 </div>
                                 {site.isDraft ? (
