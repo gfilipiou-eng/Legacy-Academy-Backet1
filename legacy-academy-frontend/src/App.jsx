@@ -5891,24 +5891,31 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(88vw,340px)] sm:w-[330px]
-                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-[var(--app-border,#2f3336)]
+                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(88vw,340px)] sm:w-[335px]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-[24px_0_60px_rgba(0,0,0,0.85)] border-r border-white/[0.10]
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
             style={{
-                backgroundColor: 'var(--app-bg, #000000)',
                 color: 'var(--app-text, #ffffff)'
             }}>
-                {/* 1. X-STYLE USER IDENTITY (Top Header) */}
-                <div className="flex-none px-5 pt-[max(20px,calc(14px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
-                    <div className="flex items-center justify-between mb-3">
+                {/* Subtle ambient luxury glows */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--gold-primary,#1D9BF0)]/[0.05] rounded-full blur-3xl pointer-events-none z-0" />
+                <div className="absolute bottom-16 left-0 w-48 h-48 bg-purple-500/[0.04] rounded-full blur-3xl pointer-events-none z-0" />
+
+                {/* 1. LUXURY USER IDENTITY CARD */}
+                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4.5 border-b border-white/[0.08] select-none bg-gradient-to-b from-white/[0.03] to-transparent">
+                    <div className="flex items-center justify-between mb-3.5">
                         <div 
                             onClick={() => handleModalOpen(() => onViewProfile(user))}
-                            className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 cursor-pointer active:opacity-80 transition-opacity shadow-sm"
+                            className="relative group/avatar cursor-pointer"
                             title={t('VIEW_PROFILE') || 'View profile'}
                         >
-                            <ProfileAvatar user={user} className="w-full h-full object-cover" />
+                            <div className="w-13 h-13 rounded-full overflow-hidden border border-white/20 ring-2 ring-[var(--gold-primary,#1D9BF0)]/25 group-hover/avatar:ring-[var(--gold-primary,#1D9BF0)]/60 transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.5)]">
+                                <ProfileAvatar user={user} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-300" />
+                            </div>
+                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#08080a] shadow-sm" />
                         </div>
+
                         <button
                             type="button"
                             onClick={(e) => { 
@@ -5918,42 +5925,47 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             }}
                             aria-label="Close menu"
                             style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                            className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-white hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer touch-manipulation select-none"
+                            className="w-10 h-10 rounded-full bg-white/[0.06] hover:bg-white/[0.14] active:bg-white/[0.22] active:scale-95 border border-white/10 hover:border-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer touch-manipulation select-none shadow-sm"
                         >
-                            <Icons.X className="w-6 h-6" />
+                            <Icons.X className="w-5 h-5 stroke-[2.2]" />
                         </button>
                     </div>
 
                     <div 
                         onClick={() => handleModalOpen(() => onViewProfile(user))}
-                        className="cursor-pointer group"
+                        className="cursor-pointer group block"
                     >
                         <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="font-black text-[17px] sm:text-[18px] text-[var(--app-text,#ffffff)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors leading-snug truncate">{user?.username}</span>
+                            <span className="font-black text-[17px] sm:text-[18px] text-white group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors leading-snug truncate tracking-tight">{user?.username}</span>
                             <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
-                            {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-3.5 h-3.5 shrink-0" />{getActiveStreak(user)}</span>}
+                            {getActiveStreak(user) > 0 && (
+                                <span className="px-1.5 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/25 text-orange-400 font-bold text-[11px] shrink-0 flex items-center gap-0.5">
+                                    <Icons.Streak className="w-3 h-3 shrink-0" />
+                                    {getActiveStreak(user)}
+                                </span>
+                            )}
                         </div>
-                        <span className="text-[14px] text-[var(--app-secondary,#71767b)] font-medium leading-none truncate block mt-1">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                        <span className="text-[13px] text-white/50 font-medium leading-none truncate block mt-1 tracking-wide">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                     </div>
 
                     <div 
                         onClick={() => handleModalOpen(() => onViewProfile(user))}
-                        className="flex items-center gap-4 mt-3 text-[14px] cursor-pointer"
+                        className="flex items-center gap-2.5 mt-3.5 pt-3 border-t border-white/[0.06] cursor-pointer"
                     >
-                        <div className="flex items-center gap-1.5">
-                            <span className="font-extrabold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.following)}</span>
-                            <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
+                            <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.following)}</span>
+                            <span className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <span className="font-extrabold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.followers)}</span>
-                            <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWERS') || 'Followers'}</span>
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
+                            <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.followers)}</span>
+                            <span className="text-[11px] text-white/50 uppercase tracking-wider font-semibold">{t('FOLLOWERS') || 'Followers'}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* 2. X-STYLE SPACIOUS NAV ITEMS */}
-                <div className="flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    <div className="flex flex-col gap-1 px-3">
+                {/* 2. PREMIUM NAV ITEMS */}
+                <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex flex-col gap-1.5 px-3">
                         {[
                             { id: 'home', icon: Icons.Home, label: t('HOME') || 'Home', action: () => handleLink('home') },
                             { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels'), action: () => handleLink('cartels') },
@@ -5965,7 +5977,9 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Settings and privacy'), action: () => handleModalOpen(onOpenSettings) }
                         ].map((item, idx) => {
                             if (item.divider) {
-                                return <div key={`div-${idx}`} className="my-1.5 border-t border-[var(--app-border,#2f3336)]/40 mx-2" />;
+                                return (
+                                    <div key={`div-${idx}`} className="my-2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-2" />
+                                );
                             }
                             const isActive = activeTab === item.id;
                             const IconComponent = item.icon;
@@ -5981,17 +5995,28 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                         WebkitTapHighlightColor: 'transparent',
                                         touchAction: 'manipulation'
                                     }}
-                                    className={`w-full px-3.5 py-3 flex items-center gap-4 rounded-2xl transition-colors duration-100 touch-manipulation cursor-pointer select-none ${
+                                    className={`group w-full px-3.5 py-2.5 flex items-center gap-3.5 rounded-2xl transition-all duration-200 touch-manipulation cursor-pointer select-none relative ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.08))] shadow-sm'
-                                            : 'text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))] active:bg-[var(--app-hover,rgba(255,255,255,0.08))]'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-gradient-to-r from-[var(--gold-primary,#1D9BF0)]/[0.14] via-[var(--gold-primary,#1D9BF0)]/[0.06] to-transparent border border-[var(--gold-primary,#1D9BF0)]/30 shadow-[0_4px_16px_rgba(0,0,0,0.35)]'
+                                            : 'text-white/80 hover:text-white hover:bg-white/[0.05] active:bg-white/[0.08] active:scale-[0.99] border border-transparent'
                                     }`}
                                 >
-                                    <IconComponent className="w-6 h-6 shrink-0" strokeWidth={2} />
-                                    <span className="text-[16px] sm:text-[17px] font-black tracking-tight text-left flex-1 truncate">{item.label}</span>
+                                    {isActive && (
+                                        <div className="absolute left-1 top-2.5 bottom-2.5 w-1 bg-[var(--gold-primary,#1D9BF0)] rounded-full shadow-[0_0_8px_var(--gold-primary,#1D9BF0)]" />
+                                    )}
+
+                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                                        isActive
+                                            ? 'bg-[var(--gold-primary,#1D9BF0)]/20 text-[var(--gold-primary,#1D9BF0)] shadow-[0_0_12px_rgba(212,175,55,0.2)]'
+                                            : 'bg-white/[0.04] group-hover:bg-white/[0.08] text-white/70 group-hover:text-white border border-white/[0.05]'
+                                    }`}>
+                                        <IconComponent className="w-5 h-5" strokeWidth={2.2} />
+                                    </div>
+
+                                    <span className="text-[15px] sm:text-[16px] font-bold tracking-tight text-left flex-1 truncate">{item.label}</span>
                                     {item.badge > 0 && (
-                                        <div className="min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 shadow-sm">
-                                            <span className="text-[10px] font-black text-white leading-none">
+                                        <div className="min-w-[20px] h-[20px] px-1.5 bg-gradient-to-r from-[var(--gold-primary,#1D9BF0)] to-amber-500 rounded-full flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(212,175,55,0.4)]">
+                                            <span className="text-[10px] font-black text-black leading-none">
                                                 {item.badge > 9 ? '9+' : item.badge}
                                             </span>
                                         </div>
@@ -6002,7 +6027,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-3 pt-3 pb-[max(16px,calc(12px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-1.5">
+                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-white/[0.08] flex flex-col gap-2 bg-gradient-to-t from-white/[0.02] to-transparent">
                         <button
                             type="button"
                             onClick={() => { onLogout(); onClose(); }}
@@ -6011,16 +6036,21 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 WebkitTapHighlightColor: 'transparent',
                                 touchAction: 'manipulation'
                             }}
-                            className="w-full px-3.5 py-2.5 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors duration-100 cursor-pointer touch-manipulation select-none"
+                            className="w-full px-3.5 py-2.5 flex items-center gap-3.5 rounded-2xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 active:bg-rose-500/20 active:scale-[0.99] border border-transparent hover:border-rose-500/20 transition-all duration-150 cursor-pointer touch-manipulation select-none group"
                         >
-                            <Icons.Logout className="w-5 h-5 shrink-0" strokeWidth={2} />
-                            <span className="text-[15px] font-bold">{t('LOGOUT')}</span>
+                            <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0 group-hover:bg-rose-500/20 transition-colors">
+                                <Icons.Logout className="w-5 h-5 text-rose-400 stroke-[2.2]" />
+                            </div>
+                            <span className="text-[14px] sm:text-[15px] font-bold">{t('LOGOUT')}</span>
                         </button>
 
-                        <div className="flex items-center gap-3 px-3.5 pt-1 text-[12px] text-[var(--app-secondary,#71767b)]">
-                            <button onClick={() => { onOpenTerms(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
-                            <span>·</span>
-                            <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('PRIVACY_POLICY')}</button>
+                        <div className="flex items-center justify-between px-3.5 pt-1 text-[11px] text-white/40">
+                            <div className="flex items-center gap-2.5">
+                                <button onClick={() => { onOpenTerms(); handleClose(); }} className="hover:text-white transition-colors cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
+                                <span>·</span>
+                                <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="hover:text-white transition-colors cursor-pointer">{t('PRIVACY_POLICY')}</button>
+                            </div>
+                            <span className="tracking-widest font-mono text-[9px] text-white/25 uppercase font-bold">LEGACY</span>
                         </div>
                     </div>
                 </div>
@@ -12890,33 +12920,66 @@ const App = () => {
                 </div>
             )}
 
-            {/* <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> PREMIUM TOAST NOTIFICATIONS <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> */}
-            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 pointer-events-none w-full max-w-[400px] px-4">
+            {/* ULTRA-PREMIUM TOAST NOTIFICATIONS (SAFE-AREA NOTCH COMPLIANT) */}
+            <div 
+                className="fixed top-[max(calc(env(safe-area-inset-top,0px)+18px),74px)] sm:top-6 left-1/2 -translate-x-1/2 z-[999999] flex flex-col gap-2.5 pointer-events-none w-[min(92vw,420px)] px-2 sm:px-0 items-center"
+                style={{ isolation: 'isolate' }}
+            >
                 {toasts.map((toast) => (
                     <div 
                         key={toast.id} 
-                        className={`pointer-events-auto overflow-hidden relative rounded-[20px] backdrop-blur-2xl border p-4 shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-5 duration-300 ${
+                        onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+                        className={`pointer-events-auto overflow-hidden relative rounded-2xl backdrop-blur-2xl border px-4 py-3 sm:px-5 sm:py-3.5 shadow-[0_16px_50px_rgba(0,0,0,0.85)] flex items-center gap-3.5 animate-in fade-in slide-in-from-top-4 duration-300 w-full cursor-pointer active:scale-98 transition-transform select-none ${
                             toast.type === 'error' 
-                                ? 'bg-red-950/40 border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.15)]' 
+                                ? 'bg-[#150507]/95 border-rose-500/35 shadow-[0_12px_40px_rgba(0,0,0,0.85),0_0_24px_rgba(244,63,94,0.18)] text-rose-100' 
                                 : toast.type === 'success'
-                                    ? 'bg-green-950/40 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.15)]'
-                                    : 'bg-black/60 border-[var(--gold-primary)]/30 shadow-[0_0_30px_rgba(212,175,55,0.15)]'
+                                    ? 'bg-[#04140b]/95 border-emerald-500/35 shadow-[0_12px_40px_rgba(0,0,0,0.85),0_0_24px_rgba(16,185,129,0.18)] text-emerald-100'
+                                    : 'bg-[#0d0d10]/95 border-[var(--gold-primary,#D4AF37)]/35 shadow-[0_12px_40px_rgba(0,0,0,0.85),0_0_24px_rgba(212,175,55,0.18)] text-amber-100'
                         }`}
                     >
-                        <div className={`absolute inset-0 opacity-20 pointer-events-none ${
-                            toast.type === 'error' ? 'bg-gradient-to-r from-red-500 to-transparent' :
-                            toast.type === 'success' ? 'bg-gradient-to-r from-green-500 to-transparent' :
-                            'bg-gradient-to-r from-[var(--gold-primary)] to-transparent'
+                        {/* Soft interior sheen */}
+                        <div className={`absolute inset-0 opacity-15 pointer-events-none ${
+                            toast.type === 'error' ? 'bg-gradient-to-r from-rose-500 via-rose-500/20 to-transparent' :
+                            toast.type === 'success' ? 'bg-gradient-to-r from-emerald-500 via-emerald-500/20 to-transparent' :
+                            'bg-gradient-to-r from-[var(--gold-primary,#D4AF37)] via-[var(--gold-primary,#D4AF37)]/20 to-transparent'
                         }`} />
                         
+                        {/* Icon badge */}
                         <div className="shrink-0 relative z-10">
-                            {toast.type === 'error' && <Icons.AlertCircle className="w-6 h-6 text-red-500" />}
-                            {toast.type === 'success' && <Icons.CheckCircle className="w-6 h-6 text-green-500" />}
-                            {toast.type === 'info' && <Icons.Bell className="w-6 h-6 text-[var(--gold-primary)]" />}
+                            {toast.type === 'error' && (
+                                <div className="w-8 h-8 rounded-full bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                                    <Icons.AlertCircle className="w-4 h-4 stroke-[2.2]" />
+                                </div>
+                            )}
+                            {toast.type === 'success' && (
+                                <div className="w-8 h-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                                    <Icons.CheckCircle className="w-4 h-4 stroke-[2.2]" />
+                                </div>
+                            )}
+                            {toast.type === 'info' && (
+                                <div className="w-8 h-8 rounded-full bg-[var(--gold-primary,#D4AF37)]/15 border border-[var(--gold-primary,#D4AF37)]/30 flex items-center justify-center text-[var(--gold-primary,#D4AF37)]">
+                                    <Icons.Bell className="w-4 h-4 stroke-[2.2]" />
+                                </div>
+                            )}
                         </div>
-                        <div className="flex-1 text-sm font-semibold text-white tracking-wide relative z-10 break-words">
+
+                        {/* Content text */}
+                        <div className="flex-1 text-[13px] sm:text-sm font-bold text-white tracking-wide relative z-10 break-words leading-snug drop-shadow-sm">
                             {toast.text}
                         </div>
+
+                        {/* Subtle close tap button */}
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setToasts(prev => prev.filter(t => t.id !== toast.id));
+                            }}
+                            className="w-6 h-6 rounded-full hover:bg-white/10 active:bg-white/20 flex items-center justify-center text-white/40 hover:text-white transition-colors shrink-0 ml-0.5 relative z-10"
+                            aria-label="Dismiss notification"
+                        >
+                            <Icons.X className="w-3.5 h-3.5 stroke-[2]" />
+                        </button>
                     </div>
                 ))}
             </div>
