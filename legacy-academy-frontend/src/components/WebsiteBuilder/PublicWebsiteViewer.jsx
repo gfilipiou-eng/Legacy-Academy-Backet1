@@ -44,21 +44,21 @@ export const PublicWebsiteViewer = ({ config }) => {
     if (!config) return <div className="min-h-screen bg-black flex items-center justify-center text-white">Website not found</div>;
 
     const themeColors = {
-        gold: { primary: '#D4AF37', bg: '#09090b', card: '#111113' },
-        blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
-        pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
-        green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
-        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' },
-        cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
-        neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
-        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' },
-        emerald: { primary: '#10b981', bg: '#02120a', card: '#052414' },
-        midnight: { primary: '#6366f1', bg: '#0a0a0a', card: '#111111' },
-        rose: { primary: '#f43f5e', bg: '#1a050a', card: '#2b0912' },
-        amber: { primary: '#f59e0b', bg: '#140c01', card: '#241602' },
-        mafia: { primary: '#C9A961', bg: '#0a0a0a', card: '#151515' },
-        light: { primary: '#1f2937', bg: '#ffffff', card: '#f8fafc' },
-        charcoal: { primary: '#4b5563', bg: '#0b0b0f', card: '#15151a' }
+        gold: { primary: '#E5B842', bg: '#16141a', card: '#221f28', border: 'rgba(229,184,66,0.22)' },
+        blue: { primary: '#38bdf8', bg: '#0c1a2e', card: '#132845', border: 'rgba(56,189,248,0.22)' },
+        pink: { primary: '#f472b6', bg: '#241220', card: '#361b30', border: 'rgba(244,114,182,0.22)' },
+        green: { primary: '#4ade80', bg: '#0d2218', card: '#153526', border: 'rgba(74,222,128,0.22)' },
+        red: { primary: '#f87171', bg: '#281116', card: '#3d1a21', border: 'rgba(248,113,113,0.22)' },
+        cyberpunk: { primary: '#facc15', bg: '#1c1038', card: '#2c1954', border: 'rgba(250,204,21,0.25)' },
+        neon: { primary: '#22d3ee', bg: '#0a232b', card: '#103744', border: 'rgba(34,211,238,0.25)' },
+        darkglass: { primary: '#c084fc', bg: '#151726', card: 'rgba(255,255,255,0.08)', border: 'rgba(192,132,252,0.25)' },
+        emerald: { primary: '#34d399', bg: '#0c241d', card: '#14382e', border: 'rgba(52,211,153,0.22)' },
+        midnight: { primary: '#818cf8', bg: '#131b38', card: '#1e2954', border: 'rgba(129,140,248,0.22)' },
+        rose: { primary: '#fb7185', bg: '#2b121c', card: '#3f1c29', border: 'rgba(251,113,133,0.22)' },
+        amber: { primary: '#fbbf24', bg: '#251b10', card: '#382918', border: 'rgba(251,191,36,0.22)' },
+        mafia: { primary: '#d4af37', bg: '#1c1815', card: '#2b2520', border: 'rgba(212,175,55,0.22)' },
+        light: { primary: '#0284c7', bg: '#f8fafc', card: '#ffffff', border: 'rgba(15,23,42,0.1)' },
+        charcoal: { primary: '#94a3b8', bg: '#1e2330', card: '#2c3345', border: 'rgba(148,163,184,0.2)' }
     };
 
     // Ensure palette is valid, fallback to gold if invalid

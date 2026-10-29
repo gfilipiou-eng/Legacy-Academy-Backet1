@@ -21,18 +21,18 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
     }
 
     const themeColors = {
-        gold: { primary: '#D4AF37', bg: '#09090b', card: '#111113' },
-        blue: { primary: '#1D9BF0', bg: '#001018', card: '#001824' },
-        pink: { primary: '#e83c74', bg: '#17050d', card: '#210712' },
-        green: { primary: '#2fd840', bg: '#041206', card: '#061c09' },
-        red: { primary: '#ef4444', bg: '#140505', card: '#1f0707' },
-        cyberpunk: { primary: '#FCE205', bg: '#0D0221', card: '#1A0738' },
-        neon: { primary: '#00FFFF', bg: '#000510', card: '#001020' },
-        minimal: { primary: '#FFFFFF', bg: '#121212', card: '#1A1A1A' },
-        darkglass: { primary: '#A78BFA', bg: '#050505', card: 'rgba(255,255,255,0.03)' }
+        gold: { primary: '#E5B842', bg: '#16141a', card: '#221f28', border: 'rgba(229,184,66,0.22)' },
+        blue: { primary: '#38bdf8', bg: '#0c1a2e', card: '#132845', border: 'rgba(56,189,248,0.22)' },
+        pink: { primary: '#f472b6', bg: '#241220', card: '#361b30', border: 'rgba(244,114,182,0.22)' },
+        green: { primary: '#4ade80', bg: '#0d2218', card: '#153526', border: 'rgba(74,222,128,0.22)' },
+        red: { primary: '#f87171', bg: '#281116', card: '#3d1a21', border: 'rgba(248,113,113,0.22)' },
+        cyberpunk: { primary: '#facc15', bg: '#1c1038', card: '#2c1954', border: 'rgba(250,204,21,0.25)' },
+        neon: { primary: '#22d3ee', bg: '#0a232b', card: '#103744', border: 'rgba(34,211,238,0.25)' },
+        minimal: { primary: '#94a3b8', bg: '#1e2330', card: '#2c3345', border: 'rgba(148,163,184,0.2)' },
+        darkglass: { primary: '#c084fc', bg: '#151726', card: 'rgba(255,255,255,0.08)', border: 'rgba(192,132,252,0.25)' }
     };
     const activePalette = websites.length > 0 ? (websites[0].palette || 'blue') : 'blue';
-    const builderPrimary = themeColors[activePalette]?.primary || '#1D9BF0';
+    const builderPrimary = themeColors[activePalette]?.primary || '#38bdf8';
 
     const handleCreateNew = () => {
         if (websites.length >= 2) return;
@@ -108,8 +108,6 @@ export const WebsiteManager = ({ onBack, user, onUpdateUser }) => {
 
     return (
         <div className="fixed inset-0 z-[5000] bg-[var(--app-bg,#050505)] flex flex-col items-center justify-start overflow-y-auto pt-safe">
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--builder-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
             <div className="w-full max-w-4xl p-6 md:p-12 relative z-10">
                 <div className="flex items-center justify-between mb-12">
                     <div className="flex items-center gap-4">

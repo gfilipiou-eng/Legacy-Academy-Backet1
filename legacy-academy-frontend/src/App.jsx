@@ -6546,15 +6546,9 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher, onMediaClick }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher, onMediaClick, onOpenWebsiteBuilder }) => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
-    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> INSTANT STATUS REFRESH: Fetch latest data for profile user on mount
-    useEffect(() => {
-        if (isOpen && profileUser?._id && fetchSpecificUser) {
-            fetchSpecificUser(profileUser._id);
-        }
-    }, [isOpen, profileUser?._id, fetchSpecificUser]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [userData, setUserData] = useState(profileUser);
@@ -6562,10 +6556,31 @@ const ProfileModal = ({
     const optimisticProfileEditRef = useRef(null);
     const profileSaveInFlightRef = useRef(false);
 
-    // <Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" /> SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
+    // INSTANT STATUS REFRESH: Fetch latest data for profile user on mount (by id or username)
+    useEffect(() => {
+        if (!isOpen) return;
+        if (profileUser?._id && fetchSpecificUser) {
+            fetchSpecificUser(profileUser._id);
+        } else if (profileUser?.username) {
+            axios.get(`/users/username/${encodeURIComponent(profileUser.username)}?t=${Date.now()}`)
+                .then(res => {
+                    if (res.data) {
+                        setUserData(prev => ({ ...(prev || {}), ...res.data }));
+                    }
+                })
+                .catch(() => {});
+        }
+    }, [isOpen, profileUser?._id, profileUser?.username, fetchSpecificUser]);
+
+    // SYNC PROFILE DATA: Keep userData perfectly aligned with global database changes
     useEffect(() => {
         if (profileUser) {
-            const latest = (allUsers || []).find(u => isSameId(u._id, profileUser._id)) || profileUser;
+            const targetId = safeId(profileUser);
+            const latest = (allUsers || []).find(u => 
+                (targetId && isSameId(u._id, targetId)) || 
+                (profileUser.username && (u.username || '').toLowerCase() === profileUser.username.toLowerCase())
+            ) || profileUser;
+
             const pending = optimisticProfileEditRef.current;
             if (pending && isSameId(pending.user?._id, latest?._id)) {
                 if (Date.now() < pending.until) {
@@ -6761,12 +6776,12 @@ const ProfileModal = ({
 
 
     useEffect(() => {
-        if (!isOpen || !profileUser?._id) {
+        const targetUserId = profileUser?._id || userData?._id || displayUser?._id;
+        if (!isOpen || !targetUserId) {
             if (!isOpen) setLoadingPosts(false);
             return;
         }
 
-        const targetUserId = profileUser._id;
         let cancelled = false;
 
         const hasPreloadedPosts = preloadedPosts?.length > 0;
@@ -6781,22 +6796,22 @@ const ProfileModal = ({
         (async () => {
             try {
                 const res = await axios.get(`/posts/user/${targetUserId}`, { timeout: 15000 });
-                if (cancelled || String(profileUser?._id || '') !== String(targetUserId)) return;
+                if (cancelled) return;
                 setUserSpecificPosts(Array.isArray(res.data) ? res.data : []);
             } catch (e) {
                 console.error("Profile posts fetch error:", e);
-                if (!cancelled && String(profileUser?._id || '') === String(targetUserId) && !(preloadedPosts?.length > 0)) {
+                if (!cancelled && !(preloadedPosts?.length > 0)) {
                     setUserSpecificPosts([]);
                 }
             } finally {
-                if (!cancelled && String(profileUser?._id || '') === String(targetUserId)) {
+                if (!cancelled) {
                     setLoadingPosts(false);
                 }
             }
         })();
 
         return () => { cancelled = true; };
-    }, [isOpen, profileUser?._id]);
+    }, [isOpen, profileUser?._id, userData?._id, displayUser?._id]);
 
     // LIVE SYNC: React to global deletions if the profile is open
     useEffect(() => {
@@ -7470,6 +7485,149 @@ const ProfileModal = ({
                                     </div>
                                 )}
                             </div>
+
+                            {/* PUBLISHED WEBSITES & DIGITAL SPACES */}
+                            {(() => {
+                                let sites = [];
+                                if (displayUser?.settings?.businessWebsites && Array.isArray(displayUser.settings.businessWebsites)) {
+                                    sites = displayUser.settings.businessWebsites.map((s, idx) => ({ ...s, originalIndex: idx }));
+                                } else if (displayUser?.settings?.businessWebsite) {
+                                    sites = [{ ...displayUser.settings.businessWebsite, originalIndex: 0 }];
+                                }
+                                const visibleSites = isMe ? sites : sites.filter(s => !s.isDraft);
+                                const externalUrl = displayUser?.website || displayUser?.settings?.website;
+                                const hasExternalWebsite = !!externalUrl && typeof externalUrl === 'string' && externalUrl.trim() !== '';
+
+                                if (visibleSites.length === 0 && !hasExternalWebsite) return null;
+
+                                return (
+                                    <div className="w-full mb-6 space-y-3 px-2">
+                                        <div className="flex items-center justify-between px-1">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] flex items-center gap-1.5">
+                                                <Icons.Globe className="w-3.5 h-3.5 text-[var(--gold-primary)]" />
+                                                {t('WEBSITES_AND_LINKS', 'Websites & Spaces')}
+                                            </span>
+                                            {isMe && onOpenWebsiteBuilder && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        onClose();
+                                                        onOpenWebsiteBuilder();
+                                                    }}
+                                                    className="text-[10px] font-bold text-[var(--gold-primary)] hover:underline flex items-center gap-1 cursor-pointer select-none"
+                                                >
+                                                    <Icons.Plus className="w-3 h-3" />
+                                                    {t('MANAGE', 'Manage')}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {visibleSites.map((site) => {
+                                                const siteUrl = `${window.location.origin}/?site=${encodeURIComponent(displayUser?.username || '')}&index=${site.originalIndex}`;
+                                                return (
+                                                    <div
+                                                        key={site.originalIndex}
+                                                        className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3 text-left relative group border border-[var(--app-border)] hover:border-[var(--app-border-hover)]"
+                                                    >
+                                                        <div className="flex items-start justify-between gap-2">
+                                                            <div className="flex items-center gap-2.5 min-w-0">
+                                                                <div
+                                                                    className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs text-white shrink-0 shadow-sm"
+                                                                    style={{ backgroundColor: site.palette === 'gold' ? '#E5B842' : '#38bdf8' }}
+                                                                >
+                                                                    <Icons.Globe className="w-4 h-4" />
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <h4 className="text-sm font-black text-[var(--app-text)] truncate leading-tight">
+                                                                        {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
+                                                                    </h4>
+                                                                    <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
+                                                                        {site.slogan || `site/${displayUser?.username || ''}`}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            {site.isDraft ? (
+                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50">
+                                                                    {t('DRAFT', 'Draft')}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1">
+                                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                                    {t('LIVE', 'Live')}
+                                                                </span>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2 pt-2 border-t border-[var(--app-border)]">
+                                                            <a
+                                                                href={siteUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                }}
+                                                                className="flex-1 py-2 px-3 rounded-xl bg-[var(--app-text)] text-[var(--app-bg)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                                                            >
+                                                                <Icons.ExternalLink className="w-3.5 h-3.5" />
+                                                                {t('VISIT_SITE', 'Visit Site')}
+                                                            </a>
+                                                            <button
+                                                                type="button"
+                                                                onClick={async (e) => {
+                                                                    e.stopPropagation();
+                                                                    try {
+                                                                        await navigator.clipboard.writeText(siteUrl);
+                                                                    } catch (_) {
+                                                                        const ta = document.createElement('textarea');
+                                                                        ta.value = siteUrl;
+                                                                        document.body.appendChild(ta);
+                                                                        ta.select();
+                                                                        document.execCommand('copy');
+                                                                        document.body.removeChild(ta);
+                                                                    }
+                                                                    addToast?.(t('LINK_COPIED', 'Website link copied to clipboard!'), 'success');
+                                                                }}
+                                                                className="p-2 rounded-xl border border-[var(--app-border)] hover:bg-[var(--app-hover)] text-[var(--app-text)] transition-colors active:scale-95 cursor-pointer"
+                                                                title={t('COPY_LINK', 'Copy Link')}
+                                                            >
+                                                                <Icons.Copy className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+
+                                            {hasExternalWebsite && (
+                                                <div className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3 text-left relative group border border-[var(--app-border)] hover:border-[var(--app-border-hover)]">
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-black text-xs text-[var(--app-text)] shrink-0 shadow-sm">
+                                                            <Icons.Link className="w-4 h-4" />
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <h4 className="text-sm font-black text-[var(--app-text)] truncate leading-tight">
+                                                                {t('OFFICIAL_LINK', 'Official Link')}
+                                                            </h4>
+                                                            <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
+                                                                {externalUrl}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <a
+                                                        href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-full py-2 px-3 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[var(--app-active)] active:scale-95 transition-all cursor-pointer"
+                                                    >
+                                                        <Icons.ExternalLink className="w-3.5 h-3.5" />
+                                                        {t('OPEN_LINK', 'Open Link')}
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
 
                             <div className="flex border-b border-[var(--app-border,#eff3f4)] w-full mb-6 mt-4 relative">
                                 {(isMe ? ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS', 'MISSIONS'] : ['ALL', 'POSTS', 'PHOTOS', 'VIDEO', 'REPOSTS']).map((tab, index) => {
@@ -8630,10 +8788,99 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     </div>
                 </div>
  
+                {/* PUBLISHED WEBSITES SHOWCASE */}
+                {(() => {
+                    let sites = [];
+                    if (publicUser?.settings?.businessWebsites && Array.isArray(publicUser.settings.businessWebsites)) {
+                        sites = publicUser.settings.businessWebsites.map((s, idx) => ({ ...s, originalIndex: idx }));
+                    } else if (publicUser?.settings?.businessWebsite) {
+                        sites = [{ ...publicUser.settings.businessWebsite, originalIndex: 0 }];
+                    }
+                    const visibleSites = sites.filter(s => !s.isDraft);
+                    const externalUrl = publicUser?.website || publicUser?.settings?.website;
+                    const hasExternalWebsite = !!externalUrl && typeof externalUrl === 'string' && externalUrl.trim() !== '';
+
+                    if (visibleSites.length === 0 && !hasExternalWebsite) return null;
+
+                    return (
+                        <div className="w-full mt-6 space-y-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <Icons.Globe className="w-4 h-4 text-[var(--gold-primary)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)]">
+                                    {t('OFFICIAL_SPACES', 'Official Websites & Links')}
+                                </span>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                {visibleSites.map((site) => {
+                                    const siteUrl = `${window.location.origin}/?site=${encodeURIComponent(publicUser?.username || '')}&index=${site.originalIndex}`;
+                                    return (
+                                        <a
+                                            key={site.originalIndex}
+                                            href={siteUrl}
+                                            className="profile-link-glass p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-[var(--app-border)] hover:border-[var(--app-border-hover)] transition-all active:scale-[0.98]"
+                                        >
+                                            <div className="flex items-center gap-3.5 min-w-0">
+                                                <div
+                                                    className="w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm text-white shrink-0 shadow-sm"
+                                                    style={{ backgroundColor: site.palette === 'gold' ? '#E5B842' : '#38bdf8' }}
+                                                >
+                                                    <Icons.Globe className="w-5 h-5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary)] transition-colors">
+                                                            {site.businessName || 'Personal Website'}
+                                                        </h4>
+                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-1">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                                            {t('LIVE', 'Live')}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                        {site.slogan || `site/${publicUser?.username || ''}`}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="w-9 h-9 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary)] group-hover:text-black transition-all shrink-0">
+                                                <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                                            </div>
+                                        </a>
+                                    );
+                                })}
+
+                                {hasExternalWebsite && (
+                                    <a
+                                        href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="profile-link-glass p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-[var(--app-border)] hover:border-[var(--app-border-hover)] transition-all active:scale-[0.98]"
+                                    >
+                                        <div className="flex items-center gap-3.5 min-w-0">
+                                            <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center font-black text-sm text-[var(--app-text)] shrink-0 shadow-sm">
+                                                <Icons.Link className="w-5 h-5" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary)] transition-colors">
+                                                    {t('OFFICIAL_LINK', 'Official Link')}
+                                                </h4>
+                                                <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                    {externalUrl}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="w-9 h-9 rounded-xl bg-[var(--app-hover)] border border-[var(--app-border)] flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary)] group-hover:text-black transition-all shrink-0">
+                                            <Icons.ExternalLink className="w-4 h-4" />
+                                        </div>
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })()}
+
                 {/* LINKTREE STYLE INVITATION CARD */}
-                <div className="w-full mt-6 p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/40 via-transparent to-[var(--gold-primary)]/20 rounded-[1.5rem] group shadow-lg relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[var(--gold-primary)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                    <div className="w-full h-full bg-[var(--app-card-bg,var(--app-bg))] border border-[var(--app-border)] rounded-[1.4rem] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden shadow-sm">
+                <div className="w-full mt-6 rounded-[1.5rem] group border border-[var(--app-border)] overflow-hidden shadow-sm">
+                    <div className="w-full h-full bg-[var(--app-card-bg,var(--app-bg))] p-6 flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10 overflow-hidden">
                         <div className="space-y-2.5 text-center sm:text-left min-w-0 flex-1 w-full">
                             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                                 <span className="px-2 py-0.5 rounded border border-[var(--gold-primary)]/30 text-[9px] font-black uppercase tracking-[0.3em] text-[var(--gold-primary)]">
@@ -8647,7 +8894,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 {t('JOIN_ELITE_MEMBERSHIP', 'MEMBERSHIP • 49€ / MONTH')}
                             </p>
                         </div>
-                        <div onClick={(e) => { e.stopPropagation(); window.location.href = '/?paywall=true'; }} className="w-full sm:w-auto mt-2 sm:mt-0 px-7 py-3.5 rounded-2xl bg-[var(--gold-primary,#1D9BF0)] hover:brightness-110 active:scale-95 text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-[var(--gold-primary)]/25 cursor-pointer shrink-0">
+                        <div onClick={(e) => { e.stopPropagation(); window.location.href = '/?paywall=true'; }} className="w-full sm:w-auto mt-2 sm:mt-0 px-7 py-3.5 rounded-2xl bg-[var(--gold-primary,#1D9BF0)] hover:brightness-105 active:scale-95 text-black font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shrink-0 shadow-sm">
                             {t('UNLOCK_ACCESS', 'UNLOCK ACCESS')}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </div>
@@ -10878,12 +11125,53 @@ const App = () => {
         }
     };
 
-    const viewProfile = (u) => {
-        const fullUser = resolveFullUser(u, users);
+    const viewProfile = async (u) => {
+        if (!u) return;
+
+        let target = resolveFullUser(u, users);
+        const uid = safeId(u) || safeId(target);
+        const uname = (typeof u === 'string' ? u : (target?.username || u?.username || '')).trim().replace(/^@+/, '');
+
+        // If not resolved from memory, construct a provisional user object immediately so modal opens with no delay
+        if (!target) {
+            if (uid) {
+                target = typeof u === 'object' ? { ...u, _id: uid, username: u.username || 'Agent' } : { _id: uid, username: 'Agent' };
+            } else if (uname) {
+                target = typeof u === 'object' ? { ...u, username: uname } : { username: uname };
+            }
+        }
+
         React.startTransition(() => {
-            setProfileUser(fullUser);
+            if (target) setProfileUser(target);
             setIsProfileOpen(true);
         });
+
+        // Background targeted resolve to ensure 100% full profile data for all users
+        try {
+            if (uid) {
+                const res = await axios.get(`/users/find/${uid}?t=${Date.now()}`);
+                if (res.data) {
+                    setUsers(prev => {
+                        const exists = prev.find(x => isSameId(x._id, res.data._id));
+                        if (exists) return prev.map(x => isSameId(x._id, res.data._id) ? { ...exists, ...res.data } : x);
+                        return [...prev, res.data];
+                    });
+                    setProfileUser(prev => (prev && (!prev._id || isSameId(prev._id, res.data._id))) ? { ...prev, ...res.data } : prev);
+                }
+            } else if (uname) {
+                const res = await axios.get(`/users/username/${encodeURIComponent(uname)}?t=${Date.now()}`);
+                if (res.data) {
+                    setUsers(prev => {
+                        const exists = prev.find(x => isSameId(x._id, res.data._id));
+                        if (exists) return prev.map(x => isSameId(x._id, res.data._id) ? { ...exists, ...res.data } : x);
+                        return [...prev, res.data];
+                    });
+                    setProfileUser(prev => (prev && (!prev._id || isSameId(prev._id, res.data._id) || (prev.username || '').toLowerCase() === uname.toLowerCase())) ? { ...prev, ...res.data } : prev);
+                }
+            }
+        } catch (err) {
+            console.error("Targeted profile fetch error:", err);
+        }
     };
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
@@ -12017,6 +12305,7 @@ const App = () => {
                         deletingPostIds={deletingPostIds}
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onMediaClick={(post) => setSelectedPost(post)}
+                        onOpenWebsiteBuilder={() => setIsWebsiteBuilderOpen(true)}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 

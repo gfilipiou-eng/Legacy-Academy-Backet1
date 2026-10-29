@@ -14,11 +14,6 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
                         boxShadow: `0 0 0 1px ${activeTheme.primary}18, 0 4px 32px -8px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.06) inset`
                     }}
                 >
-                    {/* Accent glow in corner */}
-                    <div 
-                        className="absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-[0.18] blur-[70px] pointer-events-none group-hover:opacity-[0.38] transition-opacity duration-700"
-                        style={{ backgroundColor: activeTheme.primary }}
-                    />
                     {feat.badge && (
                         <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-xl"
                             style={{ 
@@ -44,7 +39,7 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
                         <div className="flex items-center gap-2.5">
                             <span className="w-7 h-7 rounded-xl shrink-0 flex items-center justify-center text-[14px]"
                                 style={{ backgroundColor: `${activeTheme.primary}22`, color: activeTheme.primary }}>
-                                ✦
+                            ✦
                             </span>
                             <h4 className="text-[18px] md:text-[19px] font-black tracking-tight leading-tight">{feat.title}</h4>
                         </div>
@@ -59,7 +54,7 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
                             style={{ 
                                 backgroundColor: activeTheme.primary, 
                                 color: '#000',
-                                boxShadow: `0 10px 30px -10px ${activeTheme.primary}80`
+                                boxShadow: '0 4px 16px rgba(0,0,0,0.22)'
                             }}
                         >
                             <span>{feat.linkText || 'Learn More'}</span>
@@ -78,10 +73,6 @@ const renderFeatures = (features, activeTheme, setZoomImage) => {
 export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-24 pb-10 md:pt-32 md:pb-20">
         <div className="flex-1 flex flex-col md:flex-row items-center justify-center py-10 md:py-24 gap-10 md:gap-16 relative">
-            {/* Decorative background orbs */}
-            <div className="absolute top-12 left-0 w-72 h-72 rounded-full opacity-20 blur-[100px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-            <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-10 blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-
             <div className="flex-1 flex flex-col items-start z-10 text-left relative">
                 {false && (
                 <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.14em] mb-7 border backdrop-blur-xl"
@@ -107,12 +98,12 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
                             href={config.ctaLink || '#'} 
                             target={config.ctaLink?.startsWith('http') ? '_blank' : '_self'}
                             rel="noopener noreferrer"
-                            className="group px-8 py-4.5 sm:px-11 sm:py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-2xl flex items-center gap-3 border" 
+                            className="group px-8 py-4.5 sm:px-11 sm:py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-3 border" 
                             style={{
                                 backgroundColor: activeTheme.primary,
                                 color: '#000',
                                 borderColor: `${activeTheme.primary}aa`,
-                                boxShadow: `0 18px 45px -15px ${activeTheme.primary}a8`
+                                boxShadow: '0 4px 18px rgba(0,0,0,0.22)'
                             }}
                         >
                             <span>{config.ctaText}</span>
@@ -123,9 +114,6 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
             </div>
             {config.coverImage && (
                 <div className="flex-1 w-full flex justify-center mt-4 md:mt-0 relative z-10 group">
-                    <div className="absolute inset-0 -z-10 max-w-lg aspect-[4/3] md:aspect-square rounded-[2rem] opacity-50 blur-3xl"
-                        style={{ backgroundColor: activeTheme.primary }}
-                    />
                     <div className="relative w-full max-w-lg aspect-[4/3] md:aspect-square cursor-pointer" onClick={() => setZoomImage && setZoomImage(config.coverImage)}>
                         <div className="absolute inset-0 rounded-[2rem] opacity-60 border"
                             style={{ borderColor: `${activeTheme.primary}40`, transform: 'translate(14px, 14px)' }}
@@ -156,10 +144,6 @@ export const ClassicTemplate = ({ config, activeTheme, setZoomImage }) => (
 // ==========================================
 export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full flex flex-col max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-24 pb-8 md:pt-32 md:pb-14 relative overflow-hidden">
-        {/* Ambient background blobs */}
-        <div className="absolute -top-20 -left-24 w-[28rem] h-[28rem] rounded-full opacity-[0.15] blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-        <div className="absolute top-1/3 -right-28 w-[26rem] h-[26rem] rounded-full opacity-[0.12] blur-[120px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-
         {/* Banner Hero */}
         <div className="relative w-full rounded-[2.5rem] overflow-hidden border shadow-2xl p-6 sm:p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 mb-14 md:mb-20 z-10"
             style={{
@@ -197,7 +181,7 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
                             backgroundColor: activeTheme.primary,
                             color: '#000',
                             borderColor: `${activeTheme.primary}aa`,
-                            boxShadow: `0 18px 45px -15px ${activeTheme.primary}b0`
+                            boxShadow: '0 4px 18px rgba(0,0,0,0.22)'
                         }}
                     >
                         <Icons.Zap className="w-4.5 h-4.5" />
@@ -211,7 +195,6 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
                     onClick={() => setZoomImage && setZoomImage(config.coverImage)}
                     style={{ borderColor: 'rgba(255,255,255,0.12)' }}
                 >
-                    <div className="absolute -inset-6 opacity-60 blur-2xl rounded-full pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
                     <img src={config.coverImage} className="relative z-10 w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-108" alt="Store Spotlight" loading="lazy" decoding="async" />
                 </div>
             )}
@@ -238,12 +221,6 @@ export const EcommerceTemplate = ({ config, activeTheme, setZoomImage }) => (
 // ==========================================
 export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-14 md:pt-36 md:pb-24 relative overflow-hidden">
-        {/* Hero background atmosphere */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-10 left-1/4 w-[32rem] h-[32rem] rounded-full opacity-[0.14] blur-[130px]" style={{ backgroundColor: activeTheme.primary }} />
-            <div className="absolute bottom-0 right-8 w-[26rem] h-[26rem] rounded-full opacity-[0.1] blur-[110px]" style={{ backgroundColor: activeTheme.primary }} />
-        </div>
-
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center relative z-10">
             {false && (
             <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.18em] mb-7 border backdrop-blur-xl"
@@ -266,12 +243,12 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <div className="flex flex-wrap items-center justify-center gap-4">
                     <a 
                         href={config.ctaLink || '#contact'} 
-                        className="group px-11 py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-2xl flex items-center gap-2.5 border"
+                        className="group px-11 py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2.5 border"
                         style={{
                             backgroundColor: activeTheme.primary,
                             color: '#000',
                             borderColor: `${activeTheme.primary}cc`,
-                            boxShadow: `0 20px 55px -15px ${activeTheme.primary}b0`
+                            boxShadow: '0 4px 18px rgba(0,0,0,0.22)'
                         }}
                     >
                         <span>{config.ctaText}</span>
@@ -298,12 +275,9 @@ export const AgencyTemplate = ({ config, activeTheme, setZoomImage }) => (
                         style={{
                             backgroundColor: `${activeTheme.card}`,
                             borderColor: 'rgba(255,255,255,0.08)',
-                            boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 18px 40px -22px rgba(0,0,0,0.6)'
+                            boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px -10px rgba(0,0,0,0.4)'
                         }}
                     >
-                        <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-[0.15] blur-3xl pointer-events-none group-hover:opacity-[0.35] transition-opacity duration-500"
-                            style={{ backgroundColor: activeTheme.primary }}
-                        />
                         <div className="relative z-10 flex flex-col gap-1.5">
                             <div className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none mb-1" style={{ color: activeTheme.primary }}>{stat.val}</div>
                             <div className="w-10 h-[2px] rounded-full mx-auto my-1.5" style={{ backgroundColor: `${activeTheme.primary}66` }} />
@@ -348,10 +322,6 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
     const GOLD_GLOW = 'rgba(212, 175, 55, 0.16)';
     return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-32 pb-14 md:pt-40 md:pb-28 relative overflow-hidden" style={{ fontFamily: 'Cinzel, "Playfair Display", serif' }}>
-        {/* Soft gold atmosphere */}
-        <div className="absolute top-0 left-1/3 w-[24rem] h-[24rem] rounded-full opacity-[0.14] blur-[130px] pointer-events-none" style={{ backgroundColor: GOLD }} />
-        <div className="absolute bottom-0 right-10 w-[28rem] h-[28rem] rounded-full opacity-[0.11] blur-[140px] pointer-events-none" style={{ backgroundColor: GOLD }} />
-
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20 md:mb-28 relative z-10">
             {false && (
             <div className="flex flex-col items-center gap-3 mb-8">
@@ -378,10 +348,10 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
                         border: `1px solid ${GOLD_EDGE}`,
                         color: GOLD,
                         clipPath: 'polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%)',
-                        boxShadow: `0 0 0 0 ${GOLD_GLOW}`
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.22)'
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = GOLD; e.currentTarget.style.color = '#0a0a0a'; e.currentTarget.style.boxShadow = `0 18px 45px -12px ${GOLD}`; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = GOLD; e.currentTarget.style.boxShadow = 'none'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = GOLD; e.currentTarget.style.color = '#0a0a0a'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = GOLD; }}
                 >
                     <span className="relative z-10 tracking-[0.24em]">{config.ctaText}</span>
                 </a>
@@ -393,7 +363,7 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
                 onClick={() => setZoomImage && setZoomImage(config.coverImage)}
                 style={{
                     border: `1px solid ${GOLD_EDGE}`,
-                    boxShadow: `0 30px 90px -35px rgba(0,0,0,0.8), 0 0 80px -40px ${GOLD}`
+                    boxShadow: '0 20px 60px -25px rgba(0,0,0,0.6)'
                 }}
             >
                 <div className="absolute inset-0 z-10 pointer-events-none"
@@ -432,10 +402,6 @@ export const LuxuryTemplate = ({ config, activeTheme, setZoomImage }) => {
 // ==========================================
 export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-14 md:pt-36 md:pb-24 relative overflow-hidden">
-        {/* Subtle tech ambient */}
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[42rem] h-[42rem] rounded-full opacity-[0.12] blur-[140px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-        <div className="absolute bottom-0 right-0 w-[26rem] h-[26rem] rounded-full opacity-[0.1] blur-[130px] pointer-events-none" style={{ backgroundColor: activeTheme.primary }} />
-
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24 flex flex-col items-center relative z-10">
             {config.businessName && (
             <div className="inline-flex items-center gap-2.5 px-4.5 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.16em] mb-7 border backdrop-blur-2xl"
@@ -468,12 +434,12 @@ export const SaasTemplate = ({ config, activeTheme, setZoomImage }) => (
                 <div className="flex flex-wrap items-center justify-center gap-4">
                     <a 
                         href={config.ctaLink || '#'} 
-                        className="group px-9 py-5 sm:px-11 sm:py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 shadow-2xl flex items-center gap-2.5 border"
+                        className="group px-9 py-5 sm:px-11 sm:py-5 rounded-[18px] font-black uppercase tracking-[0.14em] text-[12px] sm:text-sm transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2.5 border"
                         style={{
                             backgroundColor: activeTheme.primary,
                             color: '#000',
                             borderColor: `${activeTheme.primary}c8`,
-                            boxShadow: `0 22px 60px -18px ${activeTheme.primary}b0`
+                            boxShadow: '0 4px 18px rgba(0,0,0,0.22)'
                         }}
                     >
                         <Icons.Zap className="w-4.5 h-4.5" />

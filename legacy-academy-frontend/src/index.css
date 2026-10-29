@@ -4,6 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== GLOBAL TAP HIGHLIGHT & FOCUS RESET (Eliminates mobile black boxes & tap artifacts) ===== */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+button:focus, a:focus, div:focus, input:focus, textarea:focus, select:focus {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+::selection {
+  background-color: rgba(29, 155, 240, 0.25);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(29, 155, 240, 0.25);
+  color: inherit;
+}
+
 
 
 /* App.jsx will override these with the user's selected theme color via document.documentElement.style.setProperty */
@@ -552,11 +575,20 @@ button:active {
 .profile-link-glass {
   position: relative;
   overflow: hidden;
-  background: var(--dynamic-glass-bg, linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96)));
-  backdrop-filter: blur(var(--dynamic-blur, 20px)) saturate(var(--dynamic-saturate, 150%));
-  -webkit-backdrop-filter: blur(var(--dynamic-blur, 20px)) saturate(var(--dynamic-saturate, 150%));
-  border: 1px solid rgba(96, 165, 250, 0.2);
-  border-radius: 28px;
+  background: var(--dynamic-glass-bg, linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%));
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.12));
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-link-glass:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .profile-link-glass::before {
@@ -564,7 +596,14 @@ button:active {
 }
 
 .profile-affiliation-card {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.profile-affiliation-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .profile-edit-field {
