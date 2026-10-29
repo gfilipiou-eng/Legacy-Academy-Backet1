@@ -51,6 +51,7 @@ const UserSchema = new mongoose.Schema({
     businessWebsites: [{ type: Object }],
     businessWebsite: { type: Object },
     footballTeam: { type: Object },
+    hideOfficialWebsites: { type: Boolean, default: false },
     favoritePlayer: { type: Object }
   },
   missionsStreak: { type: Number, default: 0 },

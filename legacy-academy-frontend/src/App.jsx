@@ -630,7 +630,7 @@ const fetchFounderAffiliationUser = async (username) => {
     return request;
 };
 
-const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth, iconOnly = false }) => {
+const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className = '', maxTextWidth, iconOnly = false, onViewProfile, onClick }) => {
     const normalizedUsername = sanitizeAffiliation(username);
 
     const [resolvedLinkedUser, setResolvedLinkedUser] = useState(() => {
@@ -688,6 +688,18 @@ const FounderAffiliationBadge = ({ username, linkedUser, size = 'md', className 
         <div 
             onClick={(e) => {
                 e.stopPropagation();
+                if (onClick) {
+                    onClick(e);
+                    return;
+                }
+                if (onViewProfile) {
+                    onViewProfile({ username: normalizedUsername });
+                    return;
+                }
+                if (window.__legacyViewProfile) {
+                    window.__legacyViewProfile({ username: normalizedUsername });
+                    return;
+                }
                 window.location.href = founderAffiliationHref(normalizedUsername);
             }}
             className={`founder-affiliation-badge group inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--app-border,#2f3336)] bg-[var(--app-hover,rgba(255,255,255,0.04))] hover:border-[var(--gold-primary,#1D9BF0)]/50 active:scale-95 transition-all duration-200 cursor-pointer select-none max-w-full shadow-sm ${className}`}
@@ -3132,6 +3144,18 @@ const decryptMessageText = (text, user1, user2) => {
 const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast, fetchSpecificUser }) => {
     const { t, lang } = useTranslation(user);
     const [activeChat, setActiveChat] = useState(null);
+    const [mountClickLock, setMountClickLock] = useState(true);
+
+    // Prevent ghost-clicks/tap-through when Whispers opens
+    useEffect(() => {
+        if (isOpen) {
+            setMountClickLock(true);
+            const timer = setTimeout(() => {
+                setMountClickLock(false);
+            }, 350);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
     const normalizeWhisper = useCallback((message) => {
         let decryptedText = message?.text || "";
         if (decryptedText.startsWith('E2EE::')) {
@@ -3515,7 +3539,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                             />
                         </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar">
+                    <div className={`flex-1 overflow-y-auto custom-scrollbar ${mountClickLock ? 'pointer-events-none' : ''}`}>
                         {filteredUsers.length === 0 && <div className="p-4 text-center text-[var(--app-secondary)] text-xs">{t('ZERO_AGENTS')}</div>}
                         {filteredUsers.map(u => {
                             const online = isUserOnline(u, user);
@@ -3523,7 +3547,11 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                 <button
                                     key={u._id}
                                     type="button"
-                                    onClick={() => { setActiveChat(u); }}
+                                    disabled={mountClickLock}
+                                    onClick={() => {
+                                        if (mountClickLock) return;
+                                        setActiveChat(u);
+                                    }}
                                     className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent hover:bg-[var(--app-hover)] transition-colors active:bg-[var(--app-hover)]"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[var(--app-bg)] ${online ? 'bg-green-500' : 'bg-gray-400'}`} /></div>
@@ -3894,6 +3922,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     const [neuralNarrator, setNeuralNarrator] = useState(user?.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
     const [showDanger, setShowDanger] = useState(false);
     const [enableProfileZoom, setEnableProfileZoom] = useState(user?.settings?.enableProfileZoom === true);
+    const [hideOfficialWebsites, setHideOfficialWebsites] = useState(user?.settings?.hideOfficialWebsites === true);
     const pendingShareToggleRef = useRef(null);
     const latestUserRef = useRef(user);
     const normalizeLanguageCode = (value) => String(value || '').toLowerCase().split('-')[0];
@@ -3940,6 +3969,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             setCyberSFX(user.settings?.cyberSFX !== false && localStorage.getItem('cyberSFX') !== 'false');
             setNeuralNarrator(user.settings?.neuralNarrator === true || localStorage.getItem('neuralNarrator') === 'true');
             setEnableProfileZoom(user.settings?.enableProfileZoom === true);
+            setHideOfficialWebsites(user.settings?.hideOfficialWebsites === true);
         }
     }, [user, isOpen]);
 
@@ -4007,6 +4037,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             if (key === 'enableProfileZoom') {
                 payload = { settings: { enableProfileZoom: Boolean(val) } };
                 setEnableProfileZoom(Boolean(val));
+            }
+            if (key === 'hideOfficialWebsites') {
+                payload = { settings: { hideOfficialWebsites: Boolean(val) } };
+                setHideOfficialWebsites(Boolean(val));
             }
 
             // OPTIMISTIC UPDATE FOR ALL SETTINGS
@@ -4422,6 +4456,9 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
                                     </SettingRow>
                                     <SettingRow label={t('IS_18_PLUS_PROFILE', '18+ Profile (NSFW)')} desc={t('IS_18_PLUS_PROFILE_DESC', 'Require age verification for visitors')}>
                                         <Toggle active={is18PlusProfile} onToggle={() => { const v = !is18PlusProfile; setIs18PlusProfile(v); handleSave('is18PlusProfile', v); }} saving={saving} color="red" />
+                                    </SettingRow>
+                                    <SettingRow label={t('HIDE_OFFICIAL_WEBSITES', 'Hide Official Websites & Links')} desc={t('HIDE_OFFICIAL_WEBSITES_DESC', 'Hide all published websites and external links from your profile')}>
+                                        <Toggle active={hideOfficialWebsites} onToggle={() => { const v = !hideOfficialWebsites; setHideOfficialWebsites(v); handleSave('hideOfficialWebsites', v); }} saving={saving} color="blue" />
                                     </SettingRow>
 
                                     <div className="px-4 py-4 border-t" style={{ borderColor: 'var(--app-border, #2f3336)' }}>
@@ -5831,17 +5868,25 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
         handleClose();
     };
 
+    const handleModalOpen = (fn) => {
+        playCyberSFX('menu');
+        handleClose();
+        setTimeout(() => {
+            if (fn) fn();
+        }, 180);
+    };
+
     return (
         <div className="fixed inset-0 z-[2000] flex pointer-events-none overscroll-contain">
             <div
-                className={`absolute inset-0 bg-black/70 pointer-events-auto z-[100] backdrop-blur-sm ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
+                className={`absolute inset-0 bg-black/75 pointer-events-auto z-[100] backdrop-blur-sm ${isClosing ? 'drawer-backdrop closing' : 'drawer-backdrop'}`}
                 onClick={handleClose}
                 onTouchMove={(e) => e.preventDefault()}
                 style={{ touchAction: 'none' }}
             />
 
             <div className={`
-                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(82vw,290px)] sm:w-[280px]
+                nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(88vw,340px)] sm:w-[330px]
                 flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-[var(--app-border,#2f3336)]
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
@@ -5851,18 +5896,18 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
             }}>
                 {/* 1. X-STYLE USER IDENTITY (Top Header) */}
                 <div 
-                    className="flex-none px-4 pt-[max(18px,calc(14px+env(safe-area-inset-top,0px)))] pb-3 border-b border-[var(--app-border,#2f3336)] cursor-pointer touch-manipulation select-none"
-                    onClick={() => { playCyberSFX('menu'); onClose(); onViewProfile(user); }}
+                    className="flex-none px-5 pt-[max(20px,calc(14px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] cursor-pointer touch-manipulation select-none"
+                    onClick={() => handleModalOpen(() => onViewProfile(user))}
                 >
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="w-10 h-10 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] shrink-0 active:scale-95 transition-transform">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 active:scale-95 transition-transform shadow-sm">
                             <ProfileAvatar user={user} className="w-full h-full object-cover" />
                         </div>
                         <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); handleClose(); }}
                             aria-label="Close menu"
-                            className="min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-90 transition-all cursor-pointer touch-manipulation"
+                            className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-90 transition-all cursor-pointer touch-manipulation"
                         >
                             <Icons.X className="w-5 h-5" />
                         </button>
@@ -5870,55 +5915,60 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
                     <div className="min-w-0">
                         <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="font-extrabold text-[16px] text-[var(--app-text,#ffffff)] leading-snug truncate">{user?.username}</span>
-                            <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-3.5 h-3.5 shrink-0" user={user} />
+                            <span className="font-black text-[17px] sm:text-[18px] text-[var(--app-text,#ffffff)] leading-snug truncate">{user?.username}</span>
+                            <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                             {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-3.5 h-3.5 shrink-0" />{getActiveStreak(user)}</span>}
                         </div>
-                        <span className="text-[13px] text-[var(--app-secondary,#71767b)] leading-none truncate block mt-0.5">@{user?.username?.toLowerCase().split(' ').join('')}</span>
+                        <span className="text-[14px] text-[var(--app-secondary,#71767b)] font-medium leading-none truncate block mt-1">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                     </div>
 
-                    <div className="flex items-center gap-4 mt-2.5 text-[13px]">
-                        <div className="flex items-center gap-1">
-                            <span className="font-bold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.following)}</span>
+                    <div className="flex items-center gap-4 mt-3 text-[14px]">
+                        <div className="flex items-center gap-1.5">
+                            <span className="font-extrabold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.following)}</span>
                             <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                            <span className="font-bold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.followers)}</span>
+                        <div className="flex items-center gap-1.5">
+                            <span className="font-extrabold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.followers)}</span>
                             <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWERS') || 'Followers'}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* 2. X-STYLE COMPACT NAV ITEMS (Fits whole screen without forced scroll) */}
-                <div className="flex-1 overflow-y-auto no-scrollbar py-2 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    <div className="flex flex-col gap-0.5 px-2">
+                {/* 2. X-STYLE SPACIOUS NAV ITEMS */}
+                <div className="flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex flex-col gap-1 px-3">
                         {[
-                            { id: 'profile', icon: Icons.User, label: t('PROFILE') || 'Profile', action: () => { onClose(); onViewProfile(user); } },
+                            { id: 'profile', icon: Icons.User, label: t('PROFILE') || 'Profile', action: () => handleModalOpen(() => onViewProfile(user)) },
                             { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels'), action: () => handleLink('cartels') },
-                            { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') || 'Whispers', action: () => { onClose(); onOpenChat(); } },
-                            { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: () => { onClose(); onOpenBubbles(); } },
-                            { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: () => { onClose(); onOpenWebsiteBuilder(); } },
+                            { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') || 'Whispers', action: () => handleModalOpen(onOpenChat) },
+                            { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: () => handleModalOpen(onOpenBubbles) },
+                            { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: () => handleModalOpen(onOpenWebsiteBuilder) },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE') || 'Notifications', badge: alerts?.filter(n => !n.read).length, action: () => handleLink('alerts') },
-                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Settings and privacy'), action: () => { onClose(); onOpenSettings(); } }
-                        ].map((item) => {
+                            { divider: true },
+                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Settings and privacy'), action: () => handleModalOpen(onOpenSettings) }
+                        ].map((item, idx) => {
+                            if (item.divider) {
+                                return <div key={`div-${idx}`} className="my-1.5 border-t border-[var(--app-border,#2f3336)]/40 mx-2" />;
+                            }
                             const isActive = activeTab === item.id;
+                            const IconComponent = item.icon;
                             return (
                                 <button
                                     key={item.id}
+                                    type="button"
                                     onClick={() => {
-                                        playCyberSFX('menu');
                                         item.action();
                                     }}
-                                    className={`w-full px-3 py-2.5 flex items-center gap-4 rounded-xl transition-colors duration-150 touch-manipulation cursor-pointer active:scale-[0.98] ${
+                                    className={`w-full px-3.5 py-3 flex items-center gap-4 rounded-2xl transition-all duration-150 touch-manipulation cursor-pointer active:scale-[0.98] ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.06))]'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--app-hover,rgba(255,255,255,0.08))] shadow-sm'
                                             : 'text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.05))]'
                                     }`}
                                 >
-                                    <item.icon className="w-5 h-5 shrink-0" strokeWidth={2} />
-                                    <span className="text-[15px] font-bold tracking-tight text-left flex-1 truncate">{item.label}</span>
+                                    <IconComponent className="w-6 h-6 shrink-0" strokeWidth={2} />
+                                    <span className="text-[16px] sm:text-[17px] font-black tracking-tight text-left flex-1 truncate">{item.label}</span>
                                     {item.badge > 0 && (
-                                        <div className="min-w-[18px] h-[18px] px-1 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0">
+                                        <div className="min-w-[20px] h-[20px] px-1.5 bg-[#1D9BF0] rounded-full flex items-center justify-center shrink-0 shadow-sm">
                                             <span className="text-[10px] font-black text-white leading-none">
                                                 {item.badge > 9 ? '9+' : item.badge}
                                             </span>
@@ -5930,16 +5980,17 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-2 pt-2 pb-[max(14px,calc(10px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-1">
+                    <div className="px-3 pt-3 pb-[max(16px,calc(12px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-1.5">
                         <button
+                            type="button"
                             onClick={() => { onLogout(); handleClose(); }}
-                            className="w-full px-3 py-2 flex items-center gap-4 rounded-xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors cursor-pointer touch-manipulation active:scale-[0.98]"
+                            className="w-full px-3.5 py-2.5 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-all cursor-pointer touch-manipulation active:scale-[0.98]"
                         >
                             <Icons.Logout className="w-5 h-5 shrink-0" strokeWidth={2} />
-                            <span className="text-[14px] font-bold">{t('LOGOUT')}</span>
+                            <span className="text-[15px] font-bold">{t('LOGOUT')}</span>
                         </button>
 
-                        <div className="flex items-center gap-3 px-3 pt-1 text-[11px] text-[var(--app-secondary,#71767b)]">
+                        <div className="flex items-center gap-3 px-3.5 pt-1 text-[12px] text-[var(--app-secondary,#71767b)]">
                             <button onClick={() => { onOpenTerms(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('TERMS_OF_SERVICE')}</button>
                             <span>·</span>
                             <button onClick={() => { onOpenPrivacy(); handleClose(); }} className="hover:text-[var(--app-text,#ffffff)] transition-colors cursor-pointer">{t('PRIVACY_POLICY')}</button>
@@ -7307,7 +7358,13 @@ const ProfileModal = ({
                                     })()}
                                     {displayFounderAffiliation && (
                                         <div className="mt-2">
-                                            <FounderAffiliationBadge username={displayFounderAffiliation} size="sm" maxTextWidth="max-w-none" className="max-w-full" />
+                                            <FounderAffiliationBadge 
+                                                username={displayFounderAffiliation} 
+                                                size="sm" 
+                                                maxTextWidth="max-w-none" 
+                                                className="max-w-full" 
+                                                onViewProfile={(u) => onViewProfile && onViewProfile(u)}
+                                            />
                                         </div>
                                     )}
                                     <div className="profile-handle-row flex flex-col items-center gap-2 mt-1.5">
@@ -7467,28 +7524,73 @@ const ProfileModal = ({
                                 const visibleSites = isMe ? sites : sites.filter(s => !s.isDraft);
                                 const externalUrl = displayUser?.website || displayUser?.settings?.website;
                                 const hasExternalWebsite = !!externalUrl && typeof externalUrl === 'string' && externalUrl.trim() !== '';
+                                const isHiddenBySetting = Boolean(displayUser?.settings?.hideOfficialWebsites);
 
+                                if (!isMe && isHiddenBySetting) return null;
                                 if (visibleSites.length === 0 && !hasExternalWebsite) return null;
 
                                 return (
                                     <div className="w-full mb-6 space-y-3 px-2">
                                         <div className="flex items-center justify-between px-1">
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] flex items-center gap-1.5">
-                                                <Icons.Globe className="w-3.5 h-3.5 text-[var(--gold-primary)]" />
-                                                {t('WEBSITES_AND_LINKS', 'Websites & Spaces')}
-                                            </span>
-                                            {isMe && onOpenWebsiteBuilder && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        onClose();
-                                                        onOpenWebsiteBuilder();
-                                                    }}
-                                                    className="text-[10px] font-bold text-[var(--gold-primary)] hover:underline flex items-center gap-1 cursor-pointer select-none"
-                                                >
-                                                    <Icons.Plus className="w-3 h-3" />
-                                                    {t('MANAGE', 'Manage')}
-                                                </button>
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] flex items-center gap-1.5">
+                                                    <Icons.Globe className="w-3.5 h-3.5 text-[var(--gold-primary)]" />
+                                                    {t('WEBSITES_AND_LINKS', 'Websites & Spaces')}
+                                                </span>
+                                                {isHiddenBySetting && (
+                                                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                                        {t('HIDDEN_FROM_PUBLIC', 'Hidden from public')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {isMe && (
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            const nextVal = !isHiddenBySetting;
+                                                            try {
+                                                                await axios.put('/users/settings', { settings: { hideOfficialWebsites: nextVal } });
+                                                                const updated = {
+                                                                    ...displayUser,
+                                                                    settings: { ...(displayUser?.settings || {}), hideOfficialWebsites: nextVal }
+                                                                };
+                                                                setUserData(updated);
+                                                                onUpdateUser?.(updated);
+                                                                addToast?.(nextVal ? (t('WEBSITES_HIDDEN_TOAST') || 'Websites & links hidden from profile') : (t('WEBSITES_SHOWN_TOAST') || 'Websites & links visible on profile'), 'success');
+                                                            } catch (e) {
+                                                                console.error("Toggle hide websites error:", e);
+                                                            }
+                                                        }}
+                                                        className="text-[10px] font-bold text-[var(--app-secondary)] hover:text-[var(--app-text)] flex items-center gap-1 cursor-pointer select-none px-2 py-1 rounded-lg hover:bg-[var(--app-hover)] transition-colors"
+                                                        title={isHiddenBySetting ? "Make websites visible to public" : "Hide all websites from public"}
+                                                    >
+                                                        {isHiddenBySetting ? (
+                                                            <>
+                                                                <Icons.EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                                                                <span className="text-amber-400">{t('UNHIDE', 'Unhide')}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Icons.Eye className="w-3.5 h-3.5" />
+                                                                <span>{t('HIDE_ALL', 'Hide')}</span>
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                    {onOpenWebsiteBuilder && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                onClose();
+                                                                onOpenWebsiteBuilder();
+                                                            }}
+                                                            className="text-[10px] font-bold text-[var(--gold-primary)] hover:underline flex items-center gap-1 cursor-pointer select-none"
+                                                        >
+                                                            <Icons.Plus className="w-3 h-3" />
+                                                            {t('MANAGE', 'Manage')}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
 
@@ -8643,10 +8745,21 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 </div>
             )}
 
-            <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-20 pb-24">
-                {/* LOGOUT / BACK TO PORTAL FLOATING BUTTON */}
-                <button onClick={onClose} className="absolute top-4 left-4 p-3 bg-[var(--app-card-bg,rgba(255,255,255,0.05))] backdrop-blur-xl border border-[var(--app-border)] rounded-full text-[var(--app-text)] hover:bg-[var(--app-hover)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-lg z-50">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+            <div className="profile-page-inner relative z-10 w-full max-w-lg flex flex-col items-center px-4 pt-[max(72px,calc(56px+env(safe-area-inset-top,0px)))] pb-24">
+                {/* LOGOUT / BACK TO PORTAL FIXED BUTTON */}
+                <button 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            onClose?.();
+                        }
+                    }} 
+                    aria-label="Back"
+                    className="fixed top-[max(14px,calc(10px+env(safe-area-inset-top,0px)))] left-4 z-[60] min-w-[46px] min-h-[46px] p-2.5 bg-[var(--app-bg,#000000)]/90 backdrop-blur-xl border border-[var(--app-border,#2f3336)] rounded-full text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover)] active:scale-95 transition-all duration-200 flex items-center justify-center shadow-2xl cursor-pointer touch-manipulation"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
                 </button>
 
                 {/* SIGN UP CALL TO ACTION (Removed floating button) */}
@@ -8691,6 +8804,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 linkedUser={(user && (sanitizeAffiliation(user.username).toLowerCase() === sanitizeAffiliation(publicFounderAffiliation).toLowerCase() || sanitizeAffiliation(user.username).toLowerCase().replace(/\s+/g, '') === sanitizeAffiliation(publicFounderAffiliation).toLowerCase().replace(/\s+/g, ''))) ? user : null}
                                 size="sm" 
                                 maxTextWidth="max-w-none" 
+                                onClick={() => onNavigateProfile?.(publicFounderAffiliation)}
                             />
                         </div>
                     )}
@@ -8769,7 +8883,9 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                     const visibleSites = sites.filter(s => !s.isDraft);
                     const externalUrl = publicUser?.website || publicUser?.settings?.website;
                     const hasExternalWebsite = !!externalUrl && typeof externalUrl === 'string' && externalUrl.trim() !== '';
+                    const isHiddenBySetting = Boolean(publicUser?.settings?.hideOfficialWebsites);
 
+                    if (!isOwner && isHiddenBySetting) return null;
                     if (visibleSites.length === 0 && !hasExternalWebsite) return null;
 
                     return (
@@ -8779,6 +8895,11 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)]">
                                     {t('OFFICIAL_SPACES', 'Official Websites & Links')}
                                 </span>
+                                {isHiddenBySetting && (
+                                    <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                        {t('HIDDEN_FROM_PUBLIC', 'Hidden from public')}
+                                    </span>
+                                )}
                             </div>
                             <div className="flex flex-col gap-3">
                                 {visibleSites.map((site) => {
@@ -11143,6 +11264,14 @@ const App = () => {
             console.error("Targeted profile fetch error:", err);
         }
     };
+
+    useEffect(() => {
+        window.__legacyViewProfile = viewProfile;
+        return () => {
+            delete window.__legacyViewProfile;
+        };
+    }, [viewProfile]);
+
     // AUTO-LANGUAGE DETECTION
     useEffect(() => {
         const savedLang = localStorage.getItem('language');
@@ -12632,7 +12761,13 @@ const App = () => {
                             </div>
                             <div className="mb-4" />
                             {getFounderAffiliation(shareModalProfile) && (
-                                <FounderAffiliationBadge username={getFounderAffiliation(shareModalProfile)} size="sm" maxTextWidth="max-w-none" className="mb-4" />
+                                <FounderAffiliationBadge 
+                                    username={getFounderAffiliation(shareModalProfile)} 
+                                    size="sm" 
+                                    maxTextWidth="max-w-none" 
+                                    className="mb-4" 
+                                    onViewProfile={(u) => { setShareModalProfile(null); viewProfile(u); }}
+                                />
                             )}
                             
                             {/* Bio */}

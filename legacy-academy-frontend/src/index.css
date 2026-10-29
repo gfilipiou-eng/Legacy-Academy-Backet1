@@ -492,8 +492,8 @@ button:active {
 @media (max-width: 640px) {
   .liquid-glass-nav,
   .nav-drawer-panel {
-    max-width: min(100%, 320px) !important;
-    width: min(88vw, 320px) !important;
+    max-width: min(88vw, 360px) !important;
+    width: min(88vw, 360px) !important;
   }
 
   .nav-item-btn {
@@ -2001,8 +2001,8 @@ input, textarea {
 /* Force mobile UI on ALL screen sizes */
 @media (min-width: 640px) {
   .drawer-panel {
-    width: 65% !important;
-    max-width: 280px !important;
+    width: 340px !important;
+    max-width: 360px !important;
   }
 }
 

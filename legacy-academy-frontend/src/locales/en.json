@@ -696,5 +696,12 @@
   "EDIT_POST": "Edit",
   "CREATE": "Create",
   "LIQUID_GLASS": "Liquid Glass Intensity",
-  "LIQUID_GLASS_DESC": "Adjust the blur and glass effect strength on all cards and panels."
+  "LIQUID_GLASS_DESC": "Adjust the blur and glass effect strength on all cards and panels.",
+  "HIDE_OFFICIAL_WEBSITES": "Hide Official Websites & Links",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Hide all published websites and external links from your profile.",
+  "HIDDEN_FROM_PUBLIC": "Hidden from public",
+  "WEBSITES_HIDDEN_TOAST": "Websites & links are now hidden from your public profile",
+  "WEBSITES_SHOWN_TOAST": "Websites & links are now visible on your profile",
+  "UNHIDE": "Unhide",
+  "HIDE_ALL": "Hide"
 }

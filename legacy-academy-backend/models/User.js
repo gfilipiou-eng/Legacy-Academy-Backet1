@@ -112,6 +112,7 @@ const UserSchema = new mongoose.Schema(
             businessWebsites: { type: Array, default: [] },
             footballTeam: { type: Object, default: null },
             enableProfileZoom: { type: Boolean, default: false },
+            hideOfficialWebsites: { type: Boolean, default: false },
             favoritePlayer: { type: Object }
         },
         sharesBalance: {
