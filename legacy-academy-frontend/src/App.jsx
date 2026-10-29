@@ -11775,25 +11775,17 @@ const App = () => {
                         <header className="relative w-full z-[20] bg-[var(--app-bg)] text-[var(--app-text,#ffffff)] border-b border-[var(--app-border,#eff3f4)] shrink-0 pt-[env(safe-area-inset-top,0px)]">
                             <div className="w-full px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
-                                    <button
-                                        type="button"
+                                    <EnhancedButton
                                         onClick={() => { playCyberSFX('click'); setIsDrawerOpen(true); }}
-                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 rounded-full cursor-pointer touch-manipulation active:scale-95 transition-transform"
+                                        className="relative min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-transparent transition-colors duration-300 z-50 p-2.5 -ml-2 group touch-manipulation cursor-pointer select-none"
                                         aria-label="Open menu"
+                                        scaleDown={1}
+                                        duration={0}
                                     >
-                                        {user ? (
-                                            <div className="w-8 h-8 rounded-full overflow-hidden border border-[var(--app-border,#eff3f4)] ring-1 ring-white/10 shrink-0">
-                                                <ProfileAvatar user={user} className="w-full h-full object-cover" />
-                                            </div>
-                                        ) : (
-                                            <svg fill="none" width="26" viewBox="0 0 24 24" height="26" className="text-[var(--app-text,#0f1419)] pointer-events-none">
-                                                <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
-                                            </svg>
-                                        )}
-                                        {alerts?.some(n => !n.read) && (
-                                            <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#1D9BF0] rounded-full border-2 border-[var(--app-bg,#000000)]" />
-                                        )}
-                                    </button>
+                                        <svg fill="none" width="28" viewBox="0 0 24 24" height="28" className="text-[var(--app-text,#0f1419)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors duration-300 pointer-events-none">
+                                            <path fill="currentColor" stroke="none" strokeWidth="0" strokeLinecap="butt" strokeLinejoin="miter" fillRule="evenodd" clipRule="evenodd" d="M2 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm0 6a1 1 0 0 1 1-1h18a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Z"></path>
+                                        </svg>
+                                    </EnhancedButton>
                                 </div>
                                 <div className="flex-1 flex justify-center py-2">
                                     <div className="relative flex items-center justify-center transition-transform duration-300 hover:scale-[1.02]">
