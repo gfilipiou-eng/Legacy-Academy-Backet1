@@ -3152,7 +3152,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
             setMountClickLock(true);
             const timer = setTimeout(() => {
                 setMountClickLock(false);
-            }, 30);
+            }, 200);
             return () => clearTimeout(timer);
         }
     }, [isOpen]);
@@ -3553,7 +3553,7 @@ const ChatModal = ({ isOpen, onClose, user, allUsers, initialChatUser, addToast,
                                         setActiveChat(u);
                                     }}
                                     style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent hover:bg-[var(--app-hover)] transition-colors active:bg-[var(--app-hover)] select-none"
+                                    className="w-full p-4 flex items-center gap-3 cursor-pointer text-left touch-manipulation border-l-2 border-transparent bg-transparent md:hover:bg-[var(--app-hover)] transition-colors select-none"
                                 >
                                     <div className="relative shrink-0"><div className="w-12 h-12 relative group"><div className="w-full h-full rounded-full overflow-hidden"><ProfileAvatar user={u} /></div></div><div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-[2.5px] border-[var(--app-bg)] ${online ? 'bg-green-500' : 'bg-gray-400'}`} /></div>
                                     <div className="min-w-0 flex-1"><div className="font-bold text-sm text-[var(--app-text)] flex items-center gap-1.5 truncate">{u?.username} <VerifiedBadge isFounder={u.role === 'Founder'} isUser={u.role !== 'Founder'} className="w-4 h-4 shrink-0" user={u} /> {getActiveStreak(u) > 0 && <span className="text-orange-500 font-bold text-[11px] shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-[1.2em] h-[1.2em] shrink-0" />{getActiveStreak(u)}</span>}</div><div className={`text-[10px] font-bold ${online ? 'text-green-500' : 'text-[var(--app-secondary)]'} uppercase tracking-wider`}>{online ? t('ONLINE') : t('OFFLINE')}</div></div>
@@ -5875,8 +5875,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
     const handleModalOpen = (fn) => {
         playCyberSFX('menu');
-        if (fn) fn();
         onClose();
+        setTimeout(() => {
+            if (fn) fn();
+        }, 50);
     };
 
     return (
@@ -5898,34 +5900,46 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 color: 'var(--app-text, #ffffff)'
             }}>
                 {/* 1. X-STYLE USER IDENTITY (Top Header) */}
-                <div 
-                    className="flex-none px-5 pt-[max(20px,calc(14px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] cursor-pointer touch-manipulation select-none"
-                    onClick={() => handleModalOpen(() => onViewProfile(user))}
-                >
+                <div className="flex-none px-5 pt-[max(20px,calc(14px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
                     <div className="flex items-center justify-between mb-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 active:scale-95 transition-transform shadow-sm">
+                        <div 
+                            onClick={() => handleModalOpen(() => onViewProfile(user))}
+                            className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 cursor-pointer active:opacity-80 transition-opacity shadow-sm"
+                            title={t('VIEW_PROFILE') || 'View profile'}
+                        >
                             <ProfileAvatar user={user} className="w-full h-full object-cover" />
                         </div>
                         <button
                             type="button"
-                            onClick={(e) => { e.stopPropagation(); handleClose(); }}
+                            onClick={(e) => { 
+                                e.preventDefault(); 
+                                e.stopPropagation(); 
+                                onClose(); 
+                            }}
                             aria-label="Close menu"
-                            className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-[var(--app-hover,rgba(255,255,255,0.06))] active:scale-90 transition-all cursor-pointer touch-manipulation"
+                            style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                            className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-[var(--app-secondary,#71767b)] hover:text-white hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer touch-manipulation select-none"
                         >
-                            <Icons.X className="w-5 h-5" />
+                            <Icons.X className="w-6 h-6" />
                         </button>
                     </div>
 
-                    <div className="min-w-0">
+                    <div 
+                        onClick={() => handleModalOpen(() => onViewProfile(user))}
+                        className="cursor-pointer group"
+                    >
                         <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="font-black text-[17px] sm:text-[18px] text-[var(--app-text,#ffffff)] leading-snug truncate">{user?.username}</span>
+                            <span className="font-black text-[17px] sm:text-[18px] text-[var(--app-text,#ffffff)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors leading-snug truncate">{user?.username}</span>
                             <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                             {getActiveStreak(user) > 0 && <span className="text-orange-500 font-bold text-xs shrink-0 flex items-center gap-0.5"><Icons.Streak className="w-3.5 h-3.5 shrink-0" />{getActiveStreak(user)}</span>}
                         </div>
                         <span className="text-[14px] text-[var(--app-secondary,#71767b)] font-medium leading-none truncate block mt-1">@{user?.username?.toLowerCase().split(' ').join('')}</span>
                     </div>
 
-                    <div className="flex items-center gap-4 mt-3 text-[14px]">
+                    <div 
+                        onClick={() => handleModalOpen(() => onViewProfile(user))}
+                        className="flex items-center gap-4 mt-3 text-[14px] cursor-pointer"
+                    >
                         <div className="flex items-center gap-1.5">
                             <span className="font-extrabold text-[var(--app-text,#ffffff)] tabular-nums">{getUniqueCount(user?.following)}</span>
                             <span className="text-[var(--app-secondary,#71767b)]">{t('FOLLOWING')}</span>
@@ -5941,7 +5955,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 <div className="flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col justify-between" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="flex flex-col gap-1 px-3">
                         {[
-                            { id: 'profile', icon: Icons.User, label: t('PROFILE') || 'Profile', action: () => handleModalOpen(() => onViewProfile(user)) },
+                            { id: 'home', icon: Icons.Home, label: t('HOME') || 'Home', action: () => handleLink('home') },
                             { id: 'cartels', icon: Icons.Users, label: t('CARTELS', 'Cartels'), action: () => handleLink('cartels') },
                             { id: 'chat', icon: Icons.MessageSquare, label: t('WHISPERS') || 'Whispers', action: () => handleModalOpen(onOpenChat) },
                             { id: 'bubbles', icon: Icons.ThoughtBubble, label: t('BUBBLES', 'Thought Bubbles'), action: () => handleModalOpen(onOpenBubbles) },
@@ -7653,109 +7667,78 @@ const ProfileModal = ({
                                             {visibleSites.map((site) => {
                                                 const siteUrl = `${window.location.origin}/?site=${encodeURIComponent(displayUser?.username || '')}&index=${site.originalIndex}`;
                                                 return (
-                                                    <div
+                                                    <a
                                                         key={site.originalIndex}
-                                                        className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3.5 text-left relative group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
+                                                        href={siteUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="profile-link-glass p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-white/25 active:scale-[0.99] transition-all select-none shadow-sm cursor-pointer"
                                                     >
-                                                        <div className="flex items-start justify-between gap-2">
-                                                            <div className="flex items-center gap-3 min-w-0">
-                                                                <div
-                                                                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
-                                                                        site.palette === 'gold' 
-                                                                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
-                                                                            : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
-                                                                    }`}
-                                                                >
-                                                                    <Icons.Globe className="w-4 h-4" />
-                                                                </div>
-                                                                <div className="min-w-0">
-                                                                    <h4 className="text-[14px] font-black text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
+                                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                            <div
+                                                                className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
+                                                                    site.palette === 'gold' 
+                                                                        ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
+                                                                        : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
+                                                                }`}
+                                                            >
+                                                                <Icons.Globe className="w-5 h-5" />
+                                                            </div>
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-center gap-2">
+                                                                    <h4 className="text-[14px] sm:text-[15px] font-black text-[var(--app-text)] group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
                                                                         {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
                                                                     </h4>
-                                                                    <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
-                                                                        {site.slogan || `site/${displayUser?.username || ''}`}
-                                                                    </p>
+                                                                    {site.isDraft ? (
+                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50">
+                                                                            {t('DRAFT', 'Draft')}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
+                                                                            <span className="relative flex h-1.5 w-1.5">
+                                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                                                                            </span>
+                                                                            {t('LIVE', 'Live')}
+                                                                        </span>
+                                                                    )}
                                                                 </div>
+                                                                <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                                    {site.slogan || `site/${displayUser?.username || ''}`}
+                                                                </p>
                                                             </div>
-                                                            {site.isDraft ? (
-                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50">
-                                                                    {t('DRAFT', 'Draft')}
-                                                                </span>
-                                                            ) : (
-                                                                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
-                                                                    <span className="relative flex h-1.5 w-1.5">
-                                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
-                                                                    </span>
-                                                                    {t('LIVE', 'Live')}
-                                                                </span>
-                                                            )}
                                                         </div>
-
-                                                        <div className="flex items-center gap-2 pt-2.5 border-t border-white/10">
-                                                            <a
-                                                                href={siteUrl}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                }}
-                                                                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.16] border border-white/10 text-[var(--app-text,#ffffff)] text-xs font-bold tracking-wide flex items-center justify-center gap-1.5 transition-all select-none cursor-pointer"
-                                                            >
-                                                                <Icons.ExternalLink className="w-3.5 h-3.5 text-[var(--gold-primary,#1D9BF0)]" />
-                                                                <span>{t('VISIT_SITE', 'Visit Site')}</span>
-                                                            </a>
-                                                            <button
-                                                                type="button"
-                                                                onClick={async (e) => {
-                                                                    e.stopPropagation();
-                                                                    try {
-                                                                        await navigator.clipboard.writeText(siteUrl);
-                                                                    } catch (_) {
-                                                                        const ta = document.createElement('textarea');
-                                                                        ta.value = siteUrl;
-                                                                        document.body.appendChild(ta);
-                                                                        ta.select();
-                                                                        document.execCommand('copy');
-                                                                        document.body.removeChild(ta);
-                                                                    }
-                                                                    addToast?.(t('LINK_COPIED', 'Website link copied to clipboard!'), 'success');
-                                                                }}
-                                                                className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] active:bg-white/[0.14] border border-white/10 text-[var(--app-secondary,#71767b)] hover:text-white transition-all select-none cursor-pointer flex items-center justify-center shrink-0"
-                                                                title={t('COPY_LINK', 'Copy Link')}
-                                                            >
-                                                                <Icons.Copy className="w-3.5 h-3.5" />
-                                                            </button>
+                                                        <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
+                                                            <Icons.ExternalLink className="w-4 h-4" />
                                                         </div>
-                                                    </div>
+                                                    </a>
                                                 );
                                             })}
 
                                             {hasExternalWebsite && (
-                                                <div className="profile-link-glass p-4 rounded-2xl flex flex-col justify-between gap-3.5 text-left relative group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm">
-                                                    <div className="flex items-center gap-3 min-w-0">
-                                                        <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
-                                                            <Icons.Link className="w-4 h-4" />
+                                                <a
+                                                    href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="profile-link-glass p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-white/25 active:scale-[0.99] transition-all select-none shadow-sm cursor-pointer"
+                                                >
+                                                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                        <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
+                                                            <Icons.Link className="w-5 h-5" />
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <h4 className="text-[14px] font-black text-[var(--app-text)] truncate leading-tight">
+                                                            <h4 className="text-[14px] sm:text-[15px] font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
                                                                 {t('OFFICIAL_LINK', 'Official Link')}
                                                             </h4>
-                                                            <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-0.5">
+                                                            <p className="text-[11px] text-[var(--app-secondary,#71767b)] truncate mt-1">
                                                                 {externalUrl}
                                                             </p>
                                                         </div>
                                                     </div>
-                                                    <a
-                                                        href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="w-full py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.16] border border-white/10 text-[var(--app-text,#ffffff)] text-xs font-bold tracking-wide flex items-center justify-center gap-1.5 transition-all select-none cursor-pointer"
-                                                    >
-                                                        <Icons.ExternalLink className="w-3.5 h-3.5 text-[var(--gold-primary,#1D9BF0)]" />
-                                                        <span>{t('OPEN_LINK', 'Open Link')}</span>
-                                                    </a>
-                                                </div>
+                                                    <div className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
+                                                        <Icons.ExternalLink className="w-4 h-4" />
+                                                    </div>
+                                                </a>
                                             )}
                                         </div>
                                     </div>
