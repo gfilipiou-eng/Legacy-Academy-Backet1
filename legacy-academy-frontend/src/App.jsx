@@ -4150,10 +4150,10 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
     ];
 
     return (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2 sm:p-4"
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto"
              style={{
-                 paddingTop: 'max(16px, env(safe-area-inset-top, 16px))',
-                 paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))'
+                 paddingTop: 'max(24px, calc(env(safe-area-inset-top, 0px) + 20px))',
+                 paddingBottom: 'max(20px, calc(env(safe-area-inset-bottom, 0px) + 16px))'
              }}
         >
             <div
@@ -4162,7 +4162,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             />
 
             <div
-                className="settings-modal-shell relative w-[97%] max-w-[580px] max-h-[90vh] rounded-[22px] overflow-hidden flex flex-col shadow-2xl border transition-colors"
+                className="settings-modal-shell relative w-[min(96vw,580px)] my-auto max-h-[calc(100dvh-max(48px,calc(env(safe-area-inset-top,0px)+36px))-max(28px,calc(env(safe-area-inset-bottom,0px)+16px)))] rounded-[22px] overflow-hidden flex flex-col shadow-2xl border transition-colors"
                 style={{
                     backgroundColor: 'var(--app-bg, #000000)',
                     borderColor: 'var(--app-border, #2f3336)',
@@ -4171,7 +4171,7 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
             >
                 {/* HEADER */}
                 <div
-                    className="px-4 sm:px-5 py-3 sm:py-3.5 border-b flex items-center justify-between shrink-0 relative z-20"
+                    className="px-4 sm:px-5 py-3 sm:py-3.5 border-b flex items-center justify-between shrink-0 relative z-20 bg-[var(--app-bg,#000000)]"
                     style={{ borderColor: 'var(--app-border, #2f3336)' }}
                 >
                     <div className="w-10 h-10 flex items-center justify-center">
@@ -4222,8 +4222,8 @@ const SettingsModal = ({ isOpen, onClose, logout, user, onUpdateUser }) => {
 
                 {/* CONTENT */}
                 <div
-                    className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-5 space-y-6"
-                    style={{ maxHeight: 'calc(90vh - 120px)', WebkitOverflowScrolling: 'touch' }}
+                    className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-5 space-y-6 min-h-0"
+                    style={{ WebkitOverflowScrolling: 'touch' }}
                 >
                     {/* TAB: DISPLAY (CUSTOMIZE YOUR VIEW) */}
                     {activeTab === 'display' && (
