@@ -5913,7 +5913,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 color: 'var(--app-text, #ffffff)'
             }}>
                 {/* 1. USER IDENTITY CARD */}
-                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
+                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-white/[0.08] bg-white/[0.02] select-none">
                     <div className="flex items-center justify-between mb-3.5">
                         <div 
                             onClick={() => handleModalOpen(() => onViewProfile(user))}
@@ -5983,7 +5983,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             { id: 'website_builder', icon: Icons.LayoutTemplate, label: t('WEBSITE_BUILDER', 'Website Builder'), action: () => handleModalOpen(onOpenWebsiteBuilder) },
                             { id: 'alerts', icon: Icons.Bell, label: t('NOTIFICATIONS_TITLE') || 'Notifications', badge: alerts?.filter(n => !n.read).length, action: () => handleLink('alerts') },
                             { divider: true },
-                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Settings and privacy'), action: () => handleModalOpen(onOpenSettings) }
+                            { id: 'settings', icon: Icons.Settings, label: t('SETTINGS_PRIVACY', 'Ρυθμίσεις και απόρρητο'), action: () => handleModalOpen(onOpenSettings) }
                         ].map((item, idx) => {
                             if (item.divider) {
                                 return (
@@ -6006,10 +6006,10 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                         WebkitTapHighlightColor: 'transparent',
                                         touchAction: 'manipulation'
                                     }}
-                                    className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group select-none cursor-pointer bg-transparent transition-colors duration-150 ${
+                                    className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group select-none cursor-pointer transition-all duration-150 active:scale-[0.98] ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] font-black'
-                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)]'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] font-black bg-[var(--gold-primary,#1D9BF0)]/[0.1] border border-[var(--gold-primary,#1D9BF0)]/20'
+                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-white/[0.05] border border-transparent'
                                     }`}
                                 >
                                     <IconComponent
@@ -6043,7 +6043,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-2">
+                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-white/[0.08] bg-white/[0.015] flex flex-col gap-2">
                         <button
                             type="button"
                             onClick={() => { onLogout(); onClose(); }}
@@ -6052,7 +6052,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                 WebkitTapHighlightColor: 'transparent',
                                 touchAction: 'manipulation'
                             }}
-                            className="w-full px-4 py-3 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 transition-colors duration-150 cursor-pointer touch-manipulation select-none"
+                            className="w-full px-4 py-3 flex items-center gap-4 rounded-2xl text-red-500 hover:bg-red-500/10 active:bg-red-500/20 active:scale-[0.98] transition-all duration-150 cursor-pointer touch-manipulation select-none"
                         >
                             <Icons.Logout className="w-[22px] h-[22px] sm:w-6 sm:h-6 shrink-0 text-red-500" strokeWidth="2.2" stroke="currentColor" shapeRendering="geometricPrecision" />
                             <span className="text-[15px] font-bold">{t('LOGOUT')}</span>
@@ -7321,7 +7321,7 @@ const ProfileModal = ({
                                     onChange={e => setBio(e.target.value)}
                                     maxLength={500}
                                     spellCheck={false}
-                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none p-3.5 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[90px]"
+                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none p-3.5 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[130px] max-h-[220px] overflow-y-auto"
                                     placeholder={t('BIO_PH')}
                                 />
                             </div>
@@ -7465,13 +7465,13 @@ const ProfileModal = ({
 
                                 {displayUser?.bio && displayUser.bio.trim() !== "" && (
                                     <div className="mb-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
-                                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-6 text-left sm:text-center shadow-sm relative group transition-all duration-300">
+                                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left shadow-sm relative group transition-all duration-300">
                                             <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                                 </svg>
                                             </div>
-                                            <p className="text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words">
+                                            <p className="text-[14px] sm:text-[15px] text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words leading-relaxed pr-5">
                                                 {parseText(
                                                     displayUser.bio,
                                                     (tag) => onHashtagClick?.(tag),
@@ -8845,13 +8845,13 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                 {/* BIO CARD */}
                 {publicUser.bio && (
                     <div className="mt-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
-                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-6 text-left sm:text-center shadow-sm relative group transition-all duration-300">
+                        <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left shadow-sm relative group transition-all duration-300">
                             <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                 </svg>
                             </div>
-                            <p className="text-xs sm:text-sm text-[var(--app-text)] font-medium select-text whitespace-pre-wrap break-words">
+                            <p className="text-[14px] sm:text-[15px] text-[var(--app-text,#ffffff)] font-medium select-text whitespace-pre-wrap break-words leading-relaxed pr-5">
                                 {parseText(publicUser.bio, null, (mention) => onNavigateProfile?.(mention))}
                             </p>
                         </div>
