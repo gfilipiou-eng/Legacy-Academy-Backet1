@@ -138,7 +138,7 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className={`fixed bottom-0 left-0 right-0 z-[100] pointer-events-none px-2 xs:px-3 sm:px-4 pb-[max(6px,env(safe-area-inset-bottom,6px))] sm:pb-5 transition-transform transition-opacity duration-200 ${
+            className={`fixed bottom-0 left-0 right-0 z-[100] pointer-events-none px-2 xs:px-3 sm:px-4 pb-[env(safe-area-inset-bottom,0px)] sm:pb-5 transition-transform transition-opacity duration-200 ${
                 isKeyboardVisible ? 'translate-y-28 opacity-0' : 'translate-y-0 opacity-100'
             }`}
             onTouchStart={handleTouchStart}

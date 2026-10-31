@@ -7322,7 +7322,7 @@ const ProfileModal = ({
                                     onChange={e => setBio(e.target.value)}
                                     maxLength={500}
                                     spellCheck={false}
-                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-white leading-relaxed outline-none resize-none p-3.5 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[130px] max-h-[220px] overflow-y-auto"
+                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-[14px] sm:text-[15px] text-white leading-relaxed outline-none resize-none p-4 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[130px] max-h-[260px] overflow-y-auto"
                                     placeholder={t('BIO_PH')}
                                 />
                             </div>
@@ -7422,7 +7422,7 @@ const ProfileModal = ({
                                 </div>
                             </div>
 
-                            <div className="mb-6 px-2 w-full flex flex-col items-center text-center">
+                            <div className="mb-6 w-full flex flex-col items-center text-center">
                                 <div className="flex flex-col mb-4 items-center w-full max-w-full">
                                     <div className="flex items-center justify-center gap-2 sm:gap-3 leading-none tracking-wide flex-nowrap whitespace-nowrap overflow-hidden w-full max-w-full px-2">
                                         <span className="profile-headline font-black text-[var(--app-text,#ffffff)] text-xl sm:text-2xl truncate min-w-0">{displayUser?.username || "Unknown Agent"}</span>
