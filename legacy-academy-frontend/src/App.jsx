@@ -5913,7 +5913,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                 color: 'var(--app-text, #ffffff)'
             }}>
                 {/* 1. USER IDENTITY CARD */}
-                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-white/[0.08] bg-white/[0.02] select-none">
+                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
                     <div className="flex items-center justify-between mb-3.5">
                         <div 
                             onClick={() => handleModalOpen(() => onViewProfile(user))}
@@ -6008,8 +6008,8 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                                     }}
                                     className={`w-full px-4 py-3 flex items-center gap-4 rounded-2xl group select-none cursor-pointer transition-all duration-150 active:scale-[0.98] ${
                                         isActive
-                                            ? 'text-[var(--gold-primary,#1D9BF0)] font-black bg-[var(--gold-primary,#1D9BF0)]/[0.1] border border-[var(--gold-primary,#1D9BF0)]/20'
-                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)] hover:bg-white/[0.05] border border-transparent'
+                                            ? 'text-[var(--gold-primary,#1D9BF0)] font-black'
+                                            : 'text-[var(--app-secondary,#71767b)] hover:text-[var(--app-text,#ffffff)]'
                                     }`}
                                 >
                                     <IconComponent
@@ -6043,7 +6043,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-white/[0.08] bg-white/[0.015] flex flex-col gap-2">
+                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-2">
                         <button
                             type="button"
                             onClick={() => { onLogout(); onClose(); }}
