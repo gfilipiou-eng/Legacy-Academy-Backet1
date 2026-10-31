@@ -7465,7 +7465,7 @@ const ProfileModal = ({
                                 </div>
 
                                 {displayUser?.bio && displayUser.bio.trim() !== "" && (
-                                    <div className="mb-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
+                                    <div className="mb-6 w-full p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]" style={{ textAlign: "left" }}>
                                         <div className="w-full h-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left shadow-sm relative group transition-all duration-300">
                                             <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
