@@ -146,9 +146,6 @@ const BottomNavbar = memo(({
             onTouchEnd={handleTouchEnd}
             aria-label="Bottom Navigation"
         >
-            {/* Ambient soft glow beneath the floating pill for seamless transition on mobile */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/25 to-transparent -z-10" />
-
             <div className="bottom-nav-glass w-full max-w-[480px] mx-auto rounded-full pointer-events-auto px-1.5 xs:px-2.5 sm:px-3 py-1 xs:py-1.5 sm:py-2 flex items-center justify-between relative gap-0.5 xs:gap-1 sm:gap-2">
                 
                 {/* Tab: Home */}
@@ -160,9 +157,6 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(activeTab === 'home')}>
                         <Icons.Home className={iconClass(activeTab === 'home')} fill={activeTab === 'home' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={activeTab === 'home' ? '2.5' : '2.2'} shapeRendering="geometricPrecision" />
-                        {activeTab === 'home' && (
-                            <span className="w-1 h-1 rounded-full bg-[var(--gold-primary,#1D9BF0)] mt-0.5 shadow-[0_0_6px_var(--gold-primary,#1D9BF0)]" />
-                        )}
                     </div>
                 </button>
 
@@ -175,9 +169,6 @@ const BottomNavbar = memo(({
                 >
                     <div className={navItemClass(activeTab === 'search')}>
                         <Icons.Search className={iconClass(activeTab === 'search')} fill="none" stroke="currentColor" strokeWidth={activeTab === 'search' ? '2.8' : '2.2'} shapeRendering="geometricPrecision" />
-                        {activeTab === 'search' && (
-                            <span className="w-1 h-1 rounded-full bg-[var(--gold-primary,#1D9BF0)] mt-0.5 shadow-[0_0_6px_var(--gold-primary,#1D9BF0)]" />
-                        )}
                     </div>
                 </button>
 
@@ -189,7 +180,7 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center relative z-20 flex-1 min-w-0 group cursor-pointer"
                 >
                     <div 
-                        className="w-11 h-11 xs:w-12 xs:h-12 flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-90 transition-all duration-150 shadow-[0_2px_14px_rgba(29,155,240,0.4)] ring-2 ring-black/70"
+                        className="w-11 h-11 xs:w-12 xs:h-12 flex items-center justify-center rounded-full text-black hover:scale-105 active:scale-90 transition-all duration-150 ring-2 ring-black/70"
                         style={{ background: 'linear-gradient(135deg, var(--gold-primary, #1D9BF0), var(--gold-secondary, #1a8cd8))' }}
                     >
                         <Icons.Plus className="w-6 h-6 xs:w-7 xs:h-7 stroke-[3] text-black" stroke="currentColor" shapeRendering="geometricPrecision" />
@@ -212,9 +203,6 @@ const BottomNavbar = memo(({
                                 </span>
                             </div>
                         )}
-                        {activeTab === 'alerts' && (
-                            <span className="w-1 h-1 rounded-full bg-[var(--gold-primary,#1D9BF0)] mt-0.5 shadow-[0_0_6px_var(--gold-primary,#1D9BF0)]" />
-                        )}
                     </div>
                 </button>
 
@@ -226,16 +214,13 @@ const BottomNavbar = memo(({
                     className="flex items-center justify-center flex-1 min-w-0 group"
                 >
                     <div className={navItemClass(isProfileActive)}>
-                        <div className={`relative z-10 overflow-hidden bg-neutral-900 transition-all duration-200 w-7 h-7 xs:w-8 xs:h-8 sm:w-[34px] sm:h-[34px] rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-black scale-105 shadow-[0_0_10px_var(--gold-primary,#1D9BF0)]' : 'border border-white/20'}`}>
+                        <div className={`relative z-10 overflow-hidden bg-neutral-900 transition-all duration-200 w-7 h-7 xs:w-8 xs:h-8 sm:w-[34px] sm:h-[34px] rounded-full ${isProfileActive ? 'ring-2 ring-[var(--gold-primary,#1D9BF0)] ring-offset-2 ring-offset-black scale-105' : 'border border-white/20'}`}>
                             {ProfileAvatar ? (
                                 <ProfileAvatar user={user} className="w-full h-full object-cover" priority cacheKey={user?.updatedAt || user?._id} />
                             ) : (
                                 <Icons.User className="w-full h-full p-1 text-white/80" />
                             )}
                         </div>
-                        {isProfileActive && (
-                            <span className="w-1 h-1 rounded-full bg-[var(--gold-primary,#1D9BF0)] mt-0.5 shadow-[0_0_6px_var(--gold-primary,#1D9BF0)]" />
-                        )}
                     </div>
                 </button>
             </div>
