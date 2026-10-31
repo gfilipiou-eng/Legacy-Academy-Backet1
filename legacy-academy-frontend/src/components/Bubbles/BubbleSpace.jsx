@@ -106,7 +106,7 @@ const BubbleSpace = ({ user: currentUser, onClose }) => {
     loadBubbles();
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
     };
   }, []);
 

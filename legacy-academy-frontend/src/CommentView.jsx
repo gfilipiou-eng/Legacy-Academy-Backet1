@@ -168,33 +168,10 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
     socket.on('comment.updated', handleCommentUpdated);
     socket.on('comment.deleted', handleCommentDeleted);
 
-    const scrollY = window.scrollY;
-    const prevOverflow = document.body.style.overflow;
-    const prevPosition = document.body.style.position;
-    const prevTop = document.body.style.top;
-    const prevLeft = document.body.style.left;
-    const prevRight = document.body.style.right;
-    const prevWidth = document.body.style.width;
-
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-
     return () => {
       socket.off('comment.added', handleCommentAdded);
       socket.off('comment.updated', handleCommentUpdated);
       socket.off('comment.deleted', handleCommentDeleted);
-
-      document.body.style.overflow = prevOverflow;
-      document.body.style.position = prevPosition;
-      document.body.style.top = prevTop;
-      document.body.style.left = prevLeft;
-      document.body.style.right = prevRight;
-      document.body.style.width = prevWidth;
-      window.scrollTo(0, scrollY);
     };
   }, [postId]);
 

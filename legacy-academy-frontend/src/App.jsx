@@ -9704,6 +9704,38 @@ const App = () => {
     useEffect(() => { postsRef.current = posts; }, [posts]);
     useEffect(() => { usersRef.current = users; }, [users]);
 
+    // Global mobile viewport drift protection: prevent window.scrollY drift on mobile
+    useEffect(() => {
+        const preventWindowDrift = () => {
+            if (window.scrollY !== 0 || document.documentElement.scrollTop !== 0 || document.body.scrollTop !== 0) {
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }
+        };
+
+        window.addEventListener('scroll', preventWindowDrift, { passive: true });
+        window.addEventListener('focusout', () => {
+            setTimeout(preventWindowDrift, 50);
+            setTimeout(preventWindowDrift, 200);
+        });
+        window.addEventListener('orientationchange', preventWindowDrift, { passive: true });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', preventWindowDrift);
+            window.visualViewport.addEventListener('scroll', preventWindowDrift);
+        }
+
+        return () => {
+            window.removeEventListener('scroll', preventWindowDrift);
+            window.removeEventListener('orientationchange', preventWindowDrift);
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', preventWindowDrift);
+                window.visualViewport.removeEventListener('scroll', preventWindowDrift);
+            }
+        };
+    }, []);
+
     // Track online users to show a toast when someone comes online
     useEffect(() => {
         if (!user) return;
