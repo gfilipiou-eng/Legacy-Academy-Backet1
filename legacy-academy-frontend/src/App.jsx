@@ -1928,6 +1928,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                 post={post}
                 user={user}
                 onLike={onLike}
+                onDislike={onDislike}
                 onRepost={onRepost}
                 onComment={() => { setZoomImage(null); }}
                 onShare={onShare}
@@ -12787,6 +12788,7 @@ const App = () => {
                     post={lightboxPost}
                     user={user}
                     onLike={handleLike}
+                    onDislike={handleDislike}
                     onRepost={handleRepost}
                     onComment={(p) => {
                         setLightboxPost(null);

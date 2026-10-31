@@ -19,7 +19,8 @@ export const ImageLightbox = ({
     onLike = null,
     onRepost = null,
     onComment = null,
-    onShare = null
+    onShare = null,
+    onDislike = null
 }) => {
     const [loaded, setLoaded] = useState(false);
     const [failed, setFailed] = useState(false);
@@ -27,11 +28,14 @@ export const ImageLightbox = ({
     const [localReposts, setLocalReposts] = useState(post?.reposts || []);
     const [likePop, setLikePop] = useState(0);
     const [repostPop, setRepostPop] = useState(0);
+    const [localDislikes, setLocalDislikes] = useState(post?.dislikes || []);
+    const [dislikePop, setDislikePop] = useState(0);
     const imgRef = useRef(null);
 
     useEffect(() => {
         if (post?.likes) setLocalLikes(post.likes);
         if (post?.reposts) setLocalReposts(post.reposts);
+        if (post?.dislikes) setLocalDislikes(post.dislikes);
     }, [post]);
 
     useEffect(() => {
@@ -57,6 +61,7 @@ export const ImageLightbox = ({
 
     const isLiked = localLikes.some(id => isSameId(id, user?._id));
     const isReposted = localReposts.some(id => isSameId(id, user?._id));
+    const isDisliked = localDislikes.some(id => isSameId(id, user?._id));
 
     const handleLikeClick = (e) => {
         e.stopPropagation();
@@ -81,6 +86,18 @@ export const ImageLightbox = ({
             setLocalReposts(prev => [...prev, user?._id || 'me']);
         }
         onRepost(post._id);
+    };
+
+    const handleDislikeClick = (e) => {
+        e.stopPropagation();
+        if (!post?._id || !onDislike) return;
+        setDislikePop(v => v + 1);
+        if (isDisliked) {
+            setLocalDislikes(prev => prev.filter(id => !isSameId(id, user?._id)));
+        } else {
+            setLocalDislikes(prev => [...prev, user?._id || 'me']);
+        }
+        onDislike(post._id);
     };
 
     const authorName = post?.author?.username || (typeof post?.author === 'string' ? post.author : 'Author');
@@ -240,19 +257,17 @@ export const ImageLightbox = ({
                             <span className="tabular-nums text-xs">{localLikes.length}</span>
                         </button>
 
-                        {/* SHARE */}
+                        {/* DISLIKE */}
                         <button
                             type="button"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onShare && onShare(post);
-                            }}
-                            className="group flex items-center gap-1.5 text-[14px] font-medium text-gray-300 hover:text-[#1D9BF0] transition-colors cursor-pointer px-2"
-                            title="Share"
+                            onClick={handleDislikeClick}
+                            className={`group flex items-center gap-1.5 text-[14px] font-medium transition-colors cursor-pointer px-2 ${isDisliked ? 'text-[#F97316]' : 'text-gray-300 hover:text-[#F97316]'}`}
+                            title="Dislike"
                         >
-                            <div className="p-1.5 rounded-full group-hover:bg-[#1D9BF0]/15 transition-colors">
-                                <Icons.Share className="w-5 h-5 text-gray-300 group-hover:text-[#1D9BF0]" />
+                            <div className="p-1.5 rounded-full group-hover:bg-[#F97316]/15 transition-colors">
+                                <Icons.ThumbsDown key={`dk-pop-${dislikePop}`} className={`w-5 h-5 ${isDisliked ? 'text-[#F97316] fill-current' : 'text-gray-300 group-hover:text-[#F97316]'}`} />
                             </div>
+                            <span className="tabular-nums text-xs">{localDislikes.length}</span>
                         </button>
                     </div>
                 ) : (

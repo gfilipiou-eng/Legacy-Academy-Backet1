@@ -132,7 +132,7 @@ const BottomNavbar = memo(({
     }, []);
 
     const navItemBaseClass = 'relative h-[48px] xs:h-[50px] sm:h-[52px] w-full max-w-[72px] sm:max-w-[88px] flex flex-col items-center justify-center rounded-2xl overflow-hidden select-none cursor-pointer active:scale-95 transition-all duration-150';
-    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[var(--gold-primary,#1D9BF0)] bg-[var(--gold-primary,#1D9BF0)]/[0.12] border border-[var(--gold-primary,#1D9BF0)]/25 shadow-sm' : 'text-white/65 hover:text-white hover:bg-white/[0.05] border border-transparent'}`;
+    const navItemClass = (isActive) => `${navItemBaseClass} ${isActive ? 'text-[var(--gold-primary,#1D9BF0)]' : 'text-white/65 hover:text-white'}`;
     const iconClass = (isActive) => `relative z-10 transition-transform duration-200 w-[24px] h-[24px] xs:w-[26px] xs:h-[26px] sm:w-[27px] sm:h-[27px] ${isActive ? 'scale-105 text-[var(--gold-primary,#1D9BF0)]' : 'text-white/65 group-hover:text-white'}`;
 
     return (
