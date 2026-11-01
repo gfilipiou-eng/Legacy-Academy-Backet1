@@ -1526,6 +1526,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [zoomImage, setZoomImage] = useState(null);
     const openedAtRef = useRef(0);
     const [detailLikePop, setDetailLikePop] = useState(0);
+    const [detailDislikePop, setDetailDislikePop] = useState(0);
     const [detailRepostPop, setDetailRepostPop] = useState(0);
     const [detailCommentPop, setDetailCommentPop] = useState(0);
 
