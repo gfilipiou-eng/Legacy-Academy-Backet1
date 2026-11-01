@@ -1816,18 +1816,20 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                 <span className="tabular-nums pr-2">{post.likes?.length || 0}</span>
                             </button>
 
-                            {/* SHARE */}
+                            {/* DISLIKE */}
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onShare && onShare(post);
+                                    setDetailDislikePop(v => v + 1);
+                                    onDislike?.(post._id);
                                 }}
-                                className="group flex items-center gap-1 text-[13px] font-normal text-[var(--app-secondary)] hover:text-[#1D9BF0] transition-colors cursor-pointer select-none"
-                                title="Share"
+                                className={`group flex items-center gap-1 text-[13px] font-normal transition-colors cursor-pointer select-none ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'text-[#F97316]' : 'text-[var(--app-secondary)] hover:text-[#F97316]'}`}
+                                title="Dislike"
                             >
-                                <div className="p-2 rounded-full group-hover:bg-[#1D9BF0]/10 transition-colors">
-                                    <Icons.Share className="w-[18px] h-[18px]" />
+                                <div className="p-2 rounded-full group-hover:bg-[#F97316]/10 transition-colors">
+                                    <Icons.ThumbsDown key={`ddk-${detailDislikePop}`} className={`w-[18px] h-[18px] transition-transform duration-200 active:scale-125 ${post.dislikes?.some(id => isSameId(id, user?._id)) ? 'fill-current' : ''}`} />
                                 </div>
+                                <span className="tabular-nums pr-2">{post.dislikes?.length || 0}</span>
                             </button>
                         </div>
                     </div>
