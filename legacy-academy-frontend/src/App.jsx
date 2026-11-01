@@ -6712,6 +6712,7 @@ const ProfileModal = ({
     const [coverPicError, setCoverPicError] = useState(false);
     const fileRef = useRef(null);
     const coverFileRef = useRef(null);
+    const bioTextareaRef = useRef(null);
     const [coverUploading, setCoverUploading] = useState(false);
     const [profileUploading, setProfileUploading] = useState(false);
     const [profileSaving, setProfileSaving] = useState(false);
@@ -6779,6 +6780,14 @@ const ProfileModal = ({
             setProfileSaving(false);
         }
     }, [isEditing]);
+
+    // Auto-grow the description textarea so the card mirrors the public bio card on mobile
+    useEffect(() => {
+        const el = bioTextareaRef.current;
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = `${el.scrollHeight}px`;
+    }, [bio, isEditing]);
 
     const handleProfileSave = useCallback(async () => {
         if (profileSaveInFlightRef.current || profileSaving) return;
@@ -7145,7 +7154,8 @@ const ProfileModal = ({
                     ) : isEditing ? (
                         <div className="relative p-5 sm:p-6 space-y-6 animate-fade-in w-full max-w-full box-border profile-edit-form bg-black pb-16">
                             {/* Media & Photos Section */}
-                            <div className="relative z-10 profile-link-glass p-5 rounded-3xl border border-white/10 flex flex-col items-center gap-5 shadow-md">
+                            <div className="relative z-10 w-full max-w-full box-border p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem]">
+                            <div className="relative w-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 flex flex-col items-center gap-5">
                                 <div className="relative group">
                                     <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-white/15 bg-black/40 relative shadow-lg">
                                         {profileUploading ? (
@@ -7223,15 +7233,15 @@ const ProfileModal = ({
                                                     try { await axios.delete('/users/profile-pic'); } catch (e) {}
                                                     localStorage.setItem('user', JSON.stringify(updatedUser));
                                                     if (onUpdateUser) onUpdateUser(updatedUser);
-                                                    if (addToast) addToast('Profile picture removed', 'success');
+                                                    if (addToast) addToast(t('PROFILE_PIC_REMOVED', 'Profile picture removed'), 'success');
                                                 } catch (err) { 
                                                     console.error(err);
-                                                    alert("Failed to remove profile picture."); 
+                                                    alert(t('FAILED_REMOVE_PROFILE_PIC', 'Failed to remove profile picture.')); 
                                                 }
                                                 finally { setProfileUploading(false); }
                                             }} disabled={profileUploading}
                                                 className="p-2.5 rounded-2xl bg-white/[0.04] hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
-                                                title="Remove avatar"
+                                                title={t('REMOVE_AVATAR', 'Remove avatar')}
                                             >
                                                 <Icons.X className="w-4 h-4" />
                                             </button>
@@ -7260,21 +7270,22 @@ const ProfileModal = ({
                                                     try { await axios.delete('/users/cover-pic'); } catch (e) {}
                                                     localStorage.setItem('user', JSON.stringify(updatedUser));
                                                     if (onUpdateUser) onUpdateUser(updatedUser);
-                                                    if (addToast) addToast('Background removed', 'success');
+                                                    if (addToast) addToast(t('BACKGROUND_REMOVED', 'Background removed'), 'success');
                                                 } catch (err) { 
                                                     console.error(err);
-                                                    alert("Failed to remove background."); 
+                                                    alert(t('FAILED_REMOVE_BACKGROUND', 'Failed to remove background.')); 
                                                 }
                                                 finally { setCoverUploading(false); }
                                             }} disabled={coverUploading}
                                                 className="p-2.5 rounded-2xl bg-white/[0.04] hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
-                                                title="Remove cover"
+                                                title={t('REMOVE_COVER', 'Remove cover')}
                                             >
                                                 <Icons.X className="w-4 h-4" />
                                             </button>
                                         )}
                                     </div>
                                 </div>
+                            </div>
                             </div>
 
                             <input type="file" id="cover-pic-input" ref={coverFileRef} hidden accept="image/*, video/*" onChange={async (e) => {
@@ -7316,22 +7327,27 @@ const ProfileModal = ({
 
                             {/* Bio / Description Card — mirrors the public profile bio card */}
                             <div className="relative z-10 w-full max-w-full box-border p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem] text-left">
-                                <div className="w-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left relative transition-all duration-300">
+                                <div className="w-full h-full min-w-0 bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left shadow-sm relative transition-all duration-300">
                                     <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60 pointer-events-none">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                         </svg>
                                     </div>
-                                    <div className="flex items-center justify-between mb-3 pr-6">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('DESCRIPTION')}</label>
-                                        <span className="text-[10px] font-black text-white/30 tracking-wider tabular-nums">{bio?.length || 0} / 500</span>
+                                    <div className="flex items-center justify-between gap-2 mb-3 pr-6 min-w-0">
+                                        <label className="min-w-0 truncate text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('DESCRIPTION')}</label>
+                                        <span className="shrink-0 text-[10px] font-black text-white/30 tracking-wider tabular-nums">{bio?.length || 0} / 500</span>
                                     </div>
                                     <textarea
+                                        ref={bioTextareaRef}
                                         value={bio}
-                                        onChange={e => setBio(e.target.value)}
+                                        onChange={e => {
+                                            setBio(e.target.value);
+                                            e.target.style.height = 'auto';
+                                            e.target.style.height = `${e.target.scrollHeight}px`;
+                                        }}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="edit-bio-textarea profile-edit-field w-full block box-border outline-none resize-none whitespace-pre-wrap touch-manipulation min-h-[150px] max-h-[340px] overflow-y-auto"
+                                        className="edit-bio-textarea profile-edit-field w-full block box-border outline-none resize-none whitespace-pre-wrap touch-manipulation overflow-hidden min-h-[150px]"
                                         placeholder={t('BIO_PH')}
                                     />
                                 </div>
@@ -7734,8 +7750,8 @@ const ProfileModal = ({
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
-                                                                <Icons.ExternalLink className="w-4 h-4" />
+                                                            <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                                <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                                                             </div>
                                                         </div>
                                                     </a>
@@ -7763,8 +7779,8 @@ const ProfileModal = ({
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
-                                                            <Icons.ExternalLink className="w-4 h-4" />
+                                                        <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                            <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                                                         </div>
                                                     </div>
                                                 </a>
@@ -9013,7 +9029,7 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                                 </div>
                                             </div>
                                             <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
-                                                <Icons.ExternalLink className="w-4 h-4" />
+                                                <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                                             </div>
                                         </div>
                                     </a>
