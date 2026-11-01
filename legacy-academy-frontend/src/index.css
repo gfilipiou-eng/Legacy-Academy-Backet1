@@ -3131,38 +3131,15 @@ textarea:focus {
   -webkit-user-select: none;
 }
 
-/* Full-bleed tab bar on mobile — flush to the screen bottom, covers the iOS safe area with its own surface */
+/* Full-bleed tab bar on mobile — flush to the screen bottom, no black gaps */
 @media (max-width: 639px) {
   .bottom-nav-glass {
     border-left: none !important;
     border-right: none !important;
     border-bottom: none !important;
     border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
-    border-radius: 20px 20px 0 0 !important;
-    /* Opaque surface: prevents iOS backdrop-filter compositing artifacts (black band) at the viewport edge */
-    background: #0b0b0d !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    -webkit-transform: none !important;
-    backface-visibility: visible !important;
-    -webkit-backface-visibility: visible !important;
-    /* Paint the home-indicator safe area with the bar's surface so no black shows under it */
-    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* Safety net: small strip under the bar so any 1-2px seam / safe-area sliver stays the bar's colour */
-  .bottom-nav-glass::before {
-    content: '' !important;
-    display: block !important;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -48px;
-    height: 48px;
-    background: #0b0b0d;
-    pointer-events: none;
+    border-radius: 26px 26px 0 0 !important;
+    padding-bottom: max(4px, env(safe-area-inset-bottom, 4px)) !important;
   }
 }
 
@@ -3178,10 +3155,6 @@ body.bg-light .bottom-nav-glass {
     border-right: none !important;
     border-bottom: none !important;
     border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
-    background: #ffffff !important;
-  }
-  body.bg-light .bottom-nav-glass::before {
-    background: #ffffff;
   }
 }
 
