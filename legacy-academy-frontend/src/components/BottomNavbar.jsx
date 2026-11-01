@@ -146,7 +146,7 @@ const BottomNavbar = memo(({
             onTouchEnd={handleTouchEnd}
             aria-label="Bottom Navigation"
         >
-            <div className="bottom-nav-glass w-full max-w-[480px] mx-auto rounded-full pointer-events-auto px-1.5 xs:px-2.5 sm:px-3 py-1 xs:py-1.5 sm:py-2 flex items-center justify-between relative gap-0.5 xs:gap-1 sm:gap-2">
+            <div className="bottom-nav-glass w-full sm:max-w-[480px] sm:mx-auto rounded-full pointer-events-auto px-1.5 xs:px-2.5 sm:px-3 pt-1 xs:pt-1.5 sm:py-2 flex items-center justify-between relative gap-0.5 xs:gap-1 sm:gap-2">
                 
                 {/* Tab: Home */}
                 <button
