@@ -3121,7 +3121,7 @@ textarea:focus {
   backdrop-filter: blur(30px) saturate(200%) !important;
   -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
   border: 1px solid rgba(255, 255, 255, 0.10) !important;
-  box-shadow: 0 -8px 34px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: none !important;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
@@ -3129,20 +3129,6 @@ textarea:focus {
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
-}
-
-/* Futuristic top hairline accent */
-.bottom-nav-glass::after {
-  content: '';
-  display: block !important;
-  position: absolute;
-  top: 0;
-  left: 14%;
-  right: 14%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold-primary, #1D9BF0) 55%, transparent), transparent);
-  opacity: 0.65;
-  pointer-events: none;
 }
 
 /* Full-bleed tab bar on mobile — flush to the screen bottom, no black gaps */
@@ -3153,14 +3139,14 @@ textarea:focus {
     border-bottom: none !important;
     border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
     border-radius: 26px 26px 0 0 !important;
-    padding-bottom: max(6px, env(safe-area-inset-bottom, 6px)) !important;
+    padding-bottom: max(4px, env(safe-area-inset-bottom, 4px)) !important;
   }
 }
 
 body.bg-light .bottom-nav-glass {
   background: rgba(255, 255, 255, 0.9) !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 639px) {
