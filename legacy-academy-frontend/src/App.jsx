@@ -7347,7 +7347,7 @@ const ProfileModal = ({
                                         }}
                                         maxLength={500}
                                         spellCheck={false}
-                                        className="edit-bio-textarea profile-edit-field w-full block box-border outline-none resize-none whitespace-pre-wrap touch-manipulation overflow-hidden min-h-[150px]"
+                                        className="edit-bio-textarea profile-edit-field w-full block box-border outline-none resize-none whitespace-pre-wrap touch-manipulation"
                                         placeholder={t('BIO_PH')}
                                     />
                                 </div>
