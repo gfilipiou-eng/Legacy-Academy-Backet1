@@ -7302,10 +7302,10 @@ const ProfileModal = ({
                             }} />
 
                             {/* Username Card */}
-                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-2 text-left w-full max-w-full box-border">
+                            <div className="relative z-10 edit-glass-card p-4 space-y-2 text-left w-full max-w-full box-border">
                                 <div className="flex items-center justify-between px-1">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('USERNAME')}</label>
-                                    <span className="text-[10px] font-black text-white/30 tracking-wider">{editUsername?.length || 0}/19</span>
+                                    <span className="text-[10px] font-black text-white/30 tracking-wider tabular-nums">{editUsername?.length || 0}/19</span>
                                 </div>
                                 <div className="relative">
                                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm">@</span>
@@ -7313,20 +7313,27 @@ const ProfileModal = ({
                                 </div>
                             </div>
 
-                            {/* Bio / Description Card */}
-                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-2 text-left w-full max-w-full box-border">
-                                <div className="flex items-center justify-between px-1">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('DESCRIPTION')}</label>
-                                    <span className="text-[10px] font-black text-white/30 tracking-wider">{bio?.length || 0} / 500</span>
+                            {/* Bio / Description Card — mirrors the public profile bio card */}
+                            <div className="relative z-10 w-full max-w-full box-border p-[1px] bg-gradient-to-br from-[var(--gold-primary)]/20 via-transparent to-[var(--gold-primary)]/10 rounded-[1.5rem] text-left">
+                                <div className="w-full bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl border border-[var(--app-border,#eff3f4)] rounded-[1.4rem] p-5 text-left relative transition-all duration-300">
+                                    <div className="absolute top-3 right-3 text-[var(--gold-primary)]/60 pointer-events-none">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                                        </svg>
+                                    </div>
+                                    <div className="flex items-center justify-between mb-3 pr-6">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('DESCRIPTION')}</label>
+                                        <span className="text-[10px] font-black text-white/30 tracking-wider tabular-nums">{bio?.length || 0} / 500</span>
+                                    </div>
+                                    <textarea
+                                        value={bio}
+                                        onChange={e => setBio(e.target.value)}
+                                        maxLength={500}
+                                        spellCheck={false}
+                                        className="edit-bio-textarea profile-edit-field w-full block box-border outline-none resize-none whitespace-pre-wrap touch-manipulation min-h-[150px] max-h-[340px] overflow-y-auto"
+                                        placeholder={t('BIO_PH')}
+                                    />
                                 </div>
-                                <textarea
-                                    value={bio}
-                                    onChange={e => setBio(e.target.value)}
-                                    maxLength={500}
-                                    spellCheck={false}
-                                    className="profile-edit-field w-full block box-border border border-white/10 rounded-2xl text-[14px] sm:text-[15px] text-white leading-relaxed outline-none resize-none p-4 bg-black/30 transition-colors duration-200 whitespace-pre-wrap touch-manipulation min-h-[130px] max-h-[260px] overflow-y-auto"
-                                    placeholder={t('BIO_PH')}
-                                />
                             </div>
 
                             {/* Profile Descriptor Card */}
@@ -7690,43 +7697,45 @@ const ProfileModal = ({
                                                         href={siteUrl}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/40 bg-[#0c0c0e]/95 hover:bg-[#131317] active:scale-[0.99] transition-all select-none cursor-pointer relative overflow-hidden"
+                                                        className="group relative block rounded-[1.35rem] p-[1px] bg-gradient-to-br from-white/[0.14] via-white/[0.05] to-transparent hover:from-[var(--gold-primary,#1D9BF0)]/50 hover:via-[var(--gold-primary,#1D9BF0)]/10 hover:to-transparent active:scale-[0.99] transition-all duration-300 select-none cursor-pointer"
                                                     >
-                                                        <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
-                                                            <div
-                                                                className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border ${
-                                                                    site.palette === 'gold' 
-                                                                        ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
-                                                                        : (site.palette === 'red' || site.palette === 'ranger')
-                                                                            ? 'bg-red-500/15 border-red-500/30 text-red-400'
-                                                                            : 'bg-[var(--gold-primary,#1D9BF0)]/15 border-[var(--gold-primary,#1D9BF0)]/30 text-[var(--gold-primary,#1D9BF0)]'
-                                                                }`}
-                                                            >
-                                                                <Icons.Globe className="w-5 h-5" />
-                                                            </div>
-                                                            <div className="min-w-0 flex-1">
-                                                                <div className="flex items-center gap-2">
-                                                                    <h4 className="text-[14px] sm:text-[15px] font-black text-white group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
-                                                                        {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
-                                                                    </h4>
-                                                                    {site.isDraft ? (
-                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50">
-                                                                            {t('DRAFT', 'Draft')}
-                                                                        </span>
-                                                                    ) : (
-                                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
-                                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shrink-0" />
-                                                                            {t('LIVE', 'Live')}
-                                                                        </span>
-                                                                    )}
+                                                        <div className="relative flex items-center justify-between gap-3 p-4 rounded-[1.3rem] bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl overflow-hidden">
+                                                            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                                                                <div
+                                                                    className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border ${
+                                                                        site.palette === 'gold' 
+                                                                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
+                                                                            : (site.palette === 'red' || site.palette === 'ranger')
+                                                                                ? 'bg-red-500/15 border-red-500/30 text-red-400'
+                                                                                : 'bg-[var(--gold-primary,#1D9BF0)]/15 border-[var(--gold-primary,#1D9BF0)]/30 text-[var(--gold-primary,#1D9BF0)]'
+                                                                    }`}
+                                                                >
+                                                                    <Icons.Globe className="w-5 h-5" />
                                                                 </div>
-                                                                <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
-                                                                    {site.slogan || `site/${displayUser?.username || ''}`}
-                                                                </p>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <h4 className="text-[14px] sm:text-[15px] font-black text-white group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors truncate leading-tight">
+                                                                            {site.businessName || t('UNTITLED_SITE', 'Personal Website')}
+                                                                        </h4>
+                                                                        {site.isDraft ? (
+                                                                            <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50">
+                                                                                {t('DRAFT', 'Draft')}
+                                                                            </span>
+                                                                        ) : (
+                                                                            <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
+                                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shrink-0" />
+                                                                                {t('LIVE', 'Live')}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                    <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
+                                                                        {site.slogan || `site/${displayUser?.username || ''}`}
+                                                                    </p>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 shadow-sm relative z-10 group-hover:scale-105">
-                                                            <Icons.ExternalLink className="w-3.5 h-3.5" />
+                                                            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                                <Icons.ExternalLink className="w-4 h-4" />
+                                                            </div>
                                                         </div>
                                                     </a>
                                                 );
@@ -7737,23 +7746,25 @@ const ProfileModal = ({
                                                     href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-4 rounded-2xl flex items-center justify-between gap-3 text-left group border border-white/10 hover:border-[var(--gold-primary,#1D9BF0)]/40 bg-[#0c0c0e]/95 hover:bg-[#131317] active:scale-[0.99] transition-all select-none cursor-pointer relative overflow-hidden"
+                                                    className="group relative block rounded-[1.35rem] p-[1px] bg-gradient-to-br from-white/[0.14] via-white/[0.05] to-transparent hover:from-[var(--gold-primary,#1D9BF0)]/50 hover:via-[var(--gold-primary,#1D9BF0)]/10 hover:to-transparent active:scale-[0.99] transition-all duration-300 select-none cursor-pointer"
                                                 >
-                                                    <div className="flex items-center gap-3.5 min-w-0 flex-1 relative z-10">
-                                                        <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
-                                                            <Icons.Link className="w-5 h-5" />
+                                                    <div className="relative flex items-center justify-between gap-3 p-4 rounded-[1.3rem] bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl overflow-hidden">
+                                                        <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                                                            <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center font-black text-xs text-[var(--gold-primary,#1D9BF0)] shrink-0">
+                                                                <Icons.Link className="w-5 h-5" />
+                                                            </div>
+                                                            <div className="min-w-0 flex-1">
+                                                                <h4 className="text-[14px] sm:text-[15px] font-black text-white truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
+                                                                    {t('OFFICIAL_LINK', 'Official Link')}
+                                                                </h4>
+                                                                <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
+                                                                    {externalUrl}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        <div className="min-w-0 flex-1">
-                                                            <h4 className="text-[14px] sm:text-[15px] font-black text-white truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
-                                                                {t('OFFICIAL_LINK', 'Official Link')}
-                                                            </h4>
-                                                            <p className="text-[11px] font-mono text-[var(--app-secondary,#71767b)] group-hover:text-white/80 transition-colors truncate mt-1">
-                                                                {externalUrl}
-                                                            </p>
+                                                        <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                            <Icons.ExternalLink className="w-4 h-4" />
                                                         </div>
-                                                    </div>
-                                                    <div className="w-8 h-8 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-[var(--app-secondary,#71767b)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 shadow-sm relative z-10 group-hover:scale-105">
-                                                        <Icons.ExternalLink className="w-3.5 h-3.5" />
                                                     </div>
                                                 </a>
                                             )}
@@ -8943,38 +8954,37 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         <a
                                             key={site.originalIndex}
                                             href={siteUrl}
-                                            className="profile-link-glass p-4 sm:p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
+                                            className="group relative block rounded-[1.35rem] p-[1px] bg-gradient-to-br from-white/[0.14] via-white/[0.05] to-transparent hover:from-[var(--gold-primary,#1D9BF0)]/50 hover:via-[var(--gold-primary,#1D9BF0)]/10 hover:to-transparent active:scale-[0.99] transition-all duration-300 select-none cursor-pointer"
                                         >
-                                            <div className="flex items-center gap-3.5 min-w-0">
-                                                <div
-                                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm border ${
-                                                        site.palette === 'gold' 
-                                                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
-                                                            : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
-                                                    }`}
-                                                >
-                                                    <Icons.Globe className="w-5 h-5" />
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <div className="flex items-center gap-2">
-                                                        <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
-                                                            {site.businessName || 'Personal Website'}
-                                                        </h4>
-                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 flex items-center gap-1.5">
-                                                            <span className="relative flex h-1.5 w-1.5">
-                                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
-                                                            </span>
-                                                            {t('LIVE', 'Live')}
-                                                        </span>
+                                            <div className="relative flex items-center justify-between gap-4 p-4 sm:p-5 rounded-[1.3rem] bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl overflow-hidden">
+                                                <div className="flex items-center gap-3.5 min-w-0">
+                                                    <div
+                                                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
+                                                            site.palette === 'gold' 
+                                                                ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' 
+                                                                : 'bg-sky-500/15 border-sky-500/30 text-sky-300'
+                                                        }`}
+                                                    >
+                                                        <Icons.Globe className="w-5 h-5" />
                                                     </div>
-                                                    <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
-                                                        {site.slogan || `site/${publicUser?.username || ''}`}
-                                                    </p>
+                                                    <div className="min-w-0">
+                                                        <div className="flex items-center gap-2">
+                                                            <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
+                                                                {site.businessName || 'Personal Website'}
+                                                            </h4>
+                                                            <span className="shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-1.5">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block shrink-0" />
+                                                                {t('LIVE', 'Live')}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                            {site.slogan || `site/${publicUser?.username || ''}`}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
-                                                <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                                                <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                    <Icons.ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                                                </div>
                                             </div>
                                         </a>
                                     );
@@ -8985,23 +8995,25 @@ const PublicProfileLinktree = ({ username, publicUser, publicPosts, loadingUser,
                                         href={externalUrl.startsWith('http') ? externalUrl : `https://${externalUrl}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="profile-link-glass p-4 sm:p-5 rounded-2xl flex items-center justify-between gap-4 text-left group border border-white/10 hover:border-white/20 transition-all select-none shadow-sm"
+                                        className="group relative block rounded-[1.35rem] p-[1px] bg-gradient-to-br from-white/[0.14] via-white/[0.05] to-transparent hover:from-[var(--gold-primary,#1D9BF0)]/50 hover:via-[var(--gold-primary,#1D9BF0)]/10 hover:to-transparent active:scale-[0.99] transition-all duration-300 select-none cursor-pointer"
                                     >
-                                        <div className="flex items-center gap-3.5 min-w-0">
-                                            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-black text-sm text-[var(--gold-primary,#1D9BF0)] shrink-0 shadow-sm">
-                                                <Icons.Link className="w-5 h-5" />
+                                        <div className="relative flex items-center justify-between gap-4 p-4 sm:p-5 rounded-[1.3rem] bg-[var(--app-hover,rgba(255,255,255,0.03))] backdrop-blur-xl overflow-hidden">
+                                            <div className="flex items-center gap-3.5 min-w-0">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center font-black text-sm text-[var(--gold-primary,#1D9BF0)] shrink-0">
+                                                    <Icons.Link className="w-5 h-5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
+                                                        {t('OFFICIAL_LINK', 'Official Link')}
+                                                    </h4>
+                                                    <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
+                                                        {externalUrl}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="min-w-0">
-                                                <h4 className="text-base font-black text-[var(--app-text)] truncate leading-tight group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors">
-                                                    {t('OFFICIAL_LINK', 'Official Link')}
-                                                </h4>
-                                                <p className="text-xs text-[var(--app-secondary,#71767b)] truncate mt-1">
-                                                    {externalUrl}
-                                                </p>
+                                            <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black group-hover:border-[var(--gold-primary,#1D9BF0)] transition-all shrink-0 group-hover:scale-105">
+                                                <Icons.ExternalLink className="w-4 h-4" />
                                             </div>
-                                        </div>
-                                        <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-[var(--app-text)] group-hover:bg-[var(--gold-primary,#1D9BF0)] group-hover:text-black transition-all shrink-0 shadow-sm">
-                                            <Icons.ExternalLink className="w-4 h-4" />
                                         </div>
                                     </a>
                                 )}
