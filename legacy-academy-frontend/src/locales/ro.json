@@ -684,5 +684,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Permite vizitatorilor să mărească poza de profil la clic",
   "COLOR_TEAL": "Teal",
   "COLOR_CORAL": "Coral",
-  "COLOR_VIOLET": "Violet"
+  "COLOR_VIOLET": "Violet",
+  "LANGUAGE": "Limbă",
+  "LIGHT_MODE": "Implicit",
+  "DIM_MODE": "Slăbit",
+  "BADGE_EMBER_GOLD": "Jar",
+  "BADGE_SOLAR_GOLD": "Solar",
+  "BADGE_PRISM_BLUE": "Prismă",
+  "BADGE_COBALT": "Cobalt",
+  "BADGE_NOVA": "Nova",
+  "HIDE_OFFICIAL_WEBSITES": "Ascunde site-urile oficiale și linkurile",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Ascunde toate site-urile publicate și linkurile externe din profilul tău.",
+  "HIDDEN_FROM_PUBLIC": "Ascuns de public",
+  "WEBSITES_HIDDEN_TOAST": "Site-urile și linkurile sunt acum ascunse din profilul tău public",
+  "WEBSITES_SHOWN_TOAST": "Site-urile și linkurile sunt acum vizibile pe profilul tău",
+  "UNHIDE": "Afișează",
+  "HIDE_ALL": "Ascunde"
 }

@@ -703,5 +703,11 @@
   "WEBSITES_HIDDEN_TOAST": "Websites & links are now hidden from your public profile",
   "WEBSITES_SHOWN_TOAST": "Websites & links are now visible on your profile",
   "UNHIDE": "Unhide",
-  "HIDE_ALL": "Hide"
+  "HIDE_ALL": "Hide",
+  "LANGUAGE": "Language",
+  "BADGE_EMBER_GOLD": "Ember",
+  "BADGE_SOLAR_GOLD": "Solar",
+  "BADGE_PRISM_BLUE": "Prism",
+  "BADGE_COBALT": "Cobalt",
+  "BADGE_NOVA": "Nova"
 }

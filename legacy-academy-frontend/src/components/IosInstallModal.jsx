@@ -59,7 +59,7 @@ const content = {
             steps: [
                 {
                     title: 'Άνοιξε με Safari',
-                    desc: 'Βεβαιώσου ότι χρησιμοποιείς το Safari στο iPhone ή iPad σου.',
+                    desc: 'Βεβαιώσου ότι χρησιμοποιείς το Safari στη συσκευή σου iOS.',
                 },
                 {
                     title: 'Πάτα το κουμπί Κοινής Χρήσης',

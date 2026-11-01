@@ -684,5 +684,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Ziyaretçilerin profil fotoğrafını tıklayarak yakınlaştırmasına izin ver",
   "COLOR_TEAL": "Camgöbeği",
   "COLOR_CORAL": "Mercan",
-  "COLOR_VIOLET": "Menekşe"
+  "COLOR_VIOLET": "Menekşe",
+  "LANGUAGE": "Dil",
+  "LIGHT_MODE": "Varsayılan",
+  "DIM_MODE": "Loş",
+  "BADGE_EMBER_GOLD": "Kor",
+  "BADGE_SOLAR_GOLD": "Güneş",
+  "BADGE_PRISM_BLUE": "Prizma",
+  "BADGE_COBALT": "Kobalt",
+  "BADGE_NOVA": "Nova",
+  "HIDE_OFFICIAL_WEBSITES": "Resmi Web Sitelerini ve Bağlantıları Gizle",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Yayınlanan tüm web sitelerini ve harici bağlantıları profilinden gizle.",
+  "HIDDEN_FROM_PUBLIC": "Herkesten gizli",
+  "WEBSITES_HIDDEN_TOAST": "Web siteleri ve bağlantılar artık herkese açık profilinden gizli",
+  "WEBSITES_SHOWN_TOAST": "Web siteleri ve bağlantılar artık profilinde görünür",
+  "UNHIDE": "Göster",
+  "HIDE_ALL": "Gizle"
 }

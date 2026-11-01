@@ -684,5 +684,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Разрешить посетителям увеличивать фото профиля по клику",
   "COLOR_TEAL": "Бирюзовый",
   "COLOR_CORAL": "Коралловый",
-  "COLOR_VIOLET": "Сиреневый"
+  "COLOR_VIOLET": "Сиреневый",
+  "LANGUAGE": "Язык",
+  "LIGHT_MODE": "По умолчанию",
+  "DIM_MODE": "Приглушённый",
+  "BADGE_EMBER_GOLD": "Уголёк",
+  "BADGE_SOLAR_GOLD": "Солнечный",
+  "BADGE_PRISM_BLUE": "Призма",
+  "BADGE_COBALT": "Кобальт",
+  "BADGE_NOVA": "Нова",
+  "HIDE_OFFICIAL_WEBSITES": "Скрыть официальные сайты и ссылки",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Скройте все опубликованные сайты и внешние ссылки из вашего профиля.",
+  "HIDDEN_FROM_PUBLIC": "Скрыто от публики",
+  "WEBSITES_HIDDEN_TOAST": "Сайты и ссылки теперь скрыты из вашего публичного профиля",
+  "WEBSITES_SHOWN_TOAST": "Сайты и ссылки теперь видны в вашем профиле",
+  "UNHIDE": "Показать",
+  "HIDE_ALL": "Скрыть"
 }

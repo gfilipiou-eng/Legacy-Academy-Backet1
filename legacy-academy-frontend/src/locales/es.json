@@ -684,5 +684,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Permite a los visitantes hacer zoom en la foto de perfil al hacer clic",
   "COLOR_TEAL": "Cian",
   "COLOR_CORAL": "Coral",
-  "COLOR_VIOLET": "Violeta"
+  "COLOR_VIOLET": "Violeta",
+  "LANGUAGE": "Idioma",
+  "LIGHT_MODE": "Predeterminado",
+  "DIM_MODE": "Atenuado",
+  "BADGE_EMBER_GOLD": "Brasa",
+  "BADGE_SOLAR_GOLD": "Solar",
+  "BADGE_PRISM_BLUE": "Prisma",
+  "BADGE_COBALT": "Cobalto",
+  "BADGE_NOVA": "Nova",
+  "HIDE_OFFICIAL_WEBSITES": "Ocultar sitios web y enlaces oficiales",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Oculta todos los sitios web publicados y enlaces externos de tu perfil.",
+  "HIDDEN_FROM_PUBLIC": "Oculto al público",
+  "WEBSITES_HIDDEN_TOAST": "Los sitios web y enlaces ahora están ocultos de tu perfil público",
+  "WEBSITES_SHOWN_TOAST": "Los sitios web y enlaces ahora son visibles en tu perfil",
+  "UNHIDE": "Mostrar",
+  "HIDE_ALL": "Ocultar"
 }

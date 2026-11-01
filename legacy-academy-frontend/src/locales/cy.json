@@ -686,5 +686,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Επιτρέπει στους επισκέπτες να κάνουν ζουμ στη φωτογραφία προφίλ",
   "COLOR_TEAL": "Τιρκουάζ",
   "COLOR_CORAL": "Κοράλι",
-  "COLOR_VIOLET": "Βιολετί"
+  "COLOR_VIOLET": "Βιολετί",
+  "LANGUAGE": "Γλώσσα",
+  "LIGHT_MODE": "Προεπιλογή",
+  "DIM_MODE": "Σκούρο Μπλε",
+  "BADGE_EMBER_GOLD": "Θράκα",
+  "BADGE_SOLAR_GOLD": "Ηλιακό",
+  "BADGE_PRISM_BLUE": "Πρίσμα",
+  "BADGE_COBALT": "Κοβάλτιο",
+  "BADGE_NOVA": "Νόβα",
+  "HIDE_OFFICIAL_WEBSITES": "Απόκρυψη Επίσημων Ιστοσελίδων & Συνδέσμων",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Απόκρυψη όλων των δημοσιευμένων ιστοσελίδων και εξωτερικών συνδέσμων από το προφίλ σου.",
+  "HIDDEN_FROM_PUBLIC": "Κρυφό από το κοινό",
+  "WEBSITES_HIDDEN_TOAST": "Οι ιστοσελίδες είναι πλέον κρυφές από το δημόσιο προφίλ",
+  "WEBSITES_SHOWN_TOAST": "Οι ιστοσελίδες είναι πλέον ορατές στο προφίλ σου",
+  "UNHIDE": "Εμφάνιση",
+  "HIDE_ALL": "Απόκρυψη"
 }

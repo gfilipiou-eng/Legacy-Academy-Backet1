@@ -527,11 +527,11 @@ button:active {
 }
 
 .bottom-nav-glass {
-  background: var(--glass-bg, rgba(0, 0, 0, 0.92));
+  background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--app-border, #2f3336);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: none;
 }
 
 .bottom-nav-glass::before {
@@ -578,7 +578,7 @@ button:active {
 .profile-link-glass {
   position: relative;
   overflow: hidden;
-  background: rgba(14, 17, 22, 0.72);
+  background: rgba(10, 10, 10, 0.85);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -591,7 +591,7 @@ button:active {
 
 .profile-link-glass:hover {
   border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(22, 26, 34, 0.82);
+  background: rgba(16, 16, 16, 0.9);
   transform: translateY(-1.5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -746,6 +746,75 @@ textarea.profile-edit-field:focus {
   outline: none !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
   background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Refined glass card used across the Edit Profile form */
+.edit-glass-card {
+  position: relative;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-glass-card:focus-within {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient-edged wrapper (matches the public profile bio card) */
+.edit-gradient-card {
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 1px;
+  background: linear-gradient(to bottom right, color-mix(in srgb, var(--gold-primary, #1D9BF0) 22%, transparent), transparent, color-mix(in srgb, var(--gold-primary, #1D9BF0) 10%, transparent));
+}
+
+.edit-gradient-card-inner {
+  position: relative;
+  height: 100%;
+  border-radius: 1.42rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.edit-gradient-card:focus-within .edit-gradient-card-inner {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+}
+
+/* Edit Profile textarea inherits the profile bio typography */
+.edit-bio-textarea.profile-edit-field {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.625 !important;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.edit-bio-textarea.profile-edit-field::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.edit-bio-textarea.profile-edit-field:focus {
+  background: transparent !important;
+  border: none !important;
+}
+
+@media (min-width: 641px) {
+  .edit-bio-textarea.profile-edit-field {
+    font-size: 15px !important;
+  }
 }
 
 .profile-edit-btn {
@@ -3046,12 +3115,11 @@ textarea:focus {
 
 .bottom-nav-glass {
   position: relative;
-  background: var(--glass-bg, rgba(14, 15, 20, 0.88)) !important;
+  background: rgba(0, 0, 0, 0.92) !important;
   backdrop-filter: blur(28px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 
-    0 2px 12px 0 rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: none !important;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   backface-visibility: hidden;

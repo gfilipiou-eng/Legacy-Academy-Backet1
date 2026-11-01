@@ -7328,7 +7328,7 @@ const ProfileModal = ({
                             </div>
 
                             {/* Profile Descriptor Card */}
-                            <div className="relative z-10 profile-link-glass p-4 rounded-3xl border border-white/10 space-y-3 text-left">
+                            <div className="relative z-10 edit-glass-card p-4 space-y-3 text-left">
                                 <div className="flex items-start sm:items-center justify-between gap-3 px-1">
                                     <label className="flex-1 min-w-0 whitespace-normal text-[10px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">{t('WHAT_BEST_DESCRIBES_YOU', 'WHAT BEST DESCRIBES YOU?')}</label>
                                     {profileDescriptor && (

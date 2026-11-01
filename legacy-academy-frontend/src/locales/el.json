@@ -714,5 +714,11 @@
   "WEBSITES_HIDDEN_TOAST": "Οι ιστοσελίδες είναι πλέον κρυφές από το δημόσιο προφίλ",
   "WEBSITES_SHOWN_TOAST": "Οι ιστοσελίδες είναι πλέον ορατές στο προφίλ σου",
   "UNHIDE": "Εμφάνιση",
-  "HIDE_ALL": "Απόκρυψη"
+  "HIDE_ALL": "Απόκρυψη",
+  "LANGUAGE": "Γλώσσα",
+  "BADGE_EMBER_GOLD": "Θράκα",
+  "BADGE_SOLAR_GOLD": "Ηλιακό",
+  "BADGE_PRISM_BLUE": "Πρίσμα",
+  "BADGE_COBALT": "Κοβάλτιο",
+  "BADGE_NOVA": "Νόβα"
 }

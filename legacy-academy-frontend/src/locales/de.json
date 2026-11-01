@@ -694,5 +694,20 @@
   "CARTELS_WELCOME_DESC": "Willkommen beim Kartell.",
   "CARTELS_PIN": "Geheimer Zugangscode (Optional)",
   "CARTELS_ENTER_PIN": "Dieses Kartell ist privat. Bitte gib die PIN ein, um beizutreten:",
-  "CARTELS_EDIT": "Bearbeiten"
+  "CARTELS_EDIT": "Bearbeiten",
+  "LANGUAGE": "Sprache",
+  "LIGHT_MODE": "Standard",
+  "DIM_MODE": "Gedimmt",
+  "BADGE_EMBER_GOLD": "Glut",
+  "BADGE_SOLAR_GOLD": "Solar",
+  "BADGE_PRISM_BLUE": "Prisma",
+  "BADGE_COBALT": "Kobalt",
+  "BADGE_NOVA": "Nova",
+  "HIDE_OFFICIAL_WEBSITES": "Offizielle Webseiten & Links ausblenden",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Alle veröffentlichten Webseiten und externen Links von deinem Profil ausblenden.",
+  "HIDDEN_FROM_PUBLIC": "Vor der Öffentlichkeit verborgen",
+  "WEBSITES_HIDDEN_TOAST": "Webseiten & Links sind jetzt in deinem öffentlichen Profil ausgeblendet",
+  "WEBSITES_SHOWN_TOAST": "Webseiten & Links sind jetzt in deinem Profil sichtbar",
+  "UNHIDE": "Einblenden",
+  "HIDE_ALL": "Ausblenden"
 }

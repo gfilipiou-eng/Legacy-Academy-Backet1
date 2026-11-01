@@ -684,5 +684,20 @@
   "ENABLE_PROFILE_ZOOM_DESC": "Permettre aux visiteurs de zoomer sur la photo de profil en cliquant",
   "COLOR_TEAL": "Sarcelle",
   "COLOR_CORAL": "Corail",
-  "COLOR_VIOLET": "Violet foncé"
+  "COLOR_VIOLET": "Violet foncé",
+  "LANGUAGE": "Langue",
+  "LIGHT_MODE": "Par défaut",
+  "DIM_MODE": "Atténué",
+  "BADGE_EMBER_GOLD": "Braise",
+  "BADGE_SOLAR_GOLD": "Solaire",
+  "BADGE_PRISM_BLUE": "Prisme",
+  "BADGE_COBALT": "Cobalt",
+  "BADGE_NOVA": "Nova",
+  "HIDE_OFFICIAL_WEBSITES": "Masquer les sites officiels et liens",
+  "HIDE_OFFICIAL_WEBSITES_DESC": "Masquez tous les sites publiés et liens externes de votre profil.",
+  "HIDDEN_FROM_PUBLIC": "Masqué du public",
+  "WEBSITES_HIDDEN_TOAST": "Les sites et liens sont désormais masqués de votre profil public",
+  "WEBSITES_SHOWN_TOAST": "Les sites et liens sont désormais visibles sur votre profil",
+  "UNHIDE": "Afficher",
+  "HIDE_ALL": "Masquer"
 }
