@@ -7476,7 +7476,7 @@ const ProfileModal = ({
                     ) : (
                         <div className={`p-4 sm:p-6 pb-20 flex flex-col items-stretch ${displayUser?.coverPic ? 'pt-14 sm:pt-20 mt-0' : 'mt-2 sm:mt-4'}`}>
                             <div className="flex items-center justify-center mb-3 sm:mb-4 w-full">
-                                <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-14 sm:-mt-20' : ''}`}>
+                                <div className={`relative z-20 ${displayUser?.coverPic ? '-mt-6 sm:-mt-12' : ''}`}>
                                     <div className="w-32 h-32 sm:w-40 sm:h-40 relative group shrink-0 shadow-md rounded-full">
                                         <div className="w-full h-full rounded-full overflow-hidden">
                                             <ProfileAvatar user={displayUser} size="large" key={imgKey} cacheKey={imgKey} className="w-full h-full object-cover" />
