@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { createPortal } from 'react-dom';
 import axios from './api';
 import socket from './socket';
@@ -135,24 +135,39 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   const discardRef = useRef(false);
 
   // Fixed overlays don't resize when the mobile software keyboard opens, so the
-  // composer ends up hidden behind it. Pin the shell to the visual viewport while
-  // the keyboard is up so the input stays visible above it.
-  const [kbViewport, setKbViewport] = useState(null);
+  // composer ends up hidden behind it. Bind the shell to the visual viewport so
+  // it always matches the visible area (keyboard closed == full screen).
+  const [viewportBounds, setViewportBounds] = useState(null);
+  const viewportFrameRef = useRef(null);
+  const syncViewport = useCallback(() => {
+    const vp = window.visualViewport;
+    if (!vp) return;
+    if (viewportFrameRef.current) cancelAnimationFrame(viewportFrameRef.current);
+    viewportFrameRef.current = requestAnimationFrame(() => {
+      setViewportBounds({ top: vp.offsetTop, height: vp.height });
+    });
+  }, []);
   useEffect(() => {
     const vp = window.visualViewport;
     if (!vp) return undefined;
-    const update = () => {
-      const keyboardOpen = (window.innerHeight - vp.height) > 130;
-      setKbViewport(keyboardOpen ? { top: vp.offsetTop, height: vp.height } : null);
-    };
-    update();
-    vp.addEventListener('resize', update);
-    vp.addEventListener('scroll', update);
+    syncViewport();
+    vp.addEventListener('resize', syncViewport);
+    vp.addEventListener('scroll', syncViewport);
+    window.addEventListener('resize', syncViewport);
     return () => {
-      vp.removeEventListener('resize', update);
-      vp.removeEventListener('scroll', update);
+      if (viewportFrameRef.current) cancelAnimationFrame(viewportFrameRef.current);
+      vp.removeEventListener('resize', syncViewport);
+      vp.removeEventListener('scroll', syncViewport);
+      window.removeEventListener('resize', syncViewport);
     };
-  }, []);
+  }, [syncViewport]);
+
+  // iOS fires the visualViewport resize a beat after the keyboard animates in;
+  // re-sync a few times after focus so the composer never stays hidden.
+  const resyncViewportSoon = useCallback(() => {
+    syncViewport();
+    [80, 180, 320, 520].forEach((delay) => setTimeout(syncViewport, delay));
+  }, [syncViewport]);
 
   const fetchPost = async () => {
     try {
@@ -303,7 +318,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   const shell = (content) => createPortal(
     <div
       className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] touch-manipulation overscroll-contain"
-      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', ...(kbViewport ? { top: kbViewport.top, height: kbViewport.height, bottom: 'auto' } : {}) }}
+      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', ...(viewportBounds ? { top: viewportBounds.top, height: viewportBounds.height, bottom: 'auto' } : {}) }}
     >
       {content}
       <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
@@ -419,7 +434,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
           ) : (
             post.comments.map((c, i) => {
               const isCommentAuthor = String(c.user?._id || c.userId || c.authorId) === String(currentUser?._id);
-              const commentAuthorRole = c.author?.role || c.authorRole;
+              const commentAuthorRole = c.user?.role || c.authorRole;
               const isCommentFounder = commentAuthorRole === 'Founder';
               const canEdit = isCommentAuthor || currentUser?.role === 'Founder';
               const canDelete = isCommentAuthor || currentUser?.role === 'Founder';
@@ -428,8 +443,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
               const commentAuthorId = String(c.user?._id || c.userId || c.authorId);
               const foundInAllUsers = (allUsers || []).find(u => String(u._id) === commentAuthorId);
               const mergedCommentAuthor = foundInAllUsers
-                ? { ...(c.author || {}), settings: { ...(c.author?.settings || {}), ...(foundInAllUsers.settings || {}) }, role: foundInAllUsers.role || commentAuthorRole }
-                : (c.author || { username: c.authorName, profilePic: c.authorProfilePic, settings: c.authorSettings, role: c.authorRole });
+                ? { ...(c.user || {}), settings: { ...(c.user?.settings || {}), ...(foundInAllUsers.settings || {}) }, role: foundInAllUsers.role || commentAuthorRole }
+                : (c.user || { username: c.authorName, profilePic: c.authorProfilePic, settings: c.authorSettings, role: c.authorRole });
               const mergedCommentFounder = (mergedCommentAuthor?.role || commentAuthorRole) === 'Founder';
               const commentShowBadge = mergedCommentFounder ? true : (mergedCommentAuthor?.settings?.showBadge !== false);
 
@@ -460,7 +475,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                         user={mergedCommentAuthor}
                       />
                       <span className="text-[13px] text-gray-500 truncate max-w-[28vw]">
-                        {`@${String(c.author?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
+                        {`@${String(c.user?.username || c.authorName || 'user').toLowerCase().replace(/\s+/g, '')}`}
                       </span>
                       <span className="text-gray-500">·</span>
                       <span className="text-[12px] text-gray-500">{formatDate(c.createdAt, t, lang)}</span>
@@ -603,6 +618,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
                   placeholder={t('WRITE_COMMENT', 'Add a comment...')}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
+                  onFocus={resyncViewportSoon}
                   rows="1"
                   className="w-full bg-transparent py-3 px-4 text-[16px] text-[var(--app-text)] outline-none placeholder:text-[var(--app-secondary)] resize-none min-h-[48px] max-h-[140px] custom-scrollbar leading-relaxed"
                 />

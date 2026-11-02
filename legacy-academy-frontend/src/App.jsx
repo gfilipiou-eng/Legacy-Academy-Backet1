@@ -1534,24 +1534,38 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [isTranslating, setIsTranslating] = useState(false);
 
     // Fixed overlay doesn't resize when the mobile software keyboard opens, so the
-    // bottom comment composer would sit behind the keyboard. Pin the overlay to the
-    // visual viewport while the keyboard is up so the input stays visible above it.
-    const [kbViewport, setKbViewport] = useState(null);
+    // bottom comment composer would sit behind the keyboard. Bind the overlay to the
+    // visual viewport so it always matches the visible area.
+    const [viewportBounds, setViewportBounds] = useState(null);
+    const viewportFrameRef = useRef(null);
+    const syncViewport = useCallback(() => {
+        const vp = window.visualViewport;
+        if (!vp) return;
+        if (viewportFrameRef.current) cancelAnimationFrame(viewportFrameRef.current);
+        viewportFrameRef.current = requestAnimationFrame(() => {
+            setViewportBounds({ top: vp.offsetTop, height: vp.height });
+        });
+    }, []);
     useEffect(() => {
         const vp = window.visualViewport;
         if (!vp) return undefined;
-        const update = () => {
-            const keyboardOpen = (window.innerHeight - vp.height) > 130;
-            setKbViewport(keyboardOpen ? { top: vp.offsetTop, height: vp.height } : null);
-        };
-        update();
-        vp.addEventListener('resize', update);
-        vp.addEventListener('scroll', update);
+        syncViewport();
+        vp.addEventListener('resize', syncViewport);
+        vp.addEventListener('scroll', syncViewport);
+        window.addEventListener('resize', syncViewport);
         return () => {
-            vp.removeEventListener('resize', update);
-            vp.removeEventListener('scroll', update);
+            if (viewportFrameRef.current) cancelAnimationFrame(viewportFrameRef.current);
+            vp.removeEventListener('resize', syncViewport);
+            vp.removeEventListener('scroll', syncViewport);
+            window.removeEventListener('resize', syncViewport);
         };
-    }, []);
+    }, [syncViewport]);
+    // The keyboard animates in after focus; re-sync a few times so the composer
+    // never stays hidden behind it.
+    const resyncViewportSoon = useCallback(() => {
+        syncViewport();
+        [80, 180, 320, 520].forEach((delay) => setTimeout(syncViewport, delay));
+    }, [syncViewport]);
 
     useEffect(() => {
         if (post?._id) openedAtRef.current = Date.now();
@@ -1673,7 +1687,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return createPortal(
-        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation overscroll-contain" onClick={handleBackdropClose} style={{ isolation: 'isolate', ...(kbViewport ? { top: kbViewport.top, height: kbViewport.height, bottom: 'auto' } : {}) }}>
+        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation overscroll-contain" onClick={handleBackdropClose} style={{ isolation: 'isolate', ...(viewportBounds ? { top: viewportBounds.top, height: viewportBounds.height, bottom: 'auto' } : {}) }}>
             {/* The "Sheet" / Modal */}
             <div 
                 className="post-detail-modal__sheet w-full h-full max-h-full md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl overscroll-contain" 
@@ -1924,6 +1938,7 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
                                     id={`comment-input-${post._id}`}
                                     placeholder="Add a comment..."
                                     value={commentText}
+                                    onFocus={resyncViewportSoon}
                                     onChange={(e) => {
                                         setCommentText(e.target.value);
                                         e.target.style.height = 'inherit';
