@@ -2753,7 +2753,7 @@ const PostCommentInput = forwardRef(({ post, user, t, onComment }, ref) => {
     );
 });
 
-const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null, openCommentsInModal = false }) => {
+const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = null, onComment, onDelete, onViewProfile, onOpenDetail, onOpenChat, onEditComment, onDeleteComment, onEditPost, onShare, onHashtagClick, loadingActions, reposter = null, forcePause = false, onMediaClick = null, isReadOnly = false, isDeleting = false, cacheKey = null, compact = false, onOpenSubscription = null, openCommentsInModal = false, onOpenComments = null }) => {
     console.log("📦 [POST CARD] Received post:", post._id, { isRepost: post.isRepost, repostedBy: post.repostedBy, author: post.author });
     const { t, lang } = useTranslation(user);
     const commentInputRef = useRef(null);
@@ -3018,7 +3018,9 @@ const PostCard = memo(({ post, user, allUsers, onLike, onDislike, onRepost = nul
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setTweetCommentPop(v => v + 1);
-                                        if (openCommentsInModal && onOpenDetail) {
+                                        if (onOpenComments) {
+                                            onOpenComments(post);
+                                        } else if (openCommentsInModal && onOpenDetail) {
                                             onOpenDetail(post);
                                         } else {
                                             setShowComments(!showComments);
@@ -5910,21 +5912,21 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
             <div className={`
                 nav-drawer-panel fixed top-0 left-0 bottom-0 h-[100dvh] max-h-[100dvh] w-[min(88vw,340px)] sm:w-[335px]
-                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl border-r border-[var(--app-border,#2f3336)]
+                flex flex-col pointer-events-auto z-[101] overflow-hidden shadow-2xl
                 ${isClosing ? 'drawer-panel closing' : 'drawer-panel'}
             `}
             style={{
                 color: 'var(--app-text, #ffffff)'
             }}>
                 {/* 1. USER IDENTITY CARD */}
-                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 border-b border-[var(--app-border,#2f3336)] select-none">
+                <div className="relative z-10 flex-none px-5 pt-[max(22px,calc(16px+env(safe-area-inset-top,0px)))] pb-4 select-none">
                     <div className="flex items-center justify-between mb-3.5">
                         <div 
                             onClick={() => handleModalOpen(() => onViewProfile(user))}
                             className="relative group/avatar cursor-pointer"
                             title={t('VIEW_PROFILE') || 'View profile'}
                         >
-                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--app-border,#2f3336)] ring-1 ring-white/10 shrink-0 shadow-sm bg-neutral-900">
+                            <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-sm bg-neutral-900">
                                 <ProfileAvatar user={user} priority={true} cacheKey={user?.updatedAt || user?._id} className="w-full h-full object-cover group-hover/avatar:scale-105 transition-transform duration-200" />
                             </div>
                         </div>
@@ -5938,7 +5940,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             }}
                             aria-label="Close menu"
                             style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                            className="w-10 h-10 rounded-full bg-white/[0.06] hover:bg-white/[0.14] active:bg-white/[0.22] active:scale-95 border border-white/10 hover:border-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer touch-manipulation select-none shadow-sm"
+                            className="w-10 h-10 rounded-full bg-white/[0.06] hover:bg-white/[0.14] active:bg-white/[0.22] active:scale-95 flex items-center justify-center text-white/70 hover:text-white transition-all cursor-pointer touch-manipulation select-none shadow-sm"
                         >
                             <Icons.X className="w-5 h-5 stroke-[2.2]" />
                         </button>
@@ -5952,7 +5954,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                             <span className="font-black text-[17px] sm:text-[18px] text-white group-hover:text-[var(--gold-primary,#1D9BF0)] transition-colors leading-snug truncate tracking-tight">{user?.username}</span>
                             <VerifiedBadge isFounder={user?.role === 'Founder'} isUser={user?.role !== 'Founder'} className="w-4 h-4 shrink-0" user={user} />
                             {getActiveStreak(user) > 0 && (
-                                <span className="px-1.5 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/25 text-orange-400 font-bold text-[11px] shrink-0 flex items-center gap-0.5">
+                                <span className="px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-400 font-bold text-[11px] shrink-0 flex items-center gap-0.5">
                                     <Icons.Streak className="w-3 h-3 shrink-0" />
                                     {getActiveStreak(user)}
                                 </span>
@@ -5963,13 +5965,13 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
 
                     <div 
                         onClick={() => handleModalOpen(() => onViewProfile(user))}
-                        className="flex items-center gap-2.5 mt-3.5 pt-3 border-t border-[var(--app-border,#2f3336)]/40 cursor-pointer"
+                        className="flex items-center gap-2.5 mt-3.5 pt-3 cursor-pointer"
                     >
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
                             <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.followers)}</span>
                             <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWERS') || 'Followers'}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-white/12 transition-all">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-all">
                             <span className="font-black text-white text-[13px] tabular-nums">{getUniqueCount(user?.following)}</span>
                             <span className="text-[11px] text-[var(--app-secondary,#71767b)] uppercase tracking-wider font-semibold">{t('FOLLOWING')}</span>
                         </div>
@@ -5991,7 +5993,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                         ].map((item, idx) => {
                             if (item.divider) {
                                 return (
-                                    <div key={`div-${idx}`} className="my-2 border-t border-[var(--app-border,#2f3336)]/40 mx-2" />
+                                    <div key={`div-${idx}`} className="my-2 mx-2" />
                                 );
                             }
                             const isActive = activeTab === item.id;
@@ -6047,7 +6049,7 @@ const NavigationDrawer = ({ isOpen, onClose, user, allUsers, alerts, activeTab, 
                     </div>
 
                     {/* 3. LOGOUT & COMPACT FOOTER */}
-                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] border-t border-[var(--app-border,#2f3336)] flex flex-col gap-2">
+                    <div className="px-3 pt-3 pb-[max(18px,calc(14px+env(safe-area-inset-bottom,0px)))] flex flex-col gap-2">
                         <button
                             type="button"
                             onClick={() => { onLogout(); onClose(); }}
@@ -6642,7 +6644,7 @@ const MissionsDashboard = ({ user, onUpdateUser, t, lang }) => {
 };
 
 const ProfileModal = ({
-    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher, onMediaClick, onOpenWebsiteBuilder }) => {
+    isOpen, onClose, profileUser, currentUser, allUsers, preloadedPosts, posts, onFollow, onUpdateUser, onViewProfile, onOpenChat, onOpenDetail, onOpenCreate, imgKey, setImgKey, fetchSpecificUser, lastDeletedPostId, followLoading, addToast, onDeletePost, onLike, onDislike, onRepost, onComment, onEditComment, onDeleteComment, onEditPost, onShare, onShareProfile, onHashtagClick, loadingActions, selectedPost, deletingPostIds, onOpenSubscription = null, onOpenAccountSwitcher, onMediaClick, onOpenWebsiteBuilder, onOpenComments = null }) => {
     const { t, lang } = useTranslation(currentUser);
     const hasEnoughEquity = currentUser ? (currentUser.sharesBalance || 0) >= 0.01 : false;
 
@@ -8044,6 +8046,7 @@ const ProfileModal = ({
                                                                             cacheKey={imgKey}
                                                                             onOpenSubscription={onOpenSubscription}
                                                                             openCommentsInModal={true}
+                                                                            onOpenComments={onOpenComments}
                                                                             onMediaClick={onMediaClick}
                                                                         />
                                                                     </div>
@@ -9670,6 +9673,7 @@ const App = () => {
     const [alerts, setAlerts] = useState([]);
     const [selectedNotifs, setSelectedNotifs] = useState([]);
     const [selectedPost, setSelectedPost] = useState(null); // For Zoom View
+    const [commentsPostId, setCommentsPostId] = useState(null); // Dedicated comments window (per post)
     const [lightboxPost, setLightboxPost] = useState(null); // For Fullscreen Twitter Media Lightbox
     const [loadingActions, setLoadingActions] = useState({}); // per-post loading state for optimistic UI
     const [followLoading, setFollowLoading] = useState({}); // per-user follow loading state
@@ -10758,7 +10762,7 @@ const App = () => {
 
 
     // Unified Scroll Lock for Modals
-    const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || isWebsiteBuilderOpen || isBubbleSpaceOpen || !!selectedPost;
+    const isAnyModalOpen = isChatOpen || isProfileOpen || isSettingsOpen || isCreateOpen || isEditOpen || isWebsiteBuilderOpen || isBubbleSpaceOpen || !!selectedPost || !!commentsPostId;
 
     useEffect(() => {
         if (publicProfileUsername || viewPostId || publicSiteUsername) return undefined;
@@ -10961,6 +10965,10 @@ const App = () => {
         } finally {
             setLoadingActions(prev => { const copy = { ...prev }; delete copy[safeId]; return copy; });
         }
+    };
+
+    const openCommentsWindow = (post) => {
+        if (post?._id) setCommentsPostId(post._id);
     };
 
     const handleComment = async (postId, input) => {
@@ -12442,7 +12450,7 @@ const App = () => {
                                                                             }}
                                                                             className="relative"
                                                                         >
-                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} onMediaClick={(post) => setSelectedPost(post)} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} />
+                                                                            <PostCard post={p} user={user} allUsers={users} onLike={handleLike} onDislike={handleDislike} onRepost={handleRepost} onComment={handleComment} onDelete={handleDeletePost} onViewProfile={viewProfile} onOpenDetail={setSelectedPost} onOpenChat={handleOpenChat} onEditComment={handleEditComment} onDeleteComment={handleDeleteComment} onEditPost={(post) => { setPostToEdit(post); setIsEditOpen(true); }} onShare={handleShare} onHashtagClick={handleHashtagClick} onMediaClick={(post) => setSelectedPost(post)} loadingActions={loadingActions} forcePause={isAnyModalOpen} isDeleting={deletingPostIds.has(p._id)} cacheKey={imgKey} onOpenSubscription={() => setIsSubscriptionOpen(true)} openCommentsInModal={true} onOpenComments={openCommentsWindow} />
                                                                         </div>
                                                                     ))}
                                                                 </>
@@ -12507,6 +12515,7 @@ const App = () => {
                         onOpenSubscription={() => setIsSubscriptionOpen(true)}
                         onMediaClick={(post) => setSelectedPost(post)}
                         onOpenWebsiteBuilder={() => setIsWebsiteBuilderOpen(true)}
+                        onOpenComments={openCommentsWindow}
                     />
                     <ChatModal isOpen={isChatOpen} onClose={() => { setIsChatOpen(false); setChatTarget(null); }} user={user} allUsers={users} initialChatUser={chatTarget} addToast={addToast} fetchSpecificUser={fetchUsers} />
 
@@ -12679,6 +12688,19 @@ const App = () => {
                     )}
                     <CreateModal isOpen={isCreateOpen} onClose={() => { setIsCreateOpen(false); setCreateModeStory(false); }} onCreatePost={handleCreatePost} user={user} forceStory={createModeStory} />
                     <EditPostModal isOpen={isEditOpen} onClose={() => { setIsEditOpen(false); setPostToEdit(null); }} onSuccess={() => { setIsEditOpen(false); setPostToEdit(null); fetchPosts(); }} post={postToEdit} user={user} />
+                    {commentsPostId && (
+                        <CommentView
+                            postId={commentsPostId}
+                            user={user}
+                            allUsers={users}
+                            readOnly={false}
+                            onClose={() => setCommentsPostId(null)}
+                            onViewProfile={(u) => {
+                                setCommentsPostId(null);
+                                viewProfile(u);
+                            }}
+                        />
+                    )}
                     {selectedPost && (
                         <PostDetailModal
                             post={selectedPost}

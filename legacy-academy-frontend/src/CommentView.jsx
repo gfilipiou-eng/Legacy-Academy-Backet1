@@ -114,7 +114,7 @@ const ProfileAvatarBase = ({ user }) => {
 
 const ProfileAvatar = memo(ProfileAvatarBase);
 
-const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUsers }) => {
+const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUsers, readOnly = true }) => {
   const { t, lang } = useTranslation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -124,6 +124,15 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [zoomImage, setZoomImage] = useState(null);
   const scrollRef = useRef(null);
+
+  // Comment composer state
+  const [commentText, setCommentText] = useState('');
+  const [commentAudio, setCommentAudio] = useState(null);
+  const [isRecordingComment, setIsRecordingComment] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const commentStreamRef = useRef(null);
+  const commentRecorderRef = useRef(null);
+  const discardRef = useRef(false);
 
   const fetchPost = async () => {
     try {
@@ -193,6 +202,82 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
     } catch (e) {
       alert(t('ERROR_DELETING') || "Deletion failed.");
     }
+  };
+
+  const submitComment = async (formData) => {
+    if (isSending) return;
+    try {
+      setIsSending(true);
+      await axios.post(`/posts/${postId}/comment`, formData);
+      setCommentText('');
+      setCommentAudio(null);
+      await fetchPost();
+    } catch (e) {
+      console.error('Failed to send comment', e);
+      alert(t('POST_FAILED') || 'Failed to send comment');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (!commentText.trim()) return;
+    const fd = new FormData();
+    fd.append('text', commentText.trim());
+    submitComment(fd);
+  };
+
+  const handleAudioSubmit = () => {
+    if (!commentAudio) return;
+    const fd = new FormData();
+    fd.append('file', commentAudio, 'voice.webm');
+    if (commentText.trim()) fd.append('text', commentText.trim());
+    submitComment(fd);
+  };
+
+  const stopRecording = (shouldDiscard = false) => {
+    discardRef.current = shouldDiscard;
+    if (commentRecorderRef.current && commentRecorderRef.current.state === 'recording') {
+      commentRecorderRef.current.stop();
+    } else if (shouldDiscard) {
+      setCommentAudio(null);
+      setIsRecordingComment(false);
+    }
+    if (commentStreamRef.current) {
+      commentStreamRef.current.getTracks().forEach(track => track.stop());
+      commentStreamRef.current = null;
+    }
+    if (!commentRecorderRef.current || commentRecorderRef.current.state !== 'recording') {
+      setIsRecordingComment(false);
+    }
+  };
+
+  const startCommentRecording = async () => {
+    try {
+      discardRef.current = false;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      commentStreamRef.current = stream;
+      commentRecorderRef.current = new MediaRecorder(stream);
+      const chunks = [];
+      commentRecorderRef.current.ondataavailable = e => chunks.push(e.data);
+      commentRecorderRef.current.onstop = () => {
+        if (discardRef.current) {
+          setCommentAudio(null);
+        } else {
+          setCommentAudio(new Blob(chunks, { type: 'audio/webm' }));
+        }
+        setIsRecordingComment(false);
+      };
+      commentRecorderRef.current.start();
+      setIsRecordingComment(true);
+      setTimeout(() => { if (commentRecorderRef.current?.state === 'recording') stopRecording(); }, 60000);
+    } catch (e) { alert("Mic denied"); }
+  };
+
+  const toggleCommentRecording = () => {
+    if (isRecordingComment) stopRecording();
+    else startCommentRecording();
   };
 
   const shell = (content) => createPortal(
@@ -453,14 +538,69 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
         </div>
       </div>
 
-      <div
-        className="shrink-0 px-4 py-4 border-t border-[var(--app-border,rgba(255,255,255,0.1))] bg-[var(--app-bg,#0a0a0a)]/95 text-center"
-        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
-      >
-        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] bg-[var(--app-hover)] py-3 px-4 border border-[var(--app-border)] rounded-xl">
-          {t('COMMENTS_DISABLED', 'Comments are read-only for shared links')}
+      {readOnly ? (
+        <div
+          className="shrink-0 px-4 py-4 border-t border-[var(--app-border,rgba(255,255,255,0.1))] bg-[var(--app-bg,#0a0a0a)]/95 text-center"
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+        >
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--app-secondary,#71767b)] bg-[var(--app-hover)] py-3 px-4 border border-[var(--app-border)] rounded-xl">
+            {t('COMMENTS_DISABLED', 'Comments are read-only for shared links')}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div
+          className="shrink-0 px-3 sm:px-4 py-3 bg-[var(--app-bg,#0a0a0a)]/95 backdrop-blur-2xl border-t border-[var(--app-border,rgba(255,255,255,0.1))] z-[100]"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
+        >
+          <div className="flex items-end gap-2.5 w-full max-w-4xl mx-auto">
+            <div className="w-9 h-9 shrink-0 rounded-full overflow-hidden hidden sm:block">
+              <ProfileAvatar user={currentUser} />
+            </div>
+            {isRecordingComment ? (
+              <div className="flex-1 bg-red-500/10 border border-red-500/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-red-500 text-[14px] font-bold animate-pulse">
+                  <Icons.Mic className="w-5 h-5" />
+                  {t('RECORDING', 'RECORDING...')}
+                </div>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => stopRecording(true)} className="p-1 text-[var(--app-secondary)] hover:text-red-500 transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
+                  <button type="button" onClick={() => stopRecording(false)} className="px-4 py-1.5 bg-red-500 text-white font-bold text-[13px] rounded-full active:scale-95 transition-all">{t('STOP', 'STOP')}</button>
+                </div>
+              </div>
+            ) : commentAudio ? (
+              <div className="flex-1 bg-[var(--gold-primary,#1D9BF0)]/10 border border-[var(--gold-primary,#1D9BF0)]/30 rounded-[24px] px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[var(--gold-primary,#1D9BF0)] text-[14px] font-bold">
+                  <Icons.Play className="w-5 h-5 fill-current" />
+                  {t('VOICE_NOTE_READY', 'VOICE NOTE READY')}
+                </div>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => setCommentAudio(null)} className="p-1 text-[var(--app-secondary)] hover:text-red-500 transition-colors"><Icons.Trash2 className="w-5 h-5" /></button>
+                  <button type="button" onClick={handleAudioSubmit} disabled={isSending} className="px-5 py-1.5 bg-[var(--gold-primary,#1D9BF0)] text-black font-bold text-[13px] rounded-full disabled:opacity-40 active:scale-95 transition-all">{t('SEND', 'SEND')}</button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex-1 flex flex-col bg-[var(--app-hover)] border border-[var(--app-border)] rounded-[24px] overflow-hidden focus-within:border-[var(--gold-primary)] transition-all duration-300 touch-manipulation">
+                <textarea
+                  id={`comment-input-${postId}`}
+                  placeholder={t('WRITE_COMMENT', 'Add a comment...')}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  rows="1"
+                  className="w-full bg-transparent py-3 px-4 text-[16px] text-[var(--app-text)] outline-none placeholder:text-[var(--app-secondary)] resize-none min-h-[48px] max-h-[140px] custom-scrollbar leading-relaxed"
+                />
+                <div className="flex items-center justify-between px-3 pb-2 pt-1">
+                  <button type="button" onClick={toggleCommentRecording} className="p-2 text-[var(--app-secondary)] hover:text-[var(--app-text)] hover:bg-[var(--app-hover)] rounded-full transition-colors active:scale-95">
+                    <Icons.Mic className="w-5 h-5" />
+                  </button>
+                  <button type="submit" disabled={!commentText.trim() || isSending} className="px-4 py-1.5 bg-[var(--gold-primary,#1D9BF0)] text-black font-bold text-[13px] sm:text-[14px] rounded-full disabled:opacity-30 hover:opacity-90 transition-all active:scale-95 flex items-center gap-1.5 uppercase tracking-wide">
+                    {t('POST', 'Post')} <Icons.Send className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };

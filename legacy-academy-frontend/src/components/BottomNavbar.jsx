@@ -72,40 +72,42 @@ const BottomNavbar = memo(({
             }
         };
 
+        // Only hide the bar when the visual viewport has actually shrunk (a real
+        // software keyboard). Hiding it speculatively on focus was fragile: an input
+        // that is unmounted while focused (closing the comments sheet, search, etc.)
+        // never fires focusout, so the bar stayed hidden forever and left a black
+        // band + "cut" feed under it on mobile.
         const checkKeyboard = () => {
             resetWindowScroll();
-            if (window.visualViewport) {
-                const isKb = (window.innerHeight - window.visualViewport.height) > 130;
-                setIsKeyboardVisible(isKb);
+            if (!window.visualViewport) {
+                setIsKeyboardVisible(false);
+                return;
             }
+            const isKb = (window.innerHeight - window.visualViewport.height) > 130;
+            setIsKeyboardVisible(isKb);
+        };
+
+        let recheckTimers = [];
+        const scheduleCheck = () => {
+            recheckTimers.forEach(clearTimeout);
+            recheckTimers = [0, 120, 320, 640].map((delay) => setTimeout(checkKeyboard, delay));
         };
 
         const handleFocusIn = (e) => {
             const tag = e.target?.tagName;
             if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) {
-                setIsKeyboardVisible(true);
+                scheduleCheck();
             }
         };
 
         const handleFocusOut = () => {
-            setTimeout(() => {
-                resetWindowScroll();
-                const activeTag = document.activeElement?.tagName;
-                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || document.activeElement?.isContentEditable) {
-                    return;
-                }
-                if (window.visualViewport) {
-                    const isKb = (window.innerHeight - window.visualViewport.height) > 130;
-                    setIsKeyboardVisible(isKb);
-                } else {
-                    setIsKeyboardVisible(false);
-                }
-            }, 100);
+            scheduleCheck();
         };
 
         window.addEventListener('scroll', resetWindowScroll, { passive: true });
         window.addEventListener('focusin', handleFocusIn, { passive: true });
         window.addEventListener('focusout', handleFocusOut, { passive: true });
+        window.addEventListener('resize', checkKeyboard, { passive: true });
         window.addEventListener('orientationchange', resetWindowScroll, { passive: true });
 
         if (window.visualViewport) {
@@ -120,9 +122,11 @@ const BottomNavbar = memo(({
         }
 
         return () => {
+            recheckTimers.forEach(clearTimeout);
             window.removeEventListener('scroll', resetWindowScroll);
             window.removeEventListener('focusin', handleFocusIn);
             window.removeEventListener('focusout', handleFocusOut);
+            window.removeEventListener('resize', checkKeyboard);
             window.removeEventListener('orientationchange', resetWindowScroll);
             if (window.visualViewport) {
                 window.visualViewport.removeEventListener('resize', checkKeyboard);
@@ -138,8 +142,8 @@ const BottomNavbar = memo(({
     return (
         <nav 
             ref={navRef}
-            className={`fixed bottom-0 left-0 right-0 z-[100] pointer-events-none px-0 sm:px-4 pb-0 sm:pb-5 transition-transform transition-opacity duration-200 ${
-                isKeyboardVisible ? 'translate-y-28 opacity-0' : 'translate-y-0 opacity-100'
+            className={`fixed bottom-0 left-0 right-0 z-[100] pointer-events-none px-0 sm:px-4 pb-0 sm:pb-5 transition-[transform,opacity] duration-200 ${
+                isKeyboardVisible ? 'translate-y-28 opacity-0' : 'opacity-100'
             }`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
