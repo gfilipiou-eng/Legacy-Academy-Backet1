@@ -7129,7 +7129,7 @@ const ProfileModal = ({
                     </div>
                 )}
 
-                <div className={`flex-none px-6 py-4 pt-[max(1rem,calc(1rem+env(safe-area-inset-top,0px)))] flex items-center justify-between border-b border-white/5 z-20 relative bg-white/[0.01] backdrop-blur-xl`}>
+                <div className={`flex-none px-6 py-4 pt-[max(1rem,calc(1rem+env(safe-area-inset-top,0px)))] flex items-center justify-between z-20 relative`}>
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
