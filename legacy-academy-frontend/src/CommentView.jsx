@@ -230,7 +230,6 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   };
 
   const handleDelete = async (commentId) => {
-    if (!window.confirm(t('CONFIRM_DELETE') || "Delete this intel?")) return;
     try {
       await axios.delete(`/posts/${postId}/comment/${commentId}`);
       fetchPost();
@@ -328,9 +327,8 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
 
   if (loading) {
     return shell(
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6">
-        <Icons.Loader className="w-10 h-10 text-[var(--gold-primary)] animate-spin" />
-        <div className="text-[var(--gold-primary)] font-black text-xs uppercase tracking-[0.3em]">{t('LOADING', 'Loading...')}</div>
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="text-[var(--app-secondary,#71767b)] font-bold text-xs uppercase tracking-[0.3em]">{t('LOADING', 'Loading...')}</div>
       </div>
     );
   }
