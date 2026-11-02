@@ -134,6 +134,26 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   const commentRecorderRef = useRef(null);
   const discardRef = useRef(false);
 
+  // Fixed overlays don't resize when the mobile software keyboard opens, so the
+  // composer ends up hidden behind it. Pin the shell to the visual viewport while
+  // the keyboard is up so the input stays visible above it.
+  const [kbViewport, setKbViewport] = useState(null);
+  useEffect(() => {
+    const vp = window.visualViewport;
+    if (!vp) return undefined;
+    const update = () => {
+      const keyboardOpen = (window.innerHeight - vp.height) > 130;
+      setKbViewport(keyboardOpen ? { top: vp.offsetTop, height: vp.height } : null);
+    };
+    update();
+    vp.addEventListener('resize', update);
+    vp.addEventListener('scroll', update);
+    return () => {
+      vp.removeEventListener('resize', update);
+      vp.removeEventListener('scroll', update);
+    };
+  }, []);
+
   const fetchPost = async () => {
     try {
       setErrorMsg(null);
@@ -283,7 +303,7 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
   const shell = (content) => createPortal(
     <div
       className="comment-view fixed inset-0 z-[9999] flex flex-col bg-[var(--app-bg,#0a0a0a)] text-[var(--app-text,#ffffff)] touch-manipulation overscroll-contain"
-      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      style={{ isolation: 'isolate', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', ...(kbViewport ? { top: kbViewport.top, height: kbViewport.height, bottom: 'auto' } : {}) }}
     >
       {content}
       <ImageLightbox src={zoomImage} onClose={() => setZoomImage(null)} alt="Post media" />
@@ -391,8 +411,6 @@ const CommentView = ({ postId, user: currentUser, onClose, onViewProfile, allUse
         </div>
 
         <div className="px-2 sm:px-4">
-          <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] py-3 px-2">{post.comments?.length || 0} {t('INTEL_LOGS') || 'Comments'}</h3>
-
           {post.comments?.length === 0 ? (
             <div className="py-16 text-center px-4">
               <Icons.MessageCircle className="w-12 h-12 text-gray-700 mx-auto mb-4" />

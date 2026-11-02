@@ -1533,6 +1533,26 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     const [translatedText, setTranslatedText] = useState(null);
     const [isTranslating, setIsTranslating] = useState(false);
 
+    // Fixed overlay doesn't resize when the mobile software keyboard opens, so the
+    // bottom comment composer would sit behind the keyboard. Pin the overlay to the
+    // visual viewport while the keyboard is up so the input stays visible above it.
+    const [kbViewport, setKbViewport] = useState(null);
+    useEffect(() => {
+        const vp = window.visualViewport;
+        if (!vp) return undefined;
+        const update = () => {
+            const keyboardOpen = (window.innerHeight - vp.height) > 130;
+            setKbViewport(keyboardOpen ? { top: vp.offsetTop, height: vp.height } : null);
+        };
+        update();
+        vp.addEventListener('resize', update);
+        vp.addEventListener('scroll', update);
+        return () => {
+            vp.removeEventListener('resize', update);
+            vp.removeEventListener('scroll', update);
+        };
+    }, []);
+
     useEffect(() => {
         if (post?._id) openedAtRef.current = Date.now();
     }, [post?._id]);
@@ -1653,10 +1673,10 @@ const PostDetailModal = ({ post, user, allUsers, onClose, onLike, onDislike, onR
     };
 
     return createPortal(
-        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation overscroll-contain" onClick={handleBackdropClose} style={{ isolation: 'isolate' }}>
+        <div className="post-detail-modal fixed inset-0 z-[2500] flex items-end md:items-center justify-center bg-black/80 md:bg-black/60 md:backdrop-blur-md p-0 md:p-8 overflow-hidden animate-fade-in touch-manipulation overscroll-contain" onClick={handleBackdropClose} style={{ isolation: 'isolate', ...(kbViewport ? { top: kbViewport.top, height: kbViewport.height, bottom: 'auto' } : {}) }}>
             {/* The "Sheet" / Modal */}
             <div 
-                className="post-detail-modal__sheet w-full h-[100dvh] max-h-[100dvh] md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl overscroll-contain" 
+                className="post-detail-modal__sheet w-full h-full max-h-full md:h-auto md:max-h-[90vh] md:max-w-2xl bg-[var(--app-bg)] text-[var(--app-text)] md:rounded-[32px] rounded-t-[24px] border-t md:border border-[var(--app-border)] flex flex-col overflow-hidden relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl overscroll-contain" 
                 onClick={(e) => e.stopPropagation()}
                 style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
