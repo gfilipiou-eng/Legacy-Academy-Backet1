@@ -7088,7 +7088,7 @@ const ProfileModal = ({
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: "100%" }} 
                 transition={{ type: 'spring', stiffness: 350, damping: 40, mass: 0.8 }} 
-                className={`profile-modal-shell relative w-[96%] max-w-full mx-auto my-auto sm:max-w-lg sm:mx-auto h-[85dvh] rounded-[32px] sm:h-[85vh] overflow-hidden flex flex-col border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${isEditing ? 'bg-black' : profileBackground.className}`}
+                className={`profile-modal-shell relative w-full max-w-full mx-auto my-auto h-full sm:w-[96%] sm:max-w-lg sm:mx-auto sm:h-[85vh] rounded-none sm:rounded-[32px] overflow-hidden flex flex-col border-0 border-white/10 sm:border sm:shadow-[0_24px_80px_rgba(0,0,0,0.85)] animate-zoom-in profile-shell-bg ${isEditing ? 'bg-black' : profileBackground.className}`}
                 style={{ boxSizing: 'border-box', overflow: 'hidden', backgroundColor: isEditing ? '#000000' : profileBackground.color, '--app-bg': isEditing ? '#000000' : profileBackground.color }}>
 
 
@@ -7114,7 +7114,7 @@ const ProfileModal = ({
                     </div>
                 )}
 
-                <div className={`flex-none px-6 py-4 flex items-center justify-between border-b border-white/5 z-20 relative bg-white/[0.01] backdrop-blur-xl`}>
+                <div className={`flex-none px-6 py-4 pt-[max(1rem,calc(1rem+env(safe-area-inset-top,0px)))] flex items-center justify-between border-b border-white/5 z-20 relative bg-white/[0.01] backdrop-blur-xl`}>
                     <button onClick={() => {
                         if (activeList) setActiveList(null);
                         else if (isEditing) setIsEditing(false);
